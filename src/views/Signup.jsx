@@ -5,6 +5,7 @@ import CheckBox from "../components/forSignup/checkBox";
 import image from "../assets/Visionary technology-amico (1).svg";
 import "../App.css";
 import AlertBox from "../components/alertBox";
+import { handleChange } from "../utils/handleChange";
 function Signup() {
   const [formData, setformData] = useState({
     firstName: "",
@@ -14,15 +15,7 @@ function Signup() {
     passwordConfirmed: "",
     boxchecked: false,
   });
- const [alertMessage, SetallertMessage] = useState("")
-  const handleChange = (e) => {
-    const { name, type, checked, value } = e.target;
-    setformData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value, 
-    }));
-  };
-
+ const [alertMessage, SetallertMessage] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
     if(
@@ -32,13 +25,8 @@ function Signup() {
         !formData.password.trim()||
         !formData.passwordConfirmed.trim()
     ){
-        SetallertMessage("All feilds are required");
+        SetallertMessage("All feilds are required!");
         return;
-    }
-
-    if (formData.password.trim() === "" || formData.passwordConfirmed.trim() === "") {
-        SetallertMessage("Password fields cannot be empty");
-      return;
     }
 
     if (formData.password !== formData.passwordConfirmed) {
@@ -76,34 +64,34 @@ function Signup() {
               placeholder="Enter your first name"
               name="firstName"
               value={formData.firstName}
-              onChange={handleChange}
+              onChange={(e) =>{handleChange(e, setformData)}}
             />
             <InputField
               placeholder="Enter your last name"
               name="lastName"
               value={formData.lastName}
-              onChange={handleChange}
+              onChange={(e) =>{handleChange(e, setformData)}}
             />
             <InputField
               placeholder="Enter your email"
               type="email"
               name="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={(e) =>{handleChange(e, setformData)}}
             />
             <InputField
               placeholder="Create a password"
               type="password"
               name="password"
               value={formData.password}
-              onChange={handleChange}
+              onChange={(e) =>{handleChange(e, setformData)}}
             />
             <InputField
               placeholder="Confirm password"
               type="password"
               name="passwordConfirmed"
               value={formData.passwordConfirmed}
-              onChange={handleChange}
+              onChange={(e) =>{handleChange(e, setformData)}}
             />
           </div>
 
@@ -111,7 +99,7 @@ function Signup() {
             label="I agree to the Terms & Conditions"
             name="boxchecked"
             checked={formData.boxchecked}
-            onChange={handleChange}
+            onChange={(e) =>{handleChange(e, setformData)}}
           />
 
           <Button text="Sign Up" type="submit" />
