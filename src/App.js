@@ -1,11 +1,10 @@
 import React from 'react'
-import Signup from './views/Signup'
-import Signin from './views/Signin'
+import './App.css'
+import Header from '../src/components/forHeader/header'
 function App() {
   return (
     <div>
-       <Signup></Signup>
-       <Signin></Signin>
+       <Header></Header>
     </div>
   )
 }
