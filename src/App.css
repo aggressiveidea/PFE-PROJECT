@@ -141,9 +141,9 @@ a:hover {
   text-decoration: underline;
 }
 .animated-video {
-  width: 100%; /* Adjust size to fit */
+  width: 100%; 
   height: auto;
-  border-radius: 12px; /* Rounded corners */
+  border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -151,5 +151,42 @@ a:hover {
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
 }
+.alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.alert-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.alert-box p {
+  margin-bottom: 10px;
+}
+
+.alert-box button {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.alert-box button:hover {
+  background: #d43f3f;
+}
 

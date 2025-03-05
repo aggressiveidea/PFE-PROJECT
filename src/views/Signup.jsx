@@ -1,30 +1,127 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/forSignup/Button";
 import InputField from "../components/forSignup/InputFeild";
 import CheckBox from "../components/forSignup/checkBox";
-import SocialSignUp from "../components/forSignup/SocialMedia";
 import image from "../assets/Visionary technology-amico (1).svg";
 import "../App.css";
-
+import AlertBox from "../components/alertBox";
 function Signup() {
+  const [formData, setformData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    passwordConfirmed: "",
+    boxchecked: false,
+  });
+ const [alertMessage, SetallertMessage] = useState("")
+  const handleChange = (e) => {
+    const { name, type, checked, value } = e.target;
+    setformData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value, 
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if(
+        !formData.firstName.trim() ||
+        !formData.lastName.trim() ||
+        !formData.email.trim()||
+        !formData.password.trim()||
+        !formData.passwordConfirmed.trim()
+    ){
+        SetallertMessage("All feilds are required");
+        return;
+    }
+
+    if (formData.password.trim() === "" || formData.passwordConfirmed.trim() === "") {
+        SetallertMessage("Password fields cannot be empty");
+      return;
+    }
+
+    if (formData.password !== formData.passwordConfirmed) {
+        SetallertMessage("Passwords do not match!");
+      return;
+    }
+
+    if (!formData.boxchecked) {
+        SetallertMessage("You must agree to the Terms & Conditions to sign up.");
+      return;
+    }
+    //hna instead we will send les infos ll backend inshallah and store em f la base de donnée 
+    console.log("Form submitted successfully:", formData);
+
+    setformData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      passwordConfirmed: "",
+      boxchecked: false,
+    });
+  };
+
   return (
     <div className="signUp">
+        <AlertBox message={alertMessage} onClose={() => SetallertMessage("")}></AlertBox>
       <div className="left">
         <h2>Sign Up</h2>
         <p>Create your account to get started.</p>
-        <div className="input-container">
-          <InputField placeholder="Enter your first name" />
-          <InputField placeholder="Enter your last name" />
-          <InputField placeholder="Enter your email" type="email" />
-          <InputField placeholder="Create a password" type="password" />
-          <InputField placeholder="Confirm password" type="password" />
-        </div>
-        <CheckBox label="I agree to the Terms & Conditions" />
-        <Button text="Sign Up" />
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-container">
+            <InputField
+              placeholder="Enter your first name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+            <InputField
+              placeholder="Enter your last name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+            <InputField
+              placeholder="Enter your email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <InputField
+              placeholder="Create a password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <InputField
+              placeholder="Confirm password"
+              type="password"
+              name="passwordConfirmed"
+              value={formData.passwordConfirmed}
+              onChange={handleChange}
+            />
+          </div>
+
+          <CheckBox
+            label="I agree to the Terms & Conditions"
+            name="boxchecked"
+            checked={formData.boxchecked}
+            onChange={handleChange}
+          />
+
+          <Button text="Sign Up" type="submit" />
+        </form>
+
         <p className="or-text">
           <span className="line"></span> or Sign up with{" "}
           <span className="line"></span>
         </p>
+
         <p className="signin-link">
           Already have an account? <a href="/signin">Sign in</a>
         </p>
@@ -38,3 +135,5 @@ function Signup() {
 }
 
 export default Signup;
+
+

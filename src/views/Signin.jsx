@@ -12,7 +12,7 @@ function Signup() {
       <div className="left">
         <h2>Sign in</h2>
         <div className="input-container">
-        <InputFeild placeholder="Enter your username" className="usernameInput" />
+        <InputFeild placeholder="Enter your email" className="usernameInput" type="email" />
         <InputFeild placeholder="Enter your password" type="password" />
 
         </div>

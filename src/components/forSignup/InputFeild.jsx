@@ -1,9 +1,17 @@
-import React from 'react'
+import React from 'react';
 
-function InputFeild({ placeholder }) {
+function InputField({ name, placeholder, type, value, onChange }) {
   return (
-    <input className='logininput' type="text"  placeholder={placeholder} />
-  )
+    <input
+      
+      className='logininput'
+      type={type}
+      name={name} 
+      placeholder={placeholder}
+      value={value} 
+      onChange={onChange} 
+    />
+  );
 }
 
-export default InputFeild
+export default InputField;
