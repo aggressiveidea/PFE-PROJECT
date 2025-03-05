@@ -1,8 +1,8 @@
 import React from 'react'
 
-function InputFeild() {
+function InputFeild({ placeholder }) {
   return (
-    <input className='logininput' type="text" />
+    <input className='logininput' type="text"  placeholder={placeholder} />
   )
 }
 

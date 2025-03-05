@@ -1,24 +1,33 @@
 import React from "react";
 import Button from "../components/forSignup/Button";
-import InputFeild from "../components/forSignup/InputFeild";
+import InputField from "../components/forSignup/InputFeild";
 import CheckBox from "../components/forSignup/checkBox";
-import SocialsignUp from "../components/forSignup/SocialMedia";
-import image from "../assets/Visionary technology-rafiki.svg"
-import '../App.css'
+import SocialSignUp from "../components/forSignup/SocialMedia";
+import image from "../assets/Visionary technology-amico (1).svg";
+import "../App.css";
+
 function Signup() {
   return (
     <div className="signUp">
-
       <div className="left">
-        <h2>Sign in</h2>
+        <h2>Sign Up</h2>
+        <p>Create your account to get started.</p>
         <div className="input-container">
-          <InputFeild placeholder="Username" />
-          <InputFeild placeholder="Password" type="password" />
+          <InputField placeholder="Enter your first name" />
+          <InputField placeholder="Enter your last name" />
+          <InputField placeholder="Enter your email" type="email" />
+          <InputField placeholder="Create a password" type="password" />
+          <InputField placeholder="Confirm password" type="password" />
         </div>
-        <CheckBox />
-        <Button text="Login" />
-        <p className="or-text">or Sign in with</p>
-        <SocialsignUp />
+        <CheckBox label="I agree to the Terms & Conditions" />
+        <Button text="Sign Up" />
+        <p className="or-text">
+          <span className="line"></span> or Sign up with{" "}
+          <span className="line"></span>
+        </p>
+        <p className="signin-link">
+          Already have an account? <a href="/signin">Sign in</a>
+        </p>
       </div>
 
       <div className="right">

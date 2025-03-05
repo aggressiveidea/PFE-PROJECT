@@ -1,10 +1,10 @@
 import React from 'react'
 
-function Button() {
+function Button({text}) {
   return (
     
       
-         <button className='logbtn'>test</button>
+         <button className='logbtn'>{text}</button>
        
    
   )

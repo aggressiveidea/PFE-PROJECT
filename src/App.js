@@ -1,12 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
-import SocialLogin from '../src/views/Signup'
+import React from 'react'
+import Signup from './views/Signup'
+import Signin from './views/Signin'
 function App() {
   return (
-    <div className="App">
-      <SocialLogin></SocialLogin>
+    <div>
+       <Signup></Signup>
+       <Signin></Signin>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
+
+
