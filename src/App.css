@@ -3,23 +3,33 @@
   margin: 0;
   box-sizing: border-box;
 }
-/* normal view (bl pc)*/
-.logbtn {
+.logbtn{
   height: 44px;
-  width: 413px;
+  width: 100%;
+  max-width: 413px;
   background-color: #00B4D8;
-  opacity: 0.8;
+  opacity: 0.9;
   text-align: center;
   border-radius: 20px;
-  border: 1px solid #00B4D8;
+  border: none;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
-
-/* mobile view */
-@media (max-width: 640px) {
-  .logbtn {
-    width: 90%; 
-    font-size: 18px; 
-  }
+.logbtn:hover {
+  background-color: #0094B8;
+}
+.container{
+  display: flex;
+  flex-direction: row;
+}
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkbox{
+  margin-right: 5px;
 }

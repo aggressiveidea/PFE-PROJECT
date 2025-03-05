@@ -1,11 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import Button from '../src/components/Button'
+import SocialLogin from '../src/views/Signup'
 function App() {
   return (
     <div className="App">
-     <Button></Button>
-  
+      <SocialLogin></SocialLogin>
     </div>
   );
 }

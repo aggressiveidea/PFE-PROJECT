@@ -2,7 +2,7 @@ import React from 'react'
 
 function InputFeild() {
   return (
-    <input type="text" />
+    <input className='logininput' type="text" />
   )
 }
 
