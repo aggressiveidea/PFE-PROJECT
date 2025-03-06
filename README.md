@@ -1,3 +1,3 @@
 
 # PFE PROJECT
-we will fill this once finishing the project 
+run npm install to install all dependencies 
