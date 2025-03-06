@@ -8,15 +8,12 @@ function Header() {
 
   return (
     <header className="header">
-      <Logo />
-
-      {/* Navigation */}
-      <Nav className={menuOpen ? "nav open" : "nav"} />
-
-      {/* Get Started Button */}
-      <GetStartedBtn />
-
-      {/* Hamburger Menu for Mobile */}
+      <Logo className = "Logoimg"></Logo>
+      <nav className={menuOpen ? "nav open" : "nav"}>
+      <Nav className = "navLinks"></Nav>
+      </nav>
+      <GetStartedBtn className = "toStartBtn" displayedText = "Get started" ></GetStartedBtn>
+      <GetStartedBtn className = "toStartBtn" displayedText = "About us" ></GetStartedBtn>
       <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
         ☰
       </div>

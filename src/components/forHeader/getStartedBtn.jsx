@@ -1,10 +1,10 @@
 import React from 'react'
 
-function getStartedBtn() {
+function getStartedBtn({displayedText}) {
   return (
     <div>
         <button className='getStarted'>
-            Get started
+            {displayedText}
         </button>
     </div>
   )
