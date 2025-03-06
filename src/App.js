@@ -1,10 +1,10 @@
 import React from 'react'
 import './App.css'
-import Header from '../src/components/forHeader/header'
+import FinalSearch from './components/forSearchPage/FinalSearch'
 function App() {
   return (
     <div>
-       <Header></Header>
+     <FinalSearch></FinalSearch>
     </div>
   )
 }
