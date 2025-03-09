@@ -1,40 +1,73 @@
-
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+body {
+  font-family: "Roboto";
+}
 .signUp {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: url('../src/assets/sign\ in.png') no-repeat center/cover;
   background: linear-gradient(135deg, #dff0fd, #e9f5fe);
   background-size: 200% 200%;
   animation: gradientAnimation 4s infinite alternate;
 }
-.signUp .left {
-  width: 40%;
+
+.layout-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  background-color: #ffffff;
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.left-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background-color: #E3F2FD; 
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
 }
-.line {
-  display: inline-block;
-  width: 40px;
-  height: 1px;
-  background-color: #ccc;
-  margin: 0 10px;
+
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 20px;
+  animation: float 3s ease-in-out infinite; 
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #333;
+}
+
+p {
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.input-container {
+  width: 100%;
+  max-width: 400px; 
 }
 
 .logininput {
   background-color: #f0f4f8;
   border-radius: 10px;
   width: 100%;
-  max-width: 418px;
-  height: 30px;
+  height: 40px; 
   border: 1px solid rgba(0, 119, 182, 0.2);
   padding: 8px;
   outline: none;
@@ -44,7 +77,6 @@
 .logbtn {
   height: 44px;
   width: 100%;
-  max-width: 413px;
   background-color: #030465;
   opacity: 0.9;
   text-align: center;
@@ -62,92 +94,78 @@
   cursor: pointer;
 }
 
-.check {
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.checkbox-container input {
   margin-right: 8px;
 }
-.container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.social-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+
+.or-text {
+  margin: 1rem 0;
 }
 
-.social-icons {
-  display: flex;
-  gap: 16px;
+.line {
+  display: inline-block;
+  width: 40px;
+  height: 1px;
+  background-color: #ccc;
+  margin: 0 10px;
 }
 
-.social-icons svg {
-  font-size: 24px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-}
-
-.social-icons svg:hover {
-  transform: scale(1.1);
-}
-.usernameInput{
-  margin-bottom: 5px;
-}
-.signUp .right {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.signUp .right img {
-  width: 80%;
-}
-.signup-text {
+.signin-link {
   color: #757575;
   font-size: 14px;
 }
-input::placeholder {
-  color: #aaa;
-  opacity: 1;  
-}
 
-.signup-text a {
+.signin-link a {
   color: #1897da;
   font-weight: bold;
   text-decoration: none;
 }
 
-.signup-text a:hover {
+.signin-link a:hover {
   text-decoration: underline;
 }
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 768px) {
-  .signUp {
+  .layout-container {
     flex-direction: column;
+    align-items: center;
   }
-  .signUp .left, .signUp .right {
-    width: 90%;
-  }
-  .signUp .right img {
-    width: 100%;
-  }
-}
-a {
-  color: #007bff;
-  text-decoration: none;
-}
 
-a:hover {
-  text-decoration: underline;
-}
-.animated-video {
-  width: 100%; 
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
+  .right-section {
+    margin-top: 2rem;
+  }
 
+  .form-image {
+    max-width: 300px; 
+  }
+}
 .animated-video:hover {
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
@@ -191,7 +209,7 @@ a:hover {
   background: #d43f3f;
 }
 .getStarted{
-  background: linear-gradient( to right, #0F108C 27%, #892be2c1 100%);
+  background-color: #0F108C;
   width: 130px;
   height: 44px;
   border: 1px solid linear-gradient( to right, #0F108C 27%, #8A2BE2 100%) ;
@@ -291,7 +309,7 @@ a:hover {
   color: white;
 }
 .getStarted {
-  background: linear-gradient(to right, #0F108C, #892be2);
+  background-color: #030465;
   padding: 10px 20px;
   border: none;
   border-radius: 50px;
@@ -399,9 +417,9 @@ a:hover {
 .wave-container {
   position: relative;
   width: 100%;
-  height: 150px; /* Adjust height */
+  height: 150px; 
   overflow: hidden;
-  background: #1b2636; /* Match your theme */
+  background: #1b2636; 
 }
 
 .wave {

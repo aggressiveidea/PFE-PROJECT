@@ -1,11 +1,13 @@
 import React from 'react'
 import './App.css'
-import FinalSearch from './components/forSearchPage/FinalSearch'
-import IndexedSearch from './components/forSearchPage/indexedSearch'
+import Home from './views/Home'
+import Header from './components/forHeader/header'
+import Signup from './views/Signup'
 function App() {
   return (
     <div>
-     <IndexedSearch></IndexedSearch>
+      <Header></Header>
+       <Home></Home>
     </div>
   )
 }

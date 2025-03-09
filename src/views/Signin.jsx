@@ -35,8 +35,6 @@ function Signup() {
         <h2>Sign in</h2>
 
         {alertMessage && <AlertBox message={alertMessage} onClose={() => setAlertMessage("")} />}
-
-        {/* Form to handle submission */}
         <form onSubmit={handleSubmit}>
           <div className="input-container">
             <InputFeild
