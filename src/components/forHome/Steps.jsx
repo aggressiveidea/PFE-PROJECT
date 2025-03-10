@@ -30,7 +30,7 @@ const FeaturesSection = () => {
     <div className="features-container">
       {features.map((feature, index) => (
         <FeatureCard
-          key={index}
+          key = {index}
           title={feature.title}
           image={feature.image}
           description={feature.description}

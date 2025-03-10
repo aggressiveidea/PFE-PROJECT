@@ -8,6 +8,7 @@ import AlertBox from "../components/alertBox";
 import { handleChange } from "../utils/handleChange";
 
 function Signup() {
+
   const [formData, setformData] = useState({
     firstName: "",
     lastName: "",
@@ -18,7 +19,7 @@ function Signup() {
   });
 
   const [alertMessage, SetallertMessage] = useState("");
-
+ 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (

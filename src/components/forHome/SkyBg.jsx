@@ -8,8 +8,7 @@ function SkyBg() {
     <div className="sky-container">
     {/* hadi lazm tdi kaml al div's width */}
       <img src={bg} alt="Background" className="sky-bg" />
-
-      <img src={cloud} alt="Cloud" className="cloud cloud-1" />
+      <img  alt={cloud} className="cloud cloud-1" />
       <img src={cloud} alt="Cloud" className="cloud cloud-2" />
       <img src={cloud} alt="Cloud" className="cloud cloud-3" />
       <img src={cloud} alt="Cloud" className="cloud cloud-4" />

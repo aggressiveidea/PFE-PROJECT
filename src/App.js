@@ -1,17 +1,22 @@
-import React from 'react'
-import './App.css'
-import Home from './views/Home'
-import Header from './components/forHeader/header'
-import Signup from './views/Signup'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Home from "./views/Home";
+import Signup from "./views/Signup";
+import Header from "./components/forHeader/header";
+
 function App() {
   return (
-    <div>
-      <Header></Header>
-       <Home></Home>
-    </div>
-  )
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
 
 
