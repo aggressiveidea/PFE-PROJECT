@@ -4,16 +4,16 @@ import "./App.css";
 import Home from "./views/Home";
 import Signup from "./views/Signup";
 import Header from "./components/forHeader/header";
-
+import IndexedSearch from './components/forSearchPage/indexedSearch'
 function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
-    </Router>
+   
+      <div>
+        
+     
+      <IndexedSearch></IndexedSearch>
+      </div>
+     
   );
 }
 
