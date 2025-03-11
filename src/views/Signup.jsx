@@ -59,7 +59,7 @@ function Signup() {
     <div className="signUp">
       <AlertBox message={alertMessage} onClose={() => SetallertMessage("")} />
       <div className="layout-container">
-        {/* Left Section: Form */}
+  
         <div className="left-section">
           <h2>Sign Up</h2>
           <p>Create your account to get started.</p>

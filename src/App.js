@@ -4,14 +4,15 @@ import "./App.css";
 import Home from "./views/Home";
 import Signup from "./views/Signup";
 import Header from "./components/forHeader/header";
-import IndexedSearch from './components/forSearchPage/indexedSearch'
+import QuizPage from "./views/QuizPage";
+
 function App() {
   return (
    
       <div>
-        
-     
-      <IndexedSearch></IndexedSearch>
+       <Header></Header>
+       <QuizPage></QuizPage>
+      
       </div>
      
   );

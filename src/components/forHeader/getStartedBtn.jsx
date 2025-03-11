@@ -1,13 +1,18 @@
-import React from 'react'
+"use client"
+import { motion } from "framer-motion"
 
-function getStartedBtn({displayedText}) {
+function GetStartedBtn({ displayedText, onClick }) {
   return (
-    <div>
-        <button className='getStarted'>
-            {displayedText}
-        </button>
-    </div>
+    <motion.button
+      className="get-started-btn"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+    >
+      {displayedText}
+    </motion.button>
   )
 }
 
-export default getStartedBtn
+export default GetStartedBtn
+
