@@ -22,6 +22,7 @@ html {
   height: 100%;
   object-fit: cover;
   z-index: -1;
+  animation: pulse 10s ease-in-out infinite;
 }
 
 .hero-content {
@@ -60,9 +61,37 @@ html {
   justify-content: center;
 }
 
+.hero-image img {
+  animation: float 6s ease-in-out infinite;
+}
+
 .testImage {
   max-width: 100%;
   height: auto;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Button styling */
@@ -75,12 +104,47 @@ html {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .get-started-btn:hover {
   background-color: #303f9f;
+}
+
+.get-started-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+.get-started-btn:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
 }
 
 /* Daily question section */
