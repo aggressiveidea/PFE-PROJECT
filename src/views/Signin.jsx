@@ -4,9 +4,10 @@ import InputFeild from "../components/forSignup/InputFeild";
 import CheckBox from "../components/forSignup/checkBox";
 import SocialsignUp from "../components/forSignup/SocialMedia";
 import image from "../assets/Innovation-pana.svg";
-import '../App.css';
 import AlertBox from "../components/alertBox";
+import '../style/registration.css'
 import { handleChange } from "../utils/handleChange";
+import { loginUser } from "../services/Api";
 function Signup() {
   const [existData, setExistData] = useState({
     email: "",
@@ -16,18 +17,28 @@ function Signup() {
 
   const [alertMessage, setAlertMessage] = useState("");
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!existData.email.trim() || !existData.password.trim()) {
-      setAlertMessage("All fields are required");
-      return;
+        setAlertMessage("All fields are required");
+        return;
     }
 
-    console.log("Form submitted successfully", existData);
-    setExistData({ email: "", password: "", checkedInfo: false }); // Clear inputs after submission
-  };
+    try {
+        const response = await loginUser(existData.email, existData.password);
+
+        if (response.token) {
+            console.log("Login successful", response);
+            setAlertMessage("Login successful!");
+        } else {
+            setAlertMessage(response.message || "Invalid credentials");
+        }
+    } catch (error) {
+        setAlertMessage("Login failed. Please try again.");
+    }
+};
+
 
   return (
     <div className="signUp">
