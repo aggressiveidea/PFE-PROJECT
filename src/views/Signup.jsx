@@ -6,7 +6,7 @@ import AlertBox from "../components/alertBox";
 import image from "../assets/Visionary technology-amico (1).svg";
 import { handleChange } from "../utils/handleChange";
 import { registerUser } from "../services/Api"; 
-import '../style/registration.css'
+
 function Signup() {
     const [formData, setformData] = useState({
         firstName: "",
