@@ -5,7 +5,6 @@ import CheckBox from "../components/forSignup/checkBox";
 import SocialsignUp from "../components/forSignup/SocialMedia";
 import image from "../assets/Innovation-pana.svg";
 import AlertBox from "../components/alertBox";
-import '../style/registration.css'
 import { handleChange } from "../utils/handleChange";
 import { loginUser } from "../services/Api";
 function Signup() {

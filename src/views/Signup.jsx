@@ -5,7 +5,7 @@ import CheckBox from "../components/forSignup/checkBox";
 import AlertBox from "../components/alertBox";
 import image from "../assets/Visionary technology-amico (1).svg";
 import { handleChange } from "../utils/handleChange";
-import { registerUser } from "../services/Api"; 
+import { registerUser, getProfile } from "../services/Api"; 
 
 function Signup() {
     const [formData, setformData] = useState({
@@ -21,7 +21,7 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (
             !formData.firstName.trim() ||
             !formData.lastName.trim() ||
@@ -32,17 +32,17 @@ function Signup() {
             SetallertMessage("All fields are required!");
             return;
         }
-
+    
         if (formData.password !== formData.passwordConfirmed) {
             SetallertMessage("Passwords do not match!");
             return;
         }
-
+    
         if (!formData.boxchecked) {
             SetallertMessage("You must agree to the Terms & Conditions to sign up.");
             return;
         }
-
+    
         try {
             const response = await registerUser({
                 firstName: formData.firstName,
@@ -50,9 +50,19 @@ function Signup() {
                 email: formData.email,
                 password: formData.password,
             });
-
+    
             console.log("✅ Registration successful:", response);
-            SetallertMessage("Registration successful! Welcome there!");
+    
+            if (response.token) {
+                localStorage.setItem("token", response.token); 
+    
+                const profile = await getProfile(response.token);
+                console.log("✅ Profile fetched:", profile);
+                
+                SetallertMessage("Registration successful! Welcome there!");
+            } else {
+                SetallertMessage("Registration successful, but no token received.");
+            }
         } catch (error) {
             console.error("Registration failed:", error);
             SetallertMessage(error.message || "Registration failed. Try again.");

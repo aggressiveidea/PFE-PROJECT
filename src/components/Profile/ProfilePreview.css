@@ -1,0 +1,89 @@
+.profile-preview {
+    width: 100%;
+    padding: 24px;
+    background-color: var(--background-secondary);
+    height: 100%;
+  }
+  
+  .preview-card {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    padding: 24px;
+  }
+  
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background-color: rgba(99, 102, 241, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+  }
+  
+  .profile-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .detail-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    color: var(--primary-color);
+  }
+  
+  .detail-section {
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .detail-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color);
+  }
+  
+  .detail-text {
+    color: var(--text-color);
+    line-height: 1.5;
+  }
+  
+  .detail-subtext {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-preview {
+      padding-top: 24px;
+    }
+  }
+  
+  

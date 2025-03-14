@@ -9,6 +9,14 @@
     border-radius: 12px;
     padding: 2px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
   }
   
   .gradient-blue-indigo {
@@ -60,12 +68,34 @@
     border-radius: 8px;
     background-color: #eff6ff;
     color: #4f46e5;
+    transition: transform 0.3s ease;
+  }
+  
+  .stat-card:hover .stat-card-icon {
+    transform: scale(1.1);
   }
   
   .stat-card-value {
     font-size: 28px;
     font-weight: 700;
     color: #1e293b;
+  }
+  
+  .stat-loading-indicator {
+    font-size: 16px;
+    color: #94a3b8;
+    font-style: italic;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
   @media (min-width: 640px) {
@@ -79,5 +109,7 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+  
+  
   
   
