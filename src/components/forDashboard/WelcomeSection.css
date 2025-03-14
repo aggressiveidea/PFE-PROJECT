@@ -1,0 +1,18 @@
+.welcome-section {
+    margin-bottom: 32px;
+  }
+  
+  .welcome-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+  }
+  
+  .welcome-subtitle {
+    font-size: 18px;
+    color: #64748b;
+    margin: 0;
+  }
+  
+  

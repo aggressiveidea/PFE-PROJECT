@@ -1,0 +1,35 @@
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f9fafb;
+    font-family: "Inter", sans-serif;
+  }
+  
+  .dashboard-main {
+    flex: 1;
+    transition: margin-left 0.3s ease;
+    margin-left: 250px;
+  }
+  
+  .dashboard-main.sidebar-collapsed {
+    margin-left: 80px;
+  }
+  
+  .dashboard-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-main {
+      margin-left: 0;
+    }
+  
+    .dashboard-main.sidebar-collapsed {
+      margin-left: 0;
+    }
+  }
+  
+  
+

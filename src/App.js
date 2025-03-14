@@ -1,14 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/forHeader/header";
-import Signup from "./views/Signup";
+import Dashboard from "./components/forDashboard/Dashboard";
 function App() {
   return (
    
       <div>
-      
-      
-       <Signup></Signup>
+       <Dashboard></Dashboard>
       </div>
      
   );
