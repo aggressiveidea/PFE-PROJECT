@@ -44,31 +44,28 @@ function Signup() {
         }
     
         try {
-            const response = await registerUser({
+            // Simulating user registration (no backend)
+            const userData = {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 email: formData.email,
-                password: formData.password,
-            });
+            };
     
-            console.log("✅ Registration successful:", response);
+            // Store user data in localStorage
+            localStorage.setItem("user", JSON.stringify(userData));
     
-            if (response.token) {
-                localStorage.setItem("token", response.token); 
+            // Navigate to profile page after signup
+            SetallertMessage("Registration successful! Welcome there!");
+            setTimeout(() => {
+                window.location.href = "/profile"; // Redirect to profile
+            }, 1000);
     
-                const profile = await getProfile(response.token);
-                console.log("✅ Profile fetched:", profile);
-                
-                SetallertMessage("Registration successful! Welcome there!");
-            } else {
-                SetallertMessage("Registration successful, but no token received.");
-            }
         } catch (error) {
             console.error("Registration failed:", error);
             SetallertMessage(error.message || "Registration failed. Try again.");
         }
     };
-
+    
     return (
         <div className="signUp">
             <AlertBox message={alertMessage} onClose={() => SetallertMessage("")} />

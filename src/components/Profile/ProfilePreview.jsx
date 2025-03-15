@@ -1,6 +1,17 @@
-import "./ProfilePreview.css"
+import { useEffect, useState } from "react";
+import "./ProfilePreview.css";
 
-function ProfilePreview({ profile }) {
+function ProfilePreview() {
+  const [profile, setProfile] = useState(null);
+
+  // Retrieve profile data from localStorage when the component mounts
+  useEffect(() => {
+    const storedProfile = localStorage.getItem("profile");
+    if (storedProfile) {
+      setProfile(JSON.parse(storedProfile)); // Convert JSON back to object
+    }
+  }, []);
+
   if (!profile) {
     return (
       <div className="profile-preview">
@@ -9,7 +20,7 @@ function ProfilePreview({ profile }) {
           <p>Profile data not available</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -84,9 +95,10 @@ function ProfilePreview({ profile }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ProfilePreview
+export default ProfilePreview;
+
 
 

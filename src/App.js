@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/forDashboard/Dashboard";
 import ProfilePreview from "./components/Profile/ProfilePreview";
 import Signup from "./views/Signup";
+import AdminUserManagement from "./views/AdminUserManagement";
 function App() {
   return (
    
       <div>
-        <Signup></Signup>
-        <ProfilePreview></ProfilePreview>
+        <AdminUserManagement></AdminUserManagement>
       </div>
      
   );

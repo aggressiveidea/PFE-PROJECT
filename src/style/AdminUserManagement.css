@@ -1,0 +1,370 @@
+.admin-users-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  
+  .admin-users-header {
+    margin-bottom: 24px;
+  }
+  
+  .admin-users-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 8px;
+  }
+  
+  .admin-users-header p {
+    color: var(--text-secondary);
+    font-size: 16px;
+  }
+  
+  .admin-users-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .search-container {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--background-color);
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+  }
+  
+  .filter-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .role-filter {
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    cursor: pointer;
+  }
+  
+  .role-filter:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  .users-table-container {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    overflow: hidden;
+  }
+  
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .users-table th,
+  .users-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .users-table th {
+    font-weight: 600;
+    color: var(--text-color);
+    background-color: var(--background-secondary);
+    font-size: 14px;
+  }
+  
+  .users-table tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.05);
+  }
+  
+  .user-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(99, 102, 241, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+  
+  .user-name-text {
+    font-weight: 500;
+  }
+  
+  .role-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .role-badge.admin {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+  
+  .role-badge.expert {
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+  }
+  
+  .role-badge.user {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .make-expert-button,
+  .delete-button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+  }
+  
+  .make-expert-button {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .make-expert-button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+  }
+  
+  .delete-button {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+  
+  .delete-button:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.2);
+  }
+  
+  .make-expert-button:disabled,
+  .delete-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .no-users {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-secondary);
+  }
+  
+  .error-message {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .retry-button {
+    padding: 6px 12px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .retry-button:hover {
+    background-color: #dc2626;
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(99, 102, 241, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Confirmation Modal */
+  .confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .confirm-modal {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .confirm-modal h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-color);
+  }
+  
+  .confirm-modal p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+  
+  .confirm-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  
+  .cancel-button,
+  .confirm-delete-button,
+  .confirm-expert-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+  }
+  
+  .cancel-button {
+    background-color: var(--background-secondary);
+    color: var(--text-color);
+  }
+  
+  .cancel-button:hover:not(:disabled) {
+    background-color: var(--border-color);
+  }
+  
+  .confirm-delete-button {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .confirm-delete-button:hover:not(:disabled) {
+    background-color: #dc2626;
+  }
+  
+  .confirm-expert-button {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .confirm-expert-button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+  }
+  
+  .cancel-button:disabled,
+  .confirm-delete-button:disabled,
+  .confirm-expert-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .admin-users-controls {
+      flex-direction: column;
+    }
+  
+    .search-container {
+      max-width: 100%;
+    }
+  
+    .users-table th:nth-child(4),
+    .users-table td:nth-child(4) {
+      display: none;
+    }
+  
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .users-table th:nth-child(3),
+    .users-table td:nth-child(3) {
+      display: none;
+    }
+  }
+  
+  

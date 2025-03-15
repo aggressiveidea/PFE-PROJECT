@@ -1,6 +1,6 @@
 export const registerUser = async (userData) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/register", { 
+      const response = await fetch("http://localhost:5000/auth/register", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export const registerUser = async (userData) => {
   };
   export const loginUser = async (email, password) => {
     try {
-        const response = await fetch("http://localhost:3000/auth/login", {
+        const response = await fetch("http://localhost:5000/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -36,12 +36,12 @@ export const registerUser = async (userData) => {
 };
 export const getProfile = async (token) => {
   try {
-      const response = await fetch("http://localhost:3000/profile", {
+      const response = await fetch("http://localhost:5000/auth/profile", {
           method: "GET",
           headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}` 
-          }
+              "Authorization": `Bearer ${token}`  
+          },
       });
 
       if (!response.ok) {
@@ -50,8 +50,9 @@ export const getProfile = async (token) => {
 
       return await response.json();
   } catch (error) {
-      console.error("Error fetching profile:", error);
+      console.error("🚨 Error fetching profile:", error);
       throw error;
   }
 };
+
 
