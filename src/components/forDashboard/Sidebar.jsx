@@ -1,4 +1,6 @@
 "use client"
+
+import { Link } from "react-router-dom"
 import {
   LayoutDashboard,
   BarChart2,
@@ -35,46 +37,46 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         <div className="sidebar-content">
           <ul className="sidebar-menu">
             <li className="sidebar-menu-item active">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/dashboard" className="sidebar-menu-link">
                 <LayoutDashboard size={20} />
                 {!collapsed && <span>Dashboard</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/metrics" className="sidebar-menu-link">
                 <BarChart2 size={20} />
                 {!collapsed && <span>Metrics</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/user-management" className="sidebar-menu-link">
                 <Layers size={20} />
                 {!collapsed && <span>All users</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/comments" className="sidebar-menu-link">
                 <MessageSquare size={20} />
                 {!collapsed && <span>Comments</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/settings" className="sidebar-menu-link">
                 <Settings size={20} />
                 {!collapsed && <span>Settings</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/privacy" className="sidebar-menu-link">
                 <Shield size={20} />
                 {!collapsed && <span>Privacy & Security</span>}
-              </a>
+              </Link>
             </li>
             <li className="sidebar-menu-item">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/language" className="sidebar-menu-link">
                 <Globe size={20} />
                 {!collapsed && <span>Language</span>}
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -82,10 +84,10 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         <div className="sidebar-footer">
           <ul className="sidebar-menu">
             <li className="sidebar-menu-item logout">
-              <a href="#" className="sidebar-menu-link">
+              <Link to="/logout" className="sidebar-menu-link">
                 <LogOut size={20} />
                 {!collapsed && <span>Logout</span>}
-              </a>
+              </Link>
             </li>
           </ul>
           <button className="sidebar-toggle" onClick={toggleSidebar}>
@@ -96,6 +98,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     </>
   )
 }
+
 
 
 

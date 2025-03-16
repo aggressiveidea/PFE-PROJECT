@@ -11,7 +11,7 @@ const ChangeRoleModal = ({ user, newRole, setNewRole, closeModal, handleChangeRo
         <label htmlFor="role">Select new role:</label>
         <select id="role" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
           <option value="Admin">Admin</option>
-          <option value="Editor">Editor</option>
+          <option value="Ict-expert">ICT expert</option>
           <option value="User">User</option>
         </select>
       </div>

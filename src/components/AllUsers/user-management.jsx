@@ -23,6 +23,7 @@ const UserManagement = () => {
     firstName: "",
     lastName: "",
     email: "",
+    password: "",
     role: "Admin",
     status: "Active",
   })
@@ -48,13 +49,9 @@ const UserManagement = () => {
     }
   }
   
-
-  // Initial data fetch
   useEffect(() => {
     fetchUsers()
   }, [])
-
-  // Filter users based on search term
   useEffect(() => {
     if (searchTerm && users.length > 0) {
       const filtered = users.filter(
@@ -71,7 +68,6 @@ const UserManagement = () => {
     }
   }, [searchTerm, users])
 
-  // Handle select all checkbox
   useEffect(() => {
     if (selectAll) {
       setSelectedUsers(filteredUsers.map((user) => user._id))
@@ -102,7 +98,6 @@ const UserManagement = () => {
       try {
         setIsDeleting(true)
         await deleteUser(selectedUser._id)
-        // Refresh the user list after deletion
         await fetchUsers()
         closeModal()
       } catch (err) {
@@ -119,7 +114,6 @@ const UserManagement = () => {
       try {
         setIsLoading(true)
         await updateUser(selectedUser._id, { ...selectedUser, role: newRole })
-        // Refresh the user list after update
         await fetchUsers()
         closeModal()
       } catch (err) {
@@ -153,17 +147,17 @@ const UserManagement = () => {
       firstName: "",
       lastName: "",
       email: "",
+      password:"",
       role: "Admin",
       status: "Active",
     })
   }
 
   const handleAddUser = async () => {
-    if (newUser.firstName && newUser.lastName && newUser.email) {
+    if (newUser.firstName && newUser.lastName && newUser.email && newUser.password && newUser.role) {
       try {
         setIsLoading(true)
         await createUser(newUser)
-        // Refresh the user list after adding a new user
         await fetchUsers()
         closeAddUserModal()
       } catch (err) {
@@ -187,8 +181,8 @@ const UserManagement = () => {
     switch (role?.toLowerCase()) {
       case "admin":
         return "role-admin"
-      case "editor":
-        return "role-editor"
+      case "ict-expert":
+        return "role-Ict-expert"
       default:
         return "role-user"
     }
@@ -211,17 +205,14 @@ const UserManagement = () => {
     return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase() || "U"
   }
 
-  // Get user ID - adapt to your actual data structure
   const getUserId = (user) => {
     return user._id || user.id || "N/A"
   }
 
-  // Get user status - adapt to your actual data structure
   const getUserStatus = (user) => {
     return user.status || "Active"
   }
 
-  // Get user last login - adapt to your actual data structure
   const getUserLastLogin = (user) => {
     if (user.lastLogin) return user.lastLogin
     if (user.updatedAt) return new Date(user.updatedAt).toLocaleString()
@@ -392,7 +383,7 @@ const UserManagement = () => {
                     <label htmlFor="role">Select new role:</label>
                     <select id="role" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
                       <option value="Admin">Admin</option>
-                      <option value="Editor">Editor</option>
+                      <option value="Ict-expert">Ict-expert</option>
                       <option value="User">User</option>
                     </select>
                   </div>
@@ -452,6 +443,17 @@ const UserManagement = () => {
                   value={newUser.email}
                   onChange={handleNewUserChange}
                   placeholder="Enter email address"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={newUser.password}
+                  onChange={handleNewUserChange}
+                  placeholder="Enter a password"
                 />
               </div>
               <div className="form-group">

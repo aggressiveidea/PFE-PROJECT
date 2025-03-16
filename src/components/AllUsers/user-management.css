@@ -290,9 +290,10 @@
     color: var(--primary-dark);
   }
   
-  .role-editor {
+  .role-Ict-expert{
     background-color: var(--success-light);
     color: var(--success);
+   
   }
   
   .role-user {

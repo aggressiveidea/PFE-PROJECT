@@ -73,13 +73,64 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
-export const createUser = async (data) =>{
+export const createUser = async (data) => {
+  try {
+    const response = await fetch("http://localhost:5000/user/", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), 
+    });
 
-}
-export const updateUser = async (id,data) =>{
+    if (!response.ok) {
+      throw new Error("Failed to create user");
+    }
 
-}
-export const deleteUser = async (id) =>{
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
 
-}
+export const updateUser = async (id, data) => {
+  try {
+    const response = await fetch(`http://localhost:5000/user/${id}`, {
+      method: "PUT", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), 
+    });
 
+    if (!response.ok) {
+      throw new Error("Failed to update user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/user/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};

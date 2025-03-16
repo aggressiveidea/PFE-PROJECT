@@ -7,7 +7,7 @@ const DeleteModal = ({ user, closeModal, handleDeleteUser }) => {
       <p className="user-name">
         {user.firstName} {user.lastName}
       </p>
-      <p className="warning">This action cannot be undone.</p>
+      <p className="warning">This action cannot be undone</p>
       <div className="modal-footer">
         <button className="cancel-button" onClick={closeModal}>
           Cancel
