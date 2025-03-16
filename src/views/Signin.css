@@ -1,0 +1,360 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --primary-purple: #8b3bf5;
+  --secondary-blue: #4361ee;
+  --primary-gradient: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-blue) 100%);
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --input-bg: #f8f9ff;
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.auth-container {
+  display: flex;
+  min-height: 100vh;
+  background: #fff;
+}
+
+/* Left Section - Illustration */
+.left-section {
+  flex: 1;
+  position: relative;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.content h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.content p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Stars Animation */
+.stars .star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+/* Right Section - Form */
+.right-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgb(74, 52, 114);
+  
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.6s ease-out;
+}
+
+.form-container h2 {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+}
+
+/* Form Styling */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+:global(.input-field) {
+  position: relative;
+}
+
+:global(.input-field input) {
+  width: 100%;
+  padding: 1rem;
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  color: var(--text-primary);
+}
+
+:global(.input-field input:focus) {
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 4px rgba(139, 59, 245, 0.1);
+  outline: none;
+}
+
+:global(.input-field input::placeholder) {
+  color: #a0aec0;
+}
+
+.forgot-password-container {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.forgot-password {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  position: relative;
+  display: inline-block;
+}
+
+.forgot-password::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background: white;
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.forgot-password:hover::after {
+  transform: scaleX(1);
+}
+
+/* Button Styling */
+:global(.custom-button) {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+:global(.custom-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Auth Footer */
+.auth-footer {
+  margin-top: 2rem;
+}
+
+.or-text {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.or-text span {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 0.5rem;
+}
+
+/* Social Buttons */
+:global(.social-buttons) {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+:global(.social-button) {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+:global(.social-button:hover) {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.signup-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.signup-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  transition: var(--transition);
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* Alert Box */
+:global(.alert-box) {
+  background: rgba(255, 255, 255, 0.95);
+  border-left: 4px solid var(--primary-purple);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease-out;
+  max-width: 400px;
+  margin: 1rem auto;
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+:global(.alert-box .message) {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+:global(.alert-box .close-btn) {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+:global(.alert-box .close-btn:hover) {
+  color: #333;
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column-reverse;
+  }
+
+  .left-section,
+  .right-section {
+    flex: none;
+    width: 100%;
+  }
+
+  .left-section {
+    min-height: 300px;
+  }
+
+  .content h1 {
+    font-size: 2rem;
+  }
+
+  .right-section {
+    padding: 2rem 1rem;
+  }
+
+  :global(.alert-box) {
+    width: 90%;
+  }
+}
+
+
+
+
+
+

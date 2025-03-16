@@ -1,0 +1,159 @@
+.popular-terms {
+    background-color: var(--background-light);
+  }
+  
+  .dark .popular-terms {
+    background-color: var(--background-dark);
+  }
+  
+  .terms-categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  
+  .category-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(106, 17, 203, 0.2);
+    background-color: transparent;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+  }
+  
+  .dark .category-btn {
+    border-color: rgba(236, 56, 188, 0.2);
+    color: var(--text-light);
+  }
+  
+  .category-btn:hover {
+    border-color: var(--primary-purple);
+    background-color: rgba(106, 17, 203, 0.05);
+  }
+  
+  .dark .category-btn:hover {
+    border-color: var(--primary-pink);
+    background-color: rgba(236, 56, 188, 0.05);
+  }
+  
+  .category-btn.active {
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: white;
+  }
+  
+  .dark .category-btn.active {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+  }
+  
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+  
+  .term-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .term-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+  }
+  
+  .dark .term-card-title {
+    color: var(--text-light);
+  }
+  
+  .term-card-definition {
+    color: var(--text-dark);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+  
+  .dark .term-card-definition {
+    color: var(--text-light);
+  }
+  
+  .term-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+  
+  .term-category {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: rgba(106, 17, 203, 0.1);
+    color: var(--primary-purple);
+    border-radius: 15px;
+    font-size: 0.75rem;
+  }
+  
+  .dark .term-category {
+    background-color: rgba(236, 56, 188, 0.1);
+    color: var(--primary-pink);
+  }
+  
+  .term-card-btn {
+    font-size: 0.875rem;
+    padding: 6px 12px;
+  }
+  
+  .view-all-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .view-all-btn {
+    padding: 12px 30px;
+  }
+  
+  @media (max-width: 768px) {
+    .terms-categories {
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+  
+    .terms-grid {
+      gap: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .category-btn {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+  
+    .term-card {
+      padding: 20px;
+    }
+  
+    .term-card-title {
+      font-size: 1.1rem;
+    }
+  
+    .term-card-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+  
+  

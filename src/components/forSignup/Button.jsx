@@ -1,12 +1,11 @@
-import React from 'react'
+"use client"
+import "./Button.css"
 
-function Button({text}) {
+function Button({ text, type, onClick }) {
   return (
-    
-      
-         <button className='logbtn'>{text}</button>
-       
-   
+    <button className="custom-button" type={type} onClick={onClick}>
+      {text}
+    </button>
   )
 }
 

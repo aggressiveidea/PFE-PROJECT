@@ -1,17 +1,16 @@
-import React from "react";
+"use client"
+import "./alertBox.css"
 
-const AlertBox = ({ message, onClose }) => {
-    if(!message) {
-        return null;
-    }
+function AlertBox({ message, onClose }) {
   return (
-    <div className="alert-overlay">
-      <div className="alert-box">
-        <p>{message}</p>
-        <button onClick={onClose}>OK</button>
-      </div>
+    <div className="alert-box">
+      <div className="message">{message}</div>
+      <button className="close-btn" onClick={onClose}>
+        ×
+      </button>
     </div>
-  );
-};
+  )
+}
 
-export default AlertBox;
+export default AlertBox
+

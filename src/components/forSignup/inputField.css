@@ -1,0 +1,26 @@
+.input-field {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  
+  .input-field input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(106, 17, 203, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  
+  .input-field input:focus {
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2), 0 0 15px rgba(138, 43, 226, 0.2);
+  }
+  
+  .input-field input::placeholder {
+    color: #aaa;
+  }
+  
+  

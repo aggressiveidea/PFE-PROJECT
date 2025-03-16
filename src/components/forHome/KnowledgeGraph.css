@@ -1,0 +1,287 @@
+.knowledge-graph {
+    background-color: var(--background-light);
+    position: relative;
+  }
+  
+  .dark .knowledge-graph {
+    background-color: var(--background-dark);
+  }
+  
+  .knowledge-graph::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236a11cb' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    z-index: 0;
+  }
+  
+  .dark .knowledge-graph::before {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ec38bc' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  
+  .graph-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .graph-search {
+    width: 300px;
+  }
+  
+  .graph-filters {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .filter-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(106, 17, 203, 0.2);
+    background-color: transparent;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+  }
+  
+  .dark .filter-btn {
+    border-color: rgba(236, 56, 188, 0.2);
+    color: var(--text-light);
+  }
+  
+  .filter-btn:hover {
+    border-color: var(--primary-purple);
+    background-color: rgba(106, 17, 203, 0.05);
+  }
+  
+  .dark .filter-btn:hover {
+    border-color: var(--primary-pink);
+    background-color: rgba(236, 56, 188, 0.05);
+  }
+  
+  .filter-btn.active {
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: white;
+  }
+  
+  .dark .filter-btn.active {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+  }
+  
+  .interactive-graph-container {
+    position: relative;
+    height: 600px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .dark .interactive-graph-container {
+    background-color: var(--card-dark);
+  }
+  
+  .interactive-graph {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .graph-info-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 10;
+  }
+  
+  .dark .graph-info-panel {
+    background-color: var(--card-dark);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(90deg, var(--primary-purple), var(--primary-pink));
+    color: white;
+  }
+  
+  .info-panel-header h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  
+  .info-panel-content {
+    padding: 20px;
+  }
+  
+  .term-title {
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+  }
+  
+  .dark .term-title {
+    color: var(--text-light);
+  }
+  
+  .term-translations {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+  }
+  
+  .dark .term-translations {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .translation-item {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  
+  .translation-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .language-label {
+    font-weight: 600;
+    width: 40px;
+    color: var(--primary-purple);
+  }
+  
+  .dark .language-label {
+    color: var(--primary-pink);
+  }
+  
+  .term-definition {
+    margin-bottom: 20px;
+    color: var(--text-dark);
+  }
+  
+  .dark .term-definition {
+    color: var(--text-light);
+  }
+  
+  .related-terms h5 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+  }
+  
+  .dark .related-terms h5 {
+    color: var(--text-light);
+  }
+  
+  .related-terms-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .related-term {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: rgba(106, 17, 203, 0.1);
+    color: var(--primary-purple);
+    border-radius: 15px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+  }
+  
+  .dark .related-term {
+    background-color: rgba(236, 56, 188, 0.1);
+    color: var(--primary-pink);
+  }
+  
+  .related-term:hover {
+    background-color: rgba(106, 17, 203, 0.2);
+  }
+  
+  .dark .related-term:hover {
+    background-color: rgba(236, 56, 188, 0.2);
+  }
+  
+  @media (max-width: 1024px) {
+    .graph-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+    }
+  
+    .graph-search {
+      width: 100%;
+    }
+  
+    .graph-filters {
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+  
+    .interactive-graph-container {
+      height: 500px;
+    }
+  
+    .graph-info-panel {
+      width: 250px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .interactive-graph-container {
+      height: 400px;
+    }
+  
+    .graph-info-panel {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .filter-btn {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+  
+    .interactive-graph-container {
+      height: 350px;
+    }
+  }
+  
+  

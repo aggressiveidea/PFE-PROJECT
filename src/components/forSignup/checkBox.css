@@ -1,0 +1,38 @@
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .checkbox-container input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #6a11cb;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .checkbox-container input[type="checkbox"]:checked {
+    background-color: #6a11cb;
+  }
+  
+  .checkbox-container input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .checkbox-container label {
+    font-size: 0.9rem;
+    color: #666;
+    cursor: pointer;
+  }
+  
+  

@@ -1,21 +1,14 @@
-import React from 'react';
+"use client"
+import "./checkBox.css"
 
-function CheckBox({ name, checked, onChange }) {
+function CheckBox({ name, checked, onChange, label = "Remember me" }) {
   return (
-    <div className='container'>
-      <input
-        type="checkbox"
-        name={name}
-        id={name}
-        className='check'
-        checked={checked}
-        onChange={onChange} 
-      />
-      <p className='textcheck'>
-        I agree to the <a className='link' href="#">terms of service</a> and <a href="#" className='link'>privacy policy</a>
-      </p>
+    <div className="checkbox-container">
+      <input type="checkbox" id={name} name={name} checked={checked} onChange={onChange} />
+      <label htmlFor={name}>{label}</label>
     </div>
-  );
+  )
 }
 
-export default CheckBox;
+export default CheckBox
+
