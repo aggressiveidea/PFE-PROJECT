@@ -6,6 +6,7 @@ import Signup from "./views/Signup";
 import Signin from './views/Signin';
 import SearchPage from "./views/SearchPage";
 import Dashboard from './components/forDashboard/Dashboard'
+import UserManagement from "./components/AllUsers/user-management";
 function App() {
   return (
     // <Router>
@@ -16,7 +17,7 @@ function App() {
     //   </Routes>
     // </Router>
     <div>
-         <Dashboard></Dashboard>
+        <UserManagement></UserManagement>
     </div>
    
     
