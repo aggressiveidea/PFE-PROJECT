@@ -1,5 +1,6 @@
 "use client"
 
+import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react"
 import { User, Bell, Settings, LogOut, ChevronDown } from "lucide-react"
 import "./ProfileSection.css"
@@ -44,7 +45,10 @@ export default function ProfileSection() {
             <span className="profile-name">Admin User</span>
             <span className="profile-role">Administrator</span>
           </div>
-          <ChevronDown size={16} className={`dropdown-icon ${dropdownOpen ? "open" : ""}`} />
+          <ChevronDown
+            size={16}
+            className={`dropdown-icon ${dropdownOpen ? "open" : ""}`}
+          />
         </button>
 
         {dropdownOpen && (
@@ -58,28 +62,28 @@ export default function ProfileSection() {
 
             <ul className="dropdown-menu">
               <li className="dropdown-item">
-                <a href="#" className="dropdown-link">
+                <Link to="/profile" className="dropdown-link">
                   <User size={16} />
                   <span>My Profile</span>
-                </a>
+                </Link>
               </li>
               <li className="dropdown-item">
-                <a href="#" className="dropdown-link">
+                <Link to="/settings" className="dropdown-link">
                   <Settings size={16} />
                   <span>Account Settings</span>
-                </a>
+                </Link>
               </li>
               <li className="dropdown-item">
-                <a href="#" className="dropdown-link logout">
+                <button className="dropdown-link logout">
                   <LogOut size={16} />
                   <span>Logout</span>
-                </a>
+                </button>
               </li>
             </ul>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 

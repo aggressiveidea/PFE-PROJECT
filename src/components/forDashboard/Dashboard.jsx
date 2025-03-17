@@ -7,6 +7,8 @@ import WelcomeSection from "./WelcomeSection"
 import StatisticsSection from "./StatisticsSection"
 import ChartsSection from "./ChartsSection"
 import ProfileSection from "./ProfileSection"
+import Header from "../forHome/Header";
+import Footer  from "../forHome/Footer"
 import { Menu } from "lucide-react"
 import "./Dashboard.css"
 
@@ -28,7 +30,19 @@ export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [ loading, setLoading ] = useState( true )
+  
+   const [darkMode, setDarkMode] = useState(false);
+   const [language, setLanguage] = useState("en");
+
+   useEffect(() => {
+     if (darkMode) {
+       document.body.classList.add("dark");
+     } else {
+       document.body.classList.remove("dark");
+     }
+   }, [darkMode]);
+
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed)
@@ -69,7 +83,17 @@ export default function Dashboard() {
         closeMobileMenu={() => setMobileMenuOpen(false)}
       />
 
-      <main className={`dashboard-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <Header
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={darkMode}
+      />
+      
+      <main
+        className={`dashboard-main ${
+          sidebarCollapsed ? "sidebar-collapsed" : ""
+        }`}
+      >
         <div className="dashboard-header">
           <SearchBar />
           <ProfileSection />
@@ -80,9 +104,16 @@ export default function Dashboard() {
           <StatisticsSection data={data} loading={loading} />
           <ChartsSection />
         </div>
+        <Footer
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        language={language}
+        />
+
       </main>
+      
     </div>
-  )
+  );
 }
 
 

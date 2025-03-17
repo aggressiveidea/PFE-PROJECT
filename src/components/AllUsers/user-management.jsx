@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import "./user-management.css"
 import { UserIcon, TrashIcon, MoreHorizontalIcon, FilterIcon, CheckIcon, ListOrderedIcon as SortIcon, Loader2Icon } from 'lucide-react'
 import { getAllUsers, deleteUser, createUser, updateUser } from "../../services/Api"
+import Header from "../forHome/Header";
+import Footer from "../forHome/Footer";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([])
@@ -27,7 +29,18 @@ const UserManagement = () => {
     role: "Admin",
     status: "Active",
   })
+  
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("en");
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, [ darkMode ] );
+  
   const fetchUsers = async () => {
     try {
       setIsLoading(true)
@@ -222,6 +235,11 @@ const UserManagement = () => {
 
   return (
     <div className="user-management-container">
+      <Header
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={darkMode}
+      />
       <div className="controls-container">
         <input
           type="text"
@@ -261,7 +279,11 @@ const UserManagement = () => {
                 <tr>
                   <th className="checkbox-column">
                     <label className="checkbox-container">
-                      <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={handleSelectAll}
+                      />
                       <span className="checkmark"></span>
                     </label>
                   </th>
@@ -277,7 +299,12 @@ const UserManagement = () => {
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={getUserId(user)} className={selectedUsers.includes(getUserId(user)) ? "selected" : ""}>
+                  <tr
+                    key={getUserId(user)}
+                    className={
+                      selectedUsers.includes(getUserId(user)) ? "selected" : ""
+                    }
+                  >
                     <td>
                       <label className="checkbox-container">
                         <input
@@ -294,25 +321,43 @@ const UserManagement = () => {
                         {getInitials(user.firstName, user.lastName)}
                       </div>
                       <div className="user-details">
-                        <div className="user-name">{user.firstName} {user.lastName}</div>
+                        <div className="user-name">
+                          {user.firstName} {user.lastName}
+                        </div>
                         <div className="user-email">{user.email}</div>
                       </div>
                     </td>
                     <td>
-                      <span className={`role-badge ${getRoleClass(user.role)}`}>{user.role || "User"}</span>
+                      <span className={`role-badge ${getRoleClass(user.role)}`}>
+                        {user.role || "User"}
+                      </span>
                     </td>
                     <td>
-                      <span className={`status-badge ${getStatusClass(getUserStatus(user))}`}>
-                        {getUserStatus(user) === "Active" && <CheckIcon size={12} className="status-icon" />}
+                      <span
+                        className={`status-badge ${getStatusClass(
+                          getUserStatus(user)
+                        )}`}
+                      >
+                        {getUserStatus(user) === "Active" && (
+                          <CheckIcon size={12} className="status-icon" />
+                        )}
                         {getUserStatus(user)}
                       </span>
                     </td>
                     <td>{getUserLastLogin(user)}</td>
                     <td className="actions">
-                      <button className="action-button" onClick={() => openModal("changeRole", user)} title="Change Role">
+                      <button
+                        className="action-button"
+                        onClick={() => openModal("changeRole", user)}
+                        title="Change Role"
+                      >
                         <UserIcon size={16} />
                       </button>
-                      <button className="action-button" onClick={() => openModal("delete", user)} title="Delete User">
+                      <button
+                        className="action-button"
+                        onClick={() => openModal("delete", user)}
+                        title="Delete User"
+                      >
                         <TrashIcon size={16} />
                       </button>
                       <button className="action-button" title="More Options">
@@ -338,7 +383,9 @@ const UserManagement = () => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-header">
-              <h3>{modalType === "delete" ? "Delete User" : "Change User Role"}</h3>
+              <h3>
+                {modalType === "delete" ? "Delete User" : "Change User Role"}
+              </h3>
               <button className="close-button" onClick={closeModal}>
                 ×
               </button>
@@ -353,12 +400,16 @@ const UserManagement = () => {
                   <p className="user-id">ID: {getUserId(selectedUser)}</p>
                   <p className="warning">This action cannot be undone.</p>
                   <div className="modal-footer">
-                    <button className="cancel-button" onClick={closeModal} disabled={isDeleting}>
+                    <button
+                      className="cancel-button"
+                      onClick={closeModal}
+                      disabled={isDeleting}
+                    >
                       Cancel
                     </button>
-                    <button 
-                      className="confirm-button delete" 
-                      onClick={handleDeleteUser} 
+                    <button
+                      className="confirm-button delete"
+                      onClick={handleDeleteUser}
                       disabled={isDeleting}
                     >
                       {isDeleting ? (
@@ -381,7 +432,11 @@ const UserManagement = () => {
                   <p className="user-id">ID: {getUserId(selectedUser)}</p>
                   <div className="role-selector">
                     <label htmlFor="role">Select new role:</label>
-                    <select id="role" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+                    <select
+                      id="role"
+                      value={newRole}
+                      onChange={(e) => setNewRole(e.target.value)}
+                    >
                       <option value="Admin">Admin</option>
                       <option value="Ict-expert">Ict-expert</option>
                       <option value="User">User</option>
@@ -391,7 +446,10 @@ const UserManagement = () => {
                     <button className="cancel-button" onClick={closeModal}>
                       Cancel
                     </button>
-                    <button className="confirm-button" onClick={handleChangeRole}>
+                    <button
+                      className="confirm-button"
+                      onClick={handleChangeRole}
+                    >
                       Save Changes
                     </button>
                   </div>
@@ -458,7 +516,12 @@ const UserManagement = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="newUserRole">Role</label>
-                <select id="newUserRole" name="role" value={newUser.role} onChange={handleNewUserChange}>
+                <select
+                  id="newUserRole"
+                  name="role"
+                  value={newUser.role}
+                  onChange={handleNewUserChange}
+                >
                   <option value="Admin">Admin</option>
                   <option value="Editor">Editor</option>
                   <option value="User">User</option>
@@ -466,7 +529,12 @@ const UserManagement = () => {
               </div>
               <div className="form-group">
                 <label htmlFor="status">Status</label>
-                <select id="status" name="status" value={newUser.status} onChange={handleNewUserChange}>
+                <select
+                  id="status"
+                  name="status"
+                  value={newUser.status}
+                  onChange={handleNewUserChange}
+                >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                   <option value="Pending">Pending</option>
@@ -479,7 +547,12 @@ const UserManagement = () => {
                 <button
                   className="confirm-button"
                   onClick={handleAddUser}
-                  disabled={!newUser.firstName || !newUser.lastName || !newUser.email || isLoading}
+                  disabled={
+                    !newUser.firstName ||
+                    !newUser.lastName ||
+                    !newUser.email ||
+                    isLoading
+                  }
                 >
                   {isLoading ? (
                     <>
@@ -495,8 +568,13 @@ const UserManagement = () => {
           </div>
         </div>
       )}
+      <Footer
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        language={language}
+      />
     </div>
-  )
+  );
 }
 
 export default UserManagement
