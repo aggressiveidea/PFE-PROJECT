@@ -18,26 +18,31 @@ function Signin() {
   const [alertMessage, setAlertMessage] = useState("")
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!existData.email.trim() || !existData.password.trim()) {
-      setAlertMessage("All fields are required")
-      return
+      setAlertMessage("All fields are required");
+      return;
     }
 
     try {
-      const response = await loginUser(existData.email, existData.password)
+      const response = await loginUser(existData.email, existData.password);
+      
+      console.log("Response received in handleSubmit:", response); 
 
-      if (response.token) {
-        console.log("Login successful", response)
-        setAlertMessage("Login successful!")
+      if (response?.data?.token) {  
+        console.log("Login successful", response);
+        setAlertMessage("Login successful!");
+        localStorage.setItem("token", response.data.token);
       } else {
-        setAlertMessage(response.message || "Invalid credentials")
+        setAlertMessage(response.message || "Invalid credentials");
       }
     } catch (error) {
-      setAlertMessage("Login failed. Please try again.")
+      console.log("Error in handleSubmit:", error);
+      setAlertMessage("Login failed. Please try again.");
     }
-  }
+};
+
 
   return (
     <div className="auth-container">

@@ -28,12 +28,15 @@ export const registerUser = async (userData) => {
             throw new Error("Failed to login");
         }
 
-        return await response.json();
+        const data = await response.json();
+        console.log("Backend response:", data);
+        return data;
     } catch (error) {
-        console.log("error login:", error);
+        console.log("Error login:", error);
         throw error;
     }
 };
+
 export const getProfile = async (token) => {
   try {
       const response = await fetch("http://localhost:5000/auth/profile", {
