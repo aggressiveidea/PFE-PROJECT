@@ -1,18 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import "./Header.css"
-import {translations }from "../../utils/translations"
-import { Link } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import "./Header.css";
+import { translations } from "../../utils/translations";
+import { Link } from "react-router-dom";
 
+const Header = ({ language, setLanguage }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
-const Header = ({ language, setLanguage, darkMode }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const t = translations[language]
+  const t = translations[language];
+
+  useEffect(() => {
+    // Retrieve user data from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <header className="header">
@@ -50,7 +64,7 @@ const Header = ({ language, setLanguage, darkMode }) => {
                 <a href="#explore">{t.explore}</a>
               </li>
               <li>
-              <a href="#footer">{t.contact}</a>
+                <a href="#footer">{t.contact}</a>
               </li>
             </ul>
           </nav>
@@ -61,18 +75,30 @@ const Header = ({ language, setLanguage, darkMode }) => {
             <option value="ar">العربية</option>
           </select>
 
-          <a href="#explore" className="cta-button">
-            {t.startExploring}
-          </a>
-         <div className="buttons">
-         <Link to="/signup">
-            <button className="btn-signup">Sign up</button>
-          </Link>
-          <Link to="/login">
-            <button className="btn-login">Login</button>
-          </Link>
-         </div>
+          {user ? (
+            <div className="user-info">
+              <img
+                src="https://via.placeholder.com/40" // Replace with actual profile image URL if available
+                alt="Profile"
+                className="profile-pic"
+              />
+              <span className="username">{user.name || "Guest"}</span>
+              <button onClick={handleLogout} className="btn-logout">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="buttons">
+              <Link to="/signup">
+                <button className="btn-signup">Sign up</button>
+              </Link>
+              <Link to="/login">
+                <button className="btn-login">Login</button>
+              </Link>
+            </div>
+          )}
         </div>
+
         <button className="mobile-menu-btn" onClick={toggleMenu}>
           <span></span>
           <span></span>
@@ -80,9 +106,11 @@ const Header = ({ language, setLanguage, darkMode }) => {
         </button>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
+
+
 
 

@@ -30,10 +30,12 @@ function Signin() {
       
       console.log("Response received in handleSubmit:", response); 
 
+
       if (response?.data?.token) {  
         console.log("Login successful", response);
         setAlertMessage("Login successful!");
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
       } else {
         setAlertMessage(response.message || "Invalid credentials");
       }
