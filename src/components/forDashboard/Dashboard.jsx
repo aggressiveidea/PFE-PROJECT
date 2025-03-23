@@ -95,8 +95,8 @@ export default function Dashboard() {
         }`}
       >
         <div className="dashboard-header">
-          <SearchBar />
-          <ProfileSection />
+          {/* <SearchBar /> */}
+          {/* <ProfileSection /> */}
         </div>
 
         <div className="dashboard-content fade-in">

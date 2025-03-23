@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./views/Home";
 import Header from "./components/forHome/Header";
 import Signup from "./views/Signup";
@@ -12,7 +12,7 @@ import Profile from "./components/forProfile/profile-page";
 import Profilelibrary from "./components/forProfile/profileLibrary"
 import Setting from "./components/forProfile/SettingsPage";
 import Faq from "./components/forFAQ/FaqPage"
-import ProfileLibrary from "./views/ProfileLibrary";
+// import ProfileLibrary from "./views/ProfileLibrary";
 
 
 function App() {
@@ -25,14 +25,13 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Setting />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/library" element={<ProfileLibrary />} />
+        <Route path="/library" element={<Profilelibrary />} />
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Signin />} />
       </Routes>
     </Router>
-  
-     
+ 
     
 
 )}; 

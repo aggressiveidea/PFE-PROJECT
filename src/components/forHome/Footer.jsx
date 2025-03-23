@@ -50,7 +50,7 @@ const Footer = ({ darkMode, setDarkMode, language }) => {
                   </linearGradient>
                 </defs>
               </svg>
-              <span>ICT Dictionary</span>
+              <span>EL-MOUGHITH</span>
             </div>
             <p className="footer-description">{t.footerDescription}</p>
             <div className="social-links">

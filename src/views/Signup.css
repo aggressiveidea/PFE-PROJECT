@@ -95,6 +95,7 @@ form {
 /* Checkbox styling */
 .checkbox-container {
   margin-bottom: 1.5rem;
+  display: flex;
 }
 
 :global(.checkbox-container) {

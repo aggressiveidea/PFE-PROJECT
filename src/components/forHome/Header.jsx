@@ -1,32 +1,41 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import "./Header.css";
-import { translations } from "../../utils/translations";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react"
+import "./Header.css"
+import { translations } from "../../utils/translations"
+import { Link } from "react-router-dom"
 
 const Header = ({ language, setLanguage }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
 
-  const t = translations[language];
+  const t = translations[language]
 
   useEffect(() => {
-    // Retrieve user data from localStorage
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user")
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser))
     }
-  }, []);
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-  };
+    localStorage.removeItem("user")
+    setUser(null)
+  }
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  // Simple function to get user initials
+  const getUserInitials = (name) => {
+    if (!name) return "?"
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+  }
 
   return (
     <header className="header">
@@ -61,6 +70,9 @@ const Header = ({ language, setLanguage }) => {
                 <a href="#about">{t.about}</a>
               </li>
               <li>
+                <a href="#FAQ">FAQ</a>
+              </li>
+              <li>
                 <a href="#explore">{t.explore}</a>
               </li>
               <li>
@@ -77,11 +89,7 @@ const Header = ({ language, setLanguage }) => {
 
           {user ? (
             <div className="user-info">
-              <img
-                src="https://via.placeholder.com/40" // Replace with actual profile image URL if available
-                alt="Profile"
-                className="profile-pic"
-              />
+              <div className="user-avatar">{getUserInitials(user.name)}</div>
               <span className="username">{user.name || "Guest"}</span>
               <button onClick={handleLogout} className="btn-logout">
                 Logout
@@ -106,10 +114,12 @@ const Header = ({ language, setLanguage }) => {
         </button>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
+
+
 
 
 

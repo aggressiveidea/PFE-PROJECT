@@ -3,10 +3,8 @@
 import { useState } from "react"
 import Button from "../components/forSignup/Button"
 import InputField from "../components/forSignup/InputField"
-import CheckBox from "../components/forSignup/checkBox"
 import AlertBox from "../components/alertBox"
 import NetworkGraph from "../components/NetworkGraph"
-import { handleChange } from "../utils/handleChange"
 import "./Signup.css"
 
 function Signup() {
@@ -20,6 +18,14 @@ function Signup() {
   })
 
   const [alertMessage, setAlertMessage] = useState("")
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setformData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value, 
+    }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -78,53 +84,50 @@ function Signup() {
                 placeholder="Enter your first name"
                 name="firstName"
                 value={formData.firstName}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
               <InputField
                 placeholder="Enter your last name"
                 name="lastName"
                 value={formData.lastName}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
               <InputField
                 placeholder="Enter your email"
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
               <InputField
                 placeholder="Create a password"
                 type="password"
                 name="password"
                 value={formData.password}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
               <InputField
                 placeholder="Confirm password"
                 type="password"
                 name="passwordConfirmed"
                 value={formData.passwordConfirmed}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
             </div>
 
             <div className="checkbox-container">
-              <CheckBox
-                label="I agree to the terms of service and privacy policy"
+              <input
+                type="checkbox"
+                id="boxchecked"
                 name="boxchecked"
                 checked={formData.boxchecked}
-                onChange={(e) => handleChange(e, setformData)}
+                onChange={handleChange}
               />
+              <label htmlFor="boxchecked">I agree to the terms of service and privacy policy</label>
             </div>
 
             <Button text="Sign Up" type="submit" />
           </form>
-
-          <p className="or-text">
-            <span className="line"></span> or Sign up with <span className="line"></span>
-          </p>
-
 
           <p className="signin-link">
             Already have an account? <a href="/signin">Sign in</a>
@@ -157,5 +160,3 @@ function Signup() {
 }
 
 export default Signup
-
-

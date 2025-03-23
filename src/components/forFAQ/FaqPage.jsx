@@ -60,7 +60,7 @@ const FaqPage = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container" id="FAQ">
       <Header
         language={language}
         setLanguage={setLanguage}

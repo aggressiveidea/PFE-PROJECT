@@ -42,24 +42,14 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
                 {!collapsed && <span>Dashboard</span>}
               </Link>
             </li>
-            <li className="sidebar-menu-item">
-              <Link to="/metrics" className="sidebar-menu-link">
-                <BarChart2 size={20} />
-                {!collapsed && <span>Metrics</span>}
-              </Link>
-            </li>
+       
             <li className="sidebar-menu-item">
               <Link to="/user-management" className="sidebar-menu-link">
                 <Layers size={20} />
                 {!collapsed && <span>All users</span>}
               </Link>
             </li>
-            <li className="sidebar-menu-item">
-              <Link to="/comments" className="sidebar-menu-link">
-                <MessageSquare size={20} />
-                {!collapsed && <span>Comments</span>}
-              </Link>
-            </li>
+        
             <li className="sidebar-menu-item">
               <Link to="/settings" className="sidebar-menu-link">
                 <Settings size={20} />
@@ -70,12 +60,6 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
               <Link to="/privacy" className="sidebar-menu-link">
                 <Shield size={20} />
                 {!collapsed && <span>Privacy & Security</span>}
-              </Link>
-            </li>
-            <li className="sidebar-menu-item">
-              <Link to="/language" className="sidebar-menu-link">
-                <Globe size={20} />
-                {!collapsed && <span>Language</span>}
               </Link>
             </li>
           </ul>
