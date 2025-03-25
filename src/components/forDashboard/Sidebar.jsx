@@ -27,7 +27,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
             <div className="sidebar-logo-icon">
               <LayoutDashboard size={20} />
             </div>
-            {!collapsed && <span className="sidebar-logo-text">Admin Panel</span>}
+            {!collapsed && <span className="sidebar-logo-text">EL-MOUGHITH</span>}
           </div>
           <button className="sidebar-close-mobile" onClick={closeMobileMenu}>
             <X size={20} />
@@ -44,7 +44,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
             </li>
        
             <li className="sidebar-menu-item">
-              <Link to="/user-management" className="sidebar-menu-link">
+              <Link to="/usermanagement" className="sidebar-menu-link">
                 <Layers size={20} />
                 {!collapsed && <span>All users</span>}
               </Link>
@@ -57,9 +57,9 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
               </Link>
             </li>
             <li className="sidebar-menu-item">
-              <Link to="/privacy" className="sidebar-menu-link">
+              <Link to="/profile" className="sidebar-menu-link">
                 <Shield size={20} />
-                {!collapsed && <span>Privacy & Security</span>}
+                {!collapsed && <span>Personal infos</span>}
               </Link>
             </li>
           </ul>

@@ -92,51 +92,80 @@ form {
   color: #a0aec0;
 }
 
+/* Add styling for the country dropdown */
+.country-dropdown {
+  width: 100%;
+  padding: 1rem;
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  color: var(--text-primary);
+  appearance: none; /* Remove default arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+}
+
+.country-dropdown:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 4px rgba(139, 59, 245, 0.1);
+  outline: none;
+}
+
+.country-dropdown option {
+  color: var(--text-primary);
+  background-color: white;
+  padding: 8px;
+}
+
+/* Replace the existing checkbox styling with this updated version */
 /* Checkbox styling */
 .checkbox-container {
-  margin-bottom: 1.5rem;
   display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
-:global(.checkbox-container) {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-:global(.checkbox-container input[type="checkbox"]) {
+.checkbox-container input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
-  transition: var(--transition);
-  margin-top: 3px;
-  background: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
-:global(.checkbox-container input[type="checkbox"]:checked) {
-  background-color: var(--primary-purple);
-  border-color: var(--primary-purple);
+.checkbox-container input[type="checkbox"]:checked {
+  background-color: white;
+  border-color: white;
 }
 
-:global(.checkbox-container input[type="checkbox"]:checked::after) {
+.checkbox-container input[type="checkbox"]:checked::before {
   content: "✓";
   position: absolute;
-  color: white;
-  font-size: 12px;
+  color: var(--primary-purple);
+  font-size: 14px;
+  font-weight: bold;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-:global(.checkbox-container label) {
+.checkbox-container label {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: white;
   line-height: 1.4;
+  cursor: pointer;
 }
 
 /* Button styling */
@@ -361,6 +390,9 @@ form {
     font-size: 2rem;
   }
 }
+
+
+
 
 
 
