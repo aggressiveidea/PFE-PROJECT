@@ -1,27 +1,18 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import {
-  LayoutDashboard,
-  BarChart2,
-  Layers,
-  MessageSquare,
-  Settings,
-  Shield,
-  Globe,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  X,
-} from "lucide-react"
+import { LayoutDashboard, Layers, Settings, Shield, LogOut, ChevronLeft, ChevronRight, X } from "lucide-react"
 import "./Sidebar.css"
 
-export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu }) {
+// Update the Sidebar component to accept darkMode prop
+export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode }) {
   return (
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={closeMobileMenu}></div>}
 
-      <aside className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
+      <aside
+        className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""} ${darkMode ? "dark" : ""}`}
+      >
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <div className="sidebar-logo-icon">
@@ -42,14 +33,14 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
                 {!collapsed && <span>Dashboard</span>}
               </Link>
             </li>
-       
+
             <li className="sidebar-menu-item">
               <Link to="/usermanagement" className="sidebar-menu-link">
                 <Layers size={20} />
                 {!collapsed && <span>All users</span>}
               </Link>
             </li>
-        
+
             <li className="sidebar-menu-item">
               <Link to="/settings" className="sidebar-menu-link">
                 <Settings size={20} />
@@ -82,6 +73,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     </>
   )
 }
+
 
 
 

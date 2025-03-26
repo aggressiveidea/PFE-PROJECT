@@ -11,16 +11,36 @@ const Header = ({ language, setLanguage }) => {
 
   const t = translations[language]
 
+  // Load user data from localStorage whenever it changes
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const loadUserData = () => {
+      const storedUser = localStorage.getItem("user")
+      if (storedUser) {
+        setUser(JSON.parse(storedUser))
+      }
+    }
+
+    // Load user data initially
+    loadUserData()
+
+    // Set up event listener for storage changes
+    window.addEventListener("storage", loadUserData)
+
+    // Custom event listener for user updates
+    const handleUserUpdate = () => loadUserData()
+    window.addEventListener("userUpdated", handleUserUpdate)
+
+    return () => {
+      window.removeEventListener("storage", loadUserData)
+      window.removeEventListener("userUpdated", handleUserUpdate)
     }
   }, [])
 
   const handleLogout = () => {
+    localStorage.removeItem("authData")
     localStorage.removeItem("user")
     setUser(null)
+    window.location.href = "/"
   }
 
   const toggleMenu = () => {
@@ -28,13 +48,38 @@ const Header = ({ language, setLanguage }) => {
   }
 
   // Simple function to get user initials
-  const getUserInitials = (name) => {
-    if (!name) return "?"
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
+  const getUserInitials = () => {
+    if (!user) return "?"
+
+    if (user.firstName || user.lastName) {
+      const initials = []
+      if (user.firstName) initials.push(user.firstName[0])
+      if (user.lastName) initials.push(user.lastName[0])
+      return initials.join("").toUpperCase()
+    }
+
+    // Fallback to email
+    if (user.email) {
+      return user.email[0].toUpperCase()
+    }
+
+    return "?"
+  }
+
+  // Get display name from user object
+  const getDisplayName = () => {
+    if (!user) return "Guest"
+
+    // If name property exists, use it
+    if (user.name) return user.name
+
+    // Otherwise, construct name from firstName and lastName
+    if (user.firstName || user.lastName) {
+      return `${user.firstName || ""} ${user.lastName || ""}`.trim()
+    }
+
+    // Fallback to email or Guest
+    return user.email ? user.email.split("@")[0] : "Guest"
   }
 
   return (
@@ -89,8 +134,8 @@ const Header = ({ language, setLanguage }) => {
 
           {user ? (
             <div className="user-info">
-              <div className="user-avatar">{getUserInitials(user.name)}</div>
-              <span className="username">{user.name || "Guest"}</span>
+              <div className="user-avatar">{getUserInitials()}</div>
+              <span className="username">{getDisplayName()}</span>
               <button onClick={handleLogout} className="btn-logout">
                 Logout
               </button>
@@ -118,9 +163,4 @@ const Header = ({ language, setLanguage }) => {
 }
 
 export default Header
-
-
-
-
-
 

@@ -12,6 +12,7 @@ import Profilelibrary from "./components/forProfile/profileLibrary";
 import Setting from "./components/forProfile/SettingsPage";
 import Faq from "./components/forFAQ/FaqPage";
 import ICTDictionary from "./views/ICTDictionary";
+import PersonalInfo from "./components/forTest/PersonalInfo";
 // import ProfileLibrary from "./views/ProfileLibrary";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Signin />} />
+        <Route path="/profile" element = {<PersonalInfo />}></Route>
       </Routes>
     </Router>
   );

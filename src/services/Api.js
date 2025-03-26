@@ -157,3 +157,19 @@ export const updatepassword = async (id, data) => {
     throw error;
   }
 };
+export const resendVerificationEmail = async (email) => {
+  try {
+    const response = await fetch("http://localhost:5000/auth/resend-verification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    })
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error resending verification email:", error)
+    throw error
+  }
+}

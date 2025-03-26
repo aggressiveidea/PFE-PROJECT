@@ -5,9 +5,9 @@ import Button from "../components/forSignup/Button"
 import InputField from "../components/forSignup/InputField"
 import AlertBox from "../components/alertBox"
 import NetworkGraph from "../components/NetworkGraph"
+import VerificationAlert from "../components/VerificationAlert"
 import "./Signup.css"
-import {registerUser} from '../services/Api'
-// Replace the limited countries array with a comprehensive list of all countries
+import { registerUser } from "../services/Api"
 const countries = [
   "Afghanistan",
   "Albania",
@@ -217,6 +217,10 @@ function Signup() {
   })
 
   const [alertMessage, setAlertMessage] = useState("")
+  const [alertType, setAlertType] = useState("error") // "error" or "success"
+  const [isLoading, setIsLoading] = useState(false)
+  const [showVerification, setShowVerification] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState("")
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -226,58 +230,142 @@ function Signup() {
     }))
   }
 
+  const showAlert = (message, type = "error") => {
+    setAlertMessage(message)
+    setAlertType(type)
+    // Auto-dismiss success messages after 5 seconds
+    if (type === "success") {
+      setTimeout(() => setAlertMessage(""), 5000)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Form validation
     if (
       !formData.firstName.trim() ||
       !formData.lastName.trim() ||
       !formData.email.trim() ||
       !formData.password.trim() ||
       !formData.passwordConfirmed.trim() ||
-      !formData.country 
+      !formData.country
     ) {
-      setAlertMessage("All fields are required!")
+      showAlert("All fields are required!")
+      return
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      showAlert("Please enter a valid email address")
+      return
+    }
+
+    // Password validation
+    if (formData.password.length < 8) {
+      showAlert("Password must be at least 8 characters long")
       return
     }
 
     if (formData.password !== formData.passwordConfirmed) {
-      setAlertMessage("Passwords do not match!")
+      showAlert("Passwords do not match!")
       return
     }
 
-    // if (!formData.boxchecked) {
-    //   setAlertMessage("You must agree to the Terms & Conditions to sign up.")
-    //   return
-    // }
+    setIsLoading(true)
 
     try {
       const userData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        password : formData.password,
+        password: formData.password,
         country: formData.country,
+        role: "User", // Default role
+        isVerified: false, // Ensure this is set to false
       }
-      const userDatatoStore = {
+
+      const response = await registerUser(userData)
+      console.log("Registration response:", response)
+
+      if (response.error || (response.data && response.data.error)) {
+        // Handle specific error cases
+        const errorMessage = response.error || response.data.error || "Registration failed"
+
+        if (errorMessage.includes("Email already in use") || errorMessage.includes("already exists")) {
+          showAlert("This email is already registered. Please use a different email or try logging in.")
+        } else {
+          showAlert(errorMessage)
+        }
+        return
+      }
+
+      // Extract user ID from the response based on your API structure
+      // Check all possible locations where the ID might be
+      let userId = null
+
+      // Check in response.data.data (from your backend structure)
+      if (response.data && response.data.data) {
+        userId = response.data.data._id || response.data.data.id
+      }
+
+      // Check in response.data
+      else if (response.data) {
+        userId = response.data._id || response.data.id
+      }
+
+      // Check directly in response
+      else {
+        userId = response._id || response.id
+      }
+
+      // Store user data in localStorage including the ID
+      const userDataToStore = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        country: formData.country, 
+        country: formData.country,
+        role: "User",
+        _id: userId || "",
       }
-          const response = await registerUser(userData);
-          console.log("Response received in handleSubmit:", response); 
-          localStorage.setItem("user", JSON.stringify(userDatatoStore))
-          setAlertMessage("Registration successful! Welcome aboard!");
+
+      console.log("Storing user data with ID:", userDataToStore)
+      localStorage.setItem("user", JSON.stringify(userDataToStore))
+
+      // Show verification alert instead of success message
+      setRegisteredEmail(formData.email)
+      setShowVerification(true)
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        passwordConfirmed: "",
+        country: "",
+      })
     } catch (error) {
       console.error("Registration failed:", error)
-      setAlertMessage(error.message || "Registration failed. Try again.")
+
+      // Handle network errors
+      if (error.message === "Failed to fetch") {
+        showAlert("Unable to connect to the server. Please check your internet connection and try again.")
+      } else {
+        showAlert(error.message || "Registration failed. Please try again.")
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className="signUp">
-      {alertMessage && <AlertBox message={alertMessage} onClose={() => setAlertMessage("")} />}
+      {alertMessage && <AlertBox message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />}
+
+      {showVerification && <VerificationAlert email={registeredEmail} onClose={() => setShowVerification(false)} />}
+
       <div className="layout-container">
         <div className="left-section">
           <h2>Sign Up</h2>
@@ -329,18 +417,7 @@ function Signup() {
               </select>
             </div>
 
-            {/* <div className="checkbox-container">
-              <input
-                type="checkbox"
-                id="boxchecked"
-                name="boxchecked"
-                checked={formData.boxchecked}
-                onChange={handleChange}
-              />
-              <label htmlFor="boxchecked">I agree to the terms of service and privacy policy</label>
-            </div> */}
-
-            <Button text="Sign Up" type="submit" />
+            <Button text={isLoading ? "Signing Up..." : "Sign Up"} type="submit" disabled={isLoading} />
           </form>
 
           <p className="signin-link">
