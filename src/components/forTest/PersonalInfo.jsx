@@ -15,6 +15,7 @@ export default function PersonalInfo() {
   const [language, setLanguage] = useState("en")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [updateLoading, setUpdateLoading] = useState(false)
 
   // User state with default empty values
   const [user, setUser] = useState({
@@ -68,6 +69,9 @@ export default function PersonalInfo() {
           console.log("Profile data from API:", profileData)
 
           if (profileData && profileData.user) {
+            // Make sure to extract the ID correctly
+            const userId = profileData.user._id || profileData.user.id
+
             // Set the user data from the API response
             const userData = {
               firstName: profileData.user.firstName || "",
@@ -76,9 +80,10 @@ export default function PersonalInfo() {
               userBio: profileData.user.userBio || "",
               profileImgUrl: profileData.user.profileImgUrl || "/placeholder.svg?height=200&width=200",
               role: profileData.user.role || "User",
-              _id: profileData.user._id || profileData.user.id || "",
+              _id: userId, // Ensure ID is set correctly
             }
 
+            console.log("Setting user data with ID:", userId)
             setUser(userData)
             setEditedUser(userData)
 
@@ -94,6 +99,9 @@ export default function PersonalInfo() {
           console.log("User data from localStorage:", storedUser)
 
           if (storedUser && storedUser.email) {
+            // Make sure to extract the ID correctly
+            const userId = storedUser._id || storedUser.id
+
             const userData = {
               firstName: storedUser.firstName || "",
               lastName: storedUser.lastName || "",
@@ -101,9 +109,10 @@ export default function PersonalInfo() {
               userBio: storedUser.userBio || "",
               profileImgUrl: storedUser.profileImgUrl || "/placeholder.svg?height=200&width=200",
               role: storedUser.role || "User",
-              _id: storedUser._id || storedUser.id || "",
+              _id: userId, // Ensure ID is set correctly
             }
 
+            console.log("Setting user data with ID from localStorage:", userId)
             setUser(userData)
             setEditedUser(userData)
           }
@@ -156,50 +165,88 @@ export default function PersonalInfo() {
 
   const handleSave = async () => {
     try {
-      // Only proceed if we have a user ID
-      if (!user._id) {
+      setIsEditing(false) // Disable editing mode immediately to prevent multiple submissions
+
+      // Log the entire user object to see what's available
+      console.log("Current user object:", user)
+
+      // Check for ID in different possible locations
+      const userId =
+        user._id || user.id || editedUser._id || editedUser.id || JSON.parse(localStorage.getItem("user") || "{}")._id
+
+      if (!userId) {
         console.error("User ID is missing:", user)
         alert("Cannot update profile: User ID is missing")
+        setIsEditing(true) // Re-enable editing if there's an error
         return
       }
 
-      console.log("Updating user with ID:", user._id)
+      // Check if the backend server is running
+      try {
+        const serverCheckResponse = await fetch("http://localhost:5000/", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        })
 
-      // Call the API to update the user
-      const response = await updateUser(user._id, editedUser)
+        if (!serverCheckResponse.ok) {
+          throw new Error("Backend server is not responding properly")
+        }
+      } catch (serverError) {
+        console.error("Backend server check failed:", serverError)
+        alert("Cannot connect to the server. Please make sure the backend is running.")
+        setIsEditing(true) // Re-enable editing if there's an error
+        return
+      }
+
+      console.log("Updating user with ID:", userId)
+
+      // Create a clean copy of the data to update
+      const updateData = {
+        firstName: editedUser.firstName,
+        lastName: editedUser.lastName,
+        userBio: editedUser.userBio || "",
+        // Only include profileImgUrl if it's not the placeholder
+        ...(editedUser.profileImgUrl && !editedUser.profileImgUrl.includes("placeholder.svg")
+          ? { profileImgUrl: editedUser.profileImgUrl }
+          : {}),
+      }
+
+      const response = await updateUser(userId, updateData)
       console.log("Update response:", response)
 
-      if (response && !response.error) {
-        // Update the local user state with the edited data
-        setUser(editedUser)
+      // Check for success based on your backend response format
+      if (response && response.success === true) {
+        // Update the local user state with the response data
+        const updatedUserData = response.data || updateData
 
-        // Update the user data in localStorage to keep it in sync
+        setUser({
+          ...user,
+          ...updatedUserData,
+          _id: userId, // Ensure ID is preserved
+        })
+
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
-        const updatedUserData = {
+        const updatedStoredData = {
           ...storedUser,
-          firstName: editedUser.firstName,
-          lastName: editedUser.lastName,
-          email: editedUser.email,
-          userBio: editedUser.userBio,
-          profileImgUrl: editedUser.profileImgUrl,
-          role: editedUser.role,
-          _id: editedUser._id || user._id,
+          firstName: updatedUserData.firstName || editedUser.firstName,
+          lastName: updatedUserData.lastName || editedUser.lastName,
+          userBio: updatedUserData.userBio || editedUser.userBio || "",
+          profileImgUrl: updatedUserData.profileImgUrl || editedUser.profileImgUrl,
+          _id: userId,
         }
 
-        localStorage.setItem("user", JSON.stringify(updatedUserData))
-
-        // Dispatch event to notify other components of user update
+        localStorage.setItem("user", JSON.stringify(updatedStoredData))
         window.dispatchEvent(new Event("userUpdated"))
 
-        setIsEditing(false)
         setPreviewImage(null)
         alert("Profile updated successfully!")
       } else {
-        throw new Error(response.error || "Failed to update profile")
+        throw new Error("Failed to update profile")
       }
     } catch (err) {
       console.error("Error updating profile:", err)
       alert("Failed to update profile: " + (err.message || "Unknown error"))
+      setIsEditing(true) // Re-enable editing if there's an error
     }
   }
 
@@ -328,9 +375,9 @@ export default function PersonalInfo() {
                           </button>
                         ) : (
                           <div className="edit-actions">
-                            <button className="save-button" onClick={handleSave}>
+                            <button className="save-button" onClick={handleSave} disabled={updateLoading}>
                               <Save size={18} />
-                              <span>Save Changes</span>
+                              <span>{updateLoading ? "Saving..." : "Save Changes"}</span>
                             </button>
                             <button className="cancel-button" onClick={handleCancel}>
                               <X size={18} />
@@ -431,5 +478,7 @@ export default function PersonalInfo() {
     </div>
   )
 }
+
+
 
 

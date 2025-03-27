@@ -301,37 +301,74 @@ function Signup() {
         return
       }
 
+      // Log the entire response to see its structure
+      console.log("Full registration response:", JSON.stringify(response, null, 2))
+
       // Extract user ID from the response based on your API structure
-      // Check all possible locations where the ID might be
       let userId = null
 
-      // Check in response.data.data (from your backend structure)
-      if (response.data && response.data.data) {
-        userId = response.data.data._id || response.data.data.id
+      // Try to find the user ID in the response
+      if (response.data && response.data.data && response.data.data.user) {
+        // If response has data.data.user structure
+        userId = response.data.data.user.id || response.data.data.user._id
+      } else if (response.data && response.data.data) {
+        // If response has data.data structure
+        userId = response.data.data.id || response.data.data._id
+      } else if (response.data && response.data.user) {
+        // If response has data.user structure
+        userId = response.data.user.id || response.data.user._id
+      } else if (response.data) {
+        // If response has data structure
+        userId = response.data.id || response.data._id
+      } else if (response.user) {
+        // If response has user structure
+        userId = response.user.id || response.user._id
+      } else if (response.token && response.user) {
+        // If response has token and user structure (common pattern)
+        userId = response.user.id || response.user._id
       }
 
-      // Check in response.data
-      else if (response.data) {
-        userId = response.data._id || response.data.id
+      // If we still don't have an ID, try to find it directly in the response
+      if (!userId) {
+        userId = response.id || response._id
       }
 
-      // Check directly in response
-      else {
-        userId = response._id || response.id
+      console.log("Extracted user ID:", userId)
+
+      // If we still don't have an ID, create a temporary one
+      if (!userId) {
+        console.warn("Could not extract user ID from response, using email as temporary ID")
+        userId = `temp_${formData.email.replace(/[^a-zA-Z0-9]/g, "_")}`
       }
 
-      // Store user data in localStorage including the ID
       const userDataToStore = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         country: formData.country,
         role: "User",
-        _id: userId || "",
+        _id: userId,
       }
 
       console.log("Storing user data with ID:", userDataToStore)
       localStorage.setItem("user", JSON.stringify(userDataToStore))
+
+      // Also store auth data if available
+      if (response.data && response.data.data && response.data.data.token) {
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            token: response.data.data.token,
+          }),
+        )
+      } else if (response.token) {
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            token: response.token,
+          }),
+        )
+      }
 
       // Show verification alert instead of success message
       setRegisteredEmail(formData.email)
@@ -451,4 +488,7 @@ function Signup() {
 }
 
 export default Signup
+
+
+
 
