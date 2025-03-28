@@ -217,4 +217,183 @@ export const resendVerificationEmail = async (email) => {
     throw error
   }
 }
+<<<<<<< Updated upstream
 
+=======
+export const getallarticles = async () => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get all of the articles");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+export const getArticleById = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get all of the articles");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+export const getarticlebytitle = async (title) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/title?title=${title}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by title");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+export const getarticlebycat = async (category, limit) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/category?category=${category}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by category");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+export const getarticlbBylang = async (language) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/language?language=${language}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by language");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+export const addArticle = async (data) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`, 
+      },
+      body: data, 
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to add article");
+    }
+
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error("Error adding article :", error);
+    throw error;
+  }
+};
+export const updatearticle = async (id, data) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update article");
+    }
+
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error("Error updating article :", error);
+    throw error;
+  }
+};
+export const deletearticle = async (id, token) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete article");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error deleting article :", error);
+    throw error;
+  }
+};
+>>>>>>> Stashed changes
