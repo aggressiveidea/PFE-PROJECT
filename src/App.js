@@ -15,26 +15,27 @@ import ICTDictionary from "./views/ICTDictionary";
 import PersonalInfo from "./components/forTest/PersonalInfo";
 import ArticleDetail from "./components/forarticle/ArticleDetailPage";
 import Articlepage from "./views/articlepage";
+import GraphVisualization from "./views/GraphVisualization";
 function App() {
   return (
-    
-      <Router>
-        <div className="app-container">
-          <Routes>
-            <Route path="/usermanagement" element={<UserManagement />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/settings" element={<Setting />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/library" element={<Profilelibrary />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Signin />} />
-            <Route path="/articles/" element={<Articlepage />} />
-            <Route path="/articles/:id" element={<ArticleDetail />} />
-          </Routes>
-        </div>
-      </Router>
+    <Router>
+      <Routes>
+        <Route path="/usermanagement" element={<UserManagement />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Setting />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/library" element={<Profilelibrary />} />
+        <Route path="/dictionary" element={<ICTDictionary />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Signin />} />
+        <Route path="/profile" element = {<PersonalInfo />}></Route>
+        <Route path="/graph" element={<GraphVisualization />}></Route>
+      </Routes>
+    </Router>
+
   );
+
 }
 
 export default App;
