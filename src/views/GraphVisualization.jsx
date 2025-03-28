@@ -9,7 +9,7 @@ const GraphVisualization = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/graph")
+      .get("http://localhost:3001/api/graph")
       .then((response) => {
         const data = response.data;
 

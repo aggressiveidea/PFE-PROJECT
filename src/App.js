@@ -15,11 +15,6 @@ import ICTDictionary from "./views/ICTDictionary";
 import PersonalInfo from "./components/forTest/PersonalInfo";
 import ArticleDetail from "./components/forarticle/ArticleDetailPage";
 import Articlepage from "./views/articlepage";
-//import { ThemeProvider } from "./components/forarticle/ThemeContext";
-
-// import ProfileLibrary from "./views/ProfileLibrary";
-//<Route path="/profile" element={<PersonalInfo />}></Route>
-
 function App() {
   return (
     

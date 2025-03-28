@@ -52,183 +52,22 @@ const ICTDictionary = () => {
     }
   }, [termDetailsRef])
 
-  // Simulating data fetch
+  // Fetch data from API
   useEffect(() => {
-    // This would be replaced with actual API call
     const fetchData = async () => {
       try {
-        // Replace with your actual API endpoint
-        // const response = await fetch('/api/terms');
-        // const data = await response.json();
+        setLoading(true)
+        const response = await fetch("http://localhost:3001/api/ict-dictionary/terms")
 
-        // Mock data for demonstration
-        const mockData = {
-          terms: [
-            {
-              name: "Abonné",
-              id: 1,
-              pages: [
-                { lang: "AR", num: 652, pos: 1332 },
-                { lang: "AN", num: 729, pos: 319 },
-              ],
-              categories: [
-                {
-                  name: "Don.pers.",
-                  principal_definition: {
-                    text: "Toute personne physique ou morale qui a conclu un contrat avec le prestataire de services de télécommunications accessibles au public en vue de la fourniture de tels services.",
-                    reference:
-                      "Directive 97/66/CE du Parlement Européen et du Conseil du 15 décembre 1997 concernant le traitement des données à caractère personnel et la protection de la vie privée dans le secteur des télécommunications.",
-                  },
-                },
-                {
-                  name: "Com.élec.",
-                  principal_definition: {
-                    text: "Veut dire une personne qui est le sujet nommé ou identifié dans un certificat qui lui a été délivré et qui tient une clé privée qui correspond à une clé publique énumérée dans ce certificat.",
-                    reference: "Loi sur les transactions électroniques, 1998 / Singapour.",
-                  },
-                },
-                {
-                  name: "Rés.",
-                  principal_definition: {
-                    text: "Personne payant une redevance fixe en échange du droit d'accès à une ligne téléphonique normale ou spécialisée, à un réseau ou à un service. L'abonnement est indépendant de la facturation correspondant à l'utilisation.",
-                    reference: null,
-                  },
-                },
-              ],
-            },
-            {
-              name: "IP Address",
-              id: 2,
-              pages: [{ lang: "AN", num: 245, pos: 567 }],
-              categories: [
-                {
-                  name: "Rés.",
-                  principal_definition: {
-                    text: "A unique string of numbers separated by periods that identifies each computer using the Internet Protocol to communicate over a network.",
-                    reference: "IETF RFC 791",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Package",
-              id: 3,
-              pages: [{ lang: "AN", num: 312, pos: 789 }],
-              categories: [
-                {
-                  name: "Con.info.",
-                  principal_definition: {
-                    text: "A collection of related software components that can be deployed together.",
-                    reference: "ISO/IEC 19770-2:2015",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Malware",
-              id: 4,
-              pages: [{ lang: "AN", num: 156, pos: 432 }],
-              categories: [
-                {
-                  name: "Crim.info.",
-                  principal_definition: {
-                    text: "Software designed to infiltrate or damage a computer system without the owner's informed consent.",
-                    reference: "ISO/IEC 27032:2012",
-                  },
-                },
-              ],
-            },
-            {
-              name: "GDPR",
-              id: 5,
-              pages: [{ lang: "AN", num: 189, pos: 567 }],
-              categories: [
-                {
-                  name: "Don.pers.",
-                  principal_definition: {
-                    text: "General Data Protection Regulation. A regulation in EU law on data protection and privacy for all individuals within the European Union.",
-                    reference: "Regulation (EU) 2016/679",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Copyright",
-              id: 6,
-              pages: [{ lang: "AN", num: 278, pos: 901 }],
-              categories: [
-                {
-                  name: "Pro.int.",
-                  principal_definition: {
-                    text: "A legal right that grants the creator of an original work exclusive rights for its use and distribution.",
-                    reference: "Berne Convention for the Protection of Literary and Artistic Works",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Blockchain",
-              id: 7,
-              pages: [{ lang: "AN", num: 345, pos: 678 }],
-              categories: [
-                {
-                  name: "Com.élec.",
-                  principal_definition: {
-                    text: "A distributed ledger technology that maintains a continuously growing list of records, called blocks, which are linked and secured using cryptography.",
-                    reference: "ISO/TC 307",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Cloud Computing",
-              id: 8,
-              pages: [{ lang: "AN", num: 412, pos: 789 }],
-              categories: [
-                {
-                  name: "Con.info.",
-                  principal_definition: {
-                    text: "A model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources that can be rapidly provisioned and released with minimal management effort.",
-                    reference: "NIST Special Publication 800-145",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Phishing",
-              id: 9,
-              pages: [{ lang: "AN", num: 178, pos: 345 }],
-              categories: [
-                {
-                  name: "Crim.info.",
-                  principal_definition: {
-                    text: "A type of social engineering attack often used to steal user data, including login credentials and credit card numbers, by disguising as a trustworthy entity in an electronic communication.",
-                    reference: "APWG (Anti-Phishing Working Group)",
-                  },
-                },
-              ],
-            },
-            {
-              name: "Firewall",
-              id: 10,
-              pages: [{ lang: "AN", num: 234, pos: 567 }],
-              categories: [
-                {
-                  name: "Rés.",
-                  principal_definition: {
-                    text: "A network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.",
-                    reference: "ISO/IEC 27001:2013",
-                  },
-                },
-              ],
-            },
-          ],
+        if (!response.ok) {
+          throw new Error("Failed to fetch terms")
         }
 
-        setTerms(mockData.terms)
-        setLoading(false)
+        const data = await response.json()
+        setTerms(data.terms)
       } catch (error) {
         console.error("Error fetching terms:", error)
+      } finally {
         setLoading(false)
       }
     }
@@ -255,8 +94,28 @@ const ICTDictionary = () => {
     }))
   }
 
-  const handleSearch = (query) => {
+  const handleSearch = async (query) => {
     setSearchQuery(query)
+
+    if (query.trim() && searchType === "classic") {
+      try {
+        setLoading(true)
+        const response = await fetch(
+          `http://localhost:3001/api/ict-dictionary/search?query=${encodeURIComponent(query)}`,
+        )
+
+        if (!response.ok) {
+          throw new Error("Failed to search terms")
+        }
+
+        const data = await response.json()
+        setTerms(data.terms)
+      } catch (error) {
+        console.error("Error searching terms:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   const handleLetterSelect = (letter) => {
@@ -273,17 +132,13 @@ const ICTDictionary = () => {
     // Filter by categories
     const categoryMatch = term.categories.some((category) => selectedCategories[category.name])
 
-    // Filter by search query if in classic search mode
-    const queryMatch =
-      searchType === "classic" && searchQuery ? term.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
-
     // Filter by letter if in indexed search mode
     const letterMatch =
       searchType === "indexed" && selectedLetter
         ? term.name.toLowerCase().startsWith(selectedLetter.toLowerCase())
         : true
 
-    return categoryMatch && queryMatch && letterMatch
+    return categoryMatch && letterMatch
   })
 
   // Create graph data for sigma.js
@@ -496,4 +351,6 @@ const ICTDictionary = () => {
 }
 
 export default ICTDictionary
+
+
 
