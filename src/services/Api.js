@@ -217,9 +217,6 @@ export const resendVerificationEmail = async (email) => {
     throw error
   }
 }
-<<<<<<< Updated upstream
-
-=======
 export const getallarticles = async () => {
   try {
     const response = await fetch(`http://localhost:5000/articles/`, {
@@ -396,4 +393,4 @@ export const deletearticle = async (id, token) => {
     throw error;
   }
 };
->>>>>>> Stashed changes
+
