@@ -16,6 +16,7 @@ import PersonalInfo from "./components/forTest/PersonalInfo";
 import ArticleDetail from "./components/forarticle/ArticleDetailPage";
 import Articlepage from "./views/articlepage";
 import GraphVisualization from "./views/GraphVisualization";
+import VerificationSuccess from "./components/VerificationSuccess";
 function App() {
   return (
     <Router>
@@ -31,6 +32,7 @@ function App() {
         <Route path="/login" element={<Signin />} />
         <Route path="/profile" element = {<PersonalInfo />}></Route>
         <Route path="/graph" element={<GraphVisualization />}></Route>
+        <Route path="/verification-success" element={<VerificationSuccess />}></Route>
       </Routes>
     </Router>
 

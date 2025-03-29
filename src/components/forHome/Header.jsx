@@ -4,19 +4,78 @@ import { useState, useEffect } from "react"
 import "./Header.css"
 import { translations } from "../../utils/translations"
 import { Link } from "react-router-dom"
+import { getUserById } from "../../services/Api"
 
 const Header = ({ language, setLanguage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const t = translations[language]
 
   // Load user data from localStorage whenever it changes
   useEffect(() => {
-    const loadUserData = () => {
-      const storedUser = localStorage.getItem("user")
-      if (storedUser) {
-        setUser(JSON.parse(storedUser))
+    const loadUserData = async () => {
+      try {
+        setLoading(true)
+        // Get stored user data
+        const storedUser = localStorage.getItem("user")
+
+        if (storedUser) {
+          const userData = JSON.parse(storedUser)
+
+          // Check if user is verified
+          if (userData.isVerified) {
+            // If we have a user ID, try to fetch the latest data from the server
+            if (userData._id) {
+              try {
+                // Fetch fresh user data from the server
+                const response = await getUserById(userData._id)
+
+                if (response && response.success && response.data) {
+                  // Update with server data
+                  const serverUserData = response.data
+
+                  // Create a complete user object with all necessary fields
+                  const completeUserData = {
+                    ...userData,
+                    ...serverUserData,
+                    isVerified: true, // Ensure verified status is maintained
+                  }
+
+                  // Update localStorage with the latest data
+                  localStorage.setItem("user", JSON.stringify(completeUserData))
+
+                  // Set the user state
+                  setUser(completeUserData)
+                  console.log("User data updated from server:", completeUserData)
+                } else {
+                  // If server fetch fails, use the stored data
+                  setUser(userData)
+                  console.log("Using stored user data:", userData)
+                }
+              } catch (error) {
+                console.error("Error fetching user data:", error)
+                // If fetch fails, still use the stored data
+                setUser(userData)
+              }
+            } else {
+              // No ID available, just use stored data
+              setUser(userData)
+            }
+          } else {
+            // User not verified, don't display
+            setUser(null)
+            console.log("User not verified, not displaying profile")
+          }
+        } else {
+          setUser(null)
+        }
+      } catch (error) {
+        console.error("Error in loadUserData:", error)
+        setUser(null)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -132,9 +191,13 @@ const Header = ({ language, setLanguage }) => {
             <option value="ar">العربية</option>
           </select>
 
-          {user ? (
-            <div className="user-info">
-              <div className="user-avatar">{getUserInitials()}</div>
+          {loading ? (
+            <div className="loading-indicator">Loading...</div>
+          ) : user ? (
+            <div className="user-profile">
+              <div className="user-avatar">
+                <span>{getUserInitials()}</span>
+              </div>
               <span className="username">{getDisplayName()}</span>
               <button onClick={handleLogout} className="btn-logout">
                 Logout
@@ -163,4 +226,7 @@ const Header = ({ language, setLanguage }) => {
 }
 
 export default Header
+
+
+
 

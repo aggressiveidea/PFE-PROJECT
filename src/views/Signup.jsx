@@ -233,7 +233,6 @@ function Signup() {
   const showAlert = (message, type = "error") => {
     setAlertMessage(message)
     setAlertType(type)
-    // Auto-dismiss success messages after 5 seconds
     if (type === "success") {
       setTimeout(() => setAlertMessage(""), 5000)
     }
@@ -241,8 +240,6 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    // Form validation
     if (
       !formData.firstName.trim() ||
       !formData.lastName.trim() ||
@@ -282,15 +279,14 @@ function Signup() {
         email: formData.email,
         password: formData.password,
         country: formData.country,
-        role: "User", // Default role
-        isVerified: false, // Ensure this is set to false
+        role: "User",
+        isVerified: false,
       }
 
       const response = await registerUser(userData)
       console.log("Registration response:", response)
 
       if (response.error || (response.data && response.data.error)) {
-        // Handle specific error cases
         const errorMessage = response.error || response.data.error || "Registration failed"
 
         if (errorMessage.includes("Email already in use") || errorMessage.includes("already exists")) {
@@ -300,46 +296,32 @@ function Signup() {
         }
         return
       }
-
-      // Log the entire response to see its structure
       console.log("Full registration response:", JSON.stringify(response, null, 2))
-
-      // Extract user ID from the response based on your API structure
       let userId = null
 
-      // Try to find the user ID in the response
       if (response.data && response.data.data && response.data.data.user) {
-        // If response has data.data.user structure
         userId = response.data.data.user.id || response.data.data.user._id
       } else if (response.data && response.data.data) {
-        // If response has data.data structure
         userId = response.data.data.id || response.data.data._id
       } else if (response.data && response.data.user) {
-        // If response has data.user structure
         userId = response.data.user.id || response.data.user._id
       } else if (response.data) {
-        // If response has data structure
         userId = response.data.id || response.data._id
       } else if (response.user) {
-        // If response has user structure
         userId = response.user.id || response.user._id
       } else if (response.token && response.user) {
-        // If response has token and user structure (common pattern)
         userId = response.user.id || response.user._id
       }
 
-      // If we still don't have an ID, try to find it directly in the response
       if (!userId) {
         userId = response.id || response._id
       }
 
       console.log("Extracted user ID:", userId)
-
-      // If we still don't have an ID, create a temporary one
-      if (!userId) {
-        console.warn("Could not extract user ID from response, using email as temporary ID")
-        userId = `temp_${formData.email.replace(/[^a-zA-Z0-9]/g, "_")}`
-      }
+      // if (!userId) {
+      //   console.warn("Could not extract user ID from response, using email as temporary ID")
+      //   userId = `temp_${formData.email.replace(/[^a-zA-Z0-9]/g, "_")}`
+      // }
 
       const userDataToStore = {
         firstName: formData.firstName,
@@ -348,6 +330,7 @@ function Signup() {
         country: formData.country,
         role: "User",
         _id: userId,
+        isVerified: false, // Make sure to explicitly set isVerified to false
       }
 
       console.log("Storing user data with ID:", userDataToStore)
@@ -370,11 +353,9 @@ function Signup() {
         )
       }
 
-      // Show verification alert instead of success message
       setRegisteredEmail(formData.email)
       setShowVerification(true)
 
-      // Reset form
       setFormData({
         firstName: "",
         lastName: "",
@@ -385,8 +366,6 @@ function Signup() {
       })
     } catch (error) {
       console.error("Registration failed:", error)
-
-      // Handle network errors
       if (error.message === "Failed to fetch") {
         showAlert("Unable to connect to the server. Please check your internet connection and try again.")
       } else {
@@ -488,6 +467,7 @@ function Signup() {
 }
 
 export default Signup
+
 
 
 

@@ -76,6 +76,36 @@ export const getAllUsers = async () => {
     throw error
   }
 }
+export const getUserById = async (userId) => {
+  try {
+    // Get auth token from localStorage
+    const authData = JSON.parse(localStorage.getItem("authData") || "{}")
+    const token = authData.token
+
+    const headers = {
+      "Content-Type": "application/json",
+    }
+
+    // Add authorization header if token exists
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`http://localhost:5000/user/${userId}`, {
+      method: "GET",
+      headers: headers,
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data")
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error fetching user:", error)
+    throw error
+  }
+}
 export const createUser = async (data) => {
   try {
     const response = await fetch("http://localhost:5000/user/", {
@@ -104,11 +134,9 @@ export const updateUser = async (id, data) => {
       throw new Error("User ID is required for update")
     }
 
-    // Get auth token if available
     const authData = JSON.parse(localStorage.getItem("authData") || "{}")
     const token = authData.token
 
-    // Prepare headers with auth token if available
     const headers = {
       "Content-Type": "application/json",
     }
@@ -116,17 +144,12 @@ export const updateUser = async (id, data) => {
     if (token) {
       headers["Authorization"] = `Bearer ${token}`
     }
-
-    // Clean up the data object to only include fields that should be updated
     const cleanData = {
       firstName: data.firstName,
       lastName: data.lastName,
       userBio: data.userBio || "",
-      // Don't include email as it's typically not updatable
-      // Don't include role as it's typically managed by admins
     }
 
-    // Only include profileImgUrl if it's not the placeholder
     if (data.profileImgUrl && !data.profileImgUrl.includes("placeholder.svg")) {
       cleanData.profileImgUrl = data.profileImgUrl
     }
@@ -139,10 +162,8 @@ export const updateUser = async (id, data) => {
       body: JSON.stringify(cleanData),
     })
 
-    // Log the full response for debugging
     console.log("Update response status:", response.status, response.statusText)
 
-    // Try to parse the response as JSON
     const responseData = await response.json()
     console.log("Update response data:", responseData)
 
@@ -150,7 +171,6 @@ export const updateUser = async (id, data) => {
       throw new Error(`Failed to update user: ${responseData.message || response.statusText}`)
     }
 
-    // Check for the success flag in the response based on your backend format
     if (responseData && responseData.success === true) {
       return responseData
     } else {
@@ -224,19 +244,19 @@ export const getallarticles = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to get all of the articles");
+      throw new Error("Failed to get all of the articles")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error getting in article :", error);
-    throw error;
+    console.error("Error getting in article :", error)
+    throw error
   }
-};
+}
 export const getArticleById = async (id) => {
   try {
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
@@ -244,113 +264,104 @@ export const getArticleById = async (id) => {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to get all of the articles");
+      throw new Error("Failed to get all of the articles")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error getting in article :", error);
-    throw error;
+    console.error("Error getting in article :", error)
+    throw error
   }
-};
+}
 export const getarticlebytitle = async (title) => {
   try {
-    const response = await fetch(
-      `http://localhost:5000/articles/title?title=${title}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`http://localhost:5000/articles/title?title=${title}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to get articles by title");
+      throw new Error("Failed to get articles by title")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error getting in article :", error);
-    throw error;
+    console.error("Error getting in article :", error)
+    throw error
   }
-};
+}
 export const getarticlebycat = async (category, limit) => {
   try {
-    const response = await fetch(
-      `http://localhost:5000/articles/category?category=${category}&limit=${limit}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`http://localhost:5000/articles/category?category=${category}&limit=${limit}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to get articles by category");
+      throw new Error("Failed to get articles by category")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error getting in article :", error);
-    throw error;
+    console.error("Error getting in article :", error)
+    throw error
   }
-};
+}
 export const getarticlbBylang = async (language) => {
   try {
-    const response = await fetch(
-      `http://localhost:5000/articles/language?language=${language}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`http://localhost:5000/articles/language?language=${language}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to get articles by language");
+      throw new Error("Failed to get articles by language")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error getting in article :", error);
-    throw error;
+    console.error("Error getting in article :", error)
+    throw error
   }
-};
+}
 export const addArticle = async (data) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     const response = await fetch(`http://localhost:5000/articles/`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`, 
+        Authorization: `Bearer ${token}`,
       },
-      body: data, 
-    });
+      body: data,
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to add article");
+      throw new Error("Failed to add article")
     }
 
-    const res = await response.json();
-    return res;
+    const res = await response.json()
+    return res
   } catch (error) {
-    console.error("Error adding article :", error);
-    throw error;
+    console.error("Error adding article :", error)
+    throw error
   }
-};
+}
 export const updatearticle = async (id, data) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
       method: "PUT",
       headers: {
@@ -358,39 +369,40 @@ export const updatearticle = async (id, data) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to update article");
+      throw new Error("Failed to update article")
     }
 
-    const res = await response.json();
-    return res;
+    const res = await response.json()
+    return res
   } catch (error) {
-    console.error("Error updating article :", error);
-    throw error;
+    console.error("Error updating article :", error)
+    throw error
   }
-};
+}
 export const deletearticle = async (id, token) => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to delete article");
+      throw new Error("Failed to delete article")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error deleting article :", error);
-    throw error;
+    console.error("Error deleting article :", error)
+    throw error
   }
-};
+}
+
 

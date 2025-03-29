@@ -8,47 +8,93 @@ import NetworkGraph from "../components/NetworkGraph"
 import { handleChange } from "../utils/handleChange"
 import { loginUser } from "../services/Api"
 import "./Signin.css"
+import { useNavigate } from "react-router-dom"
 
 function Signin() {
   const [existData, setExistData] = useState({
     email: "",
     password: "",
   })
-
   const [alertMessage, setAlertMessage] = useState("")
+  const [alertType, setAlertType] = useState("error")
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const showAlert = (message, type = "error") => {
+    setAlertMessage(message)
+    setAlertType(type)
+    if (type === "success") {
+      setTimeout(() => setAlertMessage(""), 3000)
+    }
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsLoading(true)
 
     if (!existData.email.trim() || !existData.password.trim()) {
-      setAlertMessage("All fields are required");
-      return;
+      showAlert("All fields are required")
+      setIsLoading(false)
+      return
     }
 
     try {
-      const response = await loginUser(existData.email, existData.password);
-      
-      console.log("Response received in handleSubmit:", response); 
+      const response = await loginUser(existData.email, existData.password)
 
+      console.log("Login response:", response)
 
-      if (response?.data?.token) {  
-        console.log("Login successful", response);
-        setAlertMessage("Login successful!");
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+      // Check for successful login
+      if (response.success && response.data && response.data.token) {
+        // Store auth token
+        localStorage.setItem(
+          "authData",
+          JSON.stringify({
+            token: response.data.token,
+          }),
+        )
+
+        // Extract user data
+        const userData = response.data.user
+
+        if (userData) {
+          // Make sure isVerified is included
+          const userToStore = {
+            ...userData,
+            isVerified: userData.isVerified || false,
+          }
+
+          // Store user data
+          localStorage.setItem("user", JSON.stringify(userToStore))
+
+          // Notify other components
+          window.dispatchEvent(new Event("userUpdated"))
+
+          // Show success message
+          showAlert("Login successful! Redirecting...", "success")
+
+          // Redirect after a short delay
+          setTimeout(() => {
+            navigate("/")
+          }, 1500)
+        } else {
+          showAlert("Login successful but user data is missing")
+        }
       } else {
-        setAlertMessage(response.message || "Invalid credentials");
+        // Handle error response
+        const errorMessage = response.message || response.error || "Invalid credentials"
+        showAlert(errorMessage)
       }
     } catch (error) {
-      console.log("Error in handleSubmit:", error);
-      setAlertMessage("Login failed. Please try again.");
+      console.error("Login error:", error)
+      showAlert(error.message || "Login failed. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
-};
-
+  }
 
   return (
     <div className="auth-container">
-      {alertMessage && <AlertBox message={alertMessage} onClose={() => setAlertMessage("")} />}
+      {alertMessage && <AlertBox message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />}
 
       <div className="left-section">
         <NetworkGraph />
@@ -100,7 +146,7 @@ function Signin() {
               </a>
             </div>
 
-            <Button text="Login" type="submit" />
+            <Button text={isLoading ? "Logging in..." : "Login"} type="submit" disabled={isLoading} />
           </form>
 
           <div className="auth-footer">
@@ -125,7 +171,6 @@ function Signin() {
 }
 
 export default Signin
-
 
 
 
