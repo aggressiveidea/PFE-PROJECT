@@ -13,60 +13,46 @@ const Header = ({ language, setLanguage }) => {
 
   const t = translations[language]
 
-  // Load user data from localStorage whenever it changes
   useEffect(() => {
     const loadUserData = async () => {
       try {
         setLoading(true)
-        // Get stored user data
         const storedUser = localStorage.getItem("user")
 
         if (storedUser) {
           const userData = JSON.parse(storedUser)
-
-          // Check if user is verified
           if (userData.isVerified) {
-            // If we have a user ID, try to fetch the latest data from the server
             if (userData._id) {
               try {
-                // Fetch fresh user data from the server
                 const response = await getUserById(userData._id)
 
                 if (response && response.success && response.data) {
-                  // Update with server data
                   const serverUserData = response.data
 
-                  // Create a complete user object with all necessary fields
                   const completeUserData = {
                     ...userData,
                     ...serverUserData,
-                    isVerified: true, // Ensure verified status is maintained
+                    isVerified: true, 
                   }
 
-                  // Update localStorage with the latest data
                   localStorage.setItem("user", JSON.stringify(completeUserData))
 
-                  // Set the user state
                   setUser(completeUserData)
                   console.log("User data updated from server:", completeUserData)
                 } else {
-                  // If server fetch fails, use the stored data
                   setUser(userData)
                   console.log("Using stored user data:", userData)
                 }
               } catch (error) {
                 console.error("Error fetching user data:", error)
-                // If fetch fails, still use the stored data
                 setUser(userData)
               }
             } else {
-              // No ID available, just use stored data
               setUser(userData)
             }
           } else {
-            // User not verified, don't display
-            setUser(null)
-            console.log("User not verified, not displaying profile")
+            setUser(userData)
+            console.log("User not verified")
           }
         } else {
           setUser(null)
@@ -79,13 +65,10 @@ const Header = ({ language, setLanguage }) => {
       }
     }
 
-    // Load user data initially
     loadUserData()
 
-    // Set up event listener for storage changes
     window.addEventListener("storage", loadUserData)
 
-    // Custom event listener for user updates
     const handleUserUpdate = () => loadUserData()
     window.addEventListener("userUpdated", handleUserUpdate)
 
@@ -106,7 +89,6 @@ const Header = ({ language, setLanguage }) => {
     setIsMenuOpen(!isMenuOpen)
   }
 
-  // Simple function to get user initials
   const getUserInitials = () => {
     if (!user) return "?"
 
@@ -117,7 +99,7 @@ const Header = ({ language, setLanguage }) => {
       return initials.join("").toUpperCase()
     }
 
-    // Fallback to email
+
     if (user.email) {
       return user.email[0].toUpperCase()
     }
@@ -132,12 +114,13 @@ const Header = ({ language, setLanguage }) => {
     // If name property exists, use it
     if (user.name) return user.name
 
-    // Otherwise, construct name from firstName and lastName
     if (user.firstName || user.lastName) {
       return `${user.firstName || ""} ${user.lastName || ""}`.trim()
     }
 
-    // Fallback to email or Guest
+   /*
+   ig i'll get rid of this line as wla useless 
+    */
     return user.email ? user.email.split("@")[0] : "Guest"
   }
 
@@ -166,23 +149,43 @@ const Header = ({ language, setLanguage }) => {
 
         <div className={`nav-container ${isMenuOpen ? "active" : ""}`}>
           <nav className="main-nav">
-            <ul>
-              <li>
-                <a href="#home">{t.home}</a>
-              </li>
-              <li>
-                <a href="#about">{t.about}</a>
-              </li>
-              <li>
-                <a href="#FAQ">FAQ</a>
-              </li>
-              <li>
-                <a href="#explore">{t.explore}</a>
-              </li>
-              <li>
-                <a href="#footer">{t.contact}</a>
-              </li>
-            </ul>
+            {user && user.isVerified ? (
+              <ul>
+                <li>
+                  <a href="/profile">Profile</a>
+                </li>
+                <li>
+                  <a href="/library">Library</a>
+                </li>
+                <li>
+                  <a href="/terms">Terms</a>
+                </li>
+                <li>
+                  <a href="/articles">Articles</a>
+                </li>
+                <li>
+                  <a href="/faq">FAQ</a>
+                </li>
+              </ul>
+            ) : (
+              <ul>
+                <li>
+                  <a href="#home">{t.home}</a>
+                </li>
+                <li>
+                  <a href="#about">{t.about}</a>
+                </li>
+                <li>
+                  <a href="#FAQ">FAQ</a>
+                </li>
+                <li>
+                  <a href="#explore">{t.explore}</a>
+                </li>
+                <li>
+                  <a href="#footer">{t.contact}</a>
+                </li>
+              </ul>
+            )}
           </nav>
 
           <select value={language} onChange={(e) => setLanguage(e.target.value)} className="language-select">
@@ -226,6 +229,8 @@ const Header = ({ language, setLanguage }) => {
 }
 
 export default Header
+
+
 
 
 

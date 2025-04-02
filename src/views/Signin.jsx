@@ -28,6 +28,7 @@ function Signin() {
     }
   }
 
+  // Update the handleSubmit function to ensure user data is properly stored
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -53,26 +54,25 @@ function Signin() {
           }),
         )
 
-        // Extract user data
+        localStorage.setItem("token", response.data.token)
+
         const userData = response.data.user
 
         if (userData) {
-          // Make sure isVerified is included
           const userToStore = {
             ...userData,
+            firstName: userData.firstName || "",
+            lastName: userData.lastName || "",
+            email: userData.email || "",
+            role: userData.role || "User",
+            _id: userData._id || userData.id || "",
             isVerified: userData.isVerified || false,
           }
 
-          // Store user data
           localStorage.setItem("user", JSON.stringify(userToStore))
-
-          // Notify other components
+          console.log("Storing user data in localStorage:", userToStore)
           window.dispatchEvent(new Event("userUpdated"))
-
-          // Show success message
           showAlert("Login successful! Redirecting...", "success")
-
-          // Redirect after a short delay
           setTimeout(() => {
             navigate("/")
           }, 1500)
@@ -80,7 +80,6 @@ function Signin() {
           showAlert("Login successful but user data is missing")
         }
       } else {
-        // Handle error response
         const errorMessage = response.message || response.error || "Invalid credentials"
         showAlert(errorMessage)
       }
@@ -171,6 +170,7 @@ function Signin() {
 }
 
 export default Signin
+
 
 
 

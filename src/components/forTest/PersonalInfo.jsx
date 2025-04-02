@@ -64,64 +64,81 @@ export default function PersonalInfo() {
         const token = authData.token
 
         if (token) {
-          // If we have a token, fetch the user profile from the API
-          const profileData = await getProfile(token)
-          console.log("Profile data from API:", profileData)
+          try {
+            // If we have a token, fetch the user profile from the API
+            const profileData = await getProfile(token)
+            console.log("Profile data from API:", profileData)
 
-          if (profileData && profileData.user) {
-            // Make sure to extract the ID correctly
-            const userId = profileData.user._id || profileData.user.id
+            if (profileData && profileData.user) {
+              // Make sure to extract the ID correctly
+              const userId = profileData.user._id || profileData.user.id
 
-            // Set the user data from the API response
-            const userData = {
-              firstName: profileData.user.firstName || "",
-              lastName: profileData.user.lastName || "",
-              email: profileData.user.email || "",
-              userBio: profileData.user.userBio || "",
-              profileImgUrl: profileData.user.profileImgUrl || "/placeholder.svg?height=200&width=200",
-              role: profileData.user.role || "User",
-              _id: userId, // Ensure ID is set correctly
+              // Set the user data from the API response
+              const userData = {
+                firstName: profileData.user.firstName || "",
+                lastName: profileData.user.lastName || "",
+                email: profileData.user.email || "",
+                userBio: profileData.user.userBio || "",
+                profileImgUrl: profileData.user.profileImgUrl || "/placeholder.svg?height=200&width=200",
+                role: profileData.user.role || "User",
+                _id: userId, // Ensure ID is set correctly
+              }
+
+              console.log("Setting user data with ID:", userId)
+              setUser(userData)
+              setEditedUser(userData)
+
+              // Update localStorage with the latest data including ID
+              localStorage.setItem("user", JSON.stringify(userData))
             }
-
-            console.log("Setting user data with ID:", userId)
-            setUser(userData)
-            setEditedUser(userData)
-
-            // Update localStorage with the latest data including ID
-            localStorage.setItem("user", JSON.stringify(userData))
-
-            // Dispatch event to notify other components of user update
-            window.dispatchEvent(new Event("userUpdated"))
+          } catch (apiError) {
+            console.error("API fetch failed, falling back to localStorage:", apiError)
+            // Fall back to localStorage if API fetch fails
+            fallbackToLocalStorage()
           }
         } else {
-          // If no token, try to get user data from localStorage (from signup)
-          const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
-          console.log("User data from localStorage:", storedUser)
-
-          if (storedUser && storedUser.email) {
-            // Make sure to extract the ID correctly
-            const userId = storedUser._id || storedUser.id
-
-            const userData = {
-              firstName: storedUser.firstName || "",
-              lastName: storedUser.lastName || "",
-              email: storedUser.email || "",
-              userBio: storedUser.userBio || "",
-              profileImgUrl: storedUser.profileImgUrl || "/placeholder.svg?height=200&width=200",
-              role: storedUser.role || "User",
-              _id: userId, // Ensure ID is set correctly
-            }
-
-            console.log("Setting user data with ID from localStorage:", userId)
-            setUser(userData)
-            setEditedUser(userData)
-          }
+          // If no token, try to get user data from localStorage
+          fallbackToLocalStorage()
         }
       } catch (err) {
         console.error("Error fetching user data:", err)
         setError("Failed to load profile data. Please try again later.")
+        // Try to fall back to localStorage as a last resort
+        fallbackToLocalStorage()
       } finally {
         setLoading(false)
+      }
+    }
+
+    // Helper function to get user data from localStorage
+    const fallbackToLocalStorage = () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
+        console.log("User data from localStorage:", storedUser)
+
+        if (storedUser && storedUser.email) {
+          // Make sure to extract the ID correctly
+          const userId = storedUser._id || storedUser.id
+
+          const userData = {
+            firstName: storedUser.firstName || "",
+            lastName: storedUser.lastName || "",
+            email: storedUser.email || "",
+            userBio: storedUser.userBio || "",
+            profileImgUrl: storedUser.profileImgUrl || "/placeholder.svg?height=200&width=200",
+            role: storedUser.role || "User",
+            _id: userId, // Ensure ID is set correctly
+          }
+
+          console.log("Setting user data with ID from localStorage:", userId)
+          setUser(userData)
+          setEditedUser(userData)
+        } else {
+          setError("No user data found. Please log in again.")
+        }
+      } catch (localStorageError) {
+        console.error("Error parsing localStorage data:", localStorageError)
+        setError("Failed to load profile data. Please log in again.")
       }
     }
 
@@ -478,6 +495,7 @@ export default function PersonalInfo() {
     </div>
   )
 }
+
 
 
 
