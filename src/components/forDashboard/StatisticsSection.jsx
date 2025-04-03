@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { Users, UserCheck, Activity } from "lucide-react"
 import "./StatisticsSection.css"
 
-
 function AnimatedCounter({ end, duration = 2000 }) {
   const [count, setCount] = useState(0)
 
@@ -36,11 +35,11 @@ function AnimatedCounter({ end, duration = 2000 }) {
 }
 
 export default function StatisticsSection({ data, loading }) {
-  // Calculate statistics from data
-  const getTotalUsers = () => data?.users?.length || 0
-  const getTotalExperts = () => data?.experts?.length || 0
-  const getActiveUsers = () => data?.activeUsers?.length || 0
-  const getActiveExperts = () => data?.activeExperts?.length || 0
+  // Get values from the data prop
+  const getTotalUsers = () => data?.totalUsers || 0
+  const getTotalExperts = () => data?.totalExperts || 0
+  const getActiveUsers = () => data?.activeUsers || 0
+  const getActiveExperts = () => data?.activeExperts || 0
 
   const statisticsData = [
     {

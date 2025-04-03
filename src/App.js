@@ -32,6 +32,7 @@ function App() {
         <Route path="/login" element={<Signin />} />
         <Route path="/profile" element = {<PersonalInfo />}></Route>
         <Route path="/graph" element={<GraphVisualization />}></Route>
+        <Route path="/articles" element={<Articlepage />}></Route>
         <Route path="/verification-success" element={<VerificationSuccess />}></Route>
       </Routes>
     </Router>

@@ -127,6 +127,7 @@ export const createUser = async (data) => {
   }
 }
 
+// Modify the updateUser function in your Api.js file to handle role updates
 export const updateUser = async (id, data) => {
   try {
     if (!id) {
@@ -144,10 +145,17 @@ export const updateUser = async (id, data) => {
     if (token) {
       headers["Authorization"] = `Bearer ${token}`
     }
+
+    // Include role in the update data if it exists
     const cleanData = {
       firstName: data.firstName,
       lastName: data.lastName,
       userBio: data.userBio || "",
+    }
+
+    // Add role to cleanData if it exists in the data
+    if (data.role) {
+      cleanData.role = data.role
     }
 
     if (data.profileImgUrl && !data.profileImgUrl.includes("placeholder.svg")) {
@@ -404,5 +412,146 @@ export const deletearticle = async (id, token) => {
     throw error
   }
 }
+export const getTotalUsers = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/total", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch total users")
+    }
+
+    const res = await response.json()
+    return res.data
+  } catch (error) {
+    console.error("Error fetching total users:", error)
+    throw error
+  }
+}
+
+export const getActiveUsers = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/active-users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch active users")
+    }
+
+    const res = await response.json()
+    return res.data
+  } catch (error) {
+    console.error("Error fetching active users:", error)
+    throw error
+  }
+}
+
+export const getUsersByCountry = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/user-country", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users by country")
+    }
+
+    const res = await response.json()
+    return res.data
+  } catch (error) {
+    console.error("Error fetching users by country:", error)
+    throw error
+  }
+}
+
+export const getUserActivityPerMonth = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/user-activity", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user activity per month")
+    }
+
+    const res = await response.json()
+    return res.data
+  } catch (error) {
+    console.error("Error fetching user activity per month:", error)
+    throw error
+  }
+}
+
+// Add this new function to your Api.js file
+export const updateUserRole = async (userId, newRole, token) => {
+  try {
+    if (!userId) {
+      throw new Error("User ID is required for role update")
+    }
+
+    if (!token) {
+      throw new Error("Authentication token is required")
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+
+    // Create a payload specifically for role update
+    const roleData = {
+      role: newRole,
+    }
+
+    console.log(`Sending role update request to http://localhost:5000/user/role/${userId} with role: ${newRole}`)
+
+    const response = await fetch(`http://localhost:5000/user/role/${userId}`, {
+      method: "PATCH", // Using PATCH for partial update
+      headers: headers,
+      body: JSON.stringify(roleData),
+    })
+
+    console.log("Role update response status:", response.status, response.statusText)
+
+    const responseData = await response.json()
+    console.log("Role update response data:", responseData)
+
+    if (!response.ok) {
+      throw new Error(`Failed to update user role: ${responseData.message || response.statusText}`)
+    }
+
+    return {
+      success: true,
+      data: responseData.data || responseData,
+    }
+  } catch (error) {
+    console.error("Error updating user role:", error)
+    return {
+      success: false,
+      message: error.message || "Failed to update user role",
+    }
+  }
+}
+
+
+
 
 

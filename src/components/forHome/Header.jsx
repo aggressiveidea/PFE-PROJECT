@@ -32,7 +32,7 @@ const Header = ({ language, setLanguage }) => {
                   const completeUserData = {
                     ...userData,
                     ...serverUserData,
-                    isVerified: true, 
+                    isVerified: true,
                   }
 
                   localStorage.setItem("user", JSON.stringify(completeUserData))
@@ -99,7 +99,6 @@ const Header = ({ language, setLanguage }) => {
       return initials.join("").toUpperCase()
     }
 
-
     if (user.email) {
       return user.email[0].toUpperCase()
     }
@@ -118,7 +117,7 @@ const Header = ({ language, setLanguage }) => {
       return `${user.firstName || ""} ${user.lastName || ""}`.trim()
     }
 
-   /*
+    /*
    ig i'll get rid of this line as wla useless 
     */
     return user.email ? user.email.split("@")[0] : "Guest"
@@ -127,27 +126,29 @@ const Header = ({ language, setLanguage }) => {
   return (
     <header className="header">
       <div className="header-container">
-        <a href="/" className="logo">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="16" fill="url(#paint0_linear)" />
-            <path
-              d="M10 16L14 20L22 12"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <defs>
-              <linearGradient id="paint0_linear" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#9333EA" />
-                <stop offset="1" stopColor="#C026D3" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <span>EL-MOUGHITH</span>
-        </a>
+        <div className="logo-section">
+          <a href="/" className="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="16" fill="url(#paint0_linear)" />
+              <path
+                d="M10 16L14 20L22 12"
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <defs>
+                <linearGradient id="paint0_linear" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#9333EA" />
+                  <stop offset="1" stopColor="#C026D3" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span>EL-MOUGHITH</span>
+          </a>
+        </div>
 
-        <div className={`nav-container ${isMenuOpen ? "active" : ""}`}>
+        <div className="nav-section">
           <nav className="main-nav">
             {user && user.isVerified ? (
               <ul>
@@ -158,7 +159,7 @@ const Header = ({ language, setLanguage }) => {
                   <a href="/library">Library</a>
                 </li>
                 <li>
-                  <a href="/terms">Terms</a>
+                  <a href="/dictionary">Terms</a>
                 </li>
                 <li>
                   <a href="/articles">Articles</a>
@@ -187,7 +188,9 @@ const Header = ({ language, setLanguage }) => {
               </ul>
             )}
           </nav>
+        </div>
 
+        <div className="user-section">
           <select value={language} onChange={(e) => setLanguage(e.target.value)} className="language-select">
             <option value="en">English</option>
             <option value="fr">Français</option>
@@ -199,9 +202,28 @@ const Header = ({ language, setLanguage }) => {
           ) : user ? (
             <div className="user-profile">
               <div className="user-avatar">
-                <span>{getUserInitials()}</span>
+                {user && user.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg") ? (
+                  <img
+                    src={user.profileImgUrl || "/placeholder.svg"}
+                    alt={getDisplayName()}
+                    className="user-avatar-img"
+                    onError={(e) => {
+                      e.target.onerror = null
+                      e.target.src = "/placeholder.svg?height=40&width=40"
+                      e.target.style.display = "none"
+                      e.target.nextElementSibling.style.display = "flex"
+                    }}
+                  />
+                ) : null}
+                <span
+                  style={{
+                    display: user?.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg") ? "none" : "flex",
+                  }}
+                >
+                  {getUserInitials()}
+                </span>
               </div>
-              <span className="username">{getDisplayName()}</span>
+              <span className="display-name">{getDisplayName()}</span>
               <button onClick={handleLogout} className="btn-logout">
                 Logout
               </button>
@@ -229,6 +251,12 @@ const Header = ({ language, setLanguage }) => {
 }
 
 export default Header
+
+
+
+
+
+
 
 
 

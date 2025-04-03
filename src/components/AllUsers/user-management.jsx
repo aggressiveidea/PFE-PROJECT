@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Filter, UserPlus, MoreHorizontal, Check, Trash2, UserCog } from "lucide-react"
+import { Search, Filter, UserPlus, MoreHorizontal, Check, Trash2, UserCog, X, RefreshCw } from "lucide-react"
 import { getAllUsers, deleteUser, createUser, updateUser } from "../../services/Api"
 import Header from "../forHome/Header"
 import Footer from "../forHome/Footer"
 import Sidebar from "../forDashboard/Sidebar"
-import './user-management.css'
+import Modal from "./Modal"
+import "./user-management.css"
+
 export default function UserManagement() {
   const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
@@ -23,17 +25,25 @@ export default function UserManagement() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
+  const [roleFilter, setRoleFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
+
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    role: "Admin",
+    role: "User",
     status: "Active",
   })
 
   const [darkMode, setDarkMode] = useState(false)
   const [language, setLanguage] = useState("en")
+
+  // Available roles and statuses for filtering
+  const availableRoles = ["User", "Ict-expert", "Content-admin", "Admin"]
+  const availableStatuses = ["Active", "Inactive", "Pending"]
 
   useEffect(() => {
     if (darkMode) {
@@ -68,21 +78,36 @@ export default function UserManagement() {
     fetchUsers()
   }, [])
 
+  // Apply filters when search term, role filter, or status filter changes
   useEffect(() => {
-    if (searchTerm && users.length > 0) {
-      const filtered = users.filter(
-        (user) =>
-          (user._id && user._id.toString().includes(searchTerm)) ||
-          (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.role && user.role.toLowerCase().includes(searchTerm.toLowerCase())),
-      )
+    if (users.length > 0) {
+      let filtered = [...users]
+
+      // Apply search filter
+      if (searchTerm) {
+        filtered = filtered.filter(
+          (user) =>
+            (user._id && user._id.toString().includes(searchTerm)) ||
+            (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (user.role && user.role.toLowerCase().includes(searchTerm.toLowerCase())),
+        )
+      }
+
+      // Apply role filter
+      if (roleFilter !== "all") {
+        filtered = filtered.filter((user) => user.role === roleFilter)
+      }
+
+      // Apply status filter
+      if (statusFilter !== "all") {
+        filtered = filtered.filter((user) => (user.status || "Active") === statusFilter)
+      }
+
       setFilteredUsers(filtered)
-    } else {
-      setFilteredUsers(users)
     }
-  }, [searchTerm, users])
+  }, [searchTerm, roleFilter, statusFilter, users])
 
   useEffect(() => {
     if (selectAll) {
@@ -94,6 +119,16 @@ export default function UserManagement() {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
+  }
+
+  const toggleFilters = () => {
+    setShowFilters(!showFilters)
+  }
+
+  const clearFilters = () => {
+    setRoleFilter("all")
+    setStatusFilter("all")
+    setSearchTerm("")
   }
 
   const openModal = (type, user) => {
@@ -129,9 +164,22 @@ export default function UserManagement() {
     if (selectedUser && selectedUser._id && newRole) {
       try {
         setIsLoading(true)
-        await updateUser(selectedUser._id, { ...selectedUser, role: newRole })
-        await fetchUsers()
-        closeModal()
+
+        // Create a payload with the role update
+        const roleUpdateData = {
+          ...selectedUser,
+          role: newRole,
+        }
+
+        // Use the standard updateUser function with the role included
+        const response = await updateUser(selectedUser._id, roleUpdateData)
+
+        if (response && response.success) {
+          await fetchUsers() // Refresh the user list
+          closeModal()
+        } else {
+          throw new Error(response?.message || "Failed to update user role")
+        }
       } catch (err) {
         console.error("Error updating user role:", err)
         setError("Failed to update user role. Please try again.")
@@ -164,7 +212,7 @@ export default function UserManagement() {
       lastName: "",
       email: "",
       password: "",
-      role: "Admin",
+      role: "User",
       status: "Active",
     })
   }
@@ -211,6 +259,8 @@ export default function UserManagement() {
         return "role-admin"
       case "ict-expert":
         return "role-ict-expert"
+      case "content-admin":
+        return "role-content-admin"
       default:
         return "role-user"
     }
@@ -248,6 +298,25 @@ export default function UserManagement() {
     return "Unknown"
   }
 
+  const getUserAvatar = (user) => {
+    if (user.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg")) {
+      return (
+        <img
+          src={user.profileImgUrl || "/placeholder.svg"}
+          alt={`${user.firstName} ${user.lastName}`}
+          className="user-avatar-img"
+          onError={(e) => {
+            e.target.onerror = null
+            e.target.style.display = "none"
+            e.target.parentNode.textContent = getInitials(user.firstName, user.lastName)
+          }}
+        />
+      )
+    } else {
+      return getInitials(user.firstName, user.lastName)
+    }
+  }
+
   return (
     <div className="app-container">
       <Sidebar
@@ -279,14 +348,73 @@ export default function UserManagement() {
             </div>
 
             <div className="action-buttons">
-              <button className="filter-button">
-                <Filter size={16} /> Filters
+              <button className="refresh-button" onClick={fetchUsers} title="Refresh user list">
+                <RefreshCw size={18} />
+              </button>
+              <button className={`filter-button ${showFilters ? "active" : ""}`} onClick={toggleFilters}>
+                <Filter size={16} /> Filters {showFilters && <span className="filter-count">•</span>}
               </button>
               <button className="add-button" onClick={openAddUserModal}>
                 <UserPlus size={16} /> Add User
               </button>
             </div>
           </div>
+
+          {showFilters && (
+            <div className="filters-panel">
+              <div className="filters-header">
+                <h3>Filter Users</h3>
+                <button className="clear-filters" onClick={clearFilters}>
+                  Clear all
+                </button>
+                <button className="close-filters" onClick={toggleFilters}>
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="filters-content">
+                <div className="filter-group">
+                  <label>Role</label>
+                  <div className="filter-options">
+                    <button
+                      className={`filter-option ${roleFilter === "all" ? "selected" : ""}`}
+                      onClick={() => setRoleFilter("all")}
+                    >
+                      All
+                    </button>
+                    {availableRoles.map((role) => (
+                      <button
+                        key={role}
+                        className={`filter-option ${roleFilter === role ? "selected" : ""}`}
+                        onClick={() => setRoleFilter(role)}
+                      >
+                        {role}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="filter-group">
+                  <label>Status</label>
+                  <div className="filter-options">
+                    <button
+                      className={`filter-option ${statusFilter === "all" ? "selected" : ""}`}
+                      onClick={() => setStatusFilter("all")}
+                    >
+                      All
+                    </button>
+                    {availableStatuses.map((status) => (
+                      <button
+                        key={status}
+                        className={`filter-option ${statusFilter === status ? "selected" : ""}`}
+                        onClick={() => setStatusFilter(status)}
+                      >
+                        {status}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="error-message">
@@ -335,7 +463,7 @@ export default function UserManagement() {
                       <td className="user-id">{getUserId(user)}</td>
                       <td>
                         <div className="user-info">
-                          <div className="user-avatar">{getInitials(user.firstName, user.lastName)}</div>
+                          <div className="user-avatar">{getUserAvatar(user)}</div>
                           <div className="user-details">
                             <div className="user-name">
                               {user.firstName} {user.lastName}
@@ -361,17 +489,17 @@ export default function UserManagement() {
                             onClick={() => openModal("changeRole", user)}
                             title="Change Role"
                           >
-                            <UserCog size={18} />
+                            <UserCog size={22} />
                           </button>
                           <button
                             className="action-button delete-action"
                             onClick={() => openModal("delete", user)}
                             title="Delete User"
                           >
-                            <Trash2 size={18} />
+                            <Trash2 size={22} />
                           </button>
                           <button className="action-button more-action" title="More Options">
-                            <MoreHorizontal size={18} />
+                            <MoreHorizontal size={22} />
                           </button>
                         </div>
                       </td>
@@ -384,66 +512,22 @@ export default function UserManagement() {
             {filteredUsers.length === 0 && !isLoading && (
               <div className="no-results">
                 <h3>No users found</h3>
-                <p>Try adjusting your search criteria</p>
+                <p>Try adjusting your search criteria or filters</p>
               </div>
             )}
           </div>
 
           {isModalOpen && selectedUser && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <div className="modal-header">
-                  <h3>{modalType === "delete" ? "Delete User" : "Change User Role"}</h3>
-                  <button className="close-button" onClick={closeModal}>
-                    ×
-                  </button>
-                </div>
-                <div className="modal-content">
-                  {modalType === "delete" ? (
-                    <div>
-                      <p>Are you sure you want to delete this user?</p>
-                      <p className="user-name">
-                        {selectedUser.firstName} {selectedUser.lastName}
-                      </p>
-                      <p className="user-id">ID: {getUserId(selectedUser)}</p>
-                      <p className="warning">This action cannot be undone.</p>
-                      <div className="modal-footer">
-                        <button className="cancel-button" onClick={closeModal} disabled={isDeleting}>
-                          Cancel
-                        </button>
-                        <button className="confirm-button delete" onClick={handleDeleteUser} disabled={isDeleting}>
-                          {isDeleting ? "Deleting..." : "Delete User"}
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <p>Change role for user:</p>
-                      <p className="user-name">
-                        {selectedUser.firstName} {selectedUser.lastName}
-                      </p>
-                      <p className="user-id">ID: {getUserId(selectedUser)}</p>
-                      <div className="role-selector">
-                        <label htmlFor="role">Select new role:</label>
-                        <select id="role" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
-                          <option value="Admin">Admin</option>
-                          <option value="Ict-expert">ICT Expert</option>
-                          <option value="User">User</option>
-                        </select>
-                      </div>
-                      <div className="modal-footer">
-                        <button className="cancel-button" onClick={closeModal}>
-                          Cancel
-                        </button>
-                        <button className="confirm-button" onClick={handleChangeRole}>
-                          Save Changes
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <Modal
+              isOpen={isModalOpen}
+              modalType={modalType}
+              selectedUser={selectedUser}
+              newRole={newRole}
+              setNewRole={setNewRole}
+              closeModal={closeModal}
+              handleDeleteUser={handleDeleteUser}
+              handleChangeRole={handleChangeRole}
+            />
           )}
 
           {isAddUserModalOpen && (
@@ -503,17 +587,21 @@ export default function UserManagement() {
                   <div className="form-group">
                     <label htmlFor="newUserRole">Role</label>
                     <select id="newUserRole" name="role" value={newUser.role} onChange={handleNewUserChange}>
-                      <option value="Admin">Admin</option>
-                      <option value="Ict-expert">ICT Expert</option>
-                      <option value="User">User</option>
+                      {availableRoles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="form-group">
                     <label htmlFor="status">Status</label>
                     <select id="status" name="status" value={newUser.status} onChange={handleNewUserChange}>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Pending">Pending</option>
+                      {availableStatuses.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="modal-footer">
@@ -541,4 +629,8 @@ export default function UserManagement() {
     </div>
   )
 }
+
+
+
+
 

@@ -1,6 +1,8 @@
 "use client"
 
 const ChangeRoleModal = ({ user, newRole, setNewRole, closeModal, handleChangeRole }) => {
+  const availableRoles = ["User", "Ict-expert", "Content-admin", "Admin"]
+
   return (
     <div className="modal-content">
       <p>Change role for user:</p>
@@ -10,9 +12,11 @@ const ChangeRoleModal = ({ user, newRole, setNewRole, closeModal, handleChangeRo
       <div className="role-selector">
         <label htmlFor="role">Select new role:</label>
         <select id="role" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
-          <option value="Admin">Admin</option>
-          <option value="Ict-expert">ICT expert</option>
-          <option value="User">User</option>
+          {availableRoles.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
         </select>
       </div>
       <div className="modal-footer">
@@ -28,4 +32,5 @@ const ChangeRoleModal = ({ user, newRole, setNewRole, closeModal, handleChangeRo
 }
 
 export default ChangeRoleModal
+
 
