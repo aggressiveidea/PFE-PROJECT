@@ -2,106 +2,93 @@
 
 import { useState } from "react"
 import "./PopularTerms.css"
-import { translations } from "../../utils/translations"
 
-const PopularTerms = ({ language }) => {
-  const t = translations[language]
-  const isRtl = language === "ar"
+const PopularTerms = () => {
   const [activeCategory, setActiveCategory] = useState("all")
 
   const categories = [
-    { id: "all", name: t.all },
-    { id: "hardware", name: t.hardware },
-    { id: "software", name: t.software },
-    { id: "networking", name: t.networking },
-    { id: "security", name: t.security },
-    { id: "ai", name: t.ai },
+    { id: "all", name: "All" },
+    { id: "hardware", name: "Hardware" },
+    { id: "software", name: "Software" },
+    { id: "networking", name: "Networking" },
+    { id: "security", name: "Security" },
+    { id: "ai", name: "AI" },
   ]
 
-  const popularTerms = [
+  const terms = [
     {
       id: 1,
-      term: "Artificial Intelligence",
-      termFr: "Intelligence Artificielle",
-      termAr: "الذكاء الاصطناعي",
-      definition: t.aiDefinition,
+      name: "Artificial Intelligence",
+      definition: "The simulation of human intelligence processes by machines, especially computer systems.",
       category: "ai",
     },
     {
       id: 2,
-      term: "Cloud Computing",
-      termFr: "Informatique en nuage",
-      termAr: "الحوسبة السحابية",
-      definition: t.cloudDefinition,
+      name: "Cloud Computing",
+      definition:
+        "The delivery of different services through the Internet, including data storage, servers, databases, networking, and software.",
       category: "networking",
     },
     {
       id: 3,
-      term: "Machine Learning",
-      termFr: "Apprentissage automatique",
-      termAr: "تعلم الآلة",
-      definition: t.mlDefinition,
+      name: "Machine Learning",
+      definition:
+        "A subset of AI that provides systems the ability to automatically learn and improve from experience without being explicitly programmed.",
       category: "ai",
     },
     {
       id: 4,
-      term: "Blockchain",
-      termFr: "Chaîne de blocs",
-      termAr: "سلسلة الكتل",
-      definition: t.blockchainDefinition,
+      name: "Blockchain",
+      definition:
+        "A distributed ledger technology that maintains a continuously growing list of records, called blocks, which are linked and secured using cryptography.",
       category: "security",
     },
     {
       id: 5,
-      term: "Internet of Things",
-      termFr: "Internet des objets",
-      termAr: "إنترنت الأشياء",
-      definition: t.iotDefinition,
+      name: "Internet of Things",
+      definition:
+        "The network of physical objects embedded with sensors, software, and other technologies for the purpose of connecting and exchanging data with other devices and systems over the Internet.",
       category: "networking",
     },
     {
       id: 6,
-      term: "Virtual Reality",
-      termFr: "Réalité virtuelle",
-      termAr: "الواقع الافتراضي",
-      definition: t.vrDefinition,
+      name: "Virtual Reality",
+      definition:
+        "A simulated experience that can be similar to or completely different from the real world, created using computer technology and special equipment.",
       category: "hardware",
     },
     {
       id: 7,
-      term: "Cybersecurity",
-      termFr: "Cybersécurité",
-      termAr: "الأمن السيبراني",
-      definition: t.cybersecurityDefinition,
+      name: "Cybersecurity",
+      definition:
+        "The practice of protecting systems, networks, and programs from digital attacks that aim to access, change, or destroy sensitive information.",
       category: "security",
     },
     {
       id: 8,
-      term: "Big Data",
-      termFr: "Mégadonnées",
-      termAr: "البيانات الضخمة",
-      definition: t.bigDataDefinition,
+      name: "Big Data",
+      definition:
+        "Extremely large data sets that may be analyzed computationally to reveal patterns, trends, and associations, especially relating to human behavior and interactions.",
       category: "software",
     },
   ]
 
-  const filteredTerms =
-    activeCategory === "all" ? popularTerms : popularTerms.filter((term) => term.category === activeCategory)
+  const filteredTerms = activeCategory === "all" ? terms : terms.filter((term) => term.category === activeCategory)
 
   return (
-    <section id="popular-terms" className={`popular-terms section ${isRtl ? "rtl" : ""}`}>
+    <section id="popular-terms" className="popular-terms">
       <div className="container">
         <div className="section-header">
-          <div className="badge">{t.trending}</div>
-          <h2 className="section-title">{t.popularTermsTitle}</h2>
-          <p className="section-description">{t.popularTermsDescription}</p>
+          <div className="badge">Trending</div>
+          <h2>Popular ICT Terms</h2>
+          <p>Explore the most frequently searched ICT terms in our dictionary.</p>
         </div>
 
-        <div className="terms-categories">
+        <div className="categories">
           {categories.map((category) => (
             <button
               key={category.id}
-              className={`category-btn ${activeCategory === category.id ? "active" : ""}`}
+              className={`category-button ${activeCategory === category.id ? "active" : ""}`}
               onClick={() => setActiveCategory(category.id)}
             >
               {category.name}
@@ -111,21 +98,15 @@ const PopularTerms = ({ language }) => {
 
         <div className="terms-grid">
           {filteredTerms.map((term) => (
-            <div className="term-card card" key={term.id}>
-              <h3 className="term-card-title">
-                {language === "en" ? term.term : language === "fr" ? term.termFr : term.termAr}
-              </h3>
-              <p className="term-card-definition">{term.definition}</p>
-              <div className="term-card-footer">
-                <span className="term-category">{t[term.category]}</span>
-                <button className="btn btn-secondary term-card-btn">{t.viewDetails}</button>
+            <div key={term.id} className="term-card">
+              <h3>{term.name}</h3>
+              <p>{term.definition}</p>
+              <div className="card-footer">
+                <span className="category-tag">{categories.find((c) => c.id === term.category).name}</span>
+                <button className="view-details">View Details</button>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="view-all-container">
-          <button className="btn btn-primary view-all-btn">{t.exploreAllTerms}</button>
         </div>
       </div>
     </section>
