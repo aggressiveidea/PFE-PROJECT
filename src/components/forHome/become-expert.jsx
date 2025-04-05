@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Mail, Send, CheckCircle } from "lucide-react"
 import "./become-expert.css"
+import { submitExpertApplication } from "../../services/Api" 
 
 const BecomeExpert = () => {
   const [formData, setFormData] = useState({
@@ -14,21 +15,32 @@ const BecomeExpert = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState("")
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError("")
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await submitExpertApplication(formData)
+
+      if (response.success) {
+        setIsSubmitted(true)
+      } else {
+        setError(response.message || "Failed to submit application")
+      }
+    } catch (error) {
+      console.error("Error submitting application:", error)
+      setError(error.message || "Something went wrong. Please try again.")
+    } finally {
       setIsSubmitting(false)
-      setIsSubmitted(true)
-    }, 1500)
+    }
   }
 
   return (
@@ -106,6 +118,8 @@ const BecomeExpert = () => {
                 </div>
 
                 <form onSubmit={handleSubmit}>
+                  {error && <div className="error-message">{error}</div>}
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="name">Full Name*</label>
@@ -175,4 +189,5 @@ const BecomeExpert = () => {
 }
 
 export default BecomeExpert
+
 

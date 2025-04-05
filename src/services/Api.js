@@ -127,7 +127,6 @@ export const createUser = async (data) => {
   }
 }
 
-// Modify the updateUser function in your Api.js file to handle role updates
 export const updateUser = async (id, data) => {
   try {
     if (!id) {
@@ -146,14 +145,12 @@ export const updateUser = async (id, data) => {
       headers["Authorization"] = `Bearer ${token}`
     }
 
-    // Include role in the update data if it exists
     const cleanData = {
       firstName: data.firstName,
       lastName: data.lastName,
       userBio: data.userBio || "",
     }
 
-    // Add role to cleanData if it exists in the data
     if (data.role) {
       cleanData.role = data.role
     }
@@ -499,8 +496,6 @@ export const getUserActivityPerMonth = async (token) => {
     throw error
   }
 }
-
-// Add this new function to your Api.js file
 export const updateUserRole = async (userId, newRole, token) => {
   try {
     if (!userId) {
@@ -516,7 +511,7 @@ export const updateUserRole = async (userId, newRole, token) => {
       Authorization: `Bearer ${token}`,
     }
 
-    // Create a payload specifically for role update
+  
     const roleData = {
       role: newRole,
     }
@@ -524,7 +519,7 @@ export const updateUserRole = async (userId, newRole, token) => {
     console.log(`Sending role update request to http://localhost:5000/user/role/${userId} with role: ${newRole}`)
 
     const response = await fetch(`http://localhost:5000/user/role/${userId}`, {
-      method: "PATCH", // Using PATCH for partial update
+      method: "PATCH", 
       headers: headers,
       body: JSON.stringify(roleData),
     })
@@ -550,7 +545,37 @@ export const updateUserRole = async (userId, newRole, token) => {
     }
   }
 }
+export const submitExpertApplication = async (applicationData) => {
+  try {
+    const response = await fetch("http://localhost:5000/user/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(applicationData),
+    })
 
+    const data = await response.json()
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to submit application",
+      }
+    }
+
+    return {
+      success: true,
+      data: data.data,
+    }
+  } catch (error) {
+    console.error("Error submitting expert application:", error)
+    return {
+      success: false,
+      message: error.message || "An error occurred during submission",
+    }
+  }
+}
 
 
 
