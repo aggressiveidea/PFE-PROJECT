@@ -1,30 +1,76 @@
+/* Light/Dark mode variables */
+:root {
+  --primary-gradient: linear-gradient(to right, #4338ca, #7e22ce);
+}
+
+/* Light mode (default) */
+.app-wrapper {
+  --bg-color: #ffffff;
+  --text-color: #1f2937;
+  --text-muted: #6b7280;
+  --card-bg: #f9fafb;
+  --border-color: #e5e7eb;
+  --hover-bg: #f3f4f6;
+  --toggle-bg: #f3f4f6;
+  --toggle-icon-bg: #4f46e5;
+  --toggle-icon-color: #ffffff;
+  --contact-section-bg: linear-gradient(to right, rgba(79, 70, 229, 0.05), rgba(139, 92, 246, 0.05));
+  --contact-section-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Dark mode */
+.app-wrapper.dark {
+  --bg-color: #1a1528;
+  --text-color: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --toggle-bg: rgba(255, 255, 255, 0.1);
+  --toggle-icon-bg: #4f46e5;
+  --toggle-icon-color: #ffffff;
+  --contact-section-bg: linear-gradient(to right, rgba(79, 70, 229, 0.1), rgba(139, 92, 246, 0.1));
+  --contact-section-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
 body {
-  background: #ffffff !important;
-  height: 100%;
   margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* App wrapper for proper footer positioning */
+.app-wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .page-container {
-  flex: 1; /* Prend tout l'espace disponible */
-  display: flex;
-  flex-direction: column;
+  flex: 1;
   max-width: 1530px;
   margin: 0 auto;
   padding: 8rem 1rem 4rem;
-  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
 }
 
+/* Footer styles */
 .footer {
-  margin-bottom: 0; /* Pousse le footer en bas */
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
+  margin-top: auto; /* Push footer to bottom */
+  width: 100%;
 }
 
 .page-header {
-  margin-top: 100px;
+  margin-top: 20px;
   text-align: center;
   margin-bottom: 4rem;
 }
@@ -33,7 +79,7 @@ body {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  background: linear-gradient(to right, #4338ca, #7e22ce);
+  background: var(--primary-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -48,13 +94,13 @@ body {
   transform: translateX(-50%);
   width: 60px;
   height: 3px;
-  background: linear-gradient(to right, #4338ca, #7e22ce);
+  background: var(--primary-gradient);
   border-radius: 3px;
 }
 
 .page-description {
   font-size: 1.125rem;
-  color: #4b5563;
+  color: var(--text-muted);
   max-width: 36rem;
   margin: 1.5rem auto 0;
   line-height: 1.6;
@@ -69,19 +115,23 @@ body {
 }
 
 .faq-item {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 1rem;
   transition: all 0.3s ease;
 }
 
 .faq-item:hover {
-  border-bottom-color: #d1d5db;
+  border-bottom-color: var(--border-color);
 }
 
 .faq-item.active {
-  border-bottom-color: #c7d2fe;
-  background-color: rgba(79, 70, 229, 0.03);
+  border-bottom-color: rgba(79, 70, 229, 0.5);
+  background-color: rgba(79, 70, 229, 0.05);
   border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.dark .faq-item.active {
+  background-color: rgba(79, 70, 229, 0.1);
 }
 
 .faq-question {
@@ -95,31 +145,36 @@ body {
 }
 
 .faq-question:hover {
-  background-color: rgba(79, 70, 229, 0.02);
+  background-color: var(--hover-bg);
 }
 
 .faq-question h3 {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-color);
   transition: color 0.3s ease;
+  margin: 0;
 }
 
 .faq-item.active .faq-question h3 {
-  color: #6a697e;
+  color: #4f46e5;
+}
+
+.dark .faq-item.active .faq-question h3 {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .faq-toggle-icon {
   width: 1.5rem;
   height: 1.5rem;
-  background-color: #f3f4f6;
+  background-color: var(--toggle-bg);
   border-radius: 50%;
   position: relative;
   transition: all 0.3s ease;
 }
 
 .faq-item.active .faq-toggle-icon {
-  background-color: #4f46e5;
+  background-color: var(--toggle-icon-bg);
   transform: rotate(180deg);
 }
 
@@ -134,9 +189,14 @@ body {
   transition: all 0.3s ease;
 }
 
+.dark .faq-toggle-icon::before,
+.dark .faq-toggle-icon::after {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 .faq-item.active .faq-toggle-icon::before,
 .faq-item.active .faq-toggle-icon::after {
-  background-color: white;
+  background-color: var(--toggle-icon-color);
 }
 
 .faq-toggle-icon::before {
@@ -168,19 +228,20 @@ body {
 
 .faq-answer p {
   font-size: 1rem;
-  color: #4b5563;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 .contact-section {
   text-align: center;
-  background: linear-gradient(to right, rgba(79, 70, 229, 0.05), rgba(139, 92, 246, 0.05));
+  background: var(--contact-section-bg);
   padding: 3rem 2rem;
   border-radius: 0.75rem;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto 2rem;
   position: relative;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--contact-section-shadow);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .contact-section::before {
@@ -190,24 +251,26 @@ body {
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(to right, #4696e5, #8b5cf6);
+  background: var(--primary-gradient);
   border-radius: 3px 3px 0 0;
 }
 
 .contact-section h2 {
   font-size: 1.75rem;
   font-weight: 600;
-  color: #37271f;
+  color: var(--text-color);
   margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
 }
 
 .contact-section p {
   font-size: 1.125rem;
-  color: #4b5563;
+  color: var(--text-muted);
   margin-bottom: 2rem;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  transition: color 0.3s ease;
 }
 
 .contact-button {
@@ -215,7 +278,7 @@ body {
   font-size: 1rem;
   font-weight: 500;
   color: white;
-  background: linear-gradient(to right, #4f46e5, #8b5cf6);
+  background: var(--primary-gradient);
   padding: 0.75rem 1.75rem;
   border: none;
   border-radius: 0.5rem;
