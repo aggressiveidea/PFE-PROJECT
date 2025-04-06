@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Search, Filter, UserPlus, MoreHorizontal, Check, Trash2, UserCog, X, RefreshCw } from "lucide-react"
-import { getAllUsers, deleteUser, createUser, updateUser } from "../../services/Api"
-import Header from "../forHome/Header"
-import Footer from "../forHome/Footer"
-import Sidebar from "../forDashboard/Sidebar"
-import Modal from "./Modal"
+import { getAllUsers, deleteUser, createUser, updateUser } from "../services/Api"
+import Header from "../components/forHome/Header"
+import Footer from "../components/forHome/Footer"
+import Sidebar from "../components/forDashboard/Sidebar"
+import Modal from "../components/AllUsers/Modal"
 import "./user-management.css"
 
 export default function UserManagement() {
@@ -28,6 +28,7 @@ export default function UserManagement() {
   const [showFilters, setShowFilters] = useState(false)
   const [roleFilter, setRoleFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [roleUpdateSuccess, setRoleUpdateSuccess] = useState(false)
 
   const [newUser, setNewUser] = useState({
     firstName: "",
@@ -117,6 +118,16 @@ export default function UserManagement() {
     }
   }, [selectAll, filteredUsers])
 
+  // Clear role update success message after 3 seconds
+  useEffect(() => {
+    if (roleUpdateSuccess) {
+      const timer = setTimeout(() => {
+        setRoleUpdateSuccess(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [roleUpdateSuccess])
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
   }
@@ -175,8 +186,32 @@ export default function UserManagement() {
         const response = await updateUser(selectedUser._id, roleUpdateData)
 
         if (response && response.success) {
+          // Update the updatedUsers collection in localStorage for real-time role updates
+          const updatedUsersCollection = JSON.parse(localStorage.getItem("updatedUsers") || "[]")
+          const userIndex = updatedUsersCollection.findIndex((u) => u._id === selectedUser._id)
+
+          if (userIndex >= 0) {
+            updatedUsersCollection[userIndex] = {
+              ...updatedUsersCollection[userIndex],
+              role: newRole,
+              updatedAt: new Date().toISOString(),
+            }
+          } else {
+            updatedUsersCollection.push({
+              _id: selectedUser._id,
+              role: newRole,
+              updatedAt: new Date().toISOString(),
+            })
+          }
+
+          localStorage.setItem("updatedUsers", JSON.stringify(updatedUsersCollection))
+
+          // Trigger a role update event for real-time updates
+          window.dispatchEvent(new Event("roleUpdated"))
+
           await fetchUsers() // Refresh the user list
           closeModal()
+          setRoleUpdateSuccess(true)
         } else {
           throw new Error(response?.message || "Failed to update user role")
         }
@@ -334,6 +369,13 @@ export default function UserManagement() {
             <h1>User Management</h1>
             <p>View and manage all users in the system</p>
           </div>
+
+          {roleUpdateSuccess && (
+            <div className="success-message">
+              <Check size={18} />
+              <span>Role updated successfully! Changes take effect immediately - no logout required.</span>
+            </div>
+          )}
 
           <div className="controls-container">
             <div className="search-container">
@@ -629,6 +671,8 @@ export default function UserManagement() {
     </div>
   )
 }
+
+
 
 
 
