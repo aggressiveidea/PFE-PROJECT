@@ -9,21 +9,18 @@ import ArticleCard from "../components/forarticle/ArticleCard";
 import { ThemeProvider } from "../components/forarticle/ThemeContext";
 import { useTheme } from "../components/forarticle/ThemeContext";
 import "../components/forarticle/globals.css";
+import Header from "../components/forHome/Header";
+
+
+
 import { getallarticles } from "../services/Api";
 import { deletearticle } from "../services/Api";
 import { updatearticle } from "../services/Api";
 
-function Home() {
-    let user = {
-        name: "",
-        role: "Admin",
-        userBio: "",
-        profileImgUrl: "",
-        firstName: "amrous",
-        lastName: "nada",
-        email: "nadanada@example.com",
-        _id: "67e491d0216b8ed85ba20682",
-    };
+function Articlepage() {
+    const storedUser = localStorage.getItem("user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
   const { darkMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
@@ -31,7 +28,16 @@ function Home() {
   const [articles, setArticles] = useState([]);
   const [articleToEdit, setArticleToEdit] = useState(null);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
-  const [favorites, setFavorites] = useState([]);
+  const [ favorites, setFavorites ] = useState( [] );
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   const articlesRef = useRef(null);
   const addArticleRef = useRef(null);
@@ -101,51 +107,49 @@ function Home() {
     }
   };
 
-  const handleEditArticle = async (id, updatedData) => {
+  const handleEditArticle = (id) => {
     const article = articles.find((article) => article._id === id);
-
     const canEdit =
-      user.role === "Super-admin" ||
-      user.role === "Admin" ||
+      user.role === "Content-admin" ||
       (user.role === "Ict-expert" && user.id === article.ownerId);
 
     if (canEdit) {
-      try {
-        const response = await updatearticle(id, updatedData);
-
-        if (!response.ok) {
-          throw new Error("Error updating article");
-        }
-
-        const updatedArticle = await response.json();
-
-        setArticles(
-          articles.map((art) => (art._id === id ? updatedArticle : art))
-        );
-
-        console.log("Successfully updated");
-      } catch (error) {
-        console.error("Error updating API:", error);
-      }
+      setArticleToEdit(article); // Show form
+      setShowUpdateForm(true);
     }
   };
 
-  const handleUpdateArticle = (updatedArticle) => {
-    setArticles(
-      articles.map((article) =>
-        article._id === updatedArticle._id ? updatedArticle : article
-      )
-    );
-    setShowUpdateForm(true);
-    setArticleToEdit(null);
+  const handleUpdateArticle = async (updatedArticle) => {
+    try {
+      const response = await updatearticle(updatedArticle._id, updatedArticle);
+
+      if (!response.ok) {
+        throw new Error("Error updating article");
+      }
+
+      const updatedFromAPI = await response.json();
+
+      setArticles(
+        articles.map((article) =>
+          article._id === updatedFromAPI._id ? updatedFromAPI : article
+        )
+      );
+
+      setShowUpdateForm(false);
+      setArticleToEdit(null);
+
+      console.log("Successfully updated");
+    } catch (error) {
+      console.error("Error updating API:", error);
+    }
   };
 
   const handleDeleteArticle = async (id) => {
-    const article = articles.find((article) => article._id === id);
+    const article = articles.find((article) => article.id === id);
 
+    console.log("id of the article ",id);
     if (
-      user.role === "Super-admin" ||
-      user.role === "Admin" ||
+      user.role === "Content-admin" ||
       (user.role === "Ict-expert" && user.id === article.ownerId)
     ) {
       try {
@@ -155,7 +159,7 @@ function Home() {
           throw new Error("error in the delete ");
         }
 
-        setArticles(articles.filter((article) => article._id !== id));
+        setArticles(articles.filter((article) => article.id !== id));
         console.log("successfully deleted ");
       } catch (error) {
         console.error(" Error fetching deleting API:", error);
@@ -165,6 +169,11 @@ function Home() {
 
   return (
     <div className={`app-container ${darkMode ? "dark-mode" : ""}`}>
+      <Header
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={darkMode}
+      />
       <div className="stars-container">
         <div className="stars"></div>
         <div className="stars2"></div>
@@ -177,7 +186,7 @@ function Home() {
       <div className="shooting-star shooting-star2"></div>
       <div className="comet"></div>
 
-      <main className="main-content ">
+      <main className="main-content-article ">
         <section className="hero-section">
           <h1 className="hero-title">Navigating the Digital Frontier</h1>
           <p className="hero-subtitle">
@@ -258,20 +267,17 @@ function Home() {
             </div>
           )}
         </section>
-        {(user.role === "Super-admin" ||
-          user.role === "Admin" ||
-          user.role === "Ict-expert") && (
+        {(user.role === "Content-admin" || user.role === "Ict-expert") && (
           <section ref={addArticleRef} className="add-article-section">
             <h2 className="section-title">Contribute an Article</h2>
             <p className="section-subtitle">
               Share your knowledge with the ICT law community
             </p>
             <div className="articles-container">
-              <AddArticleForm user={user} setArticles={setArticles} />
+              <AddArticleForm setArticles={setArticles} />
             </div>
           </section>
         )}
-        ;
         <section ref={servicesRef} className="services-section">
           <h2 className="section-title">Explore ICT Law Areas</h2>
           <p className="section-subtitle">
@@ -385,15 +391,15 @@ function Home() {
             </a>
           </div>
         </section>
+        {showUpdateForm && (
+          <UpdateArticleForm
+            article={articleToEdit}
+            onUpdate={handleUpdateArticle}
+            onClose={() => setShowUpdateForm(false)}
+          />
+        )}
       </main>
 
-      {showUpdateForm && (
-        <UpdateArticleForm
-          article={articleToEdit}
-          onClose={() => setShowUpdateForm(true)}
-          onUpdate={handleUpdateArticle}
-        />
-      )}
       <Footer />
     </div>
   );
@@ -402,7 +408,7 @@ function Home() {
 function App() {
   return (
     <ThemeProvider>
-      <Home />
+      <Articlepage />
     </ThemeProvider>
   );
 }

@@ -329,6 +329,7 @@ body.dark-mode .comet::after {
 
 /* Hero Section */
 .hero-section {
+  margin-left: 0px;
   display: flex;
   flex-direction: column;
   gap: 50px;
@@ -491,7 +492,7 @@ body.dark-mode .hero-subtitle {
 }
 
 /* Articles Section */
-.main-content .articles-section {
+.main-content-article .articles-section {
     background-color: #6b11cb00;
     padding: 60px 0;
     position: relative;
@@ -505,7 +506,7 @@ body.dark-mode .hero-subtitle {
   padding: 0 20px;
 }
 
-.main-content .add-article-section{
+.main-content-article .add-article-section{
   background-color: #6b11cb00;
   padding: 60px 0;
   position: relative;
@@ -582,7 +583,7 @@ body.dark-mode .section-subtitle {
   }
 }
 /* Services Section */
-.main-content .services-section {
+.main-content-article .services-section {
   padding: 60px 0;
   position: relative;
   animation: fadeIn 1s ease-out;

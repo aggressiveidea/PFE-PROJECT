@@ -16,12 +16,15 @@ const categoryColors = {
 
 export default function ArticleCard({
   article,
-  user,
   isFavorite,
   onToggleFavorite,
   onEdit,
   onDelete,
-}) {
+} )
+{
+  const user = JSON.parse( localStorage.getItem( "user" ) );
+  console.log( "user :",user.role  );
+  
   const [isHovered, setIsHovered] = useState(false);
 
   const handleCardClick = (e) => {
@@ -40,31 +43,37 @@ export default function ArticleCard({
   const handleEdit = (e) => {
     e.stopPropagation();
     if (onEdit) {
-      onEdit(article);
+      onEdit(article._id);
     }
   };
 
   const handleDelete = (e) => {
     e.stopPropagation();
-    if (onDelete) {
+    if ( onDelete )
+    {
       onDelete(article._id);
     }
   };
 
-  const role = user?.role?.toLowerCase(); // Convertir en minuscule
+  const role = user?.role; // Convertir en minuscule
 
   //console.log("User role:", user?.role);
   //console.log("Normalized role:", role);
+        console.log("delete", article._id);
+
+  console.log( 'article',article );
+  console.log( 'ownerId',article.ownerId );
 
   const canEdit =
-    role === "super-admin" ||
-    role === "admin" ||
+    role === "Content-admin" ||
     (role === "ict-expert" && user?.id === article.ownerId);
 
   const canDelete = canEdit; // Puisque les permissions sont les mêmes
 
-  //console.log( "Can Edit:", canEdit );
-  //console.log( "Can Delete:", canDelete );
+  console.log("onEdit defined?", typeof onEdit);
+
+  console.log( "Can Edit:", canEdit );
+  console.log( "Can Delete:", canDelete );
 
   console.log("User object:", user);
 
@@ -75,6 +84,7 @@ export default function ArticleCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
+      {/* Show category first */}
       <div
         className={`article-category ${categoryColors[article.category]?.bg} ${
           categoryColors[article.category]?.text
@@ -82,7 +92,22 @@ export default function ArticleCard({
       >
         {article.category}
       </div>
+
+      {/* Show title */}
       <h3 className="article-title">{article.title}</h3>
+
+      {/* Show base64 image below title */}
+      {article.imageUrl && (
+        <div className="article-image-wrapper">
+          <img
+            src={`data:image/jpeg;base64,${article.imageUrl}`} 
+            alt={article.title}
+            className="article-image"
+          />
+        </div>
+      )}
+
+      {/* Show truncated description */}
       <p className="article-description">
         {article.content?.length > 100
           ? `${article.content.substring(0, 100)}...`
@@ -124,7 +149,7 @@ export default function ArticleCard({
                   .share({
                     title: article.title,
                     text: article.description,
-                    url: `/articles/${article.id}`,
+                    url: `/articles/${article._id}`,
                   })
                   .catch((err) => console.log("Error sharing", err));
               }
@@ -201,4 +226,6 @@ export default function ArticleCard({
       </div>
     </div>
   );
+
+
 }

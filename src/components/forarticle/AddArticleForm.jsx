@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./add-article-form.css";
 import { addArticle } from "../../services/Api";
 
-export default function AddArticleForm({ user, setArticles }) {
+export default function AddArticleForm({ setArticles }) {
   const [formData, setFormData] = useState({
     title: "",
     category: "",
-    language: "",
+    language: "English",
     content: "",
-    imageUrl: "",
+    imageUrl: null,
   });
 
   const [previewImage, setPreviewImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState(null);
 
   const categories = [
     "All Categories",
@@ -31,78 +32,86 @@ export default function AddArticleForm({ user, setArticles }) {
 
   const languages = ["All Languages", "English", "French", "Arabic"];
 
-  // Gestion des inputs
+  useEffect(() => {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (storedUser && storedUser.id) {
+        setUserId(storedUser.id);
+      } else {
+        setError("Vous devez être connecté pour ajouter un article.");
+      }
+    } catch (e) {
+      console.error("Invalid user in localStorage", e);
+      setError("Erreur de récupération de l'utilisateur.");
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((f) => ({ ...f, [name]: value }));
   };
 
-  // Gestion de l'image
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-      // Preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setFormData((f) => ({
+      ...f,
+      imageUrl: reader.result, // ✅ base64 ici
+    }));
+    setPreviewImage(reader.result);
   };
+  reader.readAsDataURL(file); // ⬅️ encodage
+};
 
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async ( e ) =>
+  {
     e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
-    console.log(user)
-    if (!user || !user._id) {
-      setError("Vous devez être connecté pour ajouter un article.");
-      setIsSubmitting(false);
+    setIsSubmitting( true );
+    setError( "" );
+
+    if ( !userId )
+    {
+      setError( "Vous devez être connecté pour soumettre un article." );
+      setIsSubmitting( false );
       return;
     }
 
-    const articleData = new FormData();
-    articleData.append("title", formData.title);
-    articleData.append("category", formData.category);
-    articleData.append("description", formData.description);
-    articleData.append("language", formData.language);
-    articleData.append("author", user._id); // Vérifiez bien que _id est correct
+    const articleData = {
+      title: formData.title,
+      category: formData.category,
+      language: formData.language,
+      content: formData.content,
+      ownerId: userId,
+      imageUrl: formData.imageUrl || null, 
+    };
 
-    if (formData.image) {
-      articleData.append("image", formData.image);
+    try
+    {
+      const createdArticle = await addArticle( articleData ); 
+      setArticles( ( prev ) => [ ...prev, createdArticle ] );
+      setShowSuccess( true );
+      setFormData({
+        title: "",
+        category: "",
+        language: "English",
+        content: "",
+        imageUrl: null,
+      });
+      setPreviewImage( null );
+      setTimeout( () => setShowSuccess( false ), 3000 );
+    } catch ( err )
+    {
+      console.error( err );
+      setError( "Erreur lors de l'ajout de l'article." );
+    } finally
+    {
+      setIsSubmitting( false );
     }
-
-    try {
-      const createdArticle = await addArticle(articleData);
-
-      setArticles((prevArticles) => [...prevArticles, createdArticle]);
-
-      setShowSuccess(true);
-
-      setTimeout(() => {
-        setFormData({
-          title: "",
-          category: "",
-          description: "",
-          language: "English",
-          image: null,
-        });
-        setPreviewImage(null);
-        setShowSuccess(false);
-      }, 3000);
-    } catch (error) {
-      setError("Erreur lors de l'ajout de l'article");
-      console.error("Erreur API:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+  };  
 
   return (
     <div className="add-article-form-container">
@@ -170,11 +179,11 @@ export default function AddArticleForm({ user, setArticles }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="content">Description</label>
             <textarea
-              id="description"
-              name="description"
-              value={formData.description}
+              id="content"
+              name="content"
+              value={formData.content}
               onChange={handleChange}
               placeholder="Fournissez un résumé de votre article"
               required
@@ -184,7 +193,7 @@ export default function AddArticleForm({ user, setArticles }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="image">Image</label>
+            <label htmlFor="image">Image (optionnelle)</label>
             <div className="image-upload-container">
               <div className="image-upload-area">
                 {previewImage ? (
@@ -195,16 +204,14 @@ export default function AddArticleForm({ user, setArticles }) {
                       className="remove-image-btn"
                       onClick={() => {
                         setPreviewImage(null);
-                        setFormData({ ...formData, image: null });
+                        setFormData((f) => ({ ...f, imageUrl: null }));
                       }}
                     >
                       ×
                     </button>
                   </div>
                 ) : (
-                  <>
-                    <p>Glissez une image ou cliquez pour parcourir</p>
-                  </>
+                  <p>Glissez une image ou cliquez pour parcourir</p>
                 )}
                 <input
                   type="file"

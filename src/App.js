@@ -15,9 +15,10 @@ import ICTDictionary from "./views/ICTDictionary";
 import PersonalInfo from "./components/forTest/PersonalInfo";
 import ArticleDetail from "./components/forarticle/ArticleDetailPage";
 import Articlepage from "./views/articlepage";
-import GraphVisualization from "./views/GraphVisualization";
+//import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
 function App() {
+//<Route path="/graph" element={<GraphVisualization />}></Route>
   return (
     <Router>
       <Routes>
@@ -30,13 +31,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Signin />} />
-        <Route path="/profile" element = {<PersonalInfo />}></Route>
-        <Route path="/graph" element={<GraphVisualization />}></Route>
+        <Route path="/profile" element={<PersonalInfo />}></Route>
         <Route path="/articles" element={<Articlepage />}></Route>
-        <Route path="/verification-success" element={<VerificationSuccess />}></Route>
+        <Route
+          path="/verification-success"
+          element={<VerificationSuccess />}
+        ></Route>
       </Routes>
     </Router>
-
   );
 
 }

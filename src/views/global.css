@@ -32,7 +32,11 @@
     background-color: var(--background-light);
     color: var(--text-dark);
     transition: background-color var(--transition-speed), color var(--transition-speed);
-  }
+    -webkit-transition: background-color var(--transition-speed), color var(--transition-speed);
+    -moz-transition: background-color var(--transition-speed), color var(--transition-speed);
+    -ms-transition: background-color var(--transition-speed), color var(--transition-speed);
+    -o-transition: background-color var(--transition-speed), color var(--transition-speed);
+}
   
   body.dark {
     background-color: var(--background-dark);
@@ -47,6 +51,7 @@
   
   main {
     flex: 1;
+    margin-left: 0;
   }
   
   h1,

@@ -20,10 +20,10 @@ export default function UpdateArticleForm({ article, onClose, onUpdate }) {
       setFormData({
         title: article.title || "",
         category: article.category || "",
-        description: article.description || "",
+        content: article.content || "",
         language: article.languages?.[0] || "English",
         image: null,
-      });
+      } );
 
       // If article has an image, set it as preview
       if (article.image) {

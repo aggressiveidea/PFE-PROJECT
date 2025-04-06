@@ -347,26 +347,28 @@ export const getarticlbBylang = async (language) => {
 }
 export const addArticle = async (data) => {
   try {
-    const token = localStorage.getItem("token")
-    const response = await fetch(`http://localhost:5000/articles/`, {
+    const token = localStorage.getItem("token");
+    console.log( data );// Debugging
+
+    const response = await fetch("http://localhost:5000/articles/", {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: data,
-    })
+      body: JSON.stringify(data), // Sending FormData
+    });
 
     if (!response.ok) {
-      throw new Error("Failed to add article")
+      throw new Error("Failed to add article");
     }
 
-    const res = await response.json()
-    return res
+    return await response.json();
   } catch (error) {
-    console.error("Error adding article :", error)
-    throw error
+    console.error("❌ Error adding article:", error);
+    throw error;
   }
-}
+};
 export const updatearticle = async (id, data) => {
   try {
     const token = localStorage.getItem("token")
@@ -390,7 +392,7 @@ export const updatearticle = async (id, data) => {
     throw error
   }
 }
-export const deletearticle = async (id, token) => {
+export const deletearticle = async (id) => {
   try {
     const token = localStorage.getItem("token")
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
@@ -399,10 +401,11 @@ export const deletearticle = async (id, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
+    } )
 
     if (!response.ok) {
-      throw new Error("Failed to delete article")
+      throw new Error( "Failed to delete article" )
+      
     }
 
     const res = await response.json()
