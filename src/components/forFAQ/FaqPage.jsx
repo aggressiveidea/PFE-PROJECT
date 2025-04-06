@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-
-import { useState, useEffect } from "react";
-import "./FaqPage.css";
-import Header from "../forHome/Header";
-import Footer from "../forHome/Footer";
-
+import { useState, useEffect } from "react"
+import "./FaqPage.css"
+import Header from "../forHome/Header"
+import Footer from "../forHome/Footer"
 
 const FaqPage = () => {
-  const [activeQuestion, setActiveQuestion] = useState(null);
+  const [activeQuestion, setActiveQuestion] = useState(null)
+  const [darkMode, setDarkMode] = useState(true) // Set default to true for dark mode
+  const [language, setLanguage] = useState("en")
 
-  const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState("en");
-  
-     useEffect(() => {
-       if (darkMode) {
-         document.body.classList.add("dark");
-       } else {
-         document.body.classList.remove("dark");
-       }
-     }, [ darkMode ] );
-    
+  useEffect(() => {
+    // Apply dark mode to body
+    if (darkMode) {
+      document.body.classList.add("dark")
+      document.body.style.backgroundColor = "#1a1528"
+    } else {
+      document.body.classList.remove("dark")
+      document.body.style.backgroundColor = ""
+    }
+  }, [darkMode])
+
   // Sample FAQ data
   const faqs = [
     {
@@ -53,75 +53,56 @@ const FaqPage = () => {
       answer:
         "Yes, you can use our content for academic and research purposes with proper attribution. Please refer to our Terms of Service for detailed information on usage rights.",
     },
-  ];
+  ]
 
   const toggleQuestion = (id) => {
-    setActiveQuestion(activeQuestion === id ? null : id);
-  };
+    setActiveQuestion(activeQuestion === id ? null : id)
+  }
 
   return (
-    <div className="page-container" id="FAQ">
-      <Header
-        language={language}
-        setLanguage={setLanguage}
-        darkMode={darkMode}
-      />
+    <div className="app-wrapper">
+      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
 
-      <div className="page-header">
-        <h1 className="page-title">Frequently Asked Questions</h1>
-        <p className="page-description">
-          Find answers to common questions about EL-MOUGHITH and how to use our
-          platform.
-        </p>
-      </div>
+      <div className="page-container" id="FAQ">
+        <div className="page-header">
+          <h1 className="page-title">Frequently Asked Questions</h1>
+          <p className="page-description">
+            Find answers to common questions about EL-MOUGHITH and how to use our platform.
+          </p>
+        </div>
 
-      <div className="faq-container">
-        {faqs.map((faq) => (
-          <div
-            key={faq.id}
-            className={`faq-item ${activeQuestion === faq.id ? "active" : ""}`}
+        <div className="faq-container">
+          {faqs.map((faq) => (
+            <div key={faq.id} className={`faq-item ${activeQuestion === faq.id ? "active" : ""}`}>
+              <div className="faq-question" onClick={() => toggleQuestion(faq.id)}>
+                <h3>{faq.question}</h3>
+                <span className="faq-toggle-icon"></span>
+              </div>
+              <div className="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="contact-section">
+          <h2>Still have questions?</h2>
+          <p>If you couldn't find the answer to your question, feel free to contact us directly.</p>
+          <button
+            onClick={() => (window.location.href = "mailto:support@yourcompany.com?subject=Contact%20Support")}
+            className="contact-button"
           >
-            <div
-              className="faq-question"
-              onClick={() => toggleQuestion(faq.id)}
-            >
-              <h3>{faq.question}</h3>
-              <span className="faq-toggle-icon"></span>
-            </div>
-            <div className="faq-answer">
-              <p>{faq.answer}</p>
-            </div>
-          </div>
-        ))}
+            Contact Us
+          </button>
+        </div>
       </div>
 
-      <div className="contact-section">
-        <h2>Still have questions?</h2>
-        <p>
-          If you couldn't find the answer to your question, feel free to contact
-          us directly.
-        </p>
-        <button
-          onClick={() =>
-            (window.location.href =
-              "mailto:support@yourcompany.com?subject=Contact%20Support")
-          }
-          className="contact-button"
-        >
-          Contact Us
-        </button>
-          </div>
-          
-        <Footer   
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        language={language}
-          />
-          
+      <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
     </div>
-  );
-};
+  )
+}
 
-export default FaqPage;
+export default FaqPage
+
 
 
