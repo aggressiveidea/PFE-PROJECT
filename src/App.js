@@ -17,6 +17,7 @@ import ArticleDetail from "./components/forarticle/ArticleDetailPage";
 import Articlepage from "./views/articlepage";
 //import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
+import UserProfile from "./components/forUserProfile/user-profile";
 function App() {
 //<Route path="/graph" element={<GraphVisualization />}></Route>
   return (
@@ -33,10 +34,9 @@ function App() {
         <Route path="/login" element={<Signin />} />
         <Route path="/profile" element={<PersonalInfo />}></Route>
         <Route path="/articles" element={<Articlepage />}></Route>
-        <Route
-          path="/verification-success"
-          element={<VerificationSuccess />}
-        ></Route>
+        <Route path="/verification-success" element={<VerificationSuccess />}></Route>
+        <Route path="/userProfile" element={<UserProfile />}></Route>
+
       </Routes>
     </Router>
   );
