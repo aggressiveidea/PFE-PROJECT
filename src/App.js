@@ -5,8 +5,8 @@ import Header from "./components/forHome/Header";
 import Signup from "./views/Signup";
 import Signin from "./views/Signin";
 import SearchPage from "./views/SearchPage";
-import Dashboard from "./components/forDashboard/Dashboard";
-import UserManagement from "./components/AllUsers/user-management";
+import Dashboard from "./views/Dashboard";
+import UserManagement from "./views/user-management";
 import Profile from "./components/forProfile/profile-page";
 import Profilelibrary from "./components/forProfile/profileLibrary";
 import Setting from "./components/forProfile/SettingsPage";
@@ -18,6 +18,7 @@ import Articlepage from "./views/articlepage";
 import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
 import UserProfile from "./components/forUserProfile/user-profile";
+import ContentAdminDashboard from "./views/ContentAdminDashboard";
 function App() {
   return (
     <Router>
@@ -36,6 +37,7 @@ function App() {
         <Route path="/articles" element={<Articlepage />}></Route>
         <Route path="/verification-success" element={<VerificationSuccess />}></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
+        <Route path="/notifs" element={<ContentAdminDashboard/>}></Route>
       </Routes>
     </Router>
 

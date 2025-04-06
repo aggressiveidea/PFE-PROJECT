@@ -1,15 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Sidebar from "./Sidebar"
-import WelcomeSection from "./WelcomeSection"
-import StatisticsSection from "./StatisticsSection"
-import ChartsSection from "./ChartsSection"
-import Header from "../forHome/Header"
-import Footer from "../forHome/Footer"
+import Sidebar from "../components/forDashboard/Sidebar"
+import WelcomeSection from "../components/forDashboard/WelcomeSection"
+import StatisticsSection from "../components/forDashboard/StatisticsSection"
+import ChartsSection from "../components/forDashboard/ChartsSection"
+import Header from "../components/forHome/Header"
+import Footer from "../components/forHome/Footer"
 import { Menu } from "lucide-react"
 import "./Dashboard.css"
-import { getTotalUsers, getActiveUsers, getUsersByCountry, getUserActivityPerMonth } from "../../services/Api"
+import { getTotalUsers, getActiveUsers, getUsersByCountry, getUserActivityPerMonth } from "../services/Api"
 
 export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
