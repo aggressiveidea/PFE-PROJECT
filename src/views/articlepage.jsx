@@ -201,7 +201,7 @@ function Articlepage() {
           </button>
         </section>
         <section ref={articlesRef} className="articles-section">
-          <h2 className="section-title">Latest Articles</h2>
+          <h1 className="section-title">Latest Articles</h1>
           <p className="section-subtitle">
             Stay informed with our curated collection of articles on ICT laws
             and regulations

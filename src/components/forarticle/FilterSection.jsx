@@ -31,7 +31,7 @@ export default function FilterSection({
   };
 
   return (
-    <div className="filter-container">
+    <div className="filter-container-filtersection">
       <div className="filter-group">
         <span className="filter-label">Filter by:</span>
         <select
