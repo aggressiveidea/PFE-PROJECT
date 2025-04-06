@@ -289,16 +289,20 @@ export default function PersonalInfo() {
 
   return (
     <div className={`app-container ${darkMode ? "dark" : ""} ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-      <Header language={language} setLanguage={setLanguage} />
+      <div className="header-wrapper">
+        <Header language={language} setLanguage={setLanguage} />
+      </div>
 
       <div className="content-wrapper">
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar}
-          mobileOpen={mobileOpen}
-          closeMobileMenu={closeMobileMenu}
-          darkMode={darkMode}
-        />
+        <div className={`sidebar-wrapper ${mobileOpen ? "mobile-open" : ""}`}>
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            toggleSidebar={toggleSidebar}
+            mobileOpen={mobileOpen}
+            closeMobileMenu={closeMobileMenu}
+            darkMode={darkMode}
+          />
+        </div>
 
         <div className="main-content">
           <button className="mobile-menu-button" onClick={openMobileMenu}>
@@ -491,10 +495,16 @@ export default function PersonalInfo() {
         </div>
       </div>
 
-      <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+      <div className="footer-wrapper">
+        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+      </div>
     </div>
   )
 }
+
+
+
+
 
 
 
