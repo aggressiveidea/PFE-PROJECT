@@ -78,7 +78,7 @@ export default function UpdateArticleForm({ article, onClose, onUpdate }) {
       ...article,
       title: formData.title,
       category: formData.category,
-      description: formData.description,
+      content: formData.description,
       languages: [formData.language],
       image: previewImage || article.image,
     };
