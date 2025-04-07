@@ -46,7 +46,7 @@ function Articlepage() {
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  
     const fetchArticles = async () => {
       setLoading(true); // Start loading
 
@@ -69,7 +69,9 @@ function Articlepage() {
         setLoading(false);
       }
     };
-
+  
+  useEffect( () =>
+  {
     fetchArticles();
   }, []);
 
@@ -117,37 +119,47 @@ function Articlepage() {
     if (canEdit) {
       setArticleToEdit( article );
       // Show form
-      setShowUpdateForm(true);
+      setShowUpdateForm( true );
     }
   };
 
-  const handleUpdateArticle = async (updatedArticle) => {
-    try {
-      const response = await updatearticle(updatedArticle._id, updatedArticle);
+ const handleUpdateArticle = async (updatedArticle) => {
+   try {
+     // Fetch the response
+     const response = await updatearticle(updatedArticle._id, updatedArticle);
 
-      if (!response.ok) {
-        throw new Error("Error updating article");
-      }
+     console.log( "type", typeof ( response ) );
+     console.log( "type", typeof ( response.success ) );
+     
+     if ( !response.success )
+     {
+       throw new Error("error in the delete ");
+     }
 
-      const updatedFromAPI = await response.json();
+     // Update the articles in the state
+     setArticles((prevArticles) =>
+       prevArticles.map((article) =>
+         article._id === updatedArticle._id ? updatedArticle : article
+       )
+     );
 
-      setArticles(
-        articles.map((article) =>
-          article._id === updatedFromAPI._id ? updatedFromAPI : article
-        )
-      );
+     // Close the update form and reset the article to edit
+     setShowUpdateForm(false);
+     setArticleToEdit(null);
 
-      setShowUpdateForm(false);
-      setArticleToEdit(null);
+     console.log("Successfully updated");
 
-      console.log("Successfully updated");
-    } catch (error) {
-      console.error("Error updating API:", error);
-    }
-  };
+     // Fetch the updated list of articles (if necessary)
+     fetchArticles();
+   } catch (error) {
+     console.error("Error updating API:", error);
+   }
+ };
+
+
 
   const handleDeleteArticle = async (id) => {
-    const article = articles.find((article) => article.id === id);
+  const article = articles.find((article) => article._id === id);
 
     console.log( "id of the article ", id );
     console.log("userid ", article.ownerId, user.id);
@@ -155,7 +167,10 @@ function Articlepage() {
       user.role === "Content-admin" ||
       ( user.role === "Ict-expert" && user.id === article.ownerId )
       
-    ) {
+    )
+    {
+      setArticles( articles.filter( ( article ) => article._id !== id ) );
+    
       try {
         const response = await deletearticle(id);
 
@@ -163,7 +178,7 @@ function Articlepage() {
           throw new Error("error in the delete ");
         }
 
-        setArticles(articles.filter((article) => article.id !== id));
+        
         console.log("successfully deleted ");
       } catch (error) {
         console.error(" Error fetching deleting API:", error);
