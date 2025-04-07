@@ -66,8 +66,10 @@ export default function ArticleCard({
 
   const canEdit =
     role === "Content-admin" ||
-    (role === "ict-expert" && user?.id === article.ownerId);
+    (role === "Ict-expert" && user._id === article.ownerId);
 
+   console.log("userid ", article.ownerId, user._id);
+   console.log("can edit ", canEdit);
   const canDelete = canEdit; // Puisque les permissions sont les mêmes
 
   console.log("onEdit defined?", typeof onEdit);

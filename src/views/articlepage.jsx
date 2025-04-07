@@ -112,9 +112,11 @@ function Articlepage() {
     const canEdit =
       user.role === "Content-admin" ||
       (user.role === "Ict-expert" && user.id === article.ownerId);
-
+    console.log( "userid ", article.ownerId, user.id );
+    console.log( "can edit ", canEdit)
     if (canEdit) {
-      setArticleToEdit(article); // Show form
+      setArticleToEdit( article );
+      // Show form
       setShowUpdateForm(true);
     }
   };
@@ -147,10 +149,12 @@ function Articlepage() {
   const handleDeleteArticle = async (id) => {
     const article = articles.find((article) => article.id === id);
 
-    console.log("id of the article ",id);
+    console.log( "id of the article ", id );
+    console.log("userid ", article.ownerId, user.id);
     if (
       user.role === "Content-admin" ||
-      (user.role === "Ict-expert" && user.id === article.ownerId)
+      ( user.role === "Ict-expert" && user.id === article.ownerId )
+      
     ) {
       try {
         const response = await deletearticle(id);

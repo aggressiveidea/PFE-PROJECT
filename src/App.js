@@ -37,7 +37,9 @@ function App() {
         <Route path="/articles" element={<Articlepage />}></Route>
         <Route path="/verification-success" element={<VerificationSuccess />}></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
-        <Route path="/notifs" element={<ContentAdminDashboard/>}></Route>
+        <Route path="/notifs" element={<ContentAdminDashboard />}></Route>
+        <Route path="/articles/:id" element={<ArticleDetail />} />
+
       </Routes>
     </Router>
   );
