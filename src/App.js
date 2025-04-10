@@ -18,7 +18,7 @@ import Articlepage from "./views/articlepage";
 //import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
 import UserProfile from "./components/forUserProfile/user-profile";
-import ContentAdminDashboard from "./views/ContentAdminDashboard";
+import ContentAdminDashboard from "./views/DashboardContentAdmin";
 function App() {
 //<Route path="/graph" element={<GraphVisualization />}></Route>
   return (

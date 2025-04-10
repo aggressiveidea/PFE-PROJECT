@@ -1,75 +1,83 @@
 "use client"
 
-import { Check, X, User, Calendar, Clock } from "lucide-react"
-import EmptyState from "./EmptyState"
+import "./ArticlePreview.css"
+import { User, Clock, Tag, CheckCircle, XCircle } from "lucide-react"
 
-export default function ArticlePreview({ article, onValidate, onReject, formatDate }) {
+function ArticlePreview({ article, onValidate, onReject }) {
   if (!article) {
     return (
-      <div className="no-article-selected">
-        <EmptyState
-          title="No Article Selected"
-          message="Select an article from the list to preview and validate its content"
-        />
+      <div className="article-preview-empty">
+        <div className="article-preview-placeholder">
+          <div className="placeholder-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <line x1="10" y1="9" x2="8" y2="9" />
+            </svg>
+          </div>
+          <p className="placeholder-text">Select an article to preview</p>
+        </div>
       </div>
     )
   }
 
-  const formattedDate = formatDate ? formatDate(article.createdAt) : new Date(article.createdAt).toLocaleDateString()
-
-  const handleValidate = () => {
-    if (onValidate) onValidate(article._id)
-  }
-
-  const handleReject = () => {
-    if (onReject) onReject(article._id)
-  }
-
   return (
     <div className="article-preview">
-      <div className="article-preview-header">
-        <div>
-          <span className="article-category-tag">{article.category || "Uncategorized"}</span>
-          <h2 className="article-preview-title">{article.title || "Untitled Article"}</h2>
-          <div className="article-preview-meta">
-            <div className="meta-item">
-              <User size={14} />
-              <span>Submitted by {article.authorName || "Unknown Author"}</span>
-            </div>
-            <div className="meta-item">
-              <Calendar size={14} />
-              <span>{formattedDate}</span>
-            </div>
-            <div className="meta-item">
-              <Clock size={14} />
-              <span>Awaiting approval</span>
-            </div>
+      <div className="article-card">
+        <h3 className="article-title">{article.title}</h3>
+
+        <div className="article-meta">
+          <div className="article-meta-item">
+            <User size={16} />
+            <span>{article.userName}</span>
           </div>
+          <div className="article-meta-item">
+            <Clock size={16} />
+            <span>2 hours ago</span>
+          </div>
+          {article.category && (
+            <div className="article-meta-item">
+              <Tag size={16} />
+              <span>{article.category}</span>
+            </div>
+          )}
         </div>
+
+        {article.image && (
+          <div className="article-image-container">
+            <img src={article.image || "/placeholder.svg"} alt={article.title} className="article-image" />
+          </div>
+        )}
+
+        <div className="article-content">
+          <p>{article.text}</p>
+        </div>
+
         <div className="article-actions">
-          <button className="reject-button" onClick={handleReject} title="Reject this article">
-            <X size={16} />
+          <button className="btn-approve" onClick={() => onValidate(article)}>
+            <CheckCircle size={16} />
+            <span>Approve</span>
+          </button>
+          <button className="btn-reject" onClick={() => onReject(article)}>
+            <XCircle size={16} />
             <span>Reject</span>
           </button>
-          <button className="validate-button" onClick={handleValidate} title="Approve and publish this article">
-            <Check size={16} />
-            <span>Approve & Publish</span>
-          </button>
         </div>
-      </div>
-
-      {article.imageUrl && (
-        <div className="article-preview-image">
-          <img src={article.imageUrl || "/placeholder.svg"} alt={article.title || "Article image"} />
-        </div>
-      )}
-
-      <div className="article-preview-content">
-        {article.description && <p className="article-preview-description">{article.description}</p>}
-        <div className="article-preview-body">{article.content || "No content available"}</div>
       </div>
     </div>
   )
 }
 
-
+export default ArticlePreview

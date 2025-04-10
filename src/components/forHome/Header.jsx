@@ -3,15 +3,38 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import "./Header.css"
-import { translations } from "../../utils/translations"
 import { getUserById } from "../../services/Api"
 
-const Header = ({ language, setLanguage, darkMode }) => {
+// Default translations as a fallback
+const defaultTranslations = {
+  en: {
+    home: "Home",
+    about: "About",
+    explore: "Explore",
+    contact: "Contact",
+  },
+  fr: {
+    home: "Accueil",
+    about: "À propos",
+    explore: "Explorer",
+    contact: "Contact",
+  },
+  ar: {
+    home: "الرئيسية",
+    about: "حول",
+    explore: "استكشاف",
+    contact: "اتصل بنا",
+  },
+}
+
+const Header = ({ language = "en", setLanguage, darkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const t = translations[language]
+  // Use imported translations if available, otherwise use default
+  const translations = window.translations || defaultTranslations
+  const t = translations[language] || translations.en
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -465,6 +488,7 @@ const Header = ({ language, setLanguage, darkMode }) => {
 }
 
 export default Header
+
 
 
 

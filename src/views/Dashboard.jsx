@@ -101,13 +101,11 @@ export default function Dashboard() {
     fetchDashboardData()
   }, [])
 
-  // Helper function to get color for pie chart
   const getColorForIndex = (index) => {
     const colors = ["#4f46e5", "#7c3aed", "#a855f7", "#d946ef", "#ec4899", "#f43f5e", "#8b5cf6", "#6366f1"]
     return colors[index % colors.length]
   }
 
-  // Helper function to convert month number to name
   const getMonthName = (monthNum) => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     return months[monthNum - 1] || `Month ${monthNum}`
@@ -115,7 +113,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      {/* Mobile menu button */}
       <button className="mobile-menu-button" onClick={toggleMobileMenu}>
         <Menu size={24} />
       </button>
@@ -136,7 +133,7 @@ export default function Dashboard() {
         </div>
 
         <div className="dashboard-content fade-in">
-          <WelcomeSection />
+          <WelcomeSection role={"admin"} />
           <StatisticsSection data={statsData} loading={loading} />
           <ChartsSection countryData={countryData} activityData={activityData} loading={loading} />
         </div>

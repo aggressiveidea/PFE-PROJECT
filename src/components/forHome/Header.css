@@ -15,6 +15,9 @@
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-border: rgba(239, 68, 68, 0.2);
   --danger-hover-bg: rgba(239, 68, 68, 0.15);
+  --primary-color: #7c3aed;
+  --primary-color-hover: #6d28d9;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark mode variables */
@@ -29,6 +32,9 @@
   --danger-bg: rgba(255, 0, 0, 0.15);
   --danger-border: rgba(255, 0, 0, 0.3);
   --danger-hover-bg: rgba(255, 0, 0, 0.25);
+  --primary-color: #8b5cf6;
+  --primary-color-hover: #7c3aed;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .header {
@@ -38,10 +44,11 @@
   width: 100%;
   z-index: 1000;
   background-color: var(--header-bg);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   height: 60px;
   border-bottom: 1px solid var(--header-border);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .header-container {
@@ -112,15 +119,17 @@
   color: var(--text-muted);
   font-weight: 500;
   font-size: 0.9375rem;
-  transition: color var(--transition-speed);
+  transition: color var(--transition-speed), transform 0.2s ease;
   position: relative;
   height: 100%;
   display: flex;
   align-items: center;
+  padding: 0 4px;
 }
 
 .main-nav a:hover {
-  color: var(--text-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .main-nav a::after {
@@ -178,6 +187,7 @@
 .language-select:hover {
   background-color: var(--hover-bg-stronger);
   border-color: var(--header-border);
+  transform: translateY(-1px);
 }
 
 .language-select:focus {
@@ -208,6 +218,14 @@
   border-radius: 18px;
   padding: 2px 16px 2px 2px;
   height: 36px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.user-info:hover {
+  border-color: var(--primary-color);
+  background-color: var(--hover-bg-stronger);
+  transform: translateY(-1px);
 }
 
 .user-avatar {
@@ -276,6 +294,8 @@
 .btn-logout:hover {
   background-color: var(--danger-hover-bg);
   border-color: var(--danger-border);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
 }
 
 /* Auth Buttons */
@@ -302,6 +322,28 @@
   background: var(--primary-gradient);
   color: white;
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-signup::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-signup:hover::before {
+  left: 100%;
 }
 
 .btn-login {
@@ -311,13 +353,15 @@
 }
 
 .btn-signup:hover {
-  opacity: 0.9;
+  opacity: 0.95;
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(147, 51, 234, 0.2);
 }
 
 .btn-login:hover {
   background: var(--hover-bg);
-  border-color: var(--header-border);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 /* Loading indicator */
@@ -360,11 +404,16 @@
 
 .mobile-menu {
   display: none;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
   background-color: var(--header-bg);
   border-top: 1px solid var(--header-border);
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  z-index: 999;
 }
 
 .mobile-nav ul {
@@ -391,7 +440,7 @@
 
 .mobile-nav a:hover {
   background-color: var(--hover-bg);
-  color: var(--text-color);
+  color: var(--primary-color);
 }
 
 .mobile-nav svg {
@@ -403,26 +452,20 @@
     display: flex;
   }
 
-  .nav-section,
+  .nav-section {
+    display: none;
+  }
+
+  .header-container.menu-open + .mobile-menu {
+    display: block;
+  }
+
   .user-section {
     display: none;
   }
 
-  .header-container.menu-open .mobile-menu {
-    display: block;
-  }
-
-  .header-container.menu-open {
-    flex-direction: column;
-    align-items: flex-start;
-    height: auto;
-    padding-bottom: 20px;
-  }
-
-  .header-container.menu-open .logo-section {
-    width: 100%;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  .mobile-menu .language-select-container {
+    margin-top: 16px;
   }
 
   .mobile-menu .language-select {
