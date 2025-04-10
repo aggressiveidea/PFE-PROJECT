@@ -20,11 +20,11 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         const userString = localStorage.getItem("user")
         if (userString) {
           const userData = JSON.parse(userString)
-          setIsAdmin(userData.role === "admin")
-          setIsContentAdmin(userData.role === "content-admin" || userData.role === "admin")
+          setIsAdmin(userData.role === "Admin")
+          setIsContentAdmin(userData.role === "Content-admin" || userData.role === "Admin")
 
           // If user is content admin, check for pending articles
-          if (userData.role === "content-admin" || userData.role === "admin") {
+          if (userData.role === "Content-admin" || userData.role === "admin") {
             const pendingArticlesData = JSON.parse(localStorage.getItem("pendingArticles") || "[]")
             setPendingArticles(pendingArticlesData.length)
           }
