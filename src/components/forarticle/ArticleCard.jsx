@@ -1,233 +1,447 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback,useMemo } from "react";
+import { Heart, Share2, Edit, Trash, User, Calendar, Globe } from "lucide-react";
 import "./article-card.css";
+import { getUserById } from "../../services/Api";
 
-// Define the category colors
-const categoryColors = {
-  "Contrats informatiques": { bg: "bg-blue-100", text: "text-blue-600" },
-  "Criminalité informatique": { bg: "bg-purple-100", text: "text-purple-600" },
-  "Données personnelles": { bg: "bg-green-100", text: "text-green-600" },
-  Organisations: { bg: "bg-pink-100", text: "text-pink-600" },
-  "Propriété intellectuelle": { bg: "bg-orange-100", text: "text-orange-600" },
-  Réseaux: { bg: "bg-indigo-100", text: "text-indigo-600" },
-  "Commerce électronique": { bg: "bg-indigo-100", text: "text-indigo-600" },
+// Define the category colors and icons
+const categoryMetadata = {
+  "Contrats informatiques": {
+    color: "#29ABE2",
+    icon: "📄", // Document icon
+  },
+  "Criminalité informatique": {
+    color: "#8E44AD",
+    icon: "🔒", // Lock icon
+  },
+  "Données personnelles": {
+    color: "#16A085",
+    icon: "🔐", // Locked with key icon
+  },
+  Organisations: {
+    color: "#E91E63",
+    icon: "🏢", // Building icon
+  },
+  "Propriété intellectuelle": {
+    color: "#F39C12",
+    icon: "©️", // Copyright icon
+  },
+  Réseaux: {
+    color: "#3498DB",
+    icon: "🌐", // Globe icon
+  },
+  "Commerce électronique": {
+    color: "#3498DB",
+    icon: "🛒", // Shopping cart icon
+  },
 };
 
-export default function ArticleCard({
-  article,
+export default function EnhancedArticleCard( {
+  article = {},
   isFavorite,
   onToggleFavorite,
   onEdit,
   onDelete,
+  language = "en",
 } )
 {
-  const user = JSON.parse( localStorage.getItem( "user" ) );
-  console.log( "user :",user.role  );
-  
-  const [isHovered, setIsHovered] = useState(false);
 
-  const handleCardClick = (e) => {
-    if (
-      e.target.closest(".action-button") ||
-      e.target.closest(".favorite-button") ||
-      e.target.closest(".share-button") ||
-      e.target.closest(".edit-button") ||
-      e.target.closest(".delete-button")
-    ) {
-      return;
-    }
-    window.location.href = `/articles/${article._id}`;
-  };
-
-  const handleEdit = (e) => {
-    e.stopPropagation();
-    if (onEdit) {
-      onEdit(article._id);
-    }
-  };
-
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    if ( onDelete )
+  // Get user from localStorage only once during component initialization
+  const user = useMemo( () =>
+  {
+    try
     {
-      onDelete(article._id);
+      return JSON.parse( localStorage.getItem( "user" ) || "{}" );
+    } catch ( e )
+    {
+      console.error( "Error parsing user from localStorage:", e );
+      return {};
     }
-  };
+  }, [] );
 
-  const role = user?.role; // Convertir en minuscule
+  const [ isHovered, setIsHovered ] = useState( false );
+  const [ animateCard, setAnimateCard ] = useState( false );
+  const [ imageError, setImageError ] = useState( false );
+  const [ ownerInfo, setOwnerInfo ] = useState( null );
+  const [ ownerImageError, setOwnerImageError ] = useState( false );
+  const [ showOwnerTooltip, setShowOwnerTooltip ] = useState( false );
+  const [ hoveredButton, setHoveredButton ] = useState( null );
 
-  //console.log("User role:", user?.role);
-  //console.log("Normalized role:", role);
-        console.log("delete", article._id);
+  // Memoize article ID and owner ID to prevent unnecessary re-renders
+  const articleId = useMemo( () => article?._id, [ article?._id ] );
+  const ownerId = useMemo( () => article?.ownerId, [ article?.ownerId ] );
+  const userId = useMemo( () => user?._id, [ user?._id ] );
 
-  console.log( 'article',article );
-  console.log( 'ownerId',article.ownerId );
+  useEffect(() => {
+    const fetchOwnerInfo = async () => {
 
-  const canEdit =
-    role === "Content-admin" ||
-    (role === "Ict-expert" && user._id === article.ownerId);
+      try {
+        const response = await getUserById(ownerId);
+        //console.log("Response received:", response);
 
-   console.log("userid ", article.ownerId, user._id);
-   console.log("can edit ", canEdit);
-  const canDelete = canEdit; // Puisque les permissions sont les mêmes
+        //console.log("", `${response.data.firstName || ''} ${response.data.lastName || ''}`.trim() );
+        //console.log("", response.data.profileImgUrl);
+         //console.log("", response.data.role);
+        if (response) {
+          setOwnerInfo({
+            name:
+              `${response.data.firstName || ''} ${response.data.lastName || ''}`.trim()||
+              "Unknown",
+            profilePic: response.data.profileImgUrl || null,
+            role: response.data.role || null,
+          });
+        } else {
+          console.warn("Owner not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching owner info:", error);
+      }
+    };
 
-  console.log("onEdit defined?", typeof onEdit);
+    fetchOwnerInfo();
+  }, [ownerId, ownerInfo]);
 
-  console.log( "Can Edit:", canEdit );
-  console.log( "Can Delete:", canDelete );
 
-  console.log("User object:", user);
+  // Format date if available
+  const formattedDate = useMemo( () =>
+  {
+    if ( !article?.createdAt ) return "2023-04-15"; // Default date for demo
+    try
+    {
+      return article.createdAt.slice( 0, 10 );
+    } catch ( e )
+    {
+      return "Date not avaible"; // Default date for demo
+    }
+  }, [ article?.createdAt ] );
+
+  // Extract year from date for hover effect
+  const createdYear = useMemo( () =>
+  {
+    if ( !formattedDate ) return "2023";
+    return formattedDate.split( "-" )[ 0 ];
+  }, [ formattedDate ] );
+
+  // Determine owner info only once when component mounts or when relevant props change
+  useEffect( () =>
+  {
+    // Start animation
+    setAnimateCard( true );
+
+    // Only set owner info if we don't already have it and if ownerId exists
+   
+  }, [
+    ownerId,
+    userId,
+    article.ownerName,
+    article.ownerPic,
+    article.ownerRole,
+    ownerInfo,
+    user.name,
+    user.username,
+    user.profilePic,
+    user.role,
+  ] );
+
+  //console.log( "owner ", ownerInfo );
+
+  const handleCardClick = useCallback(
+    ( e ) =>
+    {
+      if (
+        e.target.closest( ".action-button" ) ||
+        e.target.closest( ".favorite-button" ) ||
+        e.target.closest( ".share-button" ) ||
+        e.target.closest( ".edit-button" ) ||
+        e.target.closest( ".delete-button" ) ||
+        e.target.closest( ".owner-profile-link" )
+      )
+      {
+        return;
+      }
+      if ( articleId )
+      {
+        window.location.href = `/articles/${articleId}`;
+      }
+    },
+    [ articleId ]
+  );
+
+  const handleOwnerClick = useCallback(
+    ( e ) =>
+    {
+      e.stopPropagation();
+      // Instead of directly navigating, show a tooltip or handle differently
+      // This prevents navigation to a non-existent page
+      setShowOwnerTooltip( true );
+
+      // Hide tooltip after 3 seconds
+      setTimeout( () =>
+      {
+        setShowOwnerTooltip( false );
+      }, 3000 );
+
+      // You can uncomment this when the profile page is available
+      // if (ownerId) {
+      //   window.location.href = `/profile/${ownerId}`
+      // }
+
+      console.log( `View profile of user: ${ownerId}` );
+    },
+    [ ownerId ]
+  );
+
+  const handleEdit = useCallback(
+    ( e ) =>
+    {
+      e.stopPropagation();
+      if ( onEdit && articleId )
+      {
+        onEdit( articleId );
+      }
+    },
+    [ onEdit, articleId ]
+  );
+
+  const handleDelete = useCallback(
+    ( e ) =>
+    {
+      e.stopPropagation();
+      if ( onDelete && articleId )
+      {
+        onDelete( articleId );
+      }
+    },
+    [ onDelete, articleId ]
+  );
+
+  const handleShare = useCallback(
+    ( e ) =>
+    {
+      e.stopPropagation();
+      // Share functionality
+      if ( navigator.share && article )
+      {
+        navigator
+          .share( {
+            title: article.title || "Article",
+            text:
+              article.description ||
+              article.content ||
+              "Check out this article",
+            url: `/articles/${articleId}`,
+          } )
+          .catch( ( err ) => console.log( "Error sharing", err ) );
+      }
+    },
+    [ article, articleId ]
+  );
+
+  const handleToggleFav = useCallback(
+    ( e ) =>
+    {
+      e.stopPropagation();
+      if ( articleId && onToggleFavorite )
+      {
+        onToggleFavorite( articleId );
+      }
+    },
+    [ articleId, onToggleFavorite ]
+  );
+
+  const handleImageError = useCallback( () =>
+  {
+    console.log( "Image failed to load" );
+    setImageError( true );
+  }, [] );
+
+  const handleOwnerImageError = useCallback( () =>
+  {
+    setOwnerImageError( true );
+  }, [] );
+
+  // Memoize permission checks
+  const role = user?.role;
+  const canEdit = useMemo(
+    () =>
+      role === "Content-admin" || ( role === "Ict-expert" && userId === ownerId ),
+    [ role, userId, ownerId ]
+  );
+  const canDelete = canEdit;
+
+  // Get category metadata
+  const getCategoryColor = useCallback( ( category ) =>
+  {
+    return categoryMetadata[ category ]?.color || "#6c757d";
+  }, [] );
+
+  const getCategoryIcon = useCallback( ( category ) =>
+  {
+    return categoryMetadata[ category ]?.icon || "📋";
+  }, [] );
+
+ useEffect(() => {
+   if (ownerInfo?.profilePic) {
+     console.log("ProfilePic type:", typeof ownerInfo.profilePic);
+     console.log("ProfilePic value:", ownerInfo.profilePic.slice(0, 100));
+   }
+ }, [ownerInfo]);
 
   return (
     <div
-      className="article-card"
+      className={`library-card  }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
-      {/* Show category first */}
-      <div
-        className={`article-category ${categoryColors[article.category]?.bg} ${
-          categoryColors[article.category]?.text
-        }`}
-      >
-        {article.category}
+      <div className="card-header">
+        {article?.category && (
+          <div
+            className="card-category"
+            style={{
+              backgroundColor: `${getCategoryColor(article.category)}20`,
+              color: getCategoryColor(article.category),
+            }}
+          >
+            <div className="category-content">
+              <span className="category-icon-article">
+                {getCategoryIcon(article.category)}
+              </span>
+              <span>{article.category}</span>
+            </div>
+          </div>
+        )}
+        <div className="header-actions">
+          <button
+            onClick={handleShare}
+            className="action-button share-button-article"
+            aria-label="Share article"
+          >
+            <Share2 size={20} />
+          </button>
+          <button
+            onClick={handleToggleFav}
+            className={`favorite-button-article ${isFavorite ? "active" : ""}`}
+            aria-label={
+              isFavorite ? "Remove from favorites" : "Add to favorites"
+            }
+          >
+            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
+          </button>
+        </div>
       </div>
 
-      {/* Show title */}
-      <h3 className="article-title">{article.title}</h3>
-
-      {/* Show base64 image below title */}
-      {article.imageUrl && (
+      {/* Show base64 image below title with error handling */}
+      {article?.imageUrl && !imageError && (
         <div className="article-image-wrapper">
           <img
-            src={`data:image/jpeg;base64,${article.imageUrl}`} 
-            alt={article.title}
+            src={article.imageUrl}
+            alt={article.title || "Article image"}
             className="article-image"
+            onError={handleImageError}
           />
         </div>
       )}
 
-      {/* Show truncated description */}
-      <p className="article-description">
-        {article.content?.length > 100
-          ? `${article.content.substring(0, 100)}...`
-          : article.content}
-      </p>
+      
 
-      <div className="article-actions">
-        <div className="action-buttons-articlepage-first">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite(article._id);
-            }}
-            className={`action-button favorite-button ${
-              isFavorite ? "active" : ""
-            }`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill={isFavorite ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-          <button
-            className="action-button share-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Share functionality
-              if (navigator.share) {
-                navigator
-                  .share({
-                    title: article.title,
-                    text: article.description,
-                    url: `/articles/${article._id}`,
-                  })
-                  .catch((err) => console.log("Error sharing", err));
-              }
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-          </button>
-        </div>
-
-        {(canEdit || canDelete) && (
-          <div className="action-buttons-articlepage-second">
-            {canEdit && (
-              <button
-                onClick={handleEdit}
-                className="action-button edit-button"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </button>
-            )}
-            {canDelete && (
-              <button
-                onClick={handleDelete}
-                className="action-button delete-button"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-              </button>
+      {/* Owner information - now with tooltip instead of navigation */}
+      <div className="owner-profile-link" onClick={handleOwnerClick}>
+        <div className="owner-info">
+          <div className="owner-avatar">
+            {ownerInfo?.profilePic && !ownerImageError ? (
+              <img
+                src={ownerInfo.profilePic}
+                alt="Owner"
+                onError={handleOwnerImageError}
+              />
+            ) : (
+              <div className="avatar-placeholder">
+                <User size={16} />
+              </div>
             )}
           </div>
+          <div className="owner-details">
+            <span className="owner-name">
+              {ownerInfo?.name || article?.ownerName || "Unknown author"}
+            </span>
+            {(ownerInfo?.role || article?.role) && (
+              <span className="owner-role">
+                {ownerInfo?.role || article?.role}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Owner profile tooltip */}
+        {showOwnerTooltip && (
+          <div className="owner-tooltip">Profile feature coming soon!</div>
         )}
+      </div>
+      <h3 className="card-title-article">
+              {article?.title || "Untitled Article"}
+            </h3>
+      {/* Metadata section with language and date */}
+      <div className="article-metadata">
+        {article?.language && (
+          <div className="metadata-item language-item">
+            <Globe size={14} color="#3498db" />
+            <span>{article.language || "English"}</span>
+          </div>
+        )}
+        <div className="metadata-item date-item">
+          <Calendar size={14} color="#f100ed77" />
+          <span>Created: {formattedDate}</span>
+        </div>
+      </div>
+{/* Show truncated description with ellipsis */}
+      <p className="card-definition">
+        {article?.content?.length > 100
+          ? `${article.content.substring(0, 100)}...`
+          : article?.content || "No description available"}
+      </p>
+      <div className="card-footer">
+        <div className="admin-actions">
+          {/* Delete button first, then edit button */}
+          {(canEdit || canDelete) && (
+            <div className="article-actions">
+              {canDelete && (
+                <button
+                  onClick={handleDelete}
+                  className={`action-button delete-button ${
+                    hoveredButton === "delete" ? "hovered" : ""
+                  }`}
+                  onMouseEnter={() => setHoveredButton("delete")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  aria-label="Delete article"
+                >
+                  <Trash size={hoveredButton === "delete" ? 20 : 18} />
+                  {hoveredButton === "delete" && (
+                    <span className="button-label">Delete</span>
+                  )}
+                </button>
+              )}
+              {canEdit && (
+                <button
+                  onClick={handleEdit}
+                  className={`action-button edit-button ${
+                    hoveredButton === "edit" ? "hovered" : ""
+                  }`}
+                  onMouseEnter={() => setHoveredButton("edit")}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  aria-label="Edit article"
+                >
+                  <Edit size={hoveredButton === "edit" ? 20 : 18} />
+                  {hoveredButton === "edit" && (
+                    <span className="button-label">Edit</span>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
-
-
 }
