@@ -53,17 +53,19 @@ export default function AddArticleForm({ setArticles }) {
 
 const handleImageChange = (e) => {
   const file = e.target.files[0];
+  console.log("File selected:", file); // ✅ Confirm file presence
   if (!file) return;
 
   const reader = new FileReader();
   reader.onloadend = () => {
     setFormData((f) => ({
       ...f,
-      imageUrl: reader.result, // ✅ base64 ici
+      imageUrl: reader.result,
     }));
     setPreviewImage(reader.result);
+    console.log("Base64 Image:", reader.result); // ✅ Confirm Base64 is loaded
   };
-  reader.readAsDataURL(file); // ⬅️ encodage
+  reader.readAsDataURL(file);
 };
 
 
@@ -85,13 +87,16 @@ const handleImageChange = (e) => {
       category: formData.category,
       language: formData.language,
       content: formData.content,
-      ownerId: userId,
-      imageUrl: formData.imageUrl || null, 
+      ownerId: userId, 
+      
     };
-
+    if (formData.imageUrl) {
+            articleData.imageUrl = formData.imageUrl;
+          }
     try
     {
       const createdArticle = await addArticle( articleData ); 
+      console.log("lololololoooooooo", createdArticle);
       setArticles( ( prev ) => [ ...prev, createdArticle ] );
       setShowSuccess( true );
       setFormData({
@@ -99,8 +104,9 @@ const handleImageChange = (e) => {
         category: "",
         language: "English",
         content: "",
-        imageUrl: null,
+        imageUrl: "",
       });
+      
       setPreviewImage( null );
       setTimeout( () => setShowSuccess( false ), 3000 );
     } catch ( err )
@@ -204,7 +210,7 @@ const handleImageChange = (e) => {
                       className="remove-image-btn"
                       onClick={() => {
                         setPreviewImage(null);
-                        setFormData((f) => ({ ...f, imageUrl: null }));
+                        setFormData((f) => ({ ...f}));
                       }}
                     >
                       ×
