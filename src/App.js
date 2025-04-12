@@ -19,6 +19,7 @@ import Articlepage from "./views/articlepage";
 import VerificationSuccess from "./components/VerificationSuccess";
 import UserProfile from "./components/forUserProfile/user-profile";
 import ContentAdminDashboard from "./views/DashboardContentAdmin";
+
 function App() {
 //<Route path="/graph" element={<GraphVisualization />}></Route>
   return (
@@ -40,7 +41,7 @@ function App() {
         <Route path="/userProfile" element={<UserProfile />}></Route>
         <Route path="/notifs" element={<ContentAdminDashboard />}></Route>
         <Route path="/articles/:id" element={<ArticleDetail />} />
-
+        <Route path="/terms" element = {<SearchPage/>}></Route>
       </Routes>
     </Router>
   );

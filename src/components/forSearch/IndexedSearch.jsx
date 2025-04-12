@@ -61,7 +61,7 @@ const IndexedSearch = ({
                     {term.categories.map((category, index) => (
                       <div
                         key={index}
-                        className="term-category-chip"
+                        className="term-category-tag"
                         style={{
                           backgroundColor: getCategoryColor(category.name) + "20",
                           color: getCategoryColor(category.name),
@@ -91,4 +91,5 @@ const IndexedSearch = ({
 }
 
 export default IndexedSearch
+
 
