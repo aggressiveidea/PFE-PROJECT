@@ -18,10 +18,10 @@ import Articlepage from "./views/articlepage";
 //import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
 import UserProfile from "./components/forUserProfile/user-profile";
-import ContentAdminDashboard from "./views/DashboardContentAdmin";
-
+import ContentAdminDashboard from "./views/ContentAdminDashboard";
+import CategoriesExplorer from "./views/SearchInput";
 function App() {
-//<Route path="/graph" element={<GraphVisualization />}></Route>
+  //<Route path="/graph" element={<GraphVisualization />}></Route>
   return (
     <Router>
       <Routes>
@@ -36,8 +36,10 @@ function App() {
         <Route path="/login" element={<Signin />} />
         <Route path="/profile" element={<PersonalInfo />}></Route>
         <Route path="/articles" element={<Articlepage />}></Route>
-        <Route path="/articles/:id" element={<ArticleDetail />} />
-        <Route path="/verification-success" element={<VerificationSuccess />}></Route>
+        <Route
+          path="/verification-success"
+          element={<VerificationSuccess />}
+        ></Route>
         <Route path="/userProfile" element={<UserProfile />}></Route>
         <Route path="/notifs" element={<ContentAdminDashboard />}></Route>
         <Route path="/articles/:id" element={<ArticleDetail />} />
@@ -45,11 +47,6 @@ function App() {
       </Routes>
     </Router>
   );
-
 }
 
 export default App;
-
-
-
-

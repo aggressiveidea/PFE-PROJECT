@@ -1,4 +1,4 @@
-:root {
+/*:root {
   --color-dark: #221f25;
   --color-royal-blue: #2749d6;
   --color-white: #f8fbfe;
@@ -31,7 +31,7 @@
   --sidebar-collapsed-width: 80px;
 }
 
-/* Base Styles */
+/* Base Styles 
 .app-container {
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
   color: var(--text-light);
 }
 
-/* Header styles */
+/* Header styles 
 .header-wrapper {
   position: fixed;
   top: 0;
@@ -63,14 +63,14 @@
   border-bottom-color: #45475a;
 }
 
-/* Main content area with sidebar and content */
+/* Main content area with sidebar and content 
 .content-wrapper {
   display: flex;
   flex: 1;
   margin-top: var(--header-height);
 }
 
-/* Sidebar styles */
+/* Sidebar styles
 .sidebar-wrapper {
   width: var(--sidebar-width);
   min-width: var(--sidebar-width);
@@ -93,7 +93,7 @@
   min-width: var(--sidebar-collapsed-width);
 }
 
-/* Main content styles */
+/* Main content styles 
 .main-content {
   flex: 1;
   background-color: var(--background-light);
@@ -107,7 +107,7 @@
   background-color: var(--background-dark);
 }
 
-/* Footer styles */
+/* Footer styles 
 .footer-wrapper {
   background-color: var(--color-white);
   transition: background-color var(--transition-speed);
@@ -123,7 +123,7 @@
   border-top-color: #45475a;
 }
 
-/* Mobile menu button */
+/* Mobile menu button 
 .mobile-menu-button {
   display: none;
   position: absolute;
@@ -150,7 +150,7 @@
   text-align: right;
 }
 
-/* Header Styles */
+/* Header Styles 
 .library-header {
   margin-bottom: 2rem;
   position: relative;
@@ -194,7 +194,7 @@
   color: #94a3b8;
 }
 
-/* Tabs Styles */
+/* Tabs Styles 
 .library-tabs {
   display: flex;
   gap: 1rem;

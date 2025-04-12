@@ -259,6 +259,9 @@ const ArticleDetail = () => {
             </svg>
             <span>Share</span>
           </button>
+          <button className="action-button add-button" onClick={handleShare}>
+            <span>Add to Library </span>
+          </button>
         </div>
 
         {relatedArticles.length > 0 && (

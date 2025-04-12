@@ -451,24 +451,21 @@ body.dark-mode .article-content ol {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: 30px;
   border: none;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 120px;
   height: 45px;
-  -webkit-border-radius: 30px;
-  -moz-border-radius: 30px;
-  -ms-border-radius: 30px;
-  -o-border-radius: 30px;
+
 }
 
 .favorite-button {
   background-color: rgba(247, 37, 133, 0.1);
   color: #f72585;
   /*border-color:#f72585 ;*/
+  border-radius: 30px;
+  width: 120px;
   border-bottom: 1px solid rgba(31, 5, 148, 0.847);
 }
 
@@ -501,6 +498,8 @@ body.dark-mode .favorite-button.active {
 .share-button {
   background-color: rgba(67, 97, 238, 0.1);
   color: #4361ee;
+  border-radius: 30px;
+  width: 120px;
 }
 
 body.dark-mode .share-button {
@@ -563,7 +562,6 @@ body.dark-mode .share-button:hover {
 .share-button {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -571,6 +569,7 @@ body.dark-mode .share-button:hover {
   background-color: white;
   color: var(--text-medium);
   transition: all 0.3s ease;
+  width: 150px;
 }
 
 .share-button:hover {
@@ -588,6 +587,47 @@ body.dark-mode .share-button:hover {
   background-color: #0077b5;
   color: white;
   border-color: #0077b5;
+}
+
+.add-button {
+  background-color: rgba(100, 37, 247, 0.818);
+  color: #ffffff;
+  /*border-color:#f72585 ;
+
+  */
+  width: 200px;
+  border-bottom: 1px solid rgba(31, 5, 148, 0.847);
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+body.dark-mode .add-button {
+  background-color: rgba(247, 37, 133, 0.2);
+  color: #ff6eb5;
+  border-color:#f72585 ;
+}
+
+.add-button:hover {
+  background-color: rgba(247, 37, 133, 0.2);
+  border-color:#f72585 ;
+}
+
+body.dark-mode .add-button:hover {
+  background-color: rgba(247, 37, 133, 0.3);
+  border-color:#f72585 ;
+}
+
+.add-button.active {
+  background-color: #f72585;
+  color: white;
+}
+
+body.dark-mode .add-button.active {
+  background-color: #ff6eb5;
+  color: #ff0080;
 }
 
 .share-button.email:hover {

@@ -12,7 +12,6 @@ import "../components/forarticle/globals.css";
 import Header from "../components/forHome/Header";
 
 
-
 import { getallarticles } from "../services/Api";
 import { deletearticle } from "../services/Api";
 import { updatearticle } from "../services/Api";
@@ -57,7 +56,8 @@ function Articlepage() {
         console.log("Response received:", response);
 
         if (response && Array.isArray(response)) {
-          setArticles(response);
+          setArticles( response );
+          
           setAlertMessage("Articles loaded successfully!");
         } else {
           setAlertMessage("No articles found.");
@@ -73,6 +73,7 @@ function Articlepage() {
   useEffect( () =>
   {
     fetchArticles();
+
   }, []);
 
   const scrollToSection = (ref) => {
