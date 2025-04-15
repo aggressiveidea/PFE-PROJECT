@@ -9,108 +9,22 @@ import IndexedSearch from "../components/forSearch/IndexedSearch"
 import GraphSearch from "../components/forSearch/GraphSearch"
 import ClassicSearch from "../components/forSearch/ClassicSearch"
 import GraphAlgorithms from "../components/forSearch/GraphAlgorithms"
+import { classicSearch, indexedSearch, graphSearch, runGraphAlgorithm, getAllterms } from "../services/Api"
 import "./SearchPage.css"
 
-// Sample data based on the provided JSON structure
-const termsData = [
-  {
-    id: "1",
-    name: "Abonné",
-    categories: [
-      {
-        name: "Données personnelles",
-        principal_definition: {
-          text: "Toute personne physique ou morale qui a conclu un contrat avec le prestataire de services de télécommunications accessibles au public en vue de la fourniture de tels services",
-          reference: "Directive 97/66/CE",
-        },
-      },
-      {
-        name: "Commerce électronique",
-        principal_definition: {
-          text: "Veut dire une personne qui est le sujet nommé ou identifié dans un certificat qui lui a été délivré et qui tient une clé privée qui correspond à une clé publique énumérée dans ce certificat",
-          reference: "Loi sur les transactions électroniques 1998 Singapour",
-        },
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Abréviation",
-    categories: [
-      {
-        name: "Commerce électronique",
-        principal_definition: {
-          text: "Version raccourcie d'un message. Les fonctions de hachage permettent de générer des abréviations qui peuvent servir à vérifier leur intégrité ou, cryptées, peuvent servir de signature électronique",
-          reference: null,
-        },
-      },
-    ],
-    relations: ["message digest", "condensat checksum"],
-  },
-  {
-    id: "3",
-    name: "Accès",
-    categories: [
-      {
-        name: "Réseaux",
-        principal_definition: {
-          text: "Possibilité d'utiliser les ressources d'un système informatique, d'y introduire des données ou d'en extraire des données",
-          reference: "ISO/IEC 2382-1:1993",
-        },
-      },
-    ],
-  },
-  {
-    id: "4",
-    name: "Adresse IP",
-    categories: [
-      {
-        name: "Réseaux",
-        principal_definition: {
-          text: "Numéro qui identifie chaque expéditeur ou récepteur de paquets d'information qui circulent sur Internet",
-          reference: "RFC 791",
-        },
-      },
-    ],
-  },
-  {
-    id: "5",
-    name: "Algorithme",
-    categories: [
-      {
-        name: "Données personnelles",
-        principal_definition: {
-          text: "Ensemble de règles opératoires dont l'application permet de résoudre un problème énoncé au moyen d'un nombre fini d'opérations",
-          reference: "ISO 2382-1:1993",
-        },
-      },
-    ],
-  },
-]
+// Mock data for initial render
+const initialTermsData = []
 
-const sampleGraphData = {
-  nodes: [
-    { id: "1", label: "Abonné", color: "#4285F4" },
-    { id: "2", label: "Abréviation", color: "#EA4335" },
-    { id: "3", label: "Accès", color: "#FBBC05" },
-    { id: "4", label: "Adresse IP", color: "#FBBC05" },
-    { id: "5", label: "Algorithme", color: "#4285F4" },
-    { id: "6", label: "Message digest", color: "#EA4335" },
-    { id: "7", label: "Condensat checksum", color: "#EA4335" },
-  ],
-  edges: [
-    { from: "1", to: "3", label: "utilise" },
-    { from: "2", to: "6", label: "est un" },
-    { from: "2", to: "7", label: "est un" },
-    { from: "3", to: "4", label: "requiert" },
-    { from: "5", to: "2", label: "génère" },
-  ],
+const initialGraphData = {
+  nodes: [],
+  edges: [],
 }
 
 const categoryTranslations = {
   "Données personnelles": "Personal Data",
   "Commerce électronique": "E-commerce",
   Réseaux: "Networks",
+  "Criminalité informatique": "Cybercrime",
 }
 
 const getCategoryColor = (categoryName) => {
@@ -118,6 +32,7 @@ const getCategoryColor = (categoryName) => {
     "Données personnelles": "#4285F4",
     "Commerce électronique": "#EA4335",
     Réseaux: "#FBBC05",
+    "Criminalité informatique": "#34A853",
     "Com.élec.": "#4285F4",
     "Con.info.": "#EA4335",
     "Crim.info.": "#FBBC05",
@@ -137,17 +52,67 @@ export default function SearchPage() {
   const [darkMode, setDarkMode] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [graphData, setGraphData] = useState(sampleGraphData)
+  const [graphData, setGraphData] = useState(initialGraphData)
   const [algorithmResults, setAlgorithmResults] = useState(null)
   const [language, setLanguage] = useState("en")
+  const [terms, setTerms] = useState(initialTermsData)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  // Load dark mode from localStorage on component mount
+  // Load initial data
   useEffect(() => {
     const storedTheme = localStorage.getItem("darkMode")
     if (storedTheme !== null) {
       setDarkMode(storedTheme === "true")
     }
+
+    // Fetch initial terms for the main page
+    fetchInitialTerms()
   }, [])
+
+  // Fetch initial terms
+  const fetchInitialTerms = async () => {
+    setIsLoading(true)
+    try {
+      const data = await getAllterms()
+
+      if (Array.isArray(data)) {
+        // Process terms to deduplicate categories for display in cards only
+        const processedTerms = data.map((term) => {
+          // Store the original categories for use in the details view
+          term.allCategories = term.categories ? [...term.categories] : []
+
+          // Create deduplicated categories for card display
+          if (term.categories && term.categories.length > 0) {
+            // Create a map to deduplicate categories by name
+            const uniqueCategories = new Map()
+
+            term.categories.forEach((category) => {
+              if (!uniqueCategories.has(category.name)) {
+                uniqueCategories.set(category.name, category)
+              }
+            })
+
+            // Convert map values back to array for display in cards
+            term.displayCategories = Array.from(uniqueCategories.values())
+          } else {
+            term.displayCategories = []
+          }
+          return term
+        })
+
+        setTerms(processedTerms)
+      } else {
+        console.error("Terms data is not an array:", data)
+        setError("Failed to load terms. Invalid data format.")
+      }
+    } catch (error) {
+      console.error("Error fetching initial terms:", error)
+      setError("Failed to load initial terms. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode.toString())
@@ -174,88 +139,207 @@ export default function SearchPage() {
     setSelectedSearchType(type)
   }
 
-  const handleSearch = (term) => {
+  const handleSearch = async (term) => {
     setSearchTerm(term)
+    try {
+      if (term.trim() !== "") {
+        setIsLoading(true)
+        const results = await classicSearch(term, 1, 8)
+        if (Array.isArray(results)) {
+          // Process results to deduplicate categories for display in cards only
+          const processedResults = results.map((term) => {
+            // Store the original categories for use in the details view
+            term.allCategories = term.categories ? [...term.categories] : []
+
+            // Create deduplicated categories for card display
+            if (term.categories && term.categories.length > 0) {
+              // Create a map to deduplicate categories by name
+              const uniqueCategories = new Map()
+
+              term.categories.forEach((category) => {
+                if (!uniqueCategories.has(category.name)) {
+                  uniqueCategories.set(category.name, category)
+                }
+              })
+
+              // Convert map values back to array for display in cards
+              term.displayCategories = Array.from(uniqueCategories.values())
+            } else {
+              term.displayCategories = []
+            }
+            return term
+          })
+
+          setTerms(processedResults)
+        } else {
+          console.error("Search results are not an array:", results)
+          setError("Invalid search results format")
+        }
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error("Search error:", error)
+      setError("Failed to perform search. Please try again.")
+      setIsLoading(false)
+    }
   }
 
-  const handleLetterSelect = (letter) => {
+  const handleLetterSelect = async (letter) => {
     setSelectedLetter(letter)
-  }
+    try {
+      setIsLoading(true)
+      const results = await indexedSearch(letter, 1, 8)
+      if (Array.isArray(results)) {
+        // Process results to deduplicate categories for display in cards only
+        const processedResults = results.map((term) => {
+          // Store the original categories for use in the details view
+          term.allCategories = term.categories ? [...term.categories] : []
 
-  const handleTermSelect = (term) => {
-    setSelectedTerm(term)
-  }
+          // Create deduplicated categories for card display
+          if (term.categories && term.categories.length > 0) {
+            // Create a map to deduplicate categories by name
+            const uniqueCategories = new Map()
 
-  const handleApplyAlgorithm = (algorithmId, results) => {
-    setAlgorithmResults(results)
-
-    // Update graph visualization based on algorithm results
-    let updatedNodes = [...graphData.nodes]
-    let updatedEdges = [...graphData.edges]
-
-    switch (algorithmId) {
-      case "dijkstra":
-
-        updatedNodes = updatedNodes.map((node) => {
-          if (results.path.includes(node.label)) {
-            return { ...node, color: "#FF6B6B", borderWidth: 3 }
-          }
-          return { ...node, color: node.color, borderWidth: 1 }
-        })
-
-        updatedEdges = updatedEdges.map((edge) => {
-          const fromNode = updatedNodes.find((n) => n.id === edge.from)
-          const toNode = updatedNodes.find((n) => n.id === edge.to)
-
-          if (
-            fromNode &&
-            toNode &&
-            results.path.includes(fromNode.label) &&
-            results.path.includes(toNode.label) &&
-            results.path.indexOf(fromNode.label) === results.path.indexOf(toNode.label) - 1
-          ) {
-            return { ...edge, color: "#FF6B6B", width: 3 }
-          }
-          return { ...edge, color: undefined, width: 1 }
-        })
-        break
-
-      case "pagerank":
-      case "betweenness-centrality":
-      case "closeness-centrality":
-        // Adjust node sizes based on importance scores
-        updatedNodes = updatedNodes.map((node) => {
-          const rankNode = results.topNodes.find((n) => n.name === node.label)
-          if (rankNode) {
-            return {
-              ...node,
-              size: 20 + rankNode.score * 30,
-              color: rankNode.score > 0.7 ? "#FF6B6B" : rankNode.score > 0.5 ? "#FFA500" : node.color,
-            }
-          }
-          return { ...node, size: 15 }
-        })
-        break
-
-      case "connected-components":
-        const componentColors = ["#FF6B6B", "#46BDC6", "#FFA500", "#7B61FF", "#34A853"]
-
-        updatedNodes = updatedNodes.map((node) => {
-          for (let i = 0; i < results.components.length; i++) {
-            if (results.components[i].nodes.includes(node.label)) {
-              return {
-                ...node,
-                color: componentColors[i % componentColors.length],
-                borderWidth: 2,
+            term.categories.forEach((category) => {
+              if (!uniqueCategories.has(category.name)) {
+                uniqueCategories.set(category.name, category)
               }
-            }
+            })
+
+            // Convert map values back to array for display in cards
+            term.displayCategories = Array.from(uniqueCategories.values())
+          } else {
+            term.displayCategories = []
           }
-          return node
+          return term
         })
-        break
+
+        setTerms(processedResults)
+      } else {
+        console.error("Indexed search results are not an array:", results)
+        setError("Invalid indexed search results format")
+      }
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Indexed search error:", error)
+      setError(`Failed to load terms for letter ${letter}. Please try again.`)
+      setIsLoading(false)
+    }
+  }
+
+  const handleTermSelect = async (term) => {
+    // Use the original categories (allCategories) for the details view if available
+    if (term.allCategories) {
+      term.categories = term.allCategories
     }
 
-    setGraphData({ nodes: updatedNodes, edges: updatedEdges })
+    setSelectedTerm(term)
+    try {
+      // If we're in graph search mode, fetch the graph data
+      if (selectedSearchType === "graphic") {
+        setIsLoading(true)
+        const results = await graphSearch(term.name, 2)
+        setGraphData(results)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error("Term selection error:", error)
+      setError("Failed to load graph data. Please try again.")
+      setIsLoading(false)
+    }
+  }
+
+  const handleApplyAlgorithm = async (algorithmId, params = {}) => {
+    if (!algorithmId) {
+      // Just clearing results
+      setAlgorithmResults(null)
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const results = await runGraphAlgorithm(algorithmId, params)
+      setAlgorithmResults(results)
+
+      // Update graph visualization based on algorithm results
+      let updatedNodes = [...graphData.nodes]
+      let updatedEdges = [...graphData.edges]
+
+      switch (algorithmId) {
+        case "dijkstra":
+          updatedNodes = updatedNodes.map((node) => {
+            if (results.path && results.path.includes(node.label)) {
+              return { ...node, color: "#FF6B6B", borderWidth: 3 }
+            }
+            return { ...node, color: node.color, borderWidth: 1 }
+          })
+
+          updatedEdges = updatedEdges.map((edge) => {
+            const fromNode = updatedNodes.find((n) => n.id === edge.from)
+            const toNode = updatedNodes.find((n) => n.id === edge.to)
+
+            if (
+              fromNode &&
+              toNode &&
+              results.path &&
+              results.path.includes(fromNode.label) &&
+              results.path.includes(toNode.label) &&
+              results.path.indexOf(fromNode.label) === results.path.indexOf(toNode.label) - 1
+            ) {
+              return { ...edge, color: "#FF6B6B", width: 3 }
+            }
+            return { ...edge, color: undefined, width: 1 }
+          })
+          break
+
+        case "pagerank":
+        case "betweenness-centrality":
+        case "closeness-centrality":
+          // Adjust node sizes based on importance scores
+          if (results.topNodes) {
+            updatedNodes = updatedNodes.map((node) => {
+              const rankNode = results.topNodes.find((n) => n.name === node.label)
+              if (rankNode) {
+                return {
+                  ...node,
+                  size: 20 + rankNode.score * 30,
+                  color: rankNode.score > 0.7 ? "#FF6B6B" : rankNode.score > 0.5 ? "#FFA500" : node.color,
+                }
+              }
+              return { ...node, size: 15 }
+            })
+          }
+          break
+
+        case "connected-components":
+          const componentColors = ["#FF6B6B", "#46BDC6", "#FFA500", "#7B61FF", "#34A853"]
+
+          if (results.components) {
+            updatedNodes = updatedNodes.map((node) => {
+              for (let i = 0; i < results.components.length; i++) {
+                if (results.components[i].nodes.includes(node.label)) {
+                  return {
+                    ...node,
+                    color: componentColors[i % componentColors.length],
+                    borderWidth: 2,
+                  }
+                }
+              }
+              return node
+            })
+          }
+          break
+      }
+
+      setGraphData({ nodes: updatedNodes, edges: updatedEdges })
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Algorithm error:", error)
+      setError("Failed to execute algorithm. Please try again.")
+      setIsLoading(false)
+    }
   }
 
   const renderSearchComponent = () => {
@@ -263,7 +347,7 @@ export default function SearchPage() {
       case "indexed":
         return (
           <IndexedSearch
-            terms={termsData}
+            terms={terms}
             selectedLetter={selectedLetter}
             onLetterSelect={handleLetterSelect}
             onTermSelect={handleTermSelect}
@@ -296,7 +380,7 @@ export default function SearchPage() {
       default:
         return (
           <ClassicSearch
-            terms={termsData}
+            terms={terms}
             onSearch={handleSearch}
             onTermSelect={handleTermSelect}
             categoryTranslations={categoryTranslations}
@@ -364,6 +448,9 @@ export default function SearchPage() {
           </div>
 
           <main className="search-page-content">
+            {isLoading && <div className="global-loading-indicator">Loading data...</div>}
+            {error && <div className="global-error-message">{error}</div>}
+
             <div className="search-page-search-container">{renderSearchComponent()}</div>
 
             {selectedTerm && (
@@ -379,28 +466,29 @@ export default function SearchPage() {
                   </button>
                 </div>
                 <div className="search-page-term-details-content">
-                  {selectedTerm.categories.map((category, index) => (
-                    <div key={index} className="search-page-term-category">
-                      <div
-                        className="search-page-term-category-header"
-                        style={{
-                          backgroundColor: getCategoryColor(category.name) + "20",
-                          color: getCategoryColor(category.name),
-                        }}
-                      >
-                        {categoryTranslations[category.name] || category.name}
+                  {selectedTerm.categories &&
+                    selectedTerm.categories.map((category, index) => (
+                      <div key={index} className="search-page-term-category">
+                        <div
+                          className="search-page-term-category-header"
+                          style={{
+                            backgroundColor: getCategoryColor(category.name) + "20",
+                            color: getCategoryColor(category.name),
+                          }}
+                        >
+                          {categoryTranslations[category.name] || category.name}
+                        </div>
+                        <div className="search-page-term-definition">
+                          <p>{category.principal_definition.text}</p>
+                          {category.principal_definition.reference && (
+                            <div className="search-page-term-reference">
+                              <Info size={14} />
+                              <span>{category.principal_definition.reference}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="search-page-term-definition">
-                        <p>{category.principal_definition.text}</p>
-                        {category.principal_definition.reference && (
-                          <div className="search-page-term-reference">
-                            <Info size={14} />
-                            <span>{category.principal_definition.reference}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
 
                   {selectedTerm.relations && selectedTerm.relations.length > 0 && (
                     <div className="search-page-term-relations">
@@ -428,3 +516,8 @@ export default function SearchPage() {
     </div>
   )
 }
+
+
+
+
+

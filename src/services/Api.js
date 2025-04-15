@@ -1,3 +1,4 @@
+
 export const registerUser = async (userData) => {
   try {
     const response = await fetch("http://localhost:5000/auth/register", {
@@ -14,6 +15,7 @@ export const registerUser = async (userData) => {
     throw error
   }
 }
+
 export const loginUser = async (email, password) => {
   try {
     const response = await fetch("http://localhost:5000/auth/login", {
@@ -57,6 +59,7 @@ export const getProfile = async (token) => {
     throw error
   }
 }
+
 export const getAllUsers = async () => {
   try {
     const response = await fetch("http://localhost:5000/user/all", {
@@ -76,6 +79,7 @@ export const getAllUsers = async () => {
     throw error
   }
 }
+
 export const getUserById = async (userId) => {
   try {
     // Get auth token from localStorage
@@ -106,6 +110,7 @@ export const getUserById = async (userId) => {
     throw error
   }
 }
+
 export const createUser = async (data) => {
   try {
     const response = await fetch("http://localhost:5000/user/", {
@@ -206,6 +211,7 @@ export const deleteUser = async (id) => {
     throw error
   }
 }
+
 export const updatepassword = async (id, data) => {
   try {
     const response = await fetch(`http://localhost:5000/user/${id}`, {
@@ -226,6 +232,7 @@ export const updatepassword = async (id, data) => {
     throw error
   }
 }
+
 export const resendVerificationEmail = async (email) => {
   try {
     const response = await fetch("http://localhost:5000/auth/resend-verification", {
@@ -242,6 +249,7 @@ export const resendVerificationEmail = async (email) => {
     throw error
   }
 }
+
 export const getallarticles = async () => {
   try {
     const response = await fetch(`http://localhost:5000/articles/`, {
@@ -262,6 +270,7 @@ export const getallarticles = async () => {
     throw error
   }
 }
+
 export const getArticleById = async (id) => {
   try {
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
@@ -282,6 +291,7 @@ export const getArticleById = async (id) => {
     throw error
   }
 }
+
 export const getarticlebytitle = async (title) => {
   try {
     const response = await fetch(`http://localhost:5000/articles/title?title=${title}`, {
@@ -302,6 +312,7 @@ export const getarticlebytitle = async (title) => {
     throw error
   }
 }
+
 export const getarticlebycat = async (category, limit) => {
   try {
     const response = await fetch(`http://localhost:5000/articles/category?category=${category}&limit=${limit}`, {
@@ -322,6 +333,7 @@ export const getarticlebycat = async (category, limit) => {
     throw error
   }
 }
+
 export const getarticlbBylang = async (language) => {
   try {
     const response = await fetch(`http://localhost:5000/articles/language?language=${language}`, {
@@ -342,10 +354,11 @@ export const getarticlbBylang = async (language) => {
     throw error
   }
 }
+
 export const addArticle = async (data) => {
   try {
-    const token = localStorage.getItem("token");
-    console.log( data );// Debugging
+    const token = localStorage.getItem("token")
+    console.log(data) // Debugging
 
     const response = await fetch("http://localhost:5000/articles/", {
       method: "POST",
@@ -354,18 +367,19 @@ export const addArticle = async (data) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data), // Sending FormData
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to add article");
+      throw new Error("Failed to add article")
     }
 
-    return await response.json();
+    return await response.json()
   } catch (error) {
-    console.error("❌ Error adding article:", error);
-    throw error;
+    console.error("❌ Error adding article:", error)
+    throw error
   }
-};
+}
+
 export const updatearticle = async (id, data) => {
   try {
     const token = localStorage.getItem("token")
@@ -389,6 +403,7 @@ export const updatearticle = async (id, data) => {
     throw error
   }
 }
+
 export const deletearticle = async (id) => {
   try {
     const token = localStorage.getItem("token")
@@ -398,11 +413,10 @@ export const deletearticle = async (id) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    } )
+    })
 
     if (!response.ok) {
-      throw new Error( "Failed to delete article" )
-      
+      throw new Error("Failed to delete article")
     }
 
     const res = await response.json()
@@ -412,6 +426,7 @@ export const deletearticle = async (id) => {
     throw error
   }
 }
+
 export const getTotalUsers = async (token) => {
   try {
     const response = await fetch("http://localhost:5000/admin/total", {
@@ -499,6 +514,7 @@ export const getUserActivityPerMonth = async (token) => {
     throw error
   }
 }
+
 export const updateUserRole = async (userId, newRole, token) => {
   try {
     if (!userId) {
@@ -514,7 +530,6 @@ export const updateUserRole = async (userId, newRole, token) => {
       Authorization: `Bearer ${token}`,
     }
 
-  
     const roleData = {
       role: newRole,
     }
@@ -522,7 +537,7 @@ export const updateUserRole = async (userId, newRole, token) => {
     console.log(`Sending role update request to http://localhost:5000/user/role/${userId} with role: ${newRole}`)
 
     const response = await fetch(`http://localhost:5000/user/role/${userId}`, {
-      method: "PATCH", 
+      method: "PATCH",
       headers: headers,
       body: JSON.stringify(roleData),
     })
@@ -548,6 +563,7 @@ export const updateUserRole = async (userId, newRole, token) => {
     }
   }
 }
+
 export const submitExpertApplication = async (applicationData) => {
   try {
     const response = await fetch("http://localhost:5000/user/submit", {
@@ -580,6 +596,192 @@ export const submitExpertApplication = async (applicationData) => {
   }
 }
 
+// Updated search functions in Api.js
 
+// Classic search function with pagination
+export const classicSearch = async (query, page = 1, limit = 8) => {
+  try {
+    // Build URL with query parameters
+    const url = new URL("http://localhost:3001/api/search/classic")
 
+    // Add query parameters
+    if (query) url.searchParams.append("query", query)
+    url.searchParams.append("page", page.toString())
+    url.searchParams.append("limit", limit.toString())
 
+    console.log("Fetching from:", url.toString())
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      console.error("Search API error:", response.status, response.statusText)
+      throw new Error("Failed to perform classic search")
+    }
+
+    const data = await response.json()
+
+    // Check if the response has the expected format
+    if (!data) {
+      console.error("Invalid search response format:", data)
+      return []
+    }
+
+    // Handle both array and object with results property
+    if (Array.isArray(data)) {
+      return data
+    } else if (data.results && Array.isArray(data.results)) {
+      return data.results
+    } else {
+      console.error("Unexpected response format:", data)
+      return []
+    }
+  } catch (error) {
+    console.error("Error in classic search:", error)
+    // Return empty array instead of throwing to prevent UI crashes
+    return []
+  }
+}
+
+// Indexed search with pagination
+export const indexedSearch = async (letter, page = 1, limit = 8) => {
+  try {
+    if (!letter || letter.length !== 1) {
+      console.error("Invalid letter parameter:", letter)
+      return []
+    }
+
+    // Build URL with query parameters
+    const url = new URL(`http://localhost:3001/api/search/indexed/${letter}`)
+    url.searchParams.append("page", page.toString())
+    url.searchParams.append("limit", limit.toString())
+
+    console.log("Fetching from:", url.toString())
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      console.error("Indexed search API error:", response.status, response.statusText)
+      throw new Error("Failed to perform indexed search")
+    }
+
+    const data = await response.json()
+
+    // Handle both array and object with results property
+    if (Array.isArray(data)) {
+      return data
+    } else if (data.results && Array.isArray(data.results)) {
+      return data.results
+    } else {
+      console.error("Unexpected response format:", data)
+      return []
+    }
+  } catch (error) {
+    console.error("Error in indexed search:", error)
+    // Return empty array instead of throwing to prevent UI crashes
+    return []
+  }
+}
+
+export const graphSearch = async (termName, depth = 2) => {
+  try {
+    if (!termName) {
+      console.error("Missing term name parameter")
+      return { nodes: [], edges: [] }
+    }
+
+    const url = new URL("http://localhost:3001/api/search/graph")
+    url.searchParams.append("term", termName)
+    url.searchParams.append("depth", depth.toString())
+
+    console.log("Fetching from:", url.toString())
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      console.error("Graph search API error:", response.status, response.statusText)
+      throw new Error("Failed to perform graph search")
+    }
+
+    const data = await response.json()
+
+    // Check if the response has the expected format
+    if (!data) {
+      console.error("Invalid graph search response format:", data)
+      return { nodes: [], edges: [] }
+    }
+
+    return {
+      nodes: data.nodes || [],
+      edges: data.links || [],
+    }
+  } catch (error) {
+    console.error("Error in graph search:", error)
+    // Return empty graph data instead of throwing to prevent UI crashes
+    return { nodes: [], edges: [] }
+  }
+}
+
+export const runGraphAlgorithm = async (algorithm, params = {}) => {
+  try {
+    if (!algorithm) {
+      console.error("Missing algorithm parameter")
+      throw new Error("Algorithm parameter is required")
+    }
+
+    const queryParams = new URLSearchParams(params).toString()
+    const url = `http://localhost:3001/api/search/algorithms/${algorithm}?${queryParams}`
+
+    console.log("Fetching from:", url)
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      console.error("algorithm API error:", response.status, response.statusText)
+      throw new Error(`failed to run algorithm: ${algorithm}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error(`Error running algorithm ${algorithm}:`, error)
+    throw error
+  }
+}
+export const getAllterms = async () => {
+  try {
+    const response = await fetch("http://localhost:3001/api/search/all", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("failed to fetch all terms")
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("error fetching terms:", error)
+    throw error
+  }
+}
