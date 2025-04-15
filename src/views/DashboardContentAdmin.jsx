@@ -1,155 +1,117 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { FileText, Eye, Search, Filter, SortDesc } from "lucide-react"
-import Header from "../components/forHome/Header"
-import Sidebar from "../components/forDashboard/Sidebar"
-import WelcomeSection from "../components/forDashboard/WelcomeSection"
-import AddArticleNotif from "../components/forContentAdmin/AddArticleNotif"
-import ArticlePreview from "../components/forContentAdmin/ArticlePreview"
-import "./DashboardContentAdmin.css"
-
-// Sample images - replace with your actual imports
-const image1 = "/placeholder.svg?height=200&width=200"
-const image2 = "/placeholder.svg?height=200&width=200"
-
-// Sample articles data
-const articlesData = [
-  {
-    id: 1,
-    title: "Understanding React Hooks",
-    text: "React Hooks are a powerful way to use state and lifecycle methods inside functional components. They allow you to reuse stateful logic between components without changing your component hierarchy. This article explores the most commonly used hooks like useState, useEffect, useContext, and more, with practical examples to help you understand how to implement them in your projects.",
-    image: image1,
-    userName: "Lamia Boughtofa",
-    notifImage: image1,
-    time: "2 hours ago",
-    category: "Frontend Development",
-  },
-  {
-    id: 2,
-    title: "Introduction to Node.js",
-    text: "Node.js is a runtime environment that allows developers to run JavaScript on the server side. It uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications. This article covers the basics of Node.js, how to set up your development environment, and build a simple API.",
-    image: image2,
-    userName: "Anissa Amari",
-    notifImage: image2,
-    time: "2 hours ago",
-    category: "Backend Development",
-  },
-  {
-    id: 3,
-    title: "Getting Started with GraphQL",
-    text: "GraphQL is a query language for your API that allows clients to request exactly the data they need. This article introduces the core concepts of GraphQL, explains how it differs from REST, and guides you through setting up a basic GraphQL server with Apollo Server.",
-    image: image2,
-    userName: "Anissa Amari",
-    notifImage: image2,
-    time: "2 hours ago",
-    category: "API Development",
-  },
-  {
-    id: 4,
-    title: "CSS Grid Layout: A Complete Guide",
-    text: "CSS Grid Layout is a two-dimensional layout system designed for the web. It lets you lay out items in rows and columns, and has many features that make building complex layouts straightforward. This comprehensive guide covers everything from basic concepts to advanced techniques.",
-    image: image2,
-    userName: "Anissa Amari",
-    notifImage: image2,
-    time: "2 hours ago",
-    category: "CSS",
-  },
-  {
-    id: 5,
-    title: "Introduction to Docker",
-    text: "Docker is a platform for developing, shipping, and running applications in containers. This article explains what containers are, how they differ from virtual machines, and walks you through creating your first Docker container.",
-    image: image2,
-    userName: "Amira feras",
-    notifImage: image2,
-    time: "2 hours ago",
-    category: "DevOps",
-  },
-]
+import { useState, useEffect } from "react";
+import { FileText, Eye, Search, Filter, SortDesc } from "lucide-react";
+import Header from "../components/forHome/Header";
+import Sidebar from "../components/forDashboard/Sidebar";
+import WelcomeSection from "../components/forDashboard/WelcomeSection";
+import AddArticleNotif from "../components/forContentAdmin/AddArticleNotif";
+import ArticlePreview from "../components/forContentAdmin/ArticlePreview";
+import "./DashboardContentAdmin.css";
+import { getUserById } from "../services/Api";
 
 export default function ContentAdminDashboard() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [darkMode, setDarkMode] = useState(false)
-  const [language, setLanguage] = useState("en")
-  const [selectedArticle, setSelectedArticle] = useState(null)
-  const [articles, setArticles] = useState(articlesData)
-  const [articleStatuses, setArticleStatuses] = useState({})
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filterCategory, setFilterCategory] = useState("all")
-  const [sortOrder, setSortOrder] = useState("newest")
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("en");
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [articles, setArticles] = useState([]);
+  const [articleStatuses, setArticleStatuses] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [sortOrder, setSortOrder] = useState("newest");
 
-  // Check system preference for dark mode
+  // Set dark mode based on system preference
   useEffect(() => {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-    setDarkMode(prefersDark)
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setDarkMode(prefersDark);
+    if (prefersDark) document.body.classList.add("dark-mode");
+  }, []);
 
-    if (prefersDark) {
-      document.body.classList.add("dark-mode")
-    }
-  }, [])
-
-  // Toggle dark mode
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    if (darkMode) {
-      document.body.classList.remove("dark-mode")
-    } else {
-      document.body.classList.add("dark-mode")
-    }
-  }
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode");
+  };
 
-  // Filter and sort articles
+  useEffect(() => {
+    const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
+   
+    const fetchArticlesWithUsers = async () => {
+      const articlesWithUsers = await Promise.all(
+        storedArticles.map(async (article) => {
+          try
+          {
+            console.log( article );
+            console.log( article.ownerId );
+            const user = await getUserById(article.ownerId);
+            return {
+              ...article,
+              userName: `${user?.firstName || "Unknown"} ${
+                user?.lastName || ""
+              }`,
+            };
+          } catch (err) {
+            console.error("Error fetching user:", err);
+            return { ...article, userName: "Unknown User" };
+          }
+        })
+      );
+      setArticles(articlesWithUsers);
+    };
+
+    fetchArticlesWithUsers();
+  }, []);
+
+  // Get all unique categories for filter
+  const categories = ["all", ...new Set(articles.map((a) => a.category))];
+
   const filteredArticles = articles
     .filter((article) => {
-      // Search filter
       const matchesSearch =
         searchQuery === "" ||
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.category.toLowerCase().includes(searchQuery.toLowerCase())
+        article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.userName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.category?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Category filter
-      const matchesCategory = filterCategory === "all" || article.category === filterCategory
+      const matchesCategory =
+        filterCategory === "all" || article.category === filterCategory;
 
-      return matchesSearch && matchesCategory
+      return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
-      // Sort by newest/oldest
-      if (sortOrder === "newest") {
-        return new Date(b.time) - new Date(a.time)
-      } else {
-        return new Date(a.time) - new Date(b.time)
-      }
-    })
+      return sortOrder === "newest"
+        ? new Date(b.createdAt) - new Date(a.createdAt)
+        : new Date(a.createdAt) - new Date(b.createdAt);
+    });
 
-  // Function to handle article selection
   const handleReadArticle = (article) => {
-    setSelectedArticle(article)
-  }
+    setSelectedArticle(article);
+  };
 
-  // Function to validate an article
   const handleValidateArticle = (article) => {
     setArticleStatuses((prev) => ({
       ...prev,
-      [article.id]: "validated",
-    }))
-  }
+      [article._id]: "validated",
+    }));
+  };
 
-  // Function to reject an article
   const handleRejectArticle = (article) => {
     setArticleStatuses((prev) => ({
       ...prev,
-      [article.id]: "rejected",
-    }))
-  }
-
-  // Get all unique categories for filter
-  const categories = ["all", ...new Set(articles.map((article) => article.category))]
+      [article._id]: "rejected",
+    }));
+  };
 
   return (
     <div className={`content-admin-container ${darkMode ? "dark-mode" : ""}`}>
-      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
+      <Header
+        language={language}
+        setLanguage={setLanguage}
+        darkMode={darkMode}
+      />
 
       <Sidebar
         collapsed={sidebarCollapsed}
@@ -160,7 +122,11 @@ export default function ContentAdminDashboard() {
         toggleDarkMode={toggleDarkMode}
       />
 
-      <main className={`content-admin-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <main
+        className={`content-admin-main ${
+          sidebarCollapsed ? "sidebar-collapsed" : ""
+        }`}
+      >
         <div className="content-admin-wrapper">
           <div className="content-admin-header">
             <WelcomeSection role="Content-admin" />
@@ -215,27 +181,31 @@ export default function ContentAdminDashboard() {
                   <FileText size={18} />
                   New Articles
                 </h2>
-                <span className="content-admin-count">{filteredArticles.length}</span>
+                <span className="content-admin-count">
+                  {filteredArticles.length}
+                </span>
               </div>
 
               <div className="content-admin-articles-list">
                 {filteredArticles.length > 0 ? (
                   filteredArticles.map((article) => (
                     <div
-                      key={article.id}
+                      key={article._id}
                       className={`content-admin-article-card ${
-                        selectedArticle?.id === article.id ? "content-admin-article-selected" : ""
+                        selectedArticle?.id === article._id
+                          ? "content-admin-article-selected"
+                          : ""
                       }`}
                       onClick={() => handleReadArticle(article)}
                     >
                       <AddArticleNotif
-                        image={article.notifImage}
+                        image={article.imageUrl}
                         userName={article.userName}
-                        time={article.time}
+                        time={article.createdAt}
                         onReadArticle={() => handleReadArticle(article)}
                         onValidate={() => handleValidateArticle(article)}
                         onReject={() => handleRejectArticle(article)}
-                        status={articleStatuses[article.id]}
+                        status={articleStatuses[article._id]}
                         title={article.title}
                         category={article.category}
                       />
@@ -261,8 +231,16 @@ export default function ContentAdminDashboard() {
               <div className="content-admin-preview-wrapper">
                 <ArticlePreview
                   article={selectedArticle}
-                  onValidate={selectedArticle ? () => handleValidateArticle(selectedArticle) : null}
-                  onReject={selectedArticle ? () => handleRejectArticle(selectedArticle) : null}
+                  onValidate={
+                    selectedArticle
+                      ? () => handleValidateArticle(selectedArticle)
+                      : null
+                  }
+                  onReject={
+                    selectedArticle
+                      ? () => handleRejectArticle(selectedArticle)
+                      : null
+                  }
                 />
               </div>
             </section>
@@ -270,6 +248,5 @@ export default function ContentAdminDashboard() {
         </div>
       </main>
     </div>
-  )
+  );
 }
-

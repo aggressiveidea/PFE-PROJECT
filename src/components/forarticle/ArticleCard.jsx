@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback,useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, Share2, Edit, Trash, User, Calendar, Globe } from "lucide-react";
 import "./article-card.css";
 import { getUserById } from "../../services/Api";
@@ -38,12 +39,11 @@ const categoryMetadata = {
 };
 
 export default function EnhancedArticleCard( {
-  article = {},
+  article ,
   isFavorite,
   onToggleFavorite,
   onEdit,
   onDelete,
-  language = "en",
 } )
 {
 
@@ -67,15 +67,17 @@ export default function EnhancedArticleCard( {
   const [ ownerImageError, setOwnerImageError ] = useState( false );
   const [ showOwnerTooltip, setShowOwnerTooltip ] = useState( false );
   const [ hoveredButton, setHoveredButton ] = useState( null );
+  const navigate = useNavigate();
 
   // Memoize article ID and owner ID to prevent unnecessary re-renders
+  console.log("ownerrrrrrr", article.ownerId);
   const articleId = useMemo( () => article?._id, [ article?._id ] );
   const ownerId = useMemo( () => article?.ownerId, [ article?.ownerId ] );
   const userId = useMemo( () => user?._id, [ user?._id ] );
 
   useEffect(() => {
     const fetchOwnerInfo = async () => {
-
+      console.log( "owner",ownerId );
       try {
         const response = await getUserById(ownerId);
         //console.log("Response received:", response);
@@ -168,29 +170,27 @@ export default function EnhancedArticleCard( {
     [ articleId ]
   );
 
-  const handleOwnerClick = useCallback(
-    ( e ) =>
+const handleOwnerClick = useCallback(
+  (e) => {
+    e.stopPropagation();
+
+    setShowOwnerTooltip(true);
+
+    // Hide tooltip after 3 seconds
+    setTimeout(() => {
+      setShowOwnerTooltip(false);
+    }, 3000);
+
+    if ( ownerId )
     {
-      e.stopPropagation();
-      // Instead of directly navigating, show a tooltip or handle differently
-      // This prevents navigation to a non-existent page
-      setShowOwnerTooltip( true );
+      
+      navigate(`/userProfile?id=${ownerId}`);
+    }
 
-      // Hide tooltip after 3 seconds
-      setTimeout( () =>
-      {
-        setShowOwnerTooltip( false );
-      }, 3000 );
-
-      // You can uncomment this when the profile page is available
-      // if (ownerId) {
-      //   window.location.href = `/profile/${ownerId}`
-      // }
-
-      console.log( `View profile of user: ${ownerId}` );
-    },
-    [ ownerId ]
-  );
+    console.log(`View profile of user: ${ownerId}`);
+  },
+  [ownerId, navigate]
+);
 
   const handleEdit = useCallback(
     ( e ) =>
@@ -409,7 +409,7 @@ export default function EnhancedArticleCard( {
               {canDelete && (
                 <button
                   onClick={handleDelete}
-                  className={`action-button delete-button ${
+                  className={`delete-button-article ${
                     hoveredButton === "delete" ? "hovered" : ""
                   }`}
                   onMouseEnter={() => setHoveredButton("delete")}
@@ -425,7 +425,7 @@ export default function EnhancedArticleCard( {
               {canEdit && (
                 <button
                   onClick={handleEdit}
-                  className={`action-button edit-button ${
+                  className={`edit-button-article ${
                     hoveredButton === "edit" ? "hovered" : ""
                   }`}
                   onMouseEnter={() => setHoveredButton("edit")}

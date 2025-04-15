@@ -10,8 +10,9 @@ import { ThemeProvider } from "../components/forarticle/ThemeContext";
 import { useTheme } from "../components/forarticle/ThemeContext";
 import "../components/forarticle/globals.css";
 import Header from "../components/forHome/Header";
-
-
+import Trends from "../components/forarticle/TrendingTopics";
+import Topics from "../components/forarticle/SuggestTopic";
+import Authors from "../components/forarticle/TopCreators";
 import { getallarticles } from "../services/Api";
 import { deletearticle } from "../services/Api";
 import { updatearticle } from "../services/Api";
@@ -27,8 +28,12 @@ function Articlepage() {
   const [articles, setArticles] = useState([]);
   const [articleToEdit, setArticleToEdit] = useState(null);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
-  const [ favorites, setFavorites ] = useState( [] );
-  const [language, setLanguage] = useState("en");
+  const [favorites, setFavorites] = useState(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    return storedFavorites ? JSON.parse(storedFavorites) : [];
+  });
+  const [ language, setLanguage ] = useState( "en" );
+  const [index, setIndex] = useState(13);
 
   useEffect(() => {
     if (darkMode) {
@@ -43,7 +48,10 @@ function Articlepage() {
   const servicesRef = useRef(null);
 
   const [alertMessage, setAlertMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [ loading, setLoading ] = useState( true );
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
 
   
     const fetchArticles = async () => {
@@ -51,7 +59,7 @@ function Articlepage() {
 
       try {
         console.log("Fetching articles...");
-        const response = await getallarticles();
+        const response = await getallarticles(0);
 
         console.log("Response received:", response);
 
@@ -100,15 +108,20 @@ function Articlepage() {
         ctaButton.removeEventListener("mouseleave", () => {});
       }
     };
-  }, []);
+  }, [] );
+  
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   const toggleFavorite = (id) => {
-    if (favorites.includes(id)) {
-      setFavorites(favorites.filter((favId) => favId !== id));
-    } else {
-      setFavorites([...favorites, id]);
-    }
-  };
+  const updatedFavorites = favorites.includes(id)
+    ? favorites.filter((favId) => favId !== id)
+    : [...favorites, id];
+
+  setFavorites(updatedFavorites);
+  
+};
 
   const handleEditArticle = (id) => {
     const article = articles.find((article) => article._id === id);
@@ -186,7 +199,36 @@ function Articlepage() {
       }
     }
   };
+  const handleshowingmore = async () => {
+    setLoadingMore(true);
 
+    try {
+      console.log("please wait...");
+      const response = await getallarticles(index);
+
+      console.log("Response realoding :", response);
+
+      if (response && Array.isArray(response)) {
+        setArticles((prev) => [...prev, ...response]);
+        setIndex((prev) => prev + 12);
+
+        // 👇 If we got less than 12, then there's no more data
+        if (response.length === 0) {
+          setHasMore(false);
+        }
+
+        setAlertMessage("Articles loaded successfully!");
+      } else {
+        setHasMore(false); // No articles returned
+        setAlertMessage("No articles found.");
+      }
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      setAlertMessage("Error loading articles. Please try again.");
+    } finally {
+      setLoadingMore(false); // 👈 Don't forget to reset this!
+    }
+  };
   return (
     <div className={`app-container ${darkMode ? "dark-mode" : ""}`}>
       <Header
@@ -219,6 +261,9 @@ function Articlepage() {
           >
             Discover Articles
           </button>
+        </section>
+        <section className="trending-section">
+          <Trends />
         </section>
         <section ref={articlesRef} className="articles-section">
           <h1 className="section-title">Latest Articles</h1>
@@ -284,6 +329,15 @@ function Articlepage() {
                     />
                   ))}
               </div>
+              {hasMore && (
+                <button
+                  className="show-more"
+                  onClick={handleshowingmore}
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? "Loading..." : "Show More"}
+                </button>
+              )}
             </div>
           )}
         </section>
@@ -298,118 +352,12 @@ function Articlepage() {
             </div>
           </section>
         )}
-        <section ref={servicesRef} className="services-section">
-          <h2 className="section-title">Explore ICT Law Areas</h2>
-          <p className="section-subtitle">
-            Discover specialized legal domains in information and communication
-            technology
-          </p>
-          <div className="services-grid">
-            <div className="service-card">
-              <div className="service-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-primary-purple"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-              </div>
-              <h3>Cybersecurity</h3>
-              <p>Legal frameworks for digital security and breach prevention</p>
-            </div>
-            <div className="service-card">
-              <div className="service-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-primary-purple"
-                >
-                  <path d="M12 2s8 3 8 10v3.5C20 19 16.42 21 12 21s-8-2-8-5.5V12c0-7 8-10 8-10z"></path>
-                </svg>
-              </div>
-              <h3>Data Protection</h3>
-              <p>Regulations governing personal data and privacy rights</p>
-            </div>
-            <div className="service-card">
-              <div className="service-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-primary-purple"
-                >
-                  <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a2 2 0 1 1 0 4h-1a7 7 0 0 1-7 7h-1v1.27c.6.34 1 .99 1 1.73a2 2 0 0 1-4 0c0-.74.4-1.39 1-1.73V18h-1a7 7 0 0 1-7-7H2a2 2 0 1 1 0-4h1a7 7 0 0 1 7-7h1V4.27C10.4 3.93 10 3.26 10 2.5a2 2 0 0 1 2-2z"></path>
-                </svg>
-              </div>
-              <h3>AI Ethics</h3>
-              <p>
-                Ethical and legal considerations for artificial intelligence
-              </p>
-            </div>
-            <div className="service-card">
-              <div className="service-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-primary-purple"
-                >
-                  <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                  <line x1="6" y1="1" x2="6" y2="4"></line>
-                  <line x1="10" y1="1" x2="10" y2="4"></line>
-                  <line x1="14" y1="1" x2="14" y2="4"></line>
-                </svg>
-              </div>
-              <h3>Digital Rights</h3>
-              <p>Legal protections in the digital environment</p>
-            </div>
-          </div>
-
-          <div className="explore-button-container">
-            <a
-              href="#"
-              className="explore-main-button"
-              onClick={() => scrollToSection(articlesRef)}
-            >
-              Explore
-            </a>
-          </div>
+        
+        <section className="authors-section">
+          <Authors />
+        </section>
+        <section className="suggestiontopics-section">
+          <Topics />
         </section>
         {showUpdateForm && (
           <UpdateArticleForm

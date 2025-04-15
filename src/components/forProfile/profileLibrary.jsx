@@ -565,9 +565,18 @@ const ProfileLibrary = () => {
   }
 
   return (
-    <div className={`app-container ${darkMode ? "dark" : ""} ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+    <div
+      className={`app-container ${darkMode ? "dark" : ""} ${
+        sidebarCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
       <div className="header-wrapper">
-        <Header language={language} setLanguage={setLanguage} darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Header
+          language={language}
+          setLanguage={setLanguage}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
       </div>
 
       <div className="content-wrapper">
@@ -600,7 +609,11 @@ const ProfileLibrary = () => {
             </svg>
           </button>
 
-          <div className={`library-container ${currentLanguage === "ar" ? "rtl" : "ltr"}`}>
+          <div
+            className={`library-container ${
+              currentLanguage === "ar" ? "rtl" : "ltr"
+            }`}
+          >
             <div className="library-header">
               <h2 className="library-title">{getText("myLibrary")}</h2>
               <p className="library-subtitle">{getText("manageItems")}</p>
@@ -608,14 +621,18 @@ const ProfileLibrary = () => {
 
             <div className="library-tabs">
               <button
-                className={`tab-button ${activeTab === "terms" ? "active" : ""}`}
+                className={`tab-button ${
+                  activeTab === "terms" ? "active" : ""
+                }`}
                 onClick={() => setActiveTab("terms")}
               >
                 <span className="tab-icon terms-icon"></span>
                 {getText("legalTerms")}
               </button>
               <button
-                className={`tab-button ${activeTab === "articles" ? "active" : ""}`}
+                className={`tab-button ${
+                  activeTab === "articles" ? "active" : ""
+                }`}
                 onClick={() => setActiveTab("articles")}
               >
                 <span className="tab-icon articles-icon"></span>
@@ -672,17 +689,25 @@ const ProfileLibrary = () => {
 
                 {/* Sort options */}
                 <div className="filter-container">
-                  <select className="filter-select" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                  <select
+                    className="filter-select"
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                  >
                     <option value="dateNewest">{getText("dateNewest")}</option>
                     <option value="dateOldest">{getText("dateOldest")}</option>
-                    <option value="alphabetical">{getText("alphabetical")}</option>
+                    <option value="alphabetical">
+                      {getText("alphabetical")}
+                    </option>
                   </select>
                   <SlidersHorizontal className="filter-icon" size={16} />
                 </div>
 
                 {/* Favorites toggle */}
                 <button
-                  className={`favorites-toggle ${showFavoritesOnly ? "active" : ""}`}
+                  className={`favorites-toggle ${
+                    showFavoritesOnly ? "active" : ""
+                  }`}
                   onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                   aria-label={getText("favorites")}
                 >
@@ -691,7 +716,11 @@ const ProfileLibrary = () => {
                 </button>
 
                 {/* Reset filters */}
-                <button className="reset-filters-button" onClick={resetFilters} aria-label="Reset filters">
+                <button
+                  className="reset-filters-button"
+                  onClick={resetFilters}
+                  aria-label="Reset filters"
+                >
                   <RotateCcw size={16} />
                 </button>
               </div>
@@ -715,27 +744,40 @@ const ProfileLibrary = () => {
                     paginatedItems.map((item, index) => (
                       <div
                         key={item.id}
-                        className={`library-card ${animateItems ? "animate" : ""} ${
-                          expandedItemId === item.id ? "expanded" : ""
-                        }`}
+                        className={`library-card-bibio ${
+                          animateItems ? "animate" : ""
+                        } ${expandedItemId === item.id ? "expanded" : ""}`}
                         style={{ animationDelay: `${index * 0.05}s` }}
                       >
                         <div className="card-header">
                           <div
                             className="card-category"
                             style={{
-                              backgroundColor: `${categoryMetadata[item.category]?.color}20`,
+                              backgroundColor: `${
+                                categoryMetadata[item.category]?.color
+                              }20`,
                             }}
                           >
-                            <span className={`category-icon ${item.category}`}></span>
+                            <span
+                              className={`category-icon ${item.category}`}
+                            ></span>
                             {getCategoryLabel(item.category)}
                           </div>
                           <button
-                            className={`favorite-button ${item.isFavorite ? "active" : ""}`}
+                            className={`favorite-button ${
+                              item.isFavorite ? "active" : ""
+                            }`}
                             onClick={() => toggleFavorite(item.id)}
-                            aria-label={item.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                            aria-label={
+                              item.isFavorite
+                                ? "Remove from favorites"
+                                : "Add to favorites"
+                            }
                           >
-                            <Heart size={20} fill={item.isFavorite ? "currentColor" : "none"} />
+                            <Heart
+                              size={20}
+                              fill={item.isFavorite ? "currentColor" : "none"}
+                            />
                           </button>
                         </div>
 
@@ -743,7 +785,9 @@ const ProfileLibrary = () => {
 
                         {activeTab === "terms" ? (
                           <p className="card-definition">
-                            {item.definition?.[currentLanguage] || item.definition?.en || ""}
+                            {item.definition?.[currentLanguage] ||
+                              item.definition?.en ||
+                              ""}
                           </p>
                         ) : (
                           <>
@@ -751,16 +795,26 @@ const ProfileLibrary = () => {
                               {getText("by")} {item.author}
                             </p>
                             <p className="card-abstract">
-                              {item.abstract?.[currentLanguage] || item.abstract?.en || ""}
+                              {item.abstract?.[currentLanguage] ||
+                                item.abstract?.en ||
+                                ""}
                             </p>
                           </>
                         )}
 
                         <div className="card-languages">
-                          <span className="languages-label">{getText("languages")}:</span>
+                          <span className="languages-label">
+                            {getText("languages")}:
+                          </span>
                           {item.languages.map((lang) => (
-                            <span key={lang} className={`language-tag ${lang === currentLanguage ? "current" : ""}`}>
-                              {availableLanguages.find((l) => l.code === lang)?.label || lang}
+                            <span
+                              key={lang}
+                              className={`language-tag ${
+                                lang === currentLanguage ? "current" : ""
+                              }`}
+                            >
+                              {availableLanguages.find((l) => l.code === lang)
+                                ?.label || lang}
                             </span>
                           ))}
                         </div>
@@ -769,12 +823,18 @@ const ProfileLibrary = () => {
                           <div className="related-terms">
                             <h4>{getText("relatedTerms")}</h4>
                             <div className="related-terms-list">
-                              {getRelatedTermsData(item.relatedTerms).map((term) => (
-                                <div key={term.id} className="related-term">
-                                  <span className="related-term-title">{term.title}</span>
-                                  <span className="related-term-category">{getCategoryLabel(term.category)}</span>
-                                </div>
-                              ))}
+                              {getRelatedTermsData(item.relatedTerms).map(
+                                (term) => (
+                                  <div key={term.id} className="related-term">
+                                    <span className="related-term-title">
+                                      {term.title}
+                                    </span>
+                                    <span className="related-term-category">
+                                      {getCategoryLabel(term.category)}
+                                    </span>
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         )}
@@ -783,7 +843,9 @@ const ProfileLibrary = () => {
                           <span className="card-date">
                             {activeTab === "terms"
                               ? `${getText("addedOn")} ${item.dateAdded}`
-                              : `${getText("publishedOn")} ${item.datePublished}`}
+                              : `${getText("publishedOn")} ${
+                                  item.datePublished
+                                }`}
                           </span>
 
                           <div className="card-actions">
@@ -812,15 +874,19 @@ const ProfileLibrary = () => {
                       <ChevronLeft size={18} />
                     </button>
                     <div className="pagination-numbers">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                          key={page}
-                          className={`page-number ${currentPage === page ? "active" : ""}`}
-                          onClick={() => handlePageChange(page)}
-                        >
-                          {page}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (page) => (
+                          <button
+                            key={page}
+                            className={`page-number ${
+                              currentPage === page ? "active" : ""
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
+                        )
+                      )}
                     </div>
                     <button
                       className="pagination-button next-button"
@@ -838,10 +904,14 @@ const ProfileLibrary = () => {
       </div>
 
       <div className="footer-wrapper">
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+        <Footer
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          language={language}
+        />
       </div>
     </div>
-  )
+  );
 }
 
 export default ProfileLibrary

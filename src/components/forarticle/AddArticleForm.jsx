@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import "./add-article-form.css";
 import { addArticle } from "../../services/Api";
+import { getArticleById } from "../../services/Api";
+
 
 export default function AddArticleForm({ setArticles }) {
   const [formData, setFormData] = useState({
@@ -51,34 +53,29 @@ export default function AddArticleForm({ setArticles }) {
     setFormData((f) => ({ ...f, [name]: value }));
   };
 
-const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  console.log("File selected:", file); // ✅ Confirm file presence
-  if (!file) return;
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    setFormData((f) => ({
-      ...f,
-      imageUrl: reader.result,
-    }));
-    setPreviewImage(reader.result);
-    console.log("Base64 Image:", reader.result); // ✅ Confirm Base64 is loaded
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((f) => ({
+        ...f,
+        imageUrl: reader.result,
+      }));
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
 
-
-  const handleSubmit = async ( e ) =>
-  {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting( true );
-    setError( "" );
+    setIsSubmitting(true);
+    setError("");
 
-    if ( !userId )
-    {
-      setError( "Vous devez être connecté pour soumettre un article." );
-      setIsSubmitting( false );
+    if (!userId) {
+      setError("Vous devez être connecté pour soumettre un article.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -87,18 +84,30 @@ const handleImageChange = (e) => {
       category: formData.category,
       language: formData.language,
       content: formData.content,
-      ownerId: userId, 
-      
+      ownerId: userId,
     };
+
     if (formData.imageUrl) {
-            articleData.imageUrl = formData.imageUrl;
-          }
-    try
-    {
-      const createdArticle = await addArticle( articleData ); 
-      console.log("lololololoooooooo", createdArticle);
-      setArticles( ( prev ) => [ ...prev, createdArticle ] );
-      setShowSuccess( true );
+      articleData.imageUrl = formData.imageUrl;
+    }
+
+    try {
+      
+      const createdArticle = await addArticle(articleData);
+      console.log( "Article créé :", createdArticle );
+    
+
+      // 1. Mise à jour du state React
+      setArticles((prev) => [...prev, createdArticle]);
+
+      // 2. Mise à jour du localStorage
+      const storedArticles = JSON.parse(localStorage.getItem("articles")) || [];
+      storedArticles.push( createdArticle );
+      console.log("the stored ", storedArticles)
+      localStorage.setItem("articles", JSON.stringify(storedArticles));
+
+      // 3. Reset & feedback
+      setShowSuccess(true);
       setFormData({
         title: "",
         category: "",
@@ -106,18 +115,15 @@ const handleImageChange = (e) => {
         content: "",
         imageUrl: "",
       });
-      
-      setPreviewImage( null );
-      setTimeout( () => setShowSuccess( false ), 3000 );
-    } catch ( err )
-    {
-      console.error( err );
-      setError( "Erreur lors de l'ajout de l'article." );
-    } finally
-    {
-      setIsSubmitting( false );
+      setPreviewImage(null);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (err) {
+      console.error(err);
+      setError("Erreur lors de l'ajout de l'article.");
+    } finally {
+      setIsSubmitting(false);
     }
-  };  
+  };
 
   return (
     <div className="add-article-form-container">

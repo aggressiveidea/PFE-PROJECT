@@ -79,9 +79,13 @@ export const getAllUsers = async () => {
 export const getUserById = async (userId) => {
   try {
     // Get auth token from localStorage
+    console.log("userId to fetch:", userId);
+
     const authData = JSON.parse(localStorage.getItem("authData") || "{}")
     const token = authData.token
 
+       console.log("userrrrrr", authData);
+       console.log("user", token);
     const headers = {
       "Content-Type": "application/json",
     }
@@ -100,12 +104,15 @@ export const getUserById = async (userId) => {
       throw new Error("Failed to fetch user data")
     }
 
-    return await response.json()
+    const res = await response.json()
+    console.log("userrr", res)
+    return res.data
   } catch (error) {
     console.error("Error fetching user:", error)
     throw error
   }
 }
+
 export const createUser = async (data) => {
   try {
     const response = await fetch("http://localhost:5000/user/", {
@@ -242,9 +249,11 @@ export const resendVerificationEmail = async (email) => {
     throw error
   }
 }
-export const getallarticles = async () => {
-  try {
-    const response = await fetch(`http://localhost:5000/articles/`, {
+export const getallarticles = async (index) => {
+  try
+  {
+    console.log("index", index)
+    const response = await fetch(`http://localhost:5000/articles/index?index=${index}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -360,7 +369,8 @@ export const addArticle = async (data) => {
       throw new Error("Failed to add article");
     }
 
-    return await response.json();
+    const res = await response.json();
+    return res.data;
   } catch (error) {
     console.error("❌ Error adding article:", error);
     throw error;

@@ -535,6 +535,46 @@ body.dark-mode .hero-subtitle {
   text-shadow: 0 2px 10px rgba(123, 94, 250, 0.1);
   -webkit-animation: fadeInUp 1s ease-out;
 }
+.show-more {
+  background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+  color: white;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 4px 12px rgba(123, 94, 250, 0.25);
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
+  display: inline-block;
+  text-align: center;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.show-more::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #f72585, #7209b7, #3a0ca3);
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.show-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(123, 94, 250, 0.35);
+}
+
+.show-more:hover::before {
+  opacity: 1;
+}
 
 .articles-section .section-title::after {
   content: "";

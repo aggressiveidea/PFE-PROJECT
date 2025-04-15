@@ -458,8 +458,8 @@ body.dark .share-button-article:hover {
 }
 
 /* Enhanced edit and delete buttons with hover effects */
-.edit-button {
-  background: linear-gradient(135deg, rgba(159, 94, 250, 0.05) 0%, rgba(123, 94, 250, 0.1) 100%);
+.edit-button-article {
+  background: linear-gradient(135deg,  rgba(208, 0, 255, 0.219) 0%, rgba(123, 94, 250, 0.1) 100%);
   width: auto;
   height: 36px;
   border-radius: 18px;
@@ -470,39 +470,43 @@ body.dark .share-button-article:hover {
   justify-content: center;
 }
 
-.delete-button {
+.delete-button-article{
   background: linear-gradient(135deg, rgba(255, 17, 21, 0.288) 0%, rgba(123, 94, 250, 0.1) 100%);
   width: auto;
   height: 36px;
-  border-radius: px;
+  border-radius: 80px;
   padding: 0 12px;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-border-radius: 80px;
+  -moz-border-radius: 80px;
+  -ms-border-radius: 80px;
+  -o-border-radius: 80px;
 }
 
-.edit-button {
-  color: rgb(206, 54, 240);
+.edit-button-article {
+  color: rgb(208, 0, 255);
 }
 
-.delete-button {
+.delete-button-article {
   color: rgba(255, 0, 0, 0.7);
 }
 
-.edit-button.hovered,
-.delete-button.hovered {
+.edit-button-article.hovered,
+.delete-button-article.hovered {
   width: auto;
   padding: 0 16px;
   transform: translateY(-4px) scale(1.1);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.edit-button.hovered {
+.edit-button-article.hovered {
   background: linear-gradient(135deg, rgba(206, 54, 240, 0.1) 0%, rgba(206, 54, 240, 0.2) 100%);
 }
 
-.delete-button.hovered {
+.delete-button-article.hovered {
   background: linear-gradient(135deg, rgba(255, 0, 0, 0.1) 0%, rgba(255, 0, 0, 0.15) 100%);
 }
 
@@ -521,19 +525,19 @@ body.dark .share-button-article:hover {
   margin-left: 4px;
 }
 
-body.dark .edit-button {
+body.dark .edit-button-article {
   color: #a0b4ff;
 }
 
-body.dark .delete-button {
+body.dark .delete-button-article {
   color: #ff8ec7;
 }
 
-body.dark .edit-button.hovered {
+body.dark .edit-button-article.hovered {
   background: linear-gradient(135deg, rgba(67, 97, 238, 0.2) 0%, rgba(67, 97, 238, 0.3) 100%);
 }
 
-body.dark .delete-button.hovered {
+body.dark .delete-button-article.hovered {
   background: linear-gradient(135deg, rgba(247, 37, 133, 0.2) 0%, rgba(247, 37, 133, 0.3) 100%);
 }
 
@@ -585,8 +589,8 @@ body.dark .delete-button.hovered {
     height: 32px;
   }
 
-  .edit-button.hovered,
-  .delete-button.hovered {
+  .edit-button-article.hovered,
+  .delete-button-article.hovered {
     transform: translateY(-2px) scale(1.05);
   }
 }
