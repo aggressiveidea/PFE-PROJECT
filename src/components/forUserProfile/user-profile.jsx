@@ -1,13 +1,18 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { ArrowLeft, Shield, User, Mail, BookOpen } from "lucide-react"
-import "./user-profile.css"
+import { useState, useEffect } from "react";
+import { ArrowLeft, Shield, User, Mail, BookOpen } from "lucide-react";
+import "./user-profile.css";
+import { getUserById } from "../../services/Api";
+import ArticleCard from "../forarticle/ArticleCard";
+import { useSearchParams } from "react-router-dom";
 
-export default function UserProfile({ userId }) {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [darkMode, setDarkMode] = useState(false)
+export default function UserProfile() {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("id");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   const [user, setUser] = useState({
     firstName: "",
@@ -18,120 +23,81 @@ export default function UserProfile({ userId }) {
     role: "User",
     _id: "",
     favoriteArticles: [],
-  })
+  });
 
+  console.log("userid", userId);
   useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode") === "true"
-    setDarkMode(savedDarkMode)
+    const savedDarkMode = localStorage.getItem("darkMode") === "true";
+    setDarkMode(savedDarkMode);
+    document.body.classList.toggle("dark", savedDarkMode);
+  }, []);
 
-    if (savedDarkMode) {
-      document.body.classList.add("dark")
-    } else {
-      document.body.classList.remove("dark")
-    }
-  }, [])
+useEffect(() => {
+  const fetchUserData = async () => {
+    setLoading(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true)
-      try {
-        let userData
+    try {
+      let userData = null;
 
-        if (userId) {
- 
-          userData = {
-            firstName: "Jane",
-            lastName: "Doe",
-            email: "jane.doe@example.com",
-            userBio:
-              "Technology enthusiast and avid reader. I love exploring new ICT concepts and sharing knowledge with others.",
-            profileImgUrl: "/placeholder.svg?height=200&width=200",
-            role: "ICT Expert",
-            _id: userId,
-            favoriteArticles: [
-              {
-                id: "1",
-                title: "The Future of Artificial Intelligence",
-                description: "Exploring how AI will shape our world in the coming decades.",
-                imageUrl: "/placeholder.svg?height=150&width=250",
-                date: "2023-05-15",
-              },
-              {
-                id: "2",
-                title: "Blockchain Technology Explained",
-                description: "A comprehensive guide to understanding blockchain and its applications.",
-                imageUrl: "/placeholder.svg?height=150&width=250",
-                date: "2023-06-22",
-              },
-              {
-                id: "3",
-                title: "Cybersecurity Best Practices",
-                description: "Essential tips to protect your digital life from threats.",
-                imageUrl: "/placeholder.svg?height=150&width=250",
-                date: "2023-07-10",
-              },
-            ],
-          }
+      const localUser = JSON.parse(localStorage.getItem("user") || "{}");
+      const storedFavorites = JSON.parse(
+        localStorage.getItem("favorites") || "[]"
+      );
+
+      console.log(" userId:", userId);
+      console.log(" localUser:", localUser);
+      console.log(" storedFavorites:", storedFavorites);
+
+      if (userId && userId !== localUser._id) {
+        const res = await getUserById(userId);
+        console.log(" API response (getUserById):", res);
+
+        if (res.success) {
+          userData = res.data;
         } else {
-
-          const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
-
-          if (storedUser && storedUser.email) {
-            userData = {
-              ...storedUser,
-              // Add mock favorite articles since they're not in the original data
-              favoriteArticles: [
-                {
-                  id: "1",
-                  title: "Introduction to Cloud Computing",
-                  description: "Learn the basics of cloud infrastructure and services.",
-                  imageUrl: "/placeholder.svg?height=150&width=250",
-                  date: "2023-04-18",
-                },
-                {
-                  id: "2",
-                  title: "Web Development Trends 2023",
-                  description: "The latest frameworks and technologies in web development.",
-                  imageUrl: "/placeholder.svg?height=150&width=250",
-                  date: "2023-08-05",
-                },
-              ],
-            }
-          } else {
-            throw new Error("No user data found")
-          }
+          throw new Error("error on the fetch ");
         }
-
-        setUser(userData)
-      } catch (err) {
-        console.error("Error fetching user data:", err)
-        setError("Failed to load profile data. Please try again later.")
-      } finally {
-        setLoading(false)
+      } else if (localUser && localUser._id) {
+        userData = localUser;
+      } else {
+        throw new Error(" No user in localStorage ");
       }
-    }
 
-    fetchUserData()
-  }, [userId])
+      userData.favoriteArticles = storedFavorites;
+
+      setUser(userData);
+      console.log(" User data set:", userData);
+    } catch (err) {
+      console.error(" Error fetching user data:", err);
+      setError("Failed to load profile data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUserData();
+}, [userId]);
+
+
 
   const getRoleBadgeClass = (role) => {
     switch (role.toLowerCase()) {
       case "admin":
       case "super-admin":
-        return "badge-admin"
+        return "badge-admin";
       case "ict-expert":
-        return "badge-expert"
+        return "badge-expert";
       case "content-admin":
-        return "badge-content"
+        return "badge-content";
       default:
-        return "badge-user"
+        return "badge-user";
     }
-  }
+  };
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" }
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
+  const formatData = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   return (
     <div className={`app-container ${darkMode ? "dark" : ""}`}>
@@ -161,12 +127,15 @@ export default function UserProfile({ userId }) {
               <div className="profile-image-container">
                 <div className="profile-image">
                   <img
-                    src={user.profileImgUrl || "/placeholder.svg?height=200&width=200"}
+                    src={
+                      user.profileImgUrl ||
+                      "/placeholder.svg?height=200&width=200"
+                    }
                     alt={`${user.firstName} ${user.lastName}`}
                     className="profile-img"
                     onError={(e) => {
-                      e.target.onerror = null
-                      e.target.src = "/placeholder.svg?height=200&width=200"
+                      e.target.onerror = null;
+                      e.target.src = "/placeholder.svg?height=200&width=200";
                     }}
                   />
                 </div>
@@ -201,7 +170,9 @@ export default function UserProfile({ userId }) {
                   </div>
                   <div className="info-item full-width">
                     <label>Bio</label>
-                    <p className="user-bio">{user.userBio || "No bio provided yet."}</p>
+                    <p className="user-bio">
+                      {user.userBio || "No bio provided yet."}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -216,29 +187,17 @@ export default function UserProfile({ userId }) {
               </h3>
             </div>
 
-            {user.favoriteArticles && user.favoriteArticles.length > 0 ? (
+            {user.favoriteArticles.length > 0 ? (
               <div className="articles-grid">
                 {user.favoriteArticles.map((article) => (
-                  <div className="article-card" key={article.id}>
-                    <div className="article-image">
-                      <img
-                        src={article.imageUrl || "/placeholder.svg?height=150&width=250"}
-                        alt={article.title}
-                        onError={(e) => {
-                          e.target.onerror = null
-                          e.target.src = "/placeholder.svg?height=150&width=250"
-                        }}
-                      />
-                    </div>
-                    <div className="article-content">
-                      <h4>{article.title}</h4>
-                      <p className="article-date">{formatDate(article.date)}</p>
-                      <p className="article-description">{article.description}</p>
-                      <a href={`/articles/${article.id}`} className="read-article">
-                        Read Article
-                      </a>
-                    </div>
-                  </div>
+                  <ArticleCard
+                    key={article._id}
+                    article={article}
+                    isFavorite={true}
+                    onToggleFavorite={() => {}}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                  />
                 ))}
               </div>
             ) : (
@@ -250,8 +209,5 @@ export default function UserProfile({ userId }) {
         </div>
       )}
     </div>
-  )
+  );
 }
-
-
-

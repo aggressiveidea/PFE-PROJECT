@@ -1,0 +1,47 @@
+.top-creators-section {
+  padding: 2rem;
+  background: white;
+}
+
+.top-creators-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.top-creators-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.see-all {
+  color: #ef4444;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.creators-list {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.creator {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.creator-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.creator-info p {
+  margin: 0;
+  color: #f87171;
+  font-size: 0.85rem;
+}

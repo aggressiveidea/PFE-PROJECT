@@ -8,6 +8,7 @@ import { getArticleById } from "../../services/Api";
 import { getarticlebycat } from "../../services/Api";
 import Footer from "./Footer";
 import Image from "../../assets/cde57eb697132f9d4316f8076379469d.jpg";
+import "./cosmic-article-detail.css";
 
 // Define the category colors (same as in ArticleCard)
 const categoryColors = {
@@ -28,7 +29,25 @@ const ArticleDetail = () => {
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [alertMessage, setAlertMessage] = useState(""); // For error messages
+  const [ alertMessage, setAlertMessage ] = useState( "" ); // For error messages
+  const sampleComments = [
+    {
+      id: 1,
+      userName: "TechExpert",
+      text: "Great article! I particularly appreciate the section on predictive security measures. It's becoming increasingly important for organizations to adopt proactive approaches.",
+      date: "2023-04-16T14:22:00Z",
+    },
+    {
+      id: 2,
+      userName: "SecurityAnalyst",
+      text: "I'd add that the integration of AI with human expertise is crucial. AI can process vast amounts of data, but human intuition and experience are still invaluable in interpreting results and making strategic decisions.",
+      date: "2023-04-17T09:15:00Z",
+    },
+  ];
+  const [comments, setComments] = useState(sampleComments);
+  const [newComment, setNewComment] = useState("");
+  const [ userName, setUserName ] = useState( "" );
+
 
   const fetchRelatedArticles = async (category, limit) => {
     try {
@@ -112,6 +131,19 @@ const ArticleDetail = () => {
     }
   };
 
+  const handleAddComment = () => {
+    if (!newComment.trim() || !userName.trim()) return;
+
+    const comment = {
+      id: Date.now(),
+      userName: userName,
+      text: newComment,
+      date: new Date().toISOString(),
+    };
+
+    setComments([...comments, comment]);
+    setNewComment("");
+  };
   if (isLoading) {
     return (
       <div className="article-detail-container">
@@ -264,6 +296,80 @@ const ArticleDetail = () => {
           </button>
         </div>
 
+        {/* Comment Section */}
+        <div className="cosmic-comments-section">
+          <h2 className="cosmic-comments-title">Comments</h2>
+
+          <div className="cosmic-comments-list">
+            {comments.length === 0 ? (
+              <p className="cosmic-no-comments">
+                Be the first to comment on this article!
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="cosmic-comment">
+                  <div className="cosmic-comment-header">
+                    <div className="cosmic-comment-avatar">
+                      {comment.userName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="cosmic-comment-info">
+                      <h4 className="cosmic-comment-author">
+                        {comment.userName}
+                      </h4>
+                      <span className="cosmic-comment-date">
+                        {new Date(comment.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="cosmic-comment-text">{comment.text}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="cosmic-comment-form">
+            <h3 className="cosmic-form-title">Add a Comment</h3>
+            <div className="cosmic-form-group">
+              <input
+                type="text"
+                className="cosmic-input"
+                placeholder="Your Name"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            </div>
+            <div className="cosmic-form-group">
+              <textarea
+                className="cosmic-textarea"
+                placeholder="Write your comment here..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                rows={4}
+              ></textarea>
+            </div>
+            <button
+              className="cosmic-submit-button"
+              onClick={handleAddComment}
+              disabled={!newComment.trim() || !userName.trim()}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              Post Comment
+            </button>
+          </div>
+        </div>
         {relatedArticles.length > 0 && (
           <div className="related-articles-section">
             <h2 className="related-articles-title">You May Also Like</h2>
