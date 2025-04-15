@@ -43,7 +43,7 @@ function App() {
         <Route path="/userProfile" element={<UserProfile />}></Route>
         <Route path="/notifs" element={<ContentAdminDashboard />}></Route>
         <Route path="/articles/:id" element={<ArticleDetail />} />
-        <Route path="/terms" element={<SearchPage />}></Route>
+        <Route path="/terms" element = {<SearchPage/>}></Route>
       </Routes>
     </Router>
   );

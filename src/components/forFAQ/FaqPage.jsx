@@ -7,7 +7,7 @@ import Footer from "../forHome/Footer"
 
 const FaqPage = () => {
   const [activeQuestion, setActiveQuestion] = useState(null)
-  const [darkMode, setDarkMode] = useState(true) // Set default to true for dark mode
+  const [darkMode, setDarkMode] = useState(true) 
   const [language, setLanguage] = useState("en")
 
   useEffect(() => {

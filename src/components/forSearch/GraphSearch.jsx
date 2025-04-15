@@ -1,352 +1,317 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { ZoomIn, ZoomOut, RefreshCw } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { ZoomIn, ZoomOut, RotateCcw, SlidersHorizontal, X, Maximize, Download, Share2 } from "lucide-react"
 
-const GraphSearch = ({ graphData, onTermSelect, categoryTranslations }) => {
+const GraphSearch = ({ graphData, onTermSelect, categoryTranslations, darkMode, getCategoryColor = () => "#666" }) => {
   const containerRef = useRef(null)
-  const networkRef = useRef(null)
+  const [network, setNetwork] = useState(null)
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [showFilters, setShowFilters] = useState(false)
+  const [hoveredNode, setHoveredNode] = useState(null)
 
-  // Category colors and icons mapping with image URLs
-  const categoryInfo = {
-    "Com.élec.": {
-      color: "#4285F4", // E-commerce (blue)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/3144/3144456.png", // Shopping cart icon
-      label: "E-commerce",
-    },
-    "Con.info.": {
-      color: "#EA4335", // IT Contracts (red)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/2521/2521232.png", // Contract/document icon
-      label: "IT Contracts",
-    },
-    "Crim.info.": {
-      color: "#FBBC05", // IT Crime (yellow)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/2092/2092757.png", // Hacker/security icon
-      label: "IT Crime",
-    },
-    "Don.pers.": {
-      color: "#34A853", // Personal Data (green)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/1077/1077340.png", // Database icon
-      label: "Personal Data",
-    },
-    "Org.": {
-      color: "#FF6D01", // Organizations (orange)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/4300/4300059.png", // Organization/building icon
-      label: "Organizations",
-    },
-    "Pro.int.": {
-      color: "#46BDC6", // Intellectual Property (teal)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/1668/1668252.png", // Copyright/IP icon
-      label: "Intellectual Property",
-    },
-    "Rés.": {
-      color: "#7B61FF", // Networks (purple)
-      imageUrl: "https://cdn-icons-png.flaticon.com/512/2885/2885417.png", // Network icon
-      label: "Networks",
-    },
+  // Get all unique categories from graph nodes
+  const allCategories = [
+    ...new Set(
+      graphData.nodes
+        .map((node) => {
+          // Extract category from node color or other property
+          const categoryName = getCategoryFromNode(node)
+          return categoryName
+        })
+        .filter(Boolean),
+    ),
+  ]
+
+  // Function to determine category from node
+  function getCategoryFromNode(node) {
+    if (node.color === "#4285F4") return "Données personnelles"
+    if (node.color === "#EA4335") return "Commerce électronique"
+    if (node.color === "#FBBC05") return "Réseaux"
+    return null
   }
 
   useEffect(() => {
-    // Skip if no data or container
-    if (!graphData || !containerRef.current) return
+    if (!containerRef.current) return
 
-    // Import libraries dynamically
-    const initNetwork = async () => {
-      try {
-        // Import vis-network dynamically
-        const { Network } = await import("vis-network")
-        const { DataSet } = await import("vis-data")
+    // Import vis-network dynamically to avoid SSR issues
+    import("vis-network").then(({ Network }) => {
+      const container = containerRef.current
 
-        // Create category nodes with images
-        const categoryNodes = Object.entries(categoryInfo).map(([category, info]) => ({
-          id: `cat_${category}`,
-          label: categoryTranslations?.[category] || info.label,
-          shape: "image",
-          image: info.imageUrl,
-          size: 40,
-          font: {
-            size: 14,
-            color: "#333",
-            face: "Arial",
-            bold: true,
-            background: "rgba(255, 255, 255, 0.8)",
-            strokeWidth: 2,
-            strokeColor: "#ffffff",
-            vadjust: -40, // Move the label below the icon
-          },
-          borderWidth: 2,
-          shadow: true,
-          shapeProperties: {
-            useBorderWithImage: true,
-          },
-        }))
+      // Filter nodes based on selected categories if any
+      let filteredNodes = [...graphData.nodes]
+      let filteredEdges = [...graphData.edges]
 
-        // Create term nodes
-        const termNodes = graphData.nodes.map((node) => ({
-          id: node.id,
-          label: node.label || "Unknown",
-          color: {
-            background: node.color,
-            border: node.color,
-          },
+      if (selectedCategories.length > 0) {
+        const nodeIds = filteredNodes
+          .filter((node) => {
+            const category = getCategoryFromNode(node)
+            return category && selectedCategories.includes(category)
+          })
+          .map((node) => node.id)
+
+        filteredNodes = filteredNodes.filter((node) => nodeIds.includes(node.id))
+        filteredEdges = filteredEdges.filter((edge) => nodeIds.includes(edge.from) && nodeIds.includes(edge.to))
+      }
+
+      // Create the network
+      const data = {
+        nodes: filteredNodes,
+        edges: filteredEdges,
+      }
+
+      const options = {
+        nodes: {
           shape: "dot",
-          size: 15,
-          font: { size: 12 },
-        }))
-
-        // Create edges between terms and categories
-        const categoryEdges = []
-        graphData.nodes.forEach((node) => {
-          const categoryName = getCategoryFromColor(node.color)
-          if (categoryName) {
-            categoryEdges.push({
-              from: `cat_${categoryName}`,
-              to: node.id,
-              color: { color: node.color, opacity: 0.6 },
-              width: 2,
-            })
-          }
-        })
-
-        // Create edges between terms
-        const termEdges = graphData.edges.map((edge) => ({
-          from: edge.source,
-          to: edge.target,
-          color: { color: "#dddddd", opacity: 0.3 },
+          size: 16,
+          font: {
+            size: 12,
+            color: darkMode ? "#f9fafb" : "#111827",
+          },
+          borderWidth: 1,
+          shadow: true,
+          scaling: {
+            label: {
+              enabled: true,
+            },
+          },
+        },
+        edges: {
           width: 1,
-          dashes: [5, 5],
-        }))
-
-        // Combine all nodes and edges
-        const nodes = new DataSet([...categoryNodes, ...termNodes])
-        const edges = new DataSet([...categoryEdges, ...termEdges])
-
-        // Network options
-        const options = {
-          physics: {
-            stabilization: {
-              enabled: true,
-              iterations: 100,
-            },
-            barnesHut: {
-              gravitationalConstant: -2000,
-              centralGravity: 0.1,
-              springLength: 150,
-              springConstant: 0.05,
-            },
+          color: { inherit: "from" },
+          smooth: {
+            type: "continuous",
           },
-          interaction: {
-            hover: true,
-            zoomView: true,
-            dragView: true,
+          font: {
+            size: 10,
+            color: darkMode ? "#d1d5db" : "#6b7280",
+            strokeWidth: 0,
+            background: darkMode ? "#1f2937" : "#ffffff",
           },
-          nodes: {
-            borderWidth: 2,
-            shadow: {
-              enabled: true,
-              color: "rgba(0,0,0,0.2)",
-              size: 5,
-              x: 0,
-              y: 0,
-            },
+        },
+        physics: {
+          stabilization: false,
+          barnesHut: {
+            gravitationalConstant: -80,
+            springConstant: 0.001,
+            springLength: 200,
           },
-        }
+        },
+        interaction: {
+          navigationButtons: true,
+          keyboard: true,
+          hover: true,
+          tooltipDelay: 200,
+        },
+      }
 
-        // Create network
-        const network = new Network(containerRef.current, { nodes, edges }, options)
+      const newNetwork = new Network(container, data, options)
 
-        // Store network reference
-        networkRef.current = network
-
-        // Simple click handler
-        network.on("click", (params) => {
-          if (params.nodes.length) {
-            const nodeId = params.nodes[0]
-
-            // Skip if it's a category node
-            if (nodeId.toString().startsWith("cat_")) return
-
-            const node = graphData.nodes.find((n) => n.id === nodeId)
-            if (node) {
-              // Find the category for this node
-              const categoryName = getCategoryFromColor(node.color)
-
-              // Create a safe term object with all required properties
-              const termData = {
-                id: nodeId,
-                name: node.label || "Unknown",
-                categories: [
-                  {
-                    name: categoryName || "Unknown",
-                    principal_definition: {
-                      text: "Definition not available",
-                      reference: null,
-                    },
+      // Add event listeners
+      newNetwork.on("click", (params) => {
+        if (params.nodes.length > 0) {
+          const nodeId = params.nodes[0]
+          const node = data.nodes.find((n) => n.id === nodeId)
+          if (node) {
+            // Find the term in your terms data and call onTermSelect
+            const term = {
+              id: node.id,
+              name: node.label,
+              categories: [
+                {
+                  name: getCategoryFromNode(node) || "Unknown",
+                  principal_definition: {
+                    text: "Definition would be here in a real implementation.",
+                    reference: null,
                   },
-                ],
-                pages: [{ lang: "EN", num: 1, pos: 1 }],
-              }
-
-              onTermSelect(termData)
+                },
+              ],
             }
+            onTermSelect(term)
           }
-        })
+        }
+      })
 
-        // Fit the network once it's stabilized
-        network.once("stabilizationIterationsDone", () => {
-          network.fit()
-        })
-      } catch (error) {
-        console.error("Error initializing network:", error)
-      }
-    }
+      newNetwork.on("hoverNode", (params) => {
+        const nodeId = params.node
+        const node = data.nodes.find((n) => n.id === nodeId)
+        if (node) {
+          setHoveredNode({
+            id: node.id,
+            label: node.label,
+            category: getCategoryFromNode(node) || "Unknown",
+          })
+        }
+      })
 
-    initNetwork()
+      newNetwork.on("blurNode", () => {
+        setHoveredNode(null)
+      })
 
-    // Clean up
-    return () => {
-      if (networkRef.current) {
-        networkRef.current.destroy()
-        networkRef.current = null
-      }
-    }
-  }, [graphData, onTermSelect, categoryTranslations])
+      setNetwork(newNetwork)
 
-  // Helper function to get category from color
-  const getCategoryFromColor = (color) => {
-    // Find the closest color match
-    let closestCategory = null
-    let closestDistance = Number.POSITIVE_INFINITY
-
-    Object.entries(categoryInfo).forEach(([category, info]) => {
-      const distance = Math.abs(color?.localeCompare(info.color) || 100)
-      if (distance < closestDistance) {
-        closestDistance = distance
-        closestCategory = category
+      return () => {
+        newNetwork.destroy()
       }
     })
+  }, [graphData, darkMode, selectedCategories, onTermSelect])
 
-    return closestCategory
-  }
-
-  // Zoom controls
-  const zoomIn = () => {
-    if (networkRef.current) {
-      const scale = networkRef.current.getScale() * 1.2
-      networkRef.current.moveTo({ scale })
+  const handleZoomIn = () => {
+    if (network) {
+      const scale = network.getScale() * 1.2
+      network.moveTo({ scale })
     }
   }
 
-  const zoomOut = () => {
-    if (networkRef.current) {
-      const scale = networkRef.current.getScale() / 1.2
-      networkRef.current.moveTo({ scale })
+  const handleZoomOut = () => {
+    if (network) {
+      const scale = network.getScale() * 0.8
+      network.moveTo({ scale })
     }
   }
 
-  const centerView = () => {
-    if (networkRef.current) {
-      networkRef.current.fit()
+  const handleReset = () => {
+    if (network) {
+      network.fit()
     }
+  }
+
+  const handleFullscreen = () => {
+    const container = containerRef.current
+    if (container) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen()
+      } else {
+        container.requestFullscreen()
+      }
+    }
+  }
+
+  const handleExportImage = () => {
+    if (network) {
+      const dataURL = network.canvas.frame.canvas.toDataURL("image/png")
+      const downloadLink = document.createElement("a")
+      downloadLink.href = dataURL
+      downloadLink.download = "ict-terms-graph.png"
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    }
+  }
+
+  const toggleCategory = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
+    )
+  }
+
+  const clearFilters = () => {
+    setSelectedCategories([])
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <div
-        className="graph-controls"
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginBottom: "10px",
-          justifyContent: "center",
-        }}
-      >
-        <button
-          onClick={zoomIn}
-          style={{
-            padding: "8px",
-            borderRadius: "4px",
-            background: "#8a3ffc",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ZoomIn size={18} />
-        </button>
-        <button
-          onClick={zoomOut}
-          style={{
-            padding: "8px",
-            borderRadius: "4px",
-            background: "#8a3ffc",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ZoomOut size={18} />
-        </button>
-        <button
-          onClick={centerView}
-          style={{
-            padding: "8px",
-            borderRadius: "4px",
-            background: "#8a3ffc",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <RefreshCw size={18} />
-        </button>
+    <div className="graph-search">
+      <div className="ict-graph-controls-container">
+        <div className="ict-graph-controls-group">
+          <button className="ict-graph-control-btn" onClick={handleZoomIn} aria-label="Zoom in">
+            <ZoomIn size={18} />
+          </button>
+          <button className="ict-graph-control-btn" onClick={handleZoomOut} aria-label="Zoom out">
+            <ZoomOut size={18} />
+          </button>
+          <button className="ict-graph-control-btn" onClick={handleReset} aria-label="Reset view">
+            <RotateCcw size={18} />
+          </button>
+        </div>
+
+        <div className="ict-graph-controls-group">
+          <button className="ict-graph-control-btn" onClick={handleFullscreen} aria-label="Fullscreen">
+            <Maximize size={18} />
+          </button>
+          <button className="ict-graph-control-btn" onClick={handleExportImage} aria-label="Export as image">
+            <Download size={18} />
+          </button>
+          <button
+            className={`ict-graph-control-btn ${showFilters ? "active" : ""}`}
+            onClick={() => setShowFilters(!showFilters)}
+            aria-label="Filter categories"
+          >
+            <SlidersHorizontal size={18} />
+          </button>
+        </div>
       </div>
 
-      <div
-        ref={containerRef}
-        style={{
-          height: "500px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          background: "white",
-        }}
-      ></div>
+      {showFilters && (
+        <div className="ict-category-filter-container">
+          <div className="ict-filter-header">
+            <div className="ict-filter-title">
+              <SlidersHorizontal size={16} />
+              <span>Filter Categories</span>
+            </div>
+            {selectedCategories.length > 0 && (
+              <button className="ict-clear-filters-btn" onClick={clearFilters}>
+                <X size={14} />
+                <span>Clear</span>
+              </button>
+            )}
+          </div>
+          <div className="ict-category-chips">
+            {allCategories.map((category) => (
+              <button
+                key={category}
+                className={`ict-category-chip ${selectedCategories.includes(category) ? "active" : ""}`}
+                onClick={() => toggleCategory(category)}
+                style={{
+                  backgroundColor: selectedCategories.includes(category)
+                    ? getCategoryColor(category) + "15"
+                    : "transparent",
+                  borderColor: getCategoryColor(category),
+                  color: getCategoryColor(category),
+                }}
+              >
+                <span className="ict-category-indicator" style={{ backgroundColor: getCategoryColor(category) }}></span>
+                <span className="ict-category-name">{categoryTranslations[category] || category}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "10px",
-          fontSize: "14px",
-          color: "#666",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "center", gap: "15px", marginBottom: "10px", flexWrap: "wrap" }}>
-          {Object.entries(categoryInfo).map(([category, info]) => (
-            <div key={category} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <img
-                src={info.imageUrl || "/placeholder.svg"}
-                alt={info.label}
-                style={{ width: "16px", height: "16px" }}
-              />
-              <span>{info.label}</span>
+      <div className="ict-graph-container" ref={containerRef}>
+        {hoveredNode && (
+          <div className="ict-node-tooltip">
+            <h4>{hoveredNode.label}</h4>
+            <div
+              className="ict-tooltip-category"
+              style={{
+                backgroundColor: getCategoryColor(hoveredNode.category) + "15",
+                color: getCategoryColor(hoveredNode.category),
+              }}
+            >
+              {categoryTranslations[hoveredNode.category] || hoveredNode.category}
+            </div>
+            <div className="ict-tooltip-action">
+              <Share2 size={12} />
+              <span>Click to view details</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="ict-graph-legend">
+        <div className="ict-legend-title">Legend</div>
+        <div className="ict-legend-items">
+          {allCategories.map((category) => (
+            <div key={category} className="ict-legend-item">
+              <span className="ict-legend-color" style={{ backgroundColor: getCategoryColor(category) }}></span>
+              <span className="ict-legend-label">{categoryTranslations[category] || category}</span>
             </div>
           ))}
         </div>
-        Click on a term to view its details
       </div>
     </div>
   )
 }
 
 export default GraphSearch
-
 
