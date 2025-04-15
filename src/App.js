@@ -18,7 +18,7 @@ import Articlepage from "./views/articlepage";
 //import GraphVisualization from "./views/GraphVisualization";
 import VerificationSuccess from "./components/VerificationSuccess";
 import UserProfile from "./components/forUserProfile/user-profile";
-import ContentAdminDashboard from "./views/ContentAdminDashboard";
+import ContentAdminDashboard from "./views/DashboardContentAdmin";
 import CategoriesExplorer from "./views/SearchInput";
 function App() {
   //<Route path="/graph" element={<GraphVisualization />}></Route>
@@ -43,6 +43,7 @@ function App() {
         <Route path="/userProfile" element={<UserProfile />}></Route>
         <Route path="/notifs" element={<ContentAdminDashboard />}></Route>
         <Route path="/articles/:id" element={<ArticleDetail />} />
+        <Route path="/terms" element={<SearchPage />}></Route>
       </Routes>
     </Router>
   );
