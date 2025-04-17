@@ -366,7 +366,7 @@ export const getarticlbBylang = async (language) => {
 export const addArticle = async (data) => {
   try {
     const token = localStorage.getItem("token")
-    console.log(data) // Debugging
+    console.log('verified',data) // Debugging
 
     const response = await fetch("http://localhost:5000/articles/", {
       method: "POST",
@@ -377,12 +377,13 @@ export const addArticle = async (data) => {
       body: JSON.stringify(data), // Sending FormData
     })
 
+    console.log("idj whayyy",response)
     if (!response.ok) {
       throw new Error("Failed to add article")
     }
 
-    return await response.json()
     const res = await response.json();
+    console.log("the fetching answer",res)
     return res.data;
 
   } catch (error) {
