@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
+import { Routes, Route, useLocation } from "react-router-dom"
 import QuizWelcome from "../components/forQuiz/QuizWelcome"
 import LevelPage from "../components/forQuiz/LevelPage"
 import QuestionPage from "../components/forQuiz/QuestionPage"
@@ -9,7 +9,7 @@ import ResultsPage from "../components/forQuiz/ResultsPage"
 import Header from "../components/forHome/Header"
 import Sidebar from "../components/forDashboard/Sidebar"
 import Footer from "../components/forHome/Footer"
-import { BarChart3, Award, Target } from "lucide-react"
+import { updateCardPerformance } from "../services/QuizStorage"
 import "./QuizPage.css"
 
 const QuizPage = () => {
@@ -22,11 +22,11 @@ const QuizPage = () => {
     averageScore: 0,
     topDifficulty: "Easy",
   })
-  const navigate = useNavigate()
   const location = useLocation()
 
   // Load quiz stats from localStorage on component mount
   useEffect(() => {
+    // Load quiz stats
     const savedStats = localStorage.getItem("quizStats")
     if (savedStats) {
       try {
@@ -54,6 +54,11 @@ const QuizPage = () => {
     localStorage.setItem("quizStats", JSON.stringify(quizStats))
   }, [quizStats])
 
+  // Function to update card performance
+  const handleUpdateCardPerformance = (cardType, score) => {
+    updateCardPerformance(cardType, score)
+  }
+
   // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
@@ -68,9 +73,6 @@ const QuizPage = () => {
   const closeMobileMenu = () => {
     setMobileOpen(false)
   }
-
-  // Check if we're on the main quiz page
-  const isMainPage = location.pathname === "/quiz" || location.pathname === "/quiz/"
 
   return (
     <div className={`quiz-page-container ${darkMode ? "dark-mode" : "light-mode"}`}>
@@ -94,38 +96,16 @@ const QuizPage = () => {
               <Route path="/question/:level" element={<QuestionPage darkMode={darkMode} />} />
               <Route
                 path="/results/:level/:score"
-                element={<ResultsPage darkMode={darkMode} setQuizStats={setQuizStats} />}
+                element={
+                  <ResultsPage
+                    darkMode={darkMode}
+                    setQuizStats={setQuizStats}
+                    updateCardPerformance={handleUpdateCardPerformance}
+                  />
+                }
               />
             </Routes>
           </div>
-
-          {isMainPage && (
-            <div className="quiz-stats-sidebar">
-              <div className="stat-card">
-                <h3>Total Quizzes Taken</h3>
-                <div className="stat-value">{quizStats.totalQuizzes}</div>
-                <div className="stat-icon">
-                  <BarChart3 size={20} />
-                </div>
-              </div>
-
-              <div className="stat-card">
-                <h3>Average Score</h3>
-                <div className="stat-value">{quizStats.averageScore}%</div>
-                <div className="stat-icon">
-                  <Award size={20} />
-                </div>
-              </div>
-
-              <div className="stat-card">
-                <h3>Top Difficulty</h3>
-                <div className="stat-value">{quizStats.topDifficulty}</div>
-                <div className="stat-icon">
-                  <Target size={20} />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </main>
 
@@ -135,3 +115,5 @@ const QuizPage = () => {
 }
 
 export default QuizPage
+
+

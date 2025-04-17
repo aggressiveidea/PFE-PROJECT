@@ -1,17 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Trophy, Share2, Home, Repeat, Award } from "lucide-react"
-import confetti from "canvas-confetti"
 import "./ResultsPage.css"
 
-const ResultsPage = ({ darkMode, setQuizStats }) => {
+const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
   const { level, score } = useParams()
   const navigate = useNavigate()
   const totalQuestions = 5
   const percentage = (Number.parseInt(score) / totalQuestions) * 100
-  const [showConfetti, setShowConfetti] = useState(false)
 
   useEffect(() => {
     // Update quiz stats
@@ -47,42 +45,9 @@ const ResultsPage = ({ darkMode, setQuizStats }) => {
       return updatedStats
     })
 
-    // Trigger confetti if score is good
-    if (percentage >= 80) {
-      setShowConfetti(true)
-      const duration = 3 * 1000
-      const animationEnd = Date.now() + duration
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
-
-      function randomInRange(min, max) {
-        return Math.random() * (max - min) + min
-      }
-
-      const interval = setInterval(() => {
-        const timeLeft = animationEnd - Date.now()
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval)
-        }
-
-        const particleCount = 50 * (timeLeft / duration)
-
-        // Confetti burst
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-          colors: ["#10b981", "#3b82f6", "#8b5cf6", "#f59e0b"],
-        })
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-          colors: ["#10b981", "#3b82f6", "#8b5cf6", "#f59e0b"],
-        })
-      }, 250)
-    }
-  }, [level, percentage, score, setQuizStats])
+    // Update card performance data
+    updateCardPerformance(level, percentage)
+  }, [level, percentage, score, setQuizStats, updateCardPerformance])
 
   let message = ""
   let color = ""
@@ -316,3 +281,6 @@ const ResultsPage = ({ darkMode, setQuizStats }) => {
 }
 
 export default ResultsPage
+
+
+
