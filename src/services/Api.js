@@ -796,3 +796,282 @@ export const getAllterms = async () => {
     throw error
   }
 }
+// Existing API functions...
+
+export const fetchQuizQuestions = async (level) => {
+  try {
+    // Map our level to Open Trivia DB difficulty
+    const difficulty = level.toLowerCase()
+
+    // Fetch questions from API
+    const response = await fetch(
+      `https://opentdb.com/api.php?amount=5&category=18&difficulty=${difficulty}&type=multiple`,
+    )
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch questions")
+    }
+
+    const data = await response.json()
+
+    if (data.response_code !== 0 || !data.results || data.results.length === 0) {
+      console.warn("API returned an error or no questions, using fallback questions")
+      return getFallbackQuestions(level)
+    }
+
+    // Format questions
+    return data.results.map((q) => {
+      // Combine correct and incorrect answers and shuffle
+      const options = [...q.incorrect_answers, q.correct_answer].sort(() => Math.random() - 0.5)
+
+      return {
+        question: q.question,
+        options: options,
+        correctAnswer: q.correct_answer,
+      }
+    })
+  } catch (error) {
+    console.error("Error fetching questions:", error)
+    return getFallbackQuestions(level)
+  }
+}
+
+// Enhanced fallback questions with more options for each difficulty level
+export const getFallbackQuestions = (level) => {
+  const questions = {
+    easy: [
+      {
+        question: "What does CPU stand for?",
+        options: [
+          "Central Processing Unit",
+          "Computer Personal Unit",
+          "Central Process Utility",
+          "Central Processor Unifier",
+        ],
+        correctAnswer: "Central Processing Unit",
+      },
+      {
+        question: "Which of these is a type of computer memory?",
+        options: ["RAM", "MAP", "TAP", "SAP"],
+        correctAnswer: "RAM",
+      },
+      {
+        question: "What does URL stand for?",
+        options: [
+          "Uniform Resource Locator",
+          "Universal Resource Link",
+          "Unified Resource Locator",
+          "Universal Resource Locator",
+        ],
+        correctAnswer: "Uniform Resource Locator",
+      },
+      {
+        question: "Which of these is an input device?",
+        options: ["Keyboard", "Monitor", "Printer", "Speaker"],
+        correctAnswer: "Keyboard",
+      },
+      {
+        question: "What file extension is used for Microsoft Excel spreadsheets?",
+        options: [".xlsx", ".docx", ".pptx", ".txt"],
+        correctAnswer: ".xlsx",
+      },
+      {
+        question: "What does PDF stand for?",
+        options: [
+          "Portable Document Format",
+          "Personal Document File",
+          "Printable Document Form",
+          "Published Document Format",
+        ],
+        correctAnswer: "Portable Document Format",
+      },
+      {
+        question: "Which company developed the Windows operating system?",
+        options: ["Microsoft", "Apple", "Google", "IBM"],
+        correctAnswer: "Microsoft",
+      },
+      {
+        question: "What does USB stand for?",
+        options: ["Universal Serial Bus", "United Serial Bus", "Universal System Bus", "Unified Serial Bus"],
+        correctAnswer: "Universal Serial Bus",
+      },
+      {
+        question: "Which of these is used to store data permanently in a computer?",
+        options: ["Hard Disk Drive", "RAM", "CPU", "ROM"],
+        correctAnswer: "Hard Disk Drive",
+      },
+      {
+        question: "What is the main function of an email client?",
+        options: ["Send and receive emails", "Browse the internet", "Edit documents", "Play games"],
+        correctAnswer: "Send and receive emails",
+      },
+    ],
+    medium: [
+      {
+        question: "What is the function of an operating system?",
+        options: [
+          "Manage computer hardware and software resources",
+          "Create documents and spreadsheets",
+          "Browse the internet",
+          "Play video games",
+        ],
+        correctAnswer: "Manage computer hardware and software resources",
+      },
+      {
+        question: "Which of these is a cloud storage service?",
+        options: ["Dropbox", "Firefox", "Photoshop", "Excel"],
+        correctAnswer: "Dropbox",
+      },
+      {
+        question: "What does HTML stand for?",
+        options: [
+          "Hypertext Markup Language",
+          "Hypertext Markdown Language",
+          "Hypertext Machine Language",
+          "Hyperlink Text Markup Language",
+        ],
+        correctAnswer: "Hypertext Markup Language",
+      },
+      {
+        question: "Which of these is a database management system?",
+        options: ["MySQL", "Windows", "Chrome", "Photoshop"],
+        correctAnswer: "MySQL",
+      },
+      {
+        question: "What is the purpose of a firewall in computer networks?",
+        options: [
+          "Monitor and control incoming and outgoing network traffic",
+          "Increase internet speed",
+          "Store website data locally",
+          "Convert digital signals to analog",
+        ],
+        correctAnswer: "Monitor and control incoming and outgoing network traffic",
+      },
+      {
+        question: "What is the difference between HTTP and HTTPS?",
+        options: [
+          "HTTPS is encrypted and secure",
+          "HTTP is faster than HTTPS",
+          "HTTPS works only on mobile devices",
+          "HTTP supports more file types",
+        ],
+        correctAnswer: "HTTPS is encrypted and secure",
+      },
+      {
+        question: "Which programming language is commonly used for web development?",
+        options: ["JavaScript", "C++", "Swift", "COBOL"],
+        correctAnswer: "JavaScript",
+      },
+      {
+        question: "What is the purpose of CSS in web development?",
+        options: ["Style and layout of web pages", "Server-side processing", "Database management", "Network security"],
+        correctAnswer: "Style and layout of web pages",
+      },
+      {
+        question: "What is a cookie in the context of web browsing?",
+        options: [
+          "Small piece of data stored on the user's computer",
+          "A type of computer virus",
+          "A programming language",
+          "A hardware component",
+        ],
+        correctAnswer: "Small piece of data stored on the user's computer",
+      },
+      {
+        question: "What is the function of a router in a network?",
+        options: [
+          "Forward data packets between computer networks",
+          "Store large amounts of data",
+          "Process complex calculations",
+          "Display visual information",
+        ],
+        correctAnswer: "Forward data packets between computer networks",
+      },
+    ],
+    hard: [
+      {
+        question: "Which protocol is used to secure communication between a web browser and a website?",
+        options: ["HTTPS", "FTP", "SMTP", "DHCP"],
+        correctAnswer: "HTTPS",
+      },
+      {
+        question: "What is the time complexity of a binary search algorithm?",
+        options: ["O(log n)", "O(n)", "O(n²)", "O(n log n)"],
+        correctAnswer: "O(log n)",
+      },
+      {
+        question: "Which of these is NOT a programming paradigm?",
+        options: [
+          "Distributive Programming",
+          "Object-Oriented Programming",
+          "Functional Programming",
+          "Procedural Programming",
+        ],
+        correctAnswer: "Distributive Programming",
+      },
+      {
+        question: "What is the purpose of a VPN?",
+        options: [
+          "Establish a protected network connection when using public networks",
+          "Increase internet speed",
+          "Store large files in the cloud",
+          "Convert file formats",
+        ],
+        correctAnswer: "Establish a protected network connection when using public networks",
+      },
+      {
+        question: "Which of these is a NoSQL database?",
+        options: ["MongoDB", "MySQL", "PostgreSQL", "Oracle"],
+        correctAnswer: "MongoDB",
+      },
+      {
+        question: "What is the difference between symmetric and asymmetric encryption?",
+        options: [
+          "Asymmetric uses different keys for encryption and decryption",
+          "Symmetric is always more secure",
+          "Asymmetric is always faster",
+          "Symmetric uses multiple keys for the same message",
+        ],
+        correctAnswer: "Asymmetric uses different keys for encryption and decryption",
+      },
+      {
+        question: "What is a RESTful API?",
+        options: [
+          "An architectural style for designing networked applications",
+          "A programming language for artificial intelligence",
+          "A type of database management system",
+          "A security protocol for wireless networks",
+        ],
+        correctAnswer: "An architectural style for designing networked applications",
+      },
+      {
+        question: "What is the purpose of normalization in database design?",
+        options: [
+          "Minimize data redundancy and dependency",
+          "Increase processing speed",
+          "Enhance graphical user interface",
+          "Improve network connectivity",
+        ],
+        correctAnswer: "Minimize data redundancy and dependency",
+      },
+      {
+        question: "Which of these is a principle of object-oriented programming?",
+        options: ["Encapsulation", "Fragmentation", "Centralization", "Normalization"],
+        correctAnswer: "Encapsulation",
+      },
+      {
+        question: "What is the purpose of a load balancer in a server architecture?",
+        options: [
+          "Distribute network traffic across multiple servers",
+          "Increase storage capacity",
+          "Encrypt sensitive data",
+          "Compress large files",
+        ],
+        correctAnswer: "Distribute network traffic across multiple servers",
+      },
+    ],
+  }
+  const levelQuestions = questions[level.toLowerCase()] || questions.medium
+
+  return levelQuestions.sort(() => Math.random() - 0.5).slice(0, 5)
+}

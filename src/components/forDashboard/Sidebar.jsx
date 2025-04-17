@@ -1,12 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Users, FileText, Settings, Moon, Sun, LayoutDashboard, Bell, LogOut, Grid, User } from "lucide-react"
+import { Users, FileText, Settings, Moon, Sun, LayoutDashboard, Bell, LogOut, Grid, User, BookOpen } from "lucide-react"
 import "./Sidebar.css"
 
 export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode, toggleDarkMode }) {
   const [activeItem, setActiveItem] = useState("content")
 
-  // Get current path to set active menu item
   useEffect(() => {
     const path = window.location.pathname
     if (path.includes("dashboard")) {
@@ -21,10 +20,11 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       setActiveItem("settings")
     } else if (path.includes("personal")) {
       setActiveItem("personal")
+    } else if (path.includes("quiz")) {
+      setActiveItem("quiz")
     }
   }, [])
 
-  // Navigation links with href
   const navLinks = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { id: "content", label: "Content dashboard", icon: FileText, href: "/content-dashboard" },
@@ -32,6 +32,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     { id: "notifications", label: "Notifications", icon: Bell, href: "/notifications" },
     { id: "settings", label: "Settings", icon: Settings, href: "/settings" },
     { id: "personal", label: "Personal infos", icon: User, href: "/personal" },
+    { id: "quiz", label: "ICT Quiz", icon: BookOpen, href: "/quiz" },
   ]
 
   return (
@@ -63,7 +64,6 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
                     href={link.href}
                     className={activeItem === link.id ? "active" : ""}
                     onClick={(e) => {
-                      // Prevent default if it's just a demo
                       if (link.href === "#") {
                         e.preventDefault()
                       }
