@@ -61,7 +61,7 @@ function Articlepage() {
         console.log("Fetching articles...");
         const response = await getallarticles(0);
 
-        console.log("Response received:", response);
+        console.log("Response received here:", response);
 
         if (response && Array.isArray(response)) {
           setArticles( response );
@@ -323,7 +323,6 @@ function Articlepage() {
                       article={article}
                       isFavorite={favorites.includes(article._id)}
                       onToggleFavorite={() => toggleFavorite(article._id)}
-                      user={user}
                       onEdit={handleEditArticle}
                       onDelete={handleDeleteArticle}
                     />

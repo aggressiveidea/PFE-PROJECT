@@ -1,14 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Eye, Search, Filter, SortDesc } from "lucide-react";
+import {
+  FileText,
+  Eye,
+  Search,
+  Filter,
+  SortDesc,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import Header from "../components/forHome/Header";
 import Sidebar from "../components/forDashboard/Sidebar";
 import WelcomeSection from "../components/forDashboard/WelcomeSection";
 import AddArticleNotif from "../components/forContentAdmin/AddArticleNotif";
-import ArticlePreview from "../components/forContentAdmin/ArticlePreview";
+import ArticleCard from "../components/forarticle/ArticleCard";
 import "./DashboardContentAdmin.css";
-import { getUserById } from "../services/Api";
+import { getUserById, deletearticle } from "../services/Api";
 
 export default function ContentAdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -21,8 +29,12 @@ export default function ContentAdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [articleToEdit, setArticleToEdit] = useState(null);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [favorites, setFavorites] = useState([]);
 
-  // Set dark mode based on system preference
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   useEffect(() => {
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -32,20 +44,18 @@ export default function ContentAdminDashboard() {
   }, []);
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    setDarkMode((prev) => !prev);
     document.body.classList.toggle("dark-mode");
   };
 
   useEffect(() => {
+    
     const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
-   
+
     const fetchArticlesWithUsers = async () => {
       const articlesWithUsers = await Promise.all(
         storedArticles.map(async (article) => {
-          try
-          {
-            console.log( article );
-            console.log( article.ownerId );
+          try {
             const user = await getUserById(article.ownerId);
             return {
               ...article,
@@ -65,7 +75,6 @@ export default function ContentAdminDashboard() {
     fetchArticlesWithUsers();
   }, []);
 
-  // Get all unique categories for filter
   const categories = ["all", ...new Set(articles.map((a) => a.category))];
 
   const filteredArticles = articles
@@ -87,22 +96,69 @@ export default function ContentAdminDashboard() {
         : new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-  const handleReadArticle = (article) => {
-    setSelectedArticle(article);
+  const handleReadArticle = (article) => setSelectedArticle(article);
+
+  const handleValidateArticle = (article) =>
+    setArticleStatuses((prev) => ({ ...prev, [article._id]: "validated" }));
+const handleRejectArticle = async (article) => {
+  try
+  {
+    console.log("article id for the delete ", article._id);
+    const response = await deletearticle(article._id);
+    if (response.succes!== true ) throw new Error("Delete failed");
+    console.log("✅ Successfully deleted from server");
+  } catch (error) {
+    console.error("❌ Delete error:", error);
+  }
+
+  // Load articles from localStorage
+  const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
+
+  // Filter out the deleted article
+  const updatedArticles = storedArticles.filter(
+    (a) => a && a._id !== article._id
+  );
+
+  // Save back to localStorage
+  localStorage.setItem("articles", JSON.stringify(updatedArticles));
+
+  console.log("✅ Updated localStorage after deletion");
+};
+
+  const handleEditArticle = (id) => {
+    const article = articles.find((a) => a._id === id);
+    const canEdit =
+      user.role === "Content-admin" ||
+      (user.role === "Ict-expert" && user.id === article.ownerId);
+
+    if (canEdit) {
+      setArticleToEdit(article);
+      setShowUpdateForm(true);
+    }
   };
 
-  const handleValidateArticle = (article) => {
-    setArticleStatuses((prev) => ({
-      ...prev,
-      [article._id]: "validated",
-    }));
+  const handleDeleteArticle = async (id) => {
+    const article = articles.find((a) => a._id === id);
+
+    if (
+      user.role === "Content-admin" ||
+      (user.role === "Ict-expert" && user.id === article.ownerId)
+    ) {
+      setArticles((prev) => prev.filter((a) => a._id !== id));
+      try {
+        const response = await deletearticle(id);
+        if (!response.ok) throw new Error("Delete failed");
+        console.log("Successfully deleted");
+      } catch (error) {
+        console.error("Delete error:", error);
+      }
+    }
   };
 
-  const handleRejectArticle = (article) => {
-    setArticleStatuses((prev) => ({
-      ...prev,
-      [article._id]: "rejected",
-    }));
+  const toggleFavorite = (id) => {
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -112,7 +168,6 @@ export default function ContentAdminDashboard() {
         setLanguage={setLanguage}
         darkMode={darkMode}
       />
-
       <Sidebar
         collapsed={sidebarCollapsed}
         toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -192,7 +247,7 @@ export default function ContentAdminDashboard() {
                     <div
                       key={article._id}
                       className={`content-admin-article-card ${
-                        selectedArticle?.id === article._id
+                        selectedArticle?._id === article._id
                           ? "content-admin-article-selected"
                           : ""
                       }`}
@@ -229,19 +284,58 @@ export default function ContentAdminDashboard() {
               </div>
 
               <div className="content-admin-preview-wrapper">
-                <ArticlePreview
-                  article={selectedArticle}
-                  onValidate={
-                    selectedArticle
-                      ? () => handleValidateArticle(selectedArticle)
-                      : null
-                  }
-                  onReject={
-                    selectedArticle
-                      ? () => handleRejectArticle(selectedArticle)
-                      : null
-                  }
-                />
+                {selectedArticle ? (
+                  <>
+                    <ArticleCard
+                      article={selectedArticle}
+                      isFavorite={favorites.includes(selectedArticle._id)}
+                      onToggleFavorite={() =>
+                        toggleFavorite(selectedArticle._id)
+                      }
+                      onEdit={() => handleEditArticle(selectedArticle._id)}
+                      onDelete={() => handleDeleteArticle(selectedArticle._id)}
+                    />
+
+                    <div className="article-notification-actions">
+                      {!articleStatuses[selectedArticle._id] && (
+                        <>
+                          <button
+                            className="btn btn-validate"
+                            onClick={() =>
+                              handleValidateArticle(selectedArticle)
+                            }
+                          >
+                            <CheckCircle size={16} />
+                            <span>Validate</span>
+                          </button>
+                          <button
+                            className="btn btn-reject"
+                            onClick={() => handleRejectArticle(selectedArticle)}
+                          >
+                            <XCircle size={16} />
+                            <span>Reject</span>
+                          </button>
+                        </>
+                      )}
+                      {articleStatuses[selectedArticle._id] === "validated" && (
+                        <div className="article-status validated">
+                          <CheckCircle size={16} />
+                          <span>Validated</span>
+                        </div>
+                      )}
+                      {articleStatuses[selectedArticle._id] === "rejected" && (
+                        <div className="article-status rejected">
+                          <XCircle size={16} />
+                          <span>Rejected</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <p className="content-admin-no-preview">
+                    Select an article to preview
+                  </p>
+                )}
               </div>
             </section>
           </div>

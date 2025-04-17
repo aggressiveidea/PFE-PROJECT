@@ -47,6 +47,8 @@ export default function EnhancedArticleCard( {
 } )
 {
 
+  console.log( "articlessssssss", article );
+
   // Get user from localStorage only once during component initialization
   const user = useMemo( () =>
   {
@@ -69,7 +71,7 @@ export default function EnhancedArticleCard( {
   const [ hoveredButton, setHoveredButton ] = useState( null );
   const navigate = useNavigate();
 
-  // Memoize article ID and owner ID to prevent unnecessary re-renders
+  console.log( "article",article );
   console.log("ownerrrrrrr", article.ownerId);
   const articleId = useMemo( () => article?._id, [ article?._id ] );
   const ownerId = useMemo( () => article?.ownerId, [ article?.ownerId ] );
@@ -80,18 +82,18 @@ export default function EnhancedArticleCard( {
       console.log( "owner",ownerId );
       try {
         const response = await getUserById(ownerId);
-        //console.log("Response received:", response);
+        console.log("Response received:", response);
 
-        //console.log("", `${response.data.firstName || ''} ${response.data.lastName || ''}`.trim() );
-        //console.log("", response.data.profileImgUrl);
-         //console.log("", response.data.role);
+        console.log("", `${response.firstName || ''} ${response.lastName || ''}`.trim() );
+        console.log("", response.profileImgUrl);
+         console.log("", response.role);
         if (response) {
           setOwnerInfo({
             name:
-              `${response.data.firstName || ''} ${response.data.lastName || ''}`.trim()||
+              `${response.firstName || ''} ${response.lastName || ''}`.trim()||
               "Unknown",
-            profilePic: response.data.profileImgUrl || null,
-            role: response.data.role || null,
+            profilePic: response.profileImgUrl || null,
+            role: response.role || null,
           });
         } else {
           console.warn("Owner not found.");

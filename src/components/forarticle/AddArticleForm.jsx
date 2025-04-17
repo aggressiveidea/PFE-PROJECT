@@ -85,6 +85,7 @@ export default function AddArticleForm({ setArticles }) {
       language: formData.language,
       content: formData.content,
       ownerId: userId,
+      verified: false
     };
 
     if (formData.imageUrl) {
@@ -92,17 +93,17 @@ export default function AddArticleForm({ setArticles }) {
     }
 
     try {
-      
+      console.log("articledata ",articleData);
       const createdArticle = await addArticle(articleData);
-      console.log( "Article créé :", createdArticle );
+      console.log( "Article créé :", createdArticle  );
     
 
       // 1. Mise à jour du state React
-      setArticles((prev) => [...prev, createdArticle]);
+      setArticles((prev) => [...prev, createdArticle ]);
 
       // 2. Mise à jour du localStorage
       const storedArticles = JSON.parse(localStorage.getItem("articles")) || [];
-      storedArticles.push( createdArticle );
+      storedArticles.push( createdArticle  );
       console.log("the stored ", storedArticles)
       localStorage.setItem("articles", JSON.stringify(storedArticles));
 
