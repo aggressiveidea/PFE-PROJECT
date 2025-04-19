@@ -52,8 +52,9 @@ useEffect(() => {
         const res = await getUserById(userId);
         console.log(" API response (getUserById):", res);
 
-        if (res.success) {
-          userData = res.data;
+        if (res) {
+          userData = res;
+          console.log("", userData);
         } else {
           throw new Error("error on the fetch ");
         }
