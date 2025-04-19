@@ -67,7 +67,7 @@ const ArticleDetail = () => {
         console.log("Fetching article with ID:", id);
 
         const data = await getArticleById(id);
-        console.log("API response:", data);
+        console.log("API responseeeeeee:", data);
 
         if (!data || !data._id) {
           throw new Error("Invalid article data received");
@@ -186,7 +186,9 @@ const ArticleDetail = () => {
   }
 
   return (
-    <div className="article-detail-container">
+    
+      <div className="article-detail-container">
+        
       <div className="stars-container">
         <div className="stars"></div>
         <div className="stars2"></div>
@@ -234,7 +236,7 @@ const ArticleDetail = () => {
 
         <div className="article-detail-image-container">
           <img
-            src={Image}
+            src={article.imageUrl}
             alt={article.title}
             className="article-detail-image"
           />
@@ -248,9 +250,9 @@ const ArticleDetail = () => {
           <div className="article-content">{article.content}</div>
         </div>
 
-        <div className="article-actions">
+        <div className="article-actions-details">
           <button
-            className={`action-button favorite-button ${
+            className={`action-button-details favorite-button-details ${
               isFavorite ? "active" : ""
             }`}
             onClick={toggleFavorite}
@@ -271,7 +273,10 @@ const ArticleDetail = () => {
             <span>Favorite</span>
           </button>
 
-          <button className="action-button share-button" onClick={handleShare}>
+          <button
+            className="action-button-details share-button-details"
+            onClick={handleShare}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -291,7 +296,10 @@ const ArticleDetail = () => {
             </svg>
             <span>Share</span>
           </button>
-          <button className="action-button add-button" onClick={handleShare}>
+          <button
+            className="action-button-details add-button-details"
+            onClick={handleShare}
+          >
             <span>Add to Library </span>
           </button>
         </div>
@@ -329,15 +337,6 @@ const ArticleDetail = () => {
 
           <div className="cosmic-comment-form">
             <h3 className="cosmic-form-title">Add a Comment</h3>
-            <div className="cosmic-form-group">
-              <input
-                type="text"
-                className="cosmic-input"
-                placeholder="Your Name"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-              />
-            </div>
             <div className="cosmic-form-group">
               <textarea
                 className="cosmic-textarea"

@@ -440,13 +440,13 @@ body.dark-mode .article-content ol {
 }
 
 /* Article Actions */
-.article-detail-content .article-actions {
+.article-detail-content .article-actions-details {
   display: flex;
   gap: 10px;
   margin-bottom: 50px;
 }
 
-.article-actions .action-button {
+.article-actions-details .action-button-details {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -460,7 +460,7 @@ body.dark-mode .article-content ol {
 
 }
 
-.favorite-button {
+.favorite-button-details {
   background-color: rgba(247, 37, 133, 0.1);
   color: #f72585;
   /*border-color:#f72585 ;*/
@@ -469,54 +469,54 @@ body.dark-mode .article-content ol {
   border-bottom: 1px solid rgba(31, 5, 148, 0.847);
 }
 
-body.dark-mode .favorite-button {
+body.dark-mode .favorite-button-details {
   background-color: rgba(247, 37, 133, 0.2);
   color: #ff6eb5;
   border-color:#f72585 ;
 }
 
-.favorite-button:hover {
+.favorite-button-details:hover {
   background-color: rgba(247, 37, 133, 0.2);
   border-color:#f72585 ;
 }
 
-body.dark-mode .favorite-button:hover {
+body.dark-mode .favorite-button-details:hover {
   background-color: rgba(247, 37, 133, 0.3);
   border-color:#f72585 ;
 }
 
-.favorite-button.active {
+.favorite-button-details.active {
   background-color: #f72585;
   color: white;
 }
 
-body.dark-mode .favorite-button.active {
+body.dark-mode .favorite-button-details.active {
   background-color: #ff6eb5;
   color: #ff0080;
 }
 
-.share-button {
+.share-button-details {
   background-color: rgba(67, 97, 238, 0.1);
   color: #4361ee;
   border-radius: 30px;
   width: 120px;
 }
 
-body.dark-mode .share-button {
+body.dark-mode .share-button-details {
   background-color: rgba(67, 97, 238, 0.2);
   color: #a0b4ff;
 }
 
-.share-button:hover {
+.share-button-details:hover {
   background-color: rgba(67, 97, 238, 0.2);
 }
 
-body.dark-mode .share-button:hover {
+body.dark-mode .share-button-details:hover {
   background-color: rgba(67, 97, 238, 0.3);
 }
 
 /* Article Actions Container */
-.article-actions-container {
+.article-actions-details-container {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 30px;
@@ -554,12 +554,12 @@ body.dark-mode .share-button:hover {
   border-color: rgba(123, 94, 250, 0.2);
 }
 
-.share-buttons {
+.share-button-detailss {
   display: flex;
   gap: 10px;
 }
 
-.share-button {
+.share-button-details {
   width: 40px;
   height: 40px;
   display: flex;
@@ -572,24 +572,24 @@ body.dark-mode .share-button:hover {
   width: 150px;
 }
 
-.share-button:hover {
+.share-button-details:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.share-button.twitter:hover {
+.share-button-details.twitter:hover {
   background-color: #1da1f2;
   color: white;
   border-color: #1da1f2;
 }
 
-.share-button.linkedin:hover {
+.share-button-details.linkedin:hover {
   background-color: #0077b5;
   color: white;
   border-color: #0077b5;
 }
 
-.add-button {
+.add-button-details {
   background-color: rgba(100, 37, 247, 0.818);
   color: #ffffff;
   /*border-color:#f72585 ;
@@ -604,39 +604,39 @@ body.dark-mode .share-button:hover {
   -o-border-radius: 10px;
 }
 
-body.dark-mode .add-button {
+body.dark-mode .add-button-details {
   background-color: rgba(247, 37, 133, 0.2);
   color: #ff6eb5;
   border-color:#f72585 ;
 }
 
-.add-button:hover {
+.add-button-details:hover {
   background-color: rgba(247, 37, 133, 0.2);
   border-color:#f72585 ;
 }
 
-body.dark-mode .add-button:hover {
+body.dark-mode .add-button-details:hover {
   background-color: rgba(247, 37, 133, 0.3);
   border-color:#f72585 ;
 }
 
-.add-button.active {
+.add-button-details.active {
   background-color: #f72585;
   color: white;
 }
 
-body.dark-mode .add-button.active {
+body.dark-mode .add-button-details.active {
   background-color: #ff6eb5;
   color: #ff0080;
 }
 
-.share-button.email:hover {
+.share-button-details.email:hover {
   background-color: #ea4335;
   color: white;
   border-color: #ea4335;
 }
 
-.share-button.copy:hover {
+.share-button-details.copy:hover {
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
@@ -855,7 +855,7 @@ body.dark-mode .article-detail-not-found p {
     padding: 20px;
   }
 
-  .article-actions-container {
+  .article-actions-details-container {
     grid-template-columns: 1fr;
   }
 

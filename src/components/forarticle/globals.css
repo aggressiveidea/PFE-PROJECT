@@ -350,12 +350,8 @@ body.dark-mode .comet::after {
   -webkit-background-clip: text; /* Compatibilité avec WebKit */
   -webkit-text-fill-color: transparent;
   color: transparent; /* Optionnel, pour compatibilité */
-
   text-shadow: 0 0 20px rgba(123, 94, 250, 0.2);
-  animation: glow 3s ease-in-out infinite alternate, float 6s ease-in-out infinite;
   font-weight: 900;
-  /*Extraboldformaintitle*/-webkit-animation: glow 3s ease-in-out infinite alternate, float 6s ease-in-out infinite;
-  -webkit-animation: glow 3s ease-in-out infinite alternate, float 6s ease-in-out infinite;
 }
 
 body.dark-mode .hero-title {
