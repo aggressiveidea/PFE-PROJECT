@@ -6,9 +6,8 @@ import "./Sidebar.css"
 
 export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode, toggleDarkMode }) {
   const [activeItem, setActiveItem] = useState("content")
-  const [userRole, setUserRole] = useState("User") // Default role
+  const [userRole, setUserRole] = useState("User")
 
-  // Fetch user role from localStorage on component mount
   useEffect(() => {
     const getUserRole = () => {
       try {
@@ -23,7 +22,6 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
 
     getUserRole()
 
-    // Listen for user updates (e.g., after profile changes)
     const handleUserUpdate = () => getUserRole()
     window.addEventListener("userUpdated", handleUserUpdate)
 
@@ -51,60 +49,58 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     }
   }, [])
 
-  // Define all navigation links with their access permissions
   const allNavLinks = [
     {
       id: "dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
       href: "/dashboard",
-      roles: ["Admin", "Ict-expert"], // Admin and ICT expert can access
+      roles: ["Admin", "Ict-expert"],
     },
     {
       id: "content",
       label: "Content dashboard",
       icon: FileText,
-      href: "/content-dashboard",
-      roles: ["Content-admin", "Ict-expert"], // Content admin and ICT expert can access
+      href: "/notifs",
+      roles: ["Content-admin", "Ict-expert"], 
     },
     {
       id: "users",
       label: "All users",
       icon: Users,
-      href: "/users",
-      roles: ["Admin"], // Only admin can access
+      href: "/usermanagement",
+      roles: ["Admin"], 
     },
     {
       id: "notifications",
       label: "Notifications",
       icon: Bell,
-      href: "/notifications",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], // All roles can access
+      href: "/notifs",
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
     },
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
       href: "/settings",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], // All roles can access
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
     },
     {
       id: "personal",
       label: "Personal infos",
       icon: User,
-      href: "/personal",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], // All roles can access
+      href: "/profile",
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
     },
     {
       id: "quiz",
       label: "ICT Quiz",
       icon: BookOpen,
       href: "/quiz",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], // All roles can access
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
     },
   ]
 
-  // Filter navigation links based on user role
   const navLinks = allNavLinks.filter((link) => link.roles.includes(userRole))
 
   return (

@@ -14,7 +14,7 @@ export const initKnowledgeGraphAnimation = (container) => {
     const ctx = canvas.getContext("2d")
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
   
-    // Generate nodes with larger sizes
+   
     const nodes = Array.from({ length: 25 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -27,7 +27,7 @@ export const initKnowledgeGraphAnimation = (container) => {
     // Generate more visible links
     const links = []
     for (let i = 0; i < nodes.length; i++) {
-      const numLinks = Math.floor(Math.random() * 3) + 2 // Ensure at least 2 links per node
+      const numLinks = Math.floor(Math.random() * 3) + 2 
       for (let j = 0; j < numLinks; j++) {
         const target = Math.floor(Math.random() * nodes.length)
         if (i !== target) {
@@ -41,9 +41,8 @@ export const initKnowledgeGraphAnimation = (container) => {
     const animate = () => {
       ctx.clearRect(0, 0, width, height)
   
-      // Draw links with increased opacity and width
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)" // More visible links
-      ctx.lineWidth = 2 // Thicker lines
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)" 
+      ctx.lineWidth = 2 
   
       links.forEach((link) => {
         const source = nodes[link.source]
@@ -58,10 +57,9 @@ export const initKnowledgeGraphAnimation = (container) => {
       // Draw and update nodes
       nodes.forEach((node) => {
         // Update position with slower movement
-        node.x += node.vx * 0.3
-        node.y += node.vy * 0.3
+        node.x += node.vx * 0.4
+        node.y += node.vy * 0.4
   
-        // Bounce off walls with some padding
         const padding = 50
         if (node.x < padding || node.x > width - padding) {
           node.vx *= -1
