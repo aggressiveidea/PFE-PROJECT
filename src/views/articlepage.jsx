@@ -355,9 +355,6 @@ function Articlepage() {
         <section className="authors-section">
           <Authors />
         </section>
-        <section className="suggestiontopics-section">
-          <Topics />
-        </section>
         {showUpdateForm && (
           <UpdateArticleForm
             article={articleToEdit}
