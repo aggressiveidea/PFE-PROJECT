@@ -55,14 +55,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       label: "Dashboard",
       icon: LayoutDashboard,
       href: "/dashboard",
-      roles: ["Admin", "Ict-expert"],
-    },
-    {
-      id: "content",
-      label: "Content dashboard",
-      icon: FileText,
-      href: "/notifs",
-      roles: ["Content-admin", "Ict-expert"], 
+      roles: ["Admin"],
     },
     {
       id: "users",
@@ -76,7 +69,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       label: "Notifications",
       icon: Bell,
       href: "/notifs",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+      roles: ["Content-admin"], 
     },
     {
       id: "settings",
