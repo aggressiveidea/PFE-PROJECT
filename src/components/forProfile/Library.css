@@ -314,12 +314,12 @@
   margin-bottom: 2rem;
 }
 
-.search-container {
+.search-container-lib {
   flex: 1;
   position: relative;
 }
 
-.search-input {
+.search-input-lib {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
   border: 1px solid var(--color-very-light-blue);

@@ -579,7 +579,7 @@ const ProfileLibrary = () => {
         />
       </div>
 
-      <div className="content-wrapper">
+      <div className="content-wrapper-lib">
         <div className={`sidebar-wrapper ${mobileOpen ? "mobile-open" : ""}`}>
           <Sidebar
             collapsed={sidebarCollapsed}
@@ -590,8 +590,8 @@ const ProfileLibrary = () => {
           />
         </div>
 
-        <div className="main-content">
-          <button className="mobile-menu-button" onClick={openMobileMenu}>
+        <div className="main-content-lib">
+          <button className="mobile-menu-button-lib" onClick={openMobileMenu}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -626,7 +626,7 @@ const ProfileLibrary = () => {
                 }`}
                 onClick={() => setActiveTab("terms")}
               >
-                <span className="tab-icon terms-icon"></span>
+                <span className="tab-icon-lib terms-icon-lib"></span>
                 {getText("legalTerms")}
               </button>
               <button
@@ -635,13 +635,13 @@ const ProfileLibrary = () => {
                 }`}
                 onClick={() => setActiveTab("articles")}
               >
-                <span className="tab-icon articles-icon"></span>
+                <span className="tab-icon-lib articles-icon-lib"></span>
                 {getText("articles")}
               </button>
             </div>
 
-            <div className="library-controls">
-              <div className="search-container">
+            <div className="library-controls-lib">
+              <div className="search-container-lib">
                 <input
                   type="text"
                   placeholder={getText("searchPlaceholder")}
@@ -649,14 +649,14 @@ const ProfileLibrary = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Search className="search-icon" size={20} />
+                <Search className="search-icon-lib" size={20} />
               </div>
 
-              <div className="filter-group">
+              <div className="filter-group-lib">
                 {/* Category filter */}
-                <div className="filter-container">
+                <div className="filter-container-lib">
                   <select
-                    className="filter-select"
+                    className="filter-select-lib"
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
                   >
@@ -667,13 +667,13 @@ const ProfileLibrary = () => {
                       </option>
                     ))}
                   </select>
-                  <Filter className="filter-icon" size={16} />
+                  <Filter className="filter-icon-lib" size={16} />
                 </div>
 
                 {/* Language filter */}
-                <div className="filter-container">
+                <div className="filter-container-lib">
                   <select
-                    className="filter-select"
+                    className="filter-select-lib"
                     value={languageFilter}
                     onChange={(e) => setLanguageFilter(e.target.value)}
                   >
@@ -684,13 +684,13 @@ const ProfileLibrary = () => {
                       </option>
                     ))}
                   </select>
-                  <Filter className="filter-icon" size={16} />
+                  <Filter className="filter-icon-lib" size={16} />
                 </div>
 
                 {/* Sort options */}
-                <div className="filter-container">
+                <div className="filter-container-lib">
                   <select
-                    className="filter-select"
+                    className="filter-select-lib"
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                   >
@@ -700,24 +700,24 @@ const ProfileLibrary = () => {
                       {getText("alphabetical")}
                     </option>
                   </select>
-                  <SlidersHorizontal className="filter-icon" size={16} />
+                  <SlidersHorizontal className="filter-icon-lib" size={16} />
                 </div>
 
                 {/* Favorites toggle */}
                 <button
-                  className={`favorites-toggle ${
+                  className={`favorites-toggle-lib ${
                     showFavoritesOnly ? "active" : ""
                   }`}
                   onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                   aria-label={getText("favorites")}
                 >
-                  <Heart className="favorites-icon" size={16} />
+                  <Heart className="favorites-icon-lib" size={16} />
                   <span>{getText("favorites")}</span>
                 </button>
 
                 {/* Reset filters */}
                 <button
-                  className="reset-filters-button"
+                  className="reset-filters-button-lib"
                   onClick={resetFilters}
                   aria-label="Reset filters"
                 >
@@ -727,13 +727,13 @@ const ProfileLibrary = () => {
             </div>
 
             {isLoading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
+              <div className="loading-container-lib">
+                <div className="loading-spinner-lib"></div>
                 <p>{getText("loading")}</p>
               </div>
             ) : (
               <>
-                <div className="library-grid">
+                <div className="library-grid-lib">
                   {paginatedItems.length === 0 ? (
                     <div className="empty-state">
                       <div className="empty-icon"></div>
@@ -759,12 +759,12 @@ const ProfileLibrary = () => {
                             }}
                           >
                             <span
-                              className={`category-icon ${item.category}`}
+                              className={`category-icon-lib ${item.category}`}
                             ></span>
                             {getCategoryLabel(item.category)}
                           </div>
                           <button
-                            className={`favorite-button ${
+                            className={`favorite-button-lib ${
                               item.isFavorite ? "active" : ""
                             }`}
                             onClick={() => toggleFavorite(item.id)}
@@ -781,20 +781,20 @@ const ProfileLibrary = () => {
                           </button>
                         </div>
 
-                        <h3 className="card-title">{item.title}</h3>
+                        <h3 className="card-title-lib">{item.title}</h3>
 
                         {activeTab === "terms" ? (
-                          <p className="card-definition">
+                          <p className="card-definition-lib">
                             {item.definition?.[currentLanguage] ||
                               item.definition?.en ||
                               ""}
                           </p>
                         ) : (
                           <>
-                            <p className="card-author">
+                            <p className="card-author-lib">
                               {getText("by")} {item.author}
                             </p>
-                            <p className="card-abstract">
+                            <p className="card-abstract-lib">
                               {item.abstract?.[currentLanguage] ||
                                 item.abstract?.en ||
                                 ""}
@@ -802,8 +802,8 @@ const ProfileLibrary = () => {
                           </>
                         )}
 
-                        <div className="card-languages">
-                          <span className="languages-label">
+                        <div className="card-languages-lib">
+                          <span className="languages-label-lib">
                             {getText("languages")}:
                           </span>
                           {item.languages.map((lang) => (
@@ -820,16 +820,16 @@ const ProfileLibrary = () => {
                         </div>
 
                         {expandedItemId === item.id && item.relatedTerms && (
-                          <div className="related-terms">
+                          <div className="related-terms-lib">
                             <h4>{getText("relatedTerms")}</h4>
-                            <div className="related-terms-list">
+                            <div className="related-terms-list-lib">
                               {getRelatedTermsData(item.relatedTerms).map(
                                 (term) => (
-                                  <div key={term.id} className="related-term">
-                                    <span className="related-term-title">
+                                  <div key={term.id} className="related-term-lib">
+                                    <span className="related-term-title-lib">
                                       {term.title}
                                     </span>
-                                    <span className="related-term-category">
+                                    <span className="related-term-category-lib">
                                       {getCategoryLabel(term.category)}
                                     </span>
                                   </div>
@@ -839,21 +839,21 @@ const ProfileLibrary = () => {
                           </div>
                         )}
 
-                        <div className="card-footer">
-                          <span className="card-date">
-                            {activeTab === "terms"
+                        <div className="card-footer-lib">
+                          <span className="card-date-lib">
+                            {activeTab === "terms-lib"
                               ? `${getText("addedOn")} ${item.dateAdded}`
                               : `${getText("publishedOn")} ${
                                   item.datePublished
                                 }`}
                           </span>
 
-                          <div className="card-actions">
-                            <button className="action-button view-button">
+                          <div className="card-actions-lib">
+                            <button className="action-button-lib view-button-lib">
                               <Eye size={16} />
                               <span>{getText("view")}</span>
                             </button>
-                            <button className="action-button share-button">
+                            <button className="action-button-lib share-button-lib">
                               <Share2 size={16} />
                               <span>{getText("share")}</span>
                             </button>
@@ -865,20 +865,20 @@ const ProfileLibrary = () => {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="library-pagination">
+                  <div className="library-pagination-lib">
                     <button
-                      className="pagination-button prev-button"
+                      className="pagination-button-lib prev-button-lib"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                     >
                       <ChevronLeft size={18} />
                     </button>
-                    <div className="pagination-numbers">
+                    <div className="pagination-numbers-lib">
                       {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                         (page) => (
                           <button
                             key={page}
-                            className={`page-number ${
+                            className={`page-number-lib ${
                               currentPage === page ? "active" : ""
                             }`}
                             onClick={() => handlePageChange(page)}
@@ -889,7 +889,7 @@ const ProfileLibrary = () => {
                       )}
                     </div>
                     <button
-                      className="pagination-button next-button"
+                      className="pagination-button-lib next-button-lib"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                     >
@@ -903,7 +903,7 @@ const ProfileLibrary = () => {
         </div>
       </div>
 
-      <div className="footer-wrapper">
+      <div className="footer-wrapper-lib">
         <Footer
           darkMode={darkMode}
           setDarkMode={setDarkMode}

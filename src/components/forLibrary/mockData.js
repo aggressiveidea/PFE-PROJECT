@@ -1,0 +1,228 @@
+
+export const mockTermsData = [
+    // E-Commerce Terms
+    {
+      id: "ec-1",
+      title: "Electronic Contract",
+      definition: {
+        en: "A contract formed through electronic means rather than through paper documents",
+        fr: "Un contrat formé par voie électronique plutôt que par documents papier",
+        ar: "عقد تم تشكيله من خلال وسائل إلكترونية بدلاً من المستندات الورقية",
+      },
+      category: "e-commerce",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-03-15",
+      isFavorite: false,
+      relatedTerms: ["ec-3", "itc-2"],
+    },
+    {
+      id: "ec-2",
+      title: "Digital Signature",
+      definition: {
+        en: "Electronic data that is used to identify the sender of a message or document",
+        fr: "Données électroniques utilisées pour identifier l'expéditeur d'un message ou d'un document",
+        ar: "بيانات إلكترونية تستخدم لتحديد مرسل رسالة أو مستند",
+      },
+      category: "e-commerce",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-03-20",
+      isFavorite: true,
+      relatedTerms: ["ec-1", "sec-1"],
+    },
+    {
+      id: "ec-3",
+      title: "Online Marketplace",
+      definition: {
+        en: "A website or app where products or services are offered by multiple third parties",
+        fr: "Un site web ou une application où des produits ou services sont proposés par plusieurs tiers",
+        ar: "موقع ويب أو تطبيق حيث يتم تقديم المنتجات أو الخدمات من قبل أطراف ثالثة متعددة",
+      },
+      category: "e-commerce",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-03-25",
+      isFavorite: false,
+      relatedTerms: ["ec-1", "mkt-1"],
+    },
+  
+    // IT Compliance Terms
+    {
+      id: "itc-1",
+      title: "Data Protection",
+      definition: {
+        en: "Measures to protect personal data against unauthorized access or processing",
+        fr: "Mesures visant à protéger les données personnelles contre l'accès ou le traitement non autorisés",
+        ar: "تدابير لحماية البيانات الشخصية ضد الوصول أو المعالجة غير المصرح بهما",
+      },
+      category: "it-compliance",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-04-01",
+      isFavorite: true,
+      relatedTerms: ["sec-2", "leg-1"],
+    },
+    {
+      id: "itc-2",
+      title: "Compliance Audit",
+      definition: {
+        en: "A systematic review to ensure adherence to laws, regulations, and policies",
+        fr: "Un examen systématique pour assurer le respect des lois, des règlements et des politiques",
+        ar: "مراجعة منهجية لضمان الالتزام بالقوانين واللوائح والسياسات",
+      },
+      category: "it-compliance",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-04-05",
+      isFavorite: false,
+      relatedTerms: ["itc-1", "leg-2"],
+    },
+  
+    // Security Terms
+    {
+      id: "sec-1",
+      title: "Cybersecurity Threat",
+      definition: {
+        en: "A malicious act that seeks to damage data, steal data, or disrupt digital life",
+        fr: "Un acte malveillant qui cherche à endommager les données, à voler des données ou à perturber la vie numérique",
+        ar: "عمل ضار يسعى إلى إتلاف البيانات أو سرقة البيانات أو تعطيل الحياة الرقمية",
+      },
+      category: "security",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-04-10",
+      isFavorite: true,
+      relatedTerms: ["sec-2", "itc-1"],
+    },
+    {
+      id: "sec-2",
+      title: "Encryption",
+      definition: {
+        en: "The process of converting information into a code to prevent unauthorized access",
+        fr: "Le processus de conversion d'informations en un code pour empêcher l'accès non autorisé",
+        ar: "عملية تحويل المعلومات إلى رمز لمنع الوصول غير المصرح به",
+      },
+      category: "security",
+      languages: ["en", "fr", "ar"],
+      dateAdded: "2024-04-15",
+      isFavorite: false,
+      relatedTerms: ["sec-1", "itc-1"],
+    },
+  ]
+  
+  // Mock data for articles
+  export const mockArticlesData = [
+    {
+      id: "art-1",
+      title: "The Impact of GDPR on Global Businesses",
+      author: "Jane Doe",
+      abstract: {
+        en: "An overview of how the General Data Protection Regulation (GDPR) affects companies worldwide.",
+        fr: "Un aperçu de la manière dont le Règlement général sur la protection des données (RGPD) affecte les entreprises du monde entier.",
+        ar: "نظرة عامة حول كيفية تأثير اللائحة العامة لحماية البيانات (GDPR) على الشركات في جميع أنحاء العالم.",
+      },
+      category: "legal",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-05-10",
+      isFavorite: true,
+      relatedTerms: ["leg-1", "itc-1"],
+    },
+    {
+      id: "art-2",
+      title: "Best Practices for Cybersecurity in 2024",
+      author: "John Smith",
+      abstract: {
+        en: "A guide to the latest cybersecurity practices to protect your business from cyber threats.",
+        fr: "Un guide des dernières pratiques de cybersécurité pour protéger votre entreprise contre les cybermenaces.",
+        ar: "دليل لأحدث ممارسات الأمن السيبراني لحماية عملك من التهديدات السيبرانية.",
+      },
+      category: "security",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-05-15",
+      isFavorite: false,
+      relatedTerms: ["sec-1", "sec-2"],
+    },
+    {
+      id: "art-3",
+      title: "The Future of E-Commerce: Trends and Predictions",
+      author: "Emily White",
+      abstract: {
+        en: "Exploring the emerging trends and making predictions about the future of e-commerce.",
+        fr: "Explorer les tendances émergentes et faire des prédictions sur l'avenir du commerce électronique.",
+        ar: "استكشاف الاتجاهات الناشئة وتقديم تنبؤات حول مستقبل التجارة الإلكترونية.",
+      },
+      category: "e-commerce",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-05-20",
+      isFavorite: true,
+      relatedTerms: ["ec-1", "ec-3"],
+    },
+  ]
+  
+  // Mock data for books
+  export const mockBooksData = [
+    {
+      id: "book-1",
+      title: "Mastering Web Development: A Comprehensive Guide",
+      author: "David Johnson",
+      description: {
+        en: "A complete guide to modern web development techniques, frameworks, and best practices.",
+        fr: "Un guide complet des techniques, frameworks et meilleures pratiques de développement web moderne.",
+        ar: "دليل شامل لتقنيات وأطر عمل وأفضل ممارسات تطوير الويب الحديثة.",
+      },
+      category: "programming",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-01-15",
+      isFavorite: true,
+      coverImage: "/placeholder.jpg",
+      isbn: "978-1234567890",
+      pages: 450,
+    },
+    {
+      id: "book-2",
+      title: "Cybersecurity Essentials for IT Professionals",
+      author: "Sarah Chen",
+      description: {
+        en: "Essential knowledge and practical techniques for IT professionals to secure systems and networks.",
+        fr: "Connaissances essentielles et techniques pratiques pour les professionnels de l'informatique pour sécuriser les systèmes et les réseaux.",
+        ar: "المعرفة الأساسية والتقنيات العملية لمحترفي تكنولوجيا المعلومات لتأمين الأنظمة والشبكات.",
+      },
+      category: "security",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-02-20",
+      isFavorite: false,
+      coverImage: "/placeholder.jpg",
+      isbn: "978-0987654321",
+      pages: 380,
+    },
+    {
+      id: "book-3",
+      title: "Cloud Computing: Architecture and Implementation",
+      author: "Michael Rodriguez",
+      description: {
+        en: "A detailed exploration of cloud computing architectures, services, and implementation strategies.",
+        fr: "Une exploration détaillée des architectures, services et stratégies d'implémentation du cloud computing.",
+        ar: "استكشاف مفصل لهندسة الحوسبة السحابية وخدماتها واستراتيجيات التنفيذ.",
+      },
+      category: "it-compliance",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-03-10",
+      isFavorite: true,
+      coverImage: "/placeholder.jpg",
+      isbn: "978-5678901234",
+      pages: 420,
+    },
+    {
+      id: "book-4",
+      title: "Artificial Intelligence in Business",
+      author: "Lisa Wong",
+      description: {
+        en: "How businesses can leverage artificial intelligence to improve operations and gain competitive advantage.",
+        fr: "Comment les entreprises peuvent tirer parti de l'intelligence artificielle pour améliorer leurs opérations et obtenir un avantage concurrentiel.",
+        ar: "كيف يمكن للشركات الاستفادة من الذكاء الاصطناعي لتحسين العمليات واكتساب ميزة تنافسية.",
+      },
+      category: "programming",
+      languages: ["en", "fr", "ar"],
+      datePublished: "2024-04-05",
+      isFavorite: false,
+      coverImage: "/placeholder.jpg",
+      isbn: "978-6789012345",
+      pages: 350,
+    },
+  ]
+  

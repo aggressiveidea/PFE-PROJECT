@@ -1,291 +1,244 @@
 "use client"
+
 import { useState, useEffect } from "react"
-import { Info, ChevronLeft, ChevronRight } from "lucide-react"
-import { indexedSearch, getAllterms } from "../../services/Api"
+import "./IndexedSearch.css"
 
-const IndexedSearch = ({
-  terms = [],
-  selectedLetter,
-  onLetterSelect,
-  onTermSelect,
-  categoryTranslations,
-  getCategoryColor,
-}) => {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [letterTerms, setLetterTerms] = useState([])
-  const [allTerms, setAllTerms] = useState([])
-  const [letterCounts, setLetterCounts] = useState({})
+const IndexedSearch = ({ language = "english" }) => {
+  const [activeLetter, setActiveLetter] = useState("A")
+  const [hoveredCard, setHoveredCard] = useState(null)
+  const [viewMode, setViewMode] = useState("cards")
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1)
-  const [termsPerPage] = useState(8)
-  const [totalTerms, setTotalTerms] = useState(0)
-
-  // Fetch all terms on component mount to calculate letter counts
-  useEffect(() => {
-    fetchAllTerms()
-  }, [])
-
-  // Fetch all terms from the database
-  const fetchAllTerms = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const data = await getAllterms()
-
-      if (Array.isArray(data)) {
-        // Process terms to deduplicate categories for display in cards only
-        const processedTerms = data.map((term) => {
-          // Store the original categories for use in the details view
-          term.allCategories = term.categories ? [...term.categories] : []
-
-          // Create deduplicated categories for card display
-          if (term.categories && term.categories.length > 0) {
-            // Create a map to deduplicate categories by name
-            const uniqueCategories = new Map()
-
-            term.categories.forEach((category) => {
-              if (!uniqueCategories.has(category.name)) {
-                uniqueCategories.set(category.name, category)
-              }
-            })
-
-            // Convert map values back to array for display in cards
-            term.displayCategories = Array.from(uniqueCategories.values())
-          } else {
-            term.displayCategories = []
-          }
-          return term
-        })
-
-        setAllTerms(processedTerms)
-
-        // Calculate letter counts
-        const counts = alphabet.reduce((acc, letter) => {
-          acc[letter] = processedTerms.filter((term) => term.name && term.name.toUpperCase().startsWith(letter)).length
-          return acc
-        }, {})
-
-        setLetterCounts(counts)
-      } else {
-        console.error("Terms data is not an array:", data)
-        setError("Failed to load terms. Invalid data format.")
-      }
-    } catch (err) {
-      console.error("Error fetching all terms:", err)
-      setError("Failed to load terms. Please try again.")
-    } finally {
-      setLoading(false)
-    }
+  // Define alphabets for different languages
+  const alphabets = {
+    english: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+    french: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+    arabic: "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split(""),
   }
 
-  // Fetch terms when selected letter changes
+  // Get the appropriate alphabet based on selected language
+  const letters = alphabets[language] || alphabets.english
+
+  // Sample terms data with language support
+  const termsData = {
+    english: [
+      {
+        name: "Algorithm",
+        category: "Computer Science",
+        definition: "A step-by-step procedure for solving a problem or accomplishing a task.",
+        reference: "Introduction to Algorithms, CLRS",
+      },
+      {
+        name: "API",
+        category: "Networks",
+        definition: "Application Programming Interface - A set of rules that allow programs to talk to each other.",
+        reference: "Web APIs: The Definitive Guide",
+      },
+      {
+        name: "Authentication",
+        category: "Cybersecurity",
+        definition: "The process of verifying the identity of a user or process.",
+        reference: "Security Engineering, Ross Anderson",
+      },
+    ],
+    french: [
+      {
+        name: "Algorithme",
+        category: "Informatique",
+        definition: "Une procédure étape par étape pour résoudre un problème ou accomplir une tâche.",
+        reference: "Introduction aux Algorithmes, CLRS",
+      },
+      {
+        name: "API",
+        category: "Réseaux",
+        definition:
+          "Interface de Programmation d'Application - Un ensemble de règles permettant aux programmes de communiquer entre eux.",
+        reference: "Guide Définitif des API Web",
+      },
+      {
+        name: "Authentification",
+        category: "Cybersécurité",
+        definition: "Le processus de vérification de l'identité d'un utilisateur ou d'un processus.",
+        reference: "Ingénierie de la Sécurité, Ross Anderson",
+      },
+    ],
+    arabic: [
+      {
+        name: "خوارزمية",
+        category: "علوم الحاسوب",
+        definition: "إجراء خطوة بخطوة لحل مشكلة أو إنجاز مهمة.",
+        reference: "مقدمة في الخوارزميات، CLRS",
+      },
+      {
+        name: "واجهة برمجة التطبيقات",
+        category: "الشبكات",
+        definition: "مجموعة من القواعد التي تسمح للبرامج بالتحدث مع بعضها البعض.",
+        reference: "الدليل النهائي لواجهات برمجة تطبيقات الويب",
+      },
+      {
+        name: "المصادقة",
+        category: "الأمن السيبراني",
+        definition: "عملية التحقق من هوية المستخدم أو العملية.",
+        reference: "هندسة الأمن، روس أندرسون",
+      },
+    ],
+  }
+
+  // Get terms for the current language
+  const terms = termsData[language] || termsData.english
+
+  // Filter terms by active letter
+  const filteredTerms = terms.filter((term) => {
+    const firstLetter = term.name.charAt(0).toUpperCase()
+    return firstLetter === activeLetter
+  })
+
+  // Count terms for each letter
+  const getTermCountForLetter = (letter) => {
+    return terms.filter((term) => term.name.charAt(0).toUpperCase() === letter).length
+  }
+
+  // Set default active letter on language change
   useEffect(() => {
-    if (selectedLetter) {
-      fetchTermsByLetter(selectedLetter, 1)
+    if (terms.length > 0) {
+      const firstTermLetter = terms[0].name.charAt(0).toUpperCase()
+      setActiveLetter(firstTermLetter)
     } else {
-      setLetterTerms([])
+      setActiveLetter(letters[0])
     }
-    // Reset to first page when letter changes
-    setCurrentPage(1)
-  }, [selectedLetter])
+  }, [language])
 
-  // Fetch terms when page changes
-  useEffect(() => {
-    if (selectedLetter && currentPage > 1) {
-      fetchTermsByLetter(selectedLetter, currentPage)
+  const getCategoryColor = (category) => {
+    const colors = {
+      "Données personnelles": "#E5DEFF",
+      "Commerce électronique": "#FDE1D3",
+      Réseaux: "#D3E4FD",
+      "Criminalité informatique": "#FFDEE2",
+      Divers: "#F1F0FB",
+      "Contrat Informatique": "#F2FCE2",
+      "Propriété intellectuelle": "#FEF7CD",
+      Organisations: "#FEC6A1",
+      "Computer Science": "#E5DEFF",
+      Networks: "#D3E4FD",
+      Cybersecurity: "#FFE5E5",
+      Informatique: "#E5DEFF",
+      Cybersécurité: "#FFE5E5",
+      "علوم الحاسوب": "#E5DEFF",
+      الشبكات: "#D3E4FD",
+      "الأمن السيبراني": "#FFE5E5",
     }
-  }, [currentPage])
-
-  const fetchTermsByLetter = async (letter, page) => {
-    if (!letter || letter.length !== 1) {
-      console.error("Invalid letter parameter:", letter)
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      console.log(`Fetching terms for letter ${letter}, page ${page}`)
-
-      // Filter from all terms first for immediate feedback
-      const filteredTerms = allTerms.filter((term) => term.name && term.name.toUpperCase().startsWith(letter))
-
-      if (filteredTerms.length > 0) {
-        const startIndex = (page - 1) * termsPerPage
-        const endIndex = startIndex + termsPerPage
-        const paginatedTerms = filteredTerms.slice(startIndex, endIndex)
-
-        setLetterTerms(paginatedTerms)
-        setTotalTerms(filteredTerms.length)
-      } else {
-        // If no terms found locally, try API call
-        const results = await indexedSearch(letter, page, termsPerPage)
-
-        if (Array.isArray(results)) {
-          // Process results to deduplicate categories for display in cards
-          const processedResults = results.map((term) => {
-            // Store the original categories for use in the details view
-            term.allCategories = term.categories ? [...term.categories] : []
-
-            // Create deduplicated categories for card display
-            if (term.categories && term.categories.length > 0) {
-              // Create a map to deduplicate categories by name
-              const uniqueCategories = new Map()
-
-              term.categories.forEach((category) => {
-                if (!uniqueCategories.has(category.name)) {
-                  uniqueCategories.set(category.name, category)
-                }
-              })
-
-              // Convert map values back to array for display in cards
-              term.displayCategories = Array.from(uniqueCategories.values())
-            } else {
-              term.displayCategories = []
-            }
-            return term
-          })
-
-          setLetterTerms(processedResults)
-          setTotalTerms(letterCounts[letter] || processedResults.length)
-        } else {
-          console.error("Indexed search results are not an array:", results)
-          setLetterTerms([])
-          setError("Invalid response format from server")
-        }
-      }
-    } catch (err) {
-      console.error(`Error fetching terms for letter ${letter}:`, err)
-      setError(`Failed to load terms for letter ${letter}. Please try again.`)
-      setLetterTerms([])
-    } finally {
-      setLoading(false)
-    }
+    return colors[category] || "#F1F0FB"
   }
 
   const handleLetterClick = (letter) => {
-    if (letterCounts[letter] > 0) {
-      onLetterSelect(letter)
-    }
+    setActiveLetter(letter)
   }
 
-  // Pagination logic
-  const totalPages = Math.ceil(totalTerms / termsPerPage)
+  const toggleViewMode = (mode) => {
+    setViewMode(mode)
+  }
 
-  const paginate = (pageNumber) => {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber)
-    }
+  // Set text direction based on language
+  const getTextDirection = () => {
+    return language === "arabic" ? "rtl" : "ltr"
   }
 
   return (
-    <div className="indexed-search">
-      <div className="alphabet-ribbon">
-        {alphabet.map((letter) => (
-          <button
+    <div className="indexed-search" style={{ direction: getTextDirection() }}>
+      <div className="letter-navigation">
+        {letters.map((letter) => (
+          <div
             key={letter}
-            className={`letter-button ${selectedLetter === letter ? "active" : ""} ${letterCounts[letter] === 0 ? "disabled" : ""}`}
+            className={`letter-item ${letter === activeLetter ? "active" : ""}`}
             onClick={() => handleLetterClick(letter)}
-            disabled={letterCounts[letter] === 0}
           >
             <span className="letter">{letter}</span>
-            <span className="letter-count">{letterCounts[letter] || 0}</span>
-          </button>
+            <span className="term-count">{getTermCountForLetter(letter)}</span>
+          </div>
         ))}
       </div>
-
-      <div className="indexed-results">
-        {!selectedLetter ? (
-          <div className="select-letter-prompt">
-            <p>Please select a letter from the alphabet above to view terms.</p>
+      <div className="terms-list">
+        <div className="terms-header">
+          <h3>
+            {language === "english" && `Terms starting with '${activeLetter}'`}
+            {language === "french" && `Termes commençant par '${activeLetter}'`}
+            {language === "arabic" && `المصطلحات التي تبدأ بـ '${activeLetter}'`}
+          </h3>
+          <div className="view-controls">
+            <button
+              className={`view-btn ${viewMode === "cards" ? "active" : ""}`}
+              onClick={() => toggleViewMode("cards")}
+            >
+              {language === "arabic" ? "بطاقات" : "Cards"}
+            </button>
+            <button
+              className={`view-btn ${viewMode === "list" ? "active" : ""}`}
+              onClick={() => toggleViewMode("list")}
+            >
+              {language === "arabic" ? "قائمة" : "List"}
+            </button>
           </div>
-        ) : loading ? (
-          <div className="loading-indicator">Loading terms...</div>
-        ) : error ? (
-          <div className="error-message">{error}</div>
-        ) : letterTerms.length === 0 ? (
-          <div className="no-results">
-            <p>No terms found starting with '{selectedLetter}'.</p>
+        </div>
+
+        {viewMode === "cards" ? (
+          <div className="terms-grid">
+            {filteredTerms.map((term, index) => (
+              <div
+                key={index}
+                className={`term-card ${hoveredCard === index ? "hovered" : ""}`}
+                style={{ backgroundColor: getCategoryColor(term.category) }}
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                <div className="card-header">
+                  <h3>{term.name}</h3>
+                  <span className="category-badge">{term.category}</span>
+                </div>
+                <div className="card-body">
+                  <p className="definition">{term.definition}</p>
+                  <p className="reference">
+                    {language === "arabic" ? "المصدر: " : "Source: "}
+                    {term.reference}
+                  </p>
+                </div>
+                <div className="card-footer">
+                  <button className="add-library-btn">
+                    <span>
+                      {language === "english" && "Add to Library"}
+                      {language === "french" && "Ajouter à la Bibliothèque"}
+                      {language === "arabic" && "إضافة إلى المكتبة"}
+                    </span>
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                      <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
-          <>
-            <div className="indexed-results-header">
-              <h3>
-                Terms starting with '{selectedLetter}' ({totalTerms})
-              </h3>
-            </div>
-
-            <div className="terms-grid">
-              {letterTerms.map((term) => (
-                <div key={term.id || term.name} className="term-card" onClick={() => onTermSelect(term)}>
-                  <h3 className="term-name">{term.name}</h3>
-                  <div className="term-categories-preview">
-                    {term.displayCategories &&
-                      term.displayCategories.map((category, index) => (
-                        <div
-                          key={index}
-                          className="term-category-tag"
-                          style={{
-                            backgroundColor: getCategoryColor(category.name) + "20",
-                            color: getCategoryColor(category.name),
-                          }}
-                        >
-                          {categoryTranslations[category.name] || category.name}
-                        </div>
-                      ))}
-                  </div>
-                  <div className="term-preview">
-                    {term.displayCategories &&
-                    term.displayCategories[0] &&
-                    term.displayCategories[0].principal_definition ? (
-                      <p>{term.displayCategories[0].principal_definition.text.substring(0, 100)}...</p>
-                    ) : (
-                      <p>No definition available</p>
-                    )}
-                  </div>
-                  {term.displayCategories &&
-                    term.displayCategories[0] &&
-                    term.displayCategories[0].principal_definition &&
-                    term.displayCategories[0].principal_definition.reference && (
-                      <div className="term-reference-preview">
-                        <Info size={14} />
-                        <span>{term.displayCategories[0].principal_definition.reference.substring(0, 40)}...</span>
-                      </div>
-                    )}
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination controls */}
-            {totalPages > 1 && (
-              <div className="ict-pagination">
-                <button
-                  className="ict-pagination-btn"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
+          <div className="terms-list-view">
+            {filteredTerms.length > 0 ? (
+              filteredTerms.map((term, index) => (
+                <div
+                  key={index}
+                  className="list-item"
+                  style={{ borderLeft: `3px solid ${getCategoryColor(term.category)}` }}
                 >
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div className="ict-pagination-info">
-                  Page {currentPage} of {totalPages}
+                  <div className="list-item-header">
+                    <h4>{term.name}</h4>
+                    <span className="category-badge small">{term.category}</span>
+                  </div>
+                  <p className="list-item-definition">{term.definition}</p>
                 </div>
-
-                <button
-                  className="ict-pagination-btn"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight size={16} />
-                </button>
+              ))
+            ) : (
+              <div className="no-terms-message">
+                {language === "english" && "No terms found starting with this letter."}
+                {language === "french" && "Aucun terme trouvé commençant par cette lettre."}
+                {language === "arabic" && "لم يتم العثور على مصطلحات تبدأ بهذا الحرف."}
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -293,7 +246,3 @@ const IndexedSearch = ({
 }
 
 export default IndexedSearch
-
-
-
-

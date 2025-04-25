@@ -1,325 +1,217 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Search, Info, Filter, X, SlidersHorizontal, Eye, ChevronLeft, ChevronRight } from "lucide-react"
-import { classicSearch, getAllterms } from "../../services/Api"
+import { useState } from "react"
+import "./ClassicSearch.css"
 
-const ClassicSearch = ({ terms = [], onSearch, onTermSelect, categoryTranslations, getCategoryColor }) => {
-  const [query, setQuery] = useState("")
-  const [filteredTerms, setFilteredTerms] = useState([])
-  const [selectedCategories, setSelectedCategories] = useState([])
-  const [showFilters, setShowFilters] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [allTerms, setAllTerms] = useState([])
+const ClassicSearch = ({ terms = [], language = "english" }) => {
+  const [hoveredCard, setHoveredCard] = useState(null)
+  const [sortOrder, setSortOrder] = useState("alphabetical")
+  const [viewMode, setViewMode] = useState("grid")
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1)
-  const [termsPerPage] = useState(8)
-  const [totalTerms, setTotalTerms] = useState(0)
-
-  // Fetch all terms on component mount
-  useEffect(() => {
-    fetchAllTerms()
-  }, [])
-
-  // Fetch all terms from the database
-  const fetchAllTerms = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const data = await getAllterms()
-
-      if (Array.isArray(data)) {
-        setAllTerms(data)
-        setFilteredTerms(data)
-        setTotalTerms(data.length)
-      } else {
-        console.error("Terms data is not an array:", data)
-        setError("Failed to load terms. Invalid data format.")
-      }
-    } catch (err) {
-      console.error("Error fetching all terms:", err)
-      setError("Failed to load terms. Please try again.")
-    } finally {
-      setLoading(false)
+  // Get language-specific labels
+  const getLabels = () => {
+    switch (language) {
+      case "french":
+        return {
+          title: "Termes informatiques",
+          searchPlaceholder: "Rechercher des termes...",
+          searchButton: "Rechercher",
+          sortBy: "Trier par",
+          alphabetical: "Alphabétique",
+          category: "Catégorie",
+          addToLibrary: "Ajouter à la bibliothèque",
+          source: "Source",
+          viewAs: "Afficher comme",
+          grid: "Grille",
+          list: "Liste",
+        }
+      case "arabic":
+        return {
+          title: "مصطلحات علوم الحاسوب",
+          searchPlaceholder: "البحث عن المصطلحات...",
+          searchButton: "بحث",
+          sortBy: "ترتيب حسب",
+          alphabetical: "أبجدي",
+          category: "الفئة",
+          addToLibrary: "إضافة إلى المكتبة",
+          source: "المصدر",
+          viewAs: "عرض كـ",
+          grid: "شبكة",
+          list: "قائمة",
+        }
+      default:
+        return {
+          title: "Computer Science Terms",
+          searchPlaceholder: "Search terms...",
+          searchButton: "Search",
+          sortBy: "Sort by",
+          alphabetical: "Alphabetical",
+          category: "Category",
+          addToLibrary: "Add to Library",
+          source: "Source",
+          viewAs: "View as",
+          grid: "Grid",
+          list: "List",
+        }
     }
   }
 
-  // Get all unique categories
-  const allCategories =
-    allTerms && allTerms.length > 0
-      ? [...new Set(allTerms.flatMap((term) => (term.categories ? term.categories.map((cat) => cat.name) : [])))]
-      : []
+  const labels = getLabels()
 
-  // Filter terms based on search query and selected categories
-  useEffect(() => {
-    if (!Array.isArray(allTerms)) {
-      console.error("Terms is not an array:", allTerms)
-      setFilteredTerms([])
-      setTotalTerms(0)
-      return
+  // Sort terms based on current sort order
+  const sortedTerms = [...terms].sort((a, b) => {
+    if (sortOrder === "alphabetical") {
+      return a.name.localeCompare(b.name)
+    } else if (sortOrder === "category") {
+      const categoryA = a.category || (a.categories && a.categories[0]?.type) || ""
+      const categoryB = b.category || (b.categories && b.categories[0]?.type) || ""
+      return categoryA.localeCompare(categoryB)
     }
+    return 0
+  })
 
-    let filtered = [...allTerms]
-
-    if (query.trim() !== "") {
-      filtered = filtered.filter(
-        (term) =>
-          term.name.toLowerCase().includes(query.toLowerCase()) ||
-          (term.categories &&
-            term.categories.some(
-              (cat) =>
-                cat.principal_definition &&
-                cat.principal_definition.text &&
-                cat.principal_definition.text.toLowerCase().includes(query.toLowerCase()),
-            )),
-      )
+  const getCategoryColor = (category) => {
+    const colors = {
+      "Données personnelles": "#E5DEFF",
+      "Commerce électronique": "#FDE1D3",
+      Réseaux: "#D3E4FD",
+      "Criminalité informatique": "#FFDEE2",
+      Divers: "#F1F0FB",
+      "Contrat Informatique": "#F2FCE2",
+      "Propriété intellectuelle": "#FEF7CD",
+      Organisations: "#FEC6A1",
+      "Computer Science": "#E5DEFF",
+      Networks: "#D3E4FD",
+      "Software Development": "#E0F5E9",
+      "Data Management": "#FFF6D9",
+      Cybersecurity: "#FFE5E5",
     }
-
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter(
-        (term) => term.categories && term.categories.some((cat) => selectedCategories.includes(cat.name)),
-      )
-    }
-
-    setFilteredTerms(filtered)
-    setTotalTerms(filtered.length)
-    // Reset to first page when filters change
-    setCurrentPage(1)
-  }, [query, allTerms, selectedCategories])
-
-  const handleInputChange = (e) => {
-    const value = e.target.value
-    setQuery(value)
+    return colors[category] || "#F1F0FB"
   }
 
-  const handleSearch = async () => {
-    if (!query.trim()) {
-      // If empty query, just reset to show all terms
-      setFilteredTerms(allTerms)
-      setTotalTerms(allTerms.length)
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      console.log(`Searching for: "${query}"`)
-      // Call the API function
-      const results = await classicSearch(query, 1, termsPerPage)
-
-      console.log("Search results:", results)
-
-      if (Array.isArray(results)) {
-        setFilteredTerms(results)
-        setTotalTerms(results.length)
-      } else {
-        console.error("Search results are not an array:", results)
-        setFilteredTerms([])
-        setTotalTerms(0)
-        setError("Invalid response format from server")
-      }
-      onSearch && onSearch(query) // Notify parent component
-    } catch (err) {
-      console.error("Search error:", err)
-      setError("Failed to perform search. Please try again.")
-      setFilteredTerms([])
-      setTotalTerms(0)
-    } finally {
-      setLoading(false)
-    }
+  // Get the primary category for a term
+  const getPrimaryCategory = (term) => {
+    return term.category || (term.categories && term.categories[0]?.type) || ""
   }
 
-  // Handle Enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSearch()
+  // Get the primary definition for a term
+  const getPrimaryDefinition = (term) => {
+    if (term.definition) return term.definition
+    if (term.categories && term.categories[0]?.principale && term.categories[0].principale[0]?.definition_principale) {
+      return term.categories[0].principale[0].definition_principale[0]
     }
+    return ""
   }
 
-  const toggleCategory = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
-    )
-  }
-
-  const clearFilters = () => {
-    setSelectedCategories([])
-  }
-
-  // Pagination logic
-  const indexOfLastTerm = currentPage * termsPerPage
-  const indexOfFirstTerm = indexOfLastTerm - termsPerPage
-  const currentTerms = filteredTerms.slice(indexOfFirstTerm, indexOfLastTerm)
-  const totalPages = Math.ceil(totalTerms / termsPerPage)
-
-  const paginate = (pageNumber) => {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber)
+  // Get the reference for a term
+  const getReference = (term) => {
+    if (term.reference) return term.reference
+    if (term.categories && term.categories[0]?.principale && term.categories[0].principale[0]?.references) {
+      return term.categories[0].principale[0].references[0] || ""
     }
+    return ""
+  }
+
+  // Set text direction based on language
+  const getTextDirection = () => {
+    return language === "arabic" ? "rtl" : "ltr"
   }
 
   return (
-    <div className="classic-search">
+    <div className="classic-search" style={{ direction: getTextDirection() }}>
       <div className="search-header">
-        <div className="ict-search-input-wrapper">
-          <div className="ict-search-icon-container">
-            <Search size={20} className="ict-search-icon" />
+        <h2>{labels.title}</h2>
+        <div className="search-controls">
+          <div className="search-bar">
+            <input type="text" placeholder={labels.searchPlaceholder} />
+            <button className="search-button">{labels.searchButton}</button>
           </div>
-          <input
-            type="text"
-            placeholder="Search for ICT terms..."
-            value={query}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            className="ict-search-input"
-          />
-          <button className="ict-search-button" onClick={handleSearch} disabled={loading}>
-            {loading ? "Searching..." : "Search"}
-          </button>
-          <button
-            className={`ict-filter-toggle-btn ${showFilters ? "active" : ""}`}
-            onClick={() => setShowFilters(!showFilters)}
-            aria-label="Toggle filters"
-          >
-            <Filter size={18} />
-          </button>
-        </div>
-
-        {showFilters && (
-          <div className="ict-category-filter-container">
-            <div className="ict-filter-header">
-              <div className="ict-filter-title">
-                <SlidersHorizontal size={16} />
-                <span>Filter Categories</span>
-              </div>
-              {selectedCategories.length > 0 && (
-                <button className="ict-clear-filters-btn" onClick={clearFilters}>
-                  <X size={14} />
-                  <span>Clear</span>
+          <div className="view-options">
+            <div className="sort-control">
+              <label>{labels.sortBy}:</label>
+              <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+                <option value="alphabetical">{labels.alphabetical}</option>
+                <option value="category">{labels.category}</option>
+              </select>
+            </div>
+            <div className="view-toggle">
+              <label>{labels.viewAs}:</label>
+              <div className="toggle-buttons">
+                <button
+                  className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  {labels.grid}
                 </button>
+                <button
+                  className={`view-toggle-btn ${viewMode === "list" ? "active" : ""}`}
+                  onClick={() => setViewMode("list")}
+                >
+                  {labels.list}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {viewMode === "grid" ? (
+        <div className="term-grid">
+          {sortedTerms.map((term, index) => (
+            <div
+              className={`term-card ${hoveredCard === index ? "hovered" : ""}`}
+              key={index}
+              style={{ backgroundColor: getCategoryColor(getPrimaryCategory(term)) }}
+              onMouseEnter={() => setHoveredCard(index)}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div className="card-content">
+                <h3>{term.name}</h3>
+                <p className="category">{getPrimaryCategory(term)}</p>
+                <p className="definition">{getPrimaryDefinition(term)}</p>
+                {getReference(term) && (
+                  <p className="reference">
+                    {language === "arabic" ? "المصدر: " : "Source: "}
+                    {getReference(term)}
+                  </p>
+                )}
+              </div>
+              <button className="add-library-btn">
+                <span className="btn-text">{labels.addToLibrary}</span>
+                <span className="btn-icon">+</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="term-list">
+          {sortedTerms.map((term, index) => (
+            <div
+              key={index}
+              className="term-list-item"
+              style={{
+                borderLeft: language !== "arabic" ? `4px solid ${getCategoryColor(getPrimaryCategory(term))}` : "none",
+                borderRight: language === "arabic" ? `4px solid ${getCategoryColor(getPrimaryCategory(term))}` : "none",
+              }}
+            >
+              <div className="term-list-header">
+                <h3>{term.name}</h3>
+                <span className="term-list-category">{getPrimaryCategory(term)}</span>
+              </div>
+              <p className="term-list-definition">{getPrimaryDefinition(term)}</p>
+              {getReference(term) && (
+                <p className="term-list-reference">
+                  {language === "arabic" ? "المصدر: " : "Source: "}
+                  {getReference(term)}
+                </p>
               )}
+              <button className="term-list-button">{labels.addToLibrary}</button>
             </div>
-            <div className="ict-category-chips">
-              {allCategories.map((category) => (
-                <button
-                  key={category}
-                  className={`ict-category-chip ${selectedCategories.includes(category) ? "active" : ""}`}
-                  onClick={() => toggleCategory(category)}
-                  style={{
-                    backgroundColor: selectedCategories.includes(category)
-                      ? getCategoryColor(category) + "15"
-                      : "transparent",
-                    borderColor: getCategoryColor(category),
-                    color: getCategoryColor(category),
-                  }}
-                >
-                  <span
-                    className="ict-category-indicator"
-                    style={{ backgroundColor: getCategoryColor(category) }}
-                  ></span>
-                  <span className="ict-category-name">{categoryTranslations[category] || category}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="search-results">
-        <div className="search-results-header">
-          <h3>Results {totalTerms > 0 && `(${totalTerms})`}</h3>
-          {totalTerms > 0 && (
-            <div className="ict-view-options">
-              <Eye size={16} />
-              <span>View</span>
-            </div>
-          )}
+          ))}
         </div>
-
-        {loading ? (
-          <div className="loading-indicator">Loading terms...</div>
-        ) : error ? (
-          <div className="error-message">{error}</div>
-        ) : totalTerms === 0 ? (
-          <div className="no-results">
-            <p>No terms found matching your search.</p>
-            <p>Try using different keywords or check your spelling.</p>
-          </div>
-        ) : (
-          <>
-            <div className="terms-grid">
-              {currentTerms.map((term) => (
-                <div key={term.id || term.name} className="term-card" onClick={() => onTermSelect(term)}>
-                  <h3 className="term-name">{term.name}</h3>
-                  <div className="term-categories-preview">
-                    {term.categories &&
-                      term.categories.map((category, index) => (
-                        <div
-                          key={index}
-                          className="term-category-tag"
-                          style={{
-                            backgroundColor: getCategoryColor(category.name) + "15",
-                            color: getCategoryColor(category.name),
-                          }}
-                        >
-                          {categoryTranslations[category.name] || category.name}
-                        </div>
-                      ))}
-                  </div>
-                  <div className="term-preview">
-                    {term.categories && term.categories[0] && term.categories[0].principal_definition ? (
-                      <p>{term.categories[0].principal_definition.text.substring(0, 100)}...</p>
-                    ) : (
-                      <p>No definition available</p>
-                    )}
-                  </div>
-                  {term.categories &&
-                    term.categories[0] &&
-                    term.categories[0].principal_definition &&
-                    term.categories[0].principal_definition.reference && (
-                      <div className="term-reference-preview">
-                        <Info size={14} />
-                        <span>{term.categories[0].principal_definition.reference}</span>
-                      </div>
-                    )}
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination controls */}
-            {totalPages > 1 && (
-              <div className="ict-pagination">
-                <button
-                  className="ict-pagination-btn"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div className="ict-pagination-info">
-                  Page {currentPage} of {totalPages}
-                </div>
-
-                <button
-                  className="ict-pagination-btn"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      )}
     </div>
   )
 }
 
 export default ClassicSearch
-

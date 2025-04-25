@@ -1,0 +1,174 @@
+/* Base styles */
+:root {
+  --chatbot-primary-color: #614ad3;
+  --chatbot-primary-light: #9b87f5;
+  --chatbot-primary-dark: #4a3ba3;
+  --chatbot-bg-color: #f8f9fc;
+  --chatbot-bg-pattern-color: rgba(229, 222, 255, 0.5);
+  --chatbot-text-color: #1f2937;
+  --chatbot-text-muted: #6b7280;
+  --chatbot-border-color: #e5e7eb;
+  --chatbot-shadow-color: rgba(97, 74, 211, 0.15);
+  --chatbot-shadow-sm: 0 2px 8px rgba(97, 74, 211, 0.1);
+  --chatbot-header-height: 60px;
+  --chatbot-sidebar-width: 250px;
+  --chatbot-sidebar-collapsed-width: 80px;
+  --chatbot-transition-speed: 0.3s ease;
+}
+
+/* Dark mode variables */
+.dark-mode {
+  --chatbot-primary-color: #8b5cf6;
+  --chatbot-primary-light: #a78bfa;
+  --chatbot-primary-dark: #7c3aed;
+  --chatbot-bg-color: #13111f;
+  --chatbot-bg-pattern-color: rgba(155, 135, 245, 0.1);
+  --chatbot-text-color: #f9fafb;
+  --chatbot-text-muted: rgba(255, 255, 255, 0.7);
+  --chatbot-border-color: #313244;
+  --chatbot-shadow-color: rgba(0, 0, 0, 0.3);
+  --chatbot-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Global styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  transition: background-color var(--chatbot-transition-speed), color var(--chatbot-transition-speed);
+}
+
+body.dark-mode {
+  background-color: var(--chatbot-bg-color);
+  color: var(--chatbot-text-color);
+}
+
+/* Page layout */
+.chatbot-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--chatbot-bg-color);
+  background-image: radial-gradient(var(--chatbot-bg-pattern-color) 0.5px, transparent 0.5px),
+    radial-gradient(var(--chatbot-bg-pattern-color) 0.5px, var(--chatbot-bg-color) 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  transition: background-color var(--chatbot-transition-speed);
+}
+
+.chatbot-content {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding-top: var(--chatbot-header-height); /* Match the header height to prevent overlap */
+}
+
+.chatbot-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 1rem;
+  transition: all var(--chatbot-transition-speed);
+  margin-left: var(--chatbot-sidebar-width); /* Match the sidebar width */
+}
+
+.chatbot-main.sidebar-collapsed {
+  margin-left: var(--chatbot-sidebar-collapsed-width); /* Match the collapsed sidebar width */
+}
+
+.chatbot-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--chatbot-primary-color);
+  text-align: center;
+  text-shadow: 0 2px 10px var(--chatbot-shadow-color);
+  position: relative;
+  transition: font-size var(--chatbot-transition-speed), color var(--chatbot-transition-speed);
+}
+
+.chatbot-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--chatbot-primary-light) 0%, var(--chatbot-primary-color) 100%);
+  border-radius: 2px;
+  transition: background var(--chatbot-transition-speed);
+}
+
+.mobile-menu-button {
+  display: none;
+  position: fixed;
+  top: calc(var(--chatbot-header-height) + 20px);
+  left: 20px;
+  z-index: 100;
+  background: none;
+  border: none;
+  color: var(--chatbot-primary-color);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color var(--chatbot-transition-speed), color var(--chatbot-transition-speed);
+}
+
+.mobile-menu-button:hover {
+  background-color: rgba(97, 74, 211, 0.1);
+}
+
+.dark-mode .mobile-menu-button:hover {
+  background-color: rgba(155, 135, 245, 0.1);
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .chatbot-main {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .chatbot-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .chatbot-main {
+    margin-left: 0;
+    padding: 1rem 0.5rem;
+  }
+
+  .chatbot-main.sidebar-collapsed {
+    margin-left: 0;
+  }
+
+  .mobile-menu-button {
+    display: block;
+  }
+
+  .chatbot-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .chatbot-title::after {
+    width: 50px;
+    height: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatbot-main {
+    padding: 0.75rem 0.25rem;
+  }
+
+  .chatbot-title {
+    font-size: 1.35rem;
+  }
+}

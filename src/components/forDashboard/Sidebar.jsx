@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Users, FileText, Settings, Moon, Sun, LayoutDashboard, Bell, LogOut, Grid, User, BookOpen } from "lucide-react"
+import { Users, FileText, Settings, Moon, Sun, LayoutDashboard, Bell, LogOut, Grid, User, BookOpen, Bot, Book } from "lucide-react"
 import "./Sidebar.css"
 
 export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode, toggleDarkMode }) {
@@ -72,6 +72,13 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       roles: ["Content-admin"], 
     },
     {
+      id: "library",
+      label: "Library",
+      icon: Book,
+      href: "/library",
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],  
+    },
+    {
       id: "settings",
       label: "Settings",
       icon: Settings,
@@ -90,6 +97,13 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       label: "ICT Quiz",
       icon: BookOpen,
       href: "/quiz",
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+    },
+    {
+      id: "ICT Assistant",
+      label: "ICT Assistant",
+      icon: Bot,
+      href: "/ia",
       roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
     },
   ]

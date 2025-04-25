@@ -1,0 +1,47 @@
+.graph-search {
+    flex: 1;
+    max-width: 600px;
+  }
+  
+  .search-input-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+  }
+  
+  .graph-search-input {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px 0 0 4px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+  }
+  
+  .graph-search-input:focus {
+    outline: none;
+    border-color: #9b87f5;
+    background-color: white;
+    box-shadow: 0 0 0 2px rgba(155, 135, 245, 0.2);
+  }
+  
+  .graph-search-button {
+    padding: 12px 20px;
+    background-color: #9b87f5;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .graph-search-button:hover {
+    background-color: #8a74e8;
+  }
+  
+  .graph-search-button:active {
+    transform: translateY(1px);
+  }
+  

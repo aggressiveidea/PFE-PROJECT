@@ -150,10 +150,10 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                   <a href="/profile">Profile</a>
                 </li>
                 <li>
-                  <a href="/library">Library</a>
+                  <a href="/terms">Explore</a>
                 </li>
                 <li>
-                  <a href="/dictionary">Terms</a>
+                  <a href="/dictionary">Knowledge graph</a>
                 </li>
                 <li>
                   <a href="/articles">Articles</a>
@@ -277,18 +277,30 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     </svg>
                     <span>Logout</span>
                   </button>
+                 
                 </div>
               )}
             </div>
           ) : (
             <div className="auth-buttons">
-              <Link to="/signup">
-                <button className="btn-signup">Sign up</button>
-              </Link>
-              <Link to="/login">
-                <button className="btn-login">Login</button>
-              </Link>
-            </div>
+            {
+              user && user.isVerified ? (
+                <Link to="/login">
+                  <button className="lib-btn">Digital Library</button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup">
+                    <button className="btn-signup">Sign up</button>
+                  </Link>
+                  <Link to="/login">
+                    <button className="btn-login">Login</button>
+                  </Link>
+                </>
+              )
+            }
+          </div>
+          
           )}
         </div>
 
@@ -323,7 +335,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     Profile
                   </a>
                 </li>
-                {/* Other mobile menu items */}
+                
                 <li>
                   <a href="/library">
                     <svg
@@ -387,7 +399,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     {t.home}
                   </a>
                 </li>
-                {/* Other mobile menu items */}
+               
               </ul>
             )}
           </nav>
@@ -427,8 +439,10 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
               </button>
             </div>
           )}
+
         </div>
       )}
+      
     </header>
   )
 }

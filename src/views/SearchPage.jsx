@@ -1,523 +1,261 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Info, Network, Share2, GitBranch, Calculator } from "lucide-react"
-import Sidebar from "../components/forDashboard/Sidebar"
 import Header from "../components/forHome/Header"
+import Sidebar from "../components/forDashboard/Sidebar"
 import Footer from "../components/forHome/Footer"
-import IndexedSearch from "../components/forSearch/IndexedSearch"
-import GraphSearch from "../components/forSearch/GraphSearch"
+import Suggestions from "../components/forSearch/Suggestions"
 import ClassicSearch from "../components/forSearch/ClassicSearch"
-import GraphAlgorithms from "../components/forSearch/GraphAlgorithms"
-import { classicSearch, indexedSearch, graphSearch, runGraphAlgorithm, getAllterms } from "../services/Api"
+import IndexedSearch from "../components/forSearch/IndexedSearch"
 import "./SearchPage.css"
 
-// Mock data for initial render
-const initialTermsData = []
+// Sample data for demonstration
+const sampleTerms = [
+  {
+    name: "Algorithm",
+    category: "Computer Science",
+    definition: "A step-by-step procedure for solving a problem or accomplishing a task.",
+    reference: "Introduction to Algorithms, CLRS",
+  },
+  {
+    name: "Protocol",
+    category: "Networks",
+    definition: "A set of rules governing data communication between devices.",
+    reference: "Computer Networks, Tanenbaum",
+  },
+  {
+    name: "Confidentialité",
+    ID: "177",
+    AR_id: "404",
+    AN_id: "160",
+    AR_num: "86",
+    AN_num: "216",
+    info: "",
+    categories: [
+      {
+        type: "Données personnelles",
+        principale: [
+          {
+            definition_principale: [
+              "La confidentialité est définie comme l'obligation d'une personne de préserver le caractère secret des renseignements personnels concernant une autre personne.",
+            ],
+            references: [],
+          },
+        ],
+        secondaire: [
+          {
+            definition_secondaire: [
+              "Les personnes employées dans l'informatique ne doivent pas collecter, traiter ou utiliser des données à caractère personnel sans autorisation (confidentialité). En entrant en fonctions, ces personnes seront requises de s'engager à (promettre de) maintenir une telle confidentialité, pour autant qu'elles travaillent pour des organismes privés. Cet engagement restera valide même après la fin de leur activité",
+            ],
+            reference_secondaires: ["Loi De Protection De Données, du 1 janvier 2002/Allemagne"],
+          },
+        ],
+      },
+      {
+        type: "Commerce électronique",
+        principale: [
+          {
+            definition_principale: [
+              "Propriété d'une information qui n'est ni disponible, ni divulguée aux personnes, entités ou processus non autorisés. Assurance que l'accès à une information d'un système d'information (ST) est limité aux seules personnes, applications, programmes, équipements admis à la connaître.",
+            ],
+            references: [],
+          },
+        ],
+        secondaire: [],
+      },
+    ],
+    relations: [],
+  },
+  {
+    name: "Data Structure",
+    category: "Computer Science",
+    definition: "A specialized format for organizing and storing data to enable efficient access and modification.",
+    reference: "Data Structures & Algorithms, Aho",
+  },
+  {
+    name: "Encryption",
+    category: "Networks",
+    definition: "The process of converting information into a code to prevent unauthorized access.",
+    reference: "Cryptography and Network Security, Stallings",
+  },
+  {
+    name: "API",
+    category: "Software Development",
+    definition: "Application Programming Interface - A set of rules that allow programs to talk to each other.",
+    reference: "Web APIs: The Definitive Guide",
+  },
+  {
+    name: "Database",
+    category: "Data Management",
+    definition:
+      "An organized collection of structured information or data, typically stored electronically in a computer system.",
+    reference: "Database Systems: The Complete Book",
+  },
+  {
+    name: "Authentication",
+    category: "Cybersecurity",
+    definition: "The process of verifying the identity of a user or process.",
+    reference: "Security Engineering, Ross Anderson",
+  },
+  {
+    name: "Abstraction",
+    category: "Computer Science",
+    definition: "The process of removing physical, spatial, or temporal details to focus on essential details.",
+    reference: "Concepts of Programming Languages, Sebesta",
+  },
+]
 
-const initialGraphData = {
-  nodes: [],
-  edges: [],
-}
-
-const categoryTranslations = {
-  "Données personnelles": "Personal Data",
-  "Commerce électronique": "E-commerce",
-  Réseaux: "Networks",
-  "Criminalité informatique": "Cybercrime",
-}
-
-const getCategoryColor = (categoryName) => {
-  const categoryColors = {
-    "Données personnelles": "#4285F4",
-    "Commerce électronique": "#EA4335",
-    Réseaux: "#FBBC05",
-    "Criminalité informatique": "#34A853",
-    "Com.élec.": "#4285F4",
-    "Con.info.": "#EA4335",
-    "Crim.info.": "#FBBC05",
-    "Don.pers.": "#34A853",
-    Org: "#FF6D01",
-    "Pro.int.": "#46BDC6",
-    Rés: "#7B61FF",
-  }
-  return categoryColors[categoryName] || "#666"
-}
-
-export default function SearchPage() {
-  const [selectedSearchType, setSelectedSearchType] = useState("classic")
+const SearchPage = () => {
+  const [searchType, setSearchType] = useState("classic")
+  const [selectedLanguage, setSelectedLanguage] = useState("english")
+  const [activeCategories, setActiveCategories] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedLetter, setSelectedLetter] = useState(null)
-  const [selectedTerm, setSelectedTerm] = useState(null)
-  const [darkMode, setDarkMode] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [graphData, setGraphData] = useState(initialGraphData)
-  const [algorithmResults, setAlgorithmResults] = useState(null)
-  const [language, setLanguage] = useState("en")
-  const [terms, setTerms] = useState(initialTermsData)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [filteredTerms, setFilteredTerms] = useState(sampleTerms)
 
-  // Load initial data
+  const categories = [
+    "Données personnelles",
+    "Commerce électronique",
+    "Réseaux",
+    "Criminalité informatique",
+    "Divers",
+    "Contrat Informatique",
+    "Propriété intellectuelle",
+    "Organisations",
+    "Computer Science",
+    "Networks",
+    "Software Development",
+    "Data Management",
+    "Cybersecurity",
+  ]
+
+  // Filter terms based on search input and active categories
   useEffect(() => {
-    const storedTheme = localStorage.getItem("darkMode")
-    if (storedTheme !== null) {
-      setDarkMode(storedTheme === "true")
+    let results = sampleTerms
+
+    // Filter by search term
+    if (searchTerm) {
+      results = results.filter((term) => term.name.toLowerCase().includes(searchTerm.toLowerCase()))
     }
 
-    // Fetch initial terms for the main page
-    fetchInitialTerms()
-  }, [])
-
-  // Fetch initial terms
-  const fetchInitialTerms = async () => {
-    setIsLoading(true)
-    try {
-      const data = await getAllterms()
-
-      if (Array.isArray(data)) {
-        // Process terms to deduplicate categories for display in cards only
-        const processedTerms = data.map((term) => {
-          // Store the original categories for use in the details view
-          term.allCategories = term.categories ? [...term.categories] : []
-
-          // Create deduplicated categories for card display
-          if (term.categories && term.categories.length > 0) {
-            // Create a map to deduplicate categories by name
-            const uniqueCategories = new Map()
-
-            term.categories.forEach((category) => {
-              if (!uniqueCategories.has(category.name)) {
-                uniqueCategories.set(category.name, category)
-              }
-            })
-
-            // Convert map values back to array for display in cards
-            term.displayCategories = Array.from(uniqueCategories.values())
-          } else {
-            term.displayCategories = []
-          }
-          return term
-        })
-
-        setTerms(processedTerms)
-      } else {
-        console.error("Terms data is not an array:", data)
-        setError("Failed to load terms. Invalid data format.")
-      }
-    } catch (error) {
-      console.error("Error fetching initial terms:", error)
-      setError("Failed to load initial terms. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    localStorage.setItem("darkMode", darkMode.toString())
-    document.documentElement.classList.toggle("dark", darkMode)
-  }, [darkMode])
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-  }
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed)
-  }
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false)
-  }
-
-  const handleSearchTypeChange = (type) => {
-    setSelectedSearchType(type)
-  }
-
-  const handleSearch = async (term) => {
-    setSearchTerm(term)
-    try {
-      if (term.trim() !== "") {
-        setIsLoading(true)
-        const results = await classicSearch(term, 1, 8)
-        if (Array.isArray(results)) {
-          // Process results to deduplicate categories for display in cards only
-          const processedResults = results.map((term) => {
-            // Store the original categories for use in the details view
-            term.allCategories = term.categories ? [...term.categories] : []
-
-            // Create deduplicated categories for card display
-            if (term.categories && term.categories.length > 0) {
-              // Create a map to deduplicate categories by name
-              const uniqueCategories = new Map()
-
-              term.categories.forEach((category) => {
-                if (!uniqueCategories.has(category.name)) {
-                  uniqueCategories.set(category.name, category)
-                }
-              })
-
-              // Convert map values back to array for display in cards
-              term.displayCategories = Array.from(uniqueCategories.values())
-            } else {
-              term.displayCategories = []
-            }
-            return term
-          })
-
-          setTerms(processedResults)
-        } else {
-          console.error("Search results are not an array:", results)
-          setError("Invalid search results format")
+    // Filter by active categories
+    if (activeCategories.length > 0) {
+      results = results.filter((term) => {
+        // For terms with multiple categories
+        if (term.categories && term.categories.length > 0) {
+          return term.categories.some((cat) => activeCategories.includes(cat.type))
         }
-        setIsLoading(false)
-      }
-    } catch (error) {
-      console.error("Search error:", error)
-      setError("Failed to perform search. Please try again.")
-      setIsLoading(false)
+        // For terms with a single category
+        return activeCategories.includes(term.category)
+      })
     }
-  }
 
-  const handleLetterSelect = async (letter) => {
-    setSelectedLetter(letter)
-    try {
-      setIsLoading(true)
-      const results = await indexedSearch(letter, 1, 8)
-      if (Array.isArray(results)) {
-        // Process results to deduplicate categories for display in cards only
-        const processedResults = results.map((term) => {
-          // Store the original categories for use in the details view
-          term.allCategories = term.categories ? [...term.categories] : []
+    setFilteredTerms(results)
+  }, [searchTerm, activeCategories])
 
-          // Create deduplicated categories for card display
-          if (term.categories && term.categories.length > 0) {
-            // Create a map to deduplicate categories by name
-            const uniqueCategories = new Map()
-
-            term.categories.forEach((category) => {
-              if (!uniqueCategories.has(category.name)) {
-                uniqueCategories.set(category.name, category)
-              }
-            })
-
-            // Convert map values back to array for display in cards
-            term.displayCategories = Array.from(uniqueCategories.values())
-          } else {
-            term.displayCategories = []
-          }
-          return term
-        })
-
-        setTerms(processedResults)
+  const handleCategoryToggle = (category) => {
+    setActiveCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((c) => c !== category)
       } else {
-        console.error("Indexed search results are not an array:", results)
-        setError("Invalid indexed search results format")
+        return [...prev, category]
       }
-      setIsLoading(false)
-    } catch (error) {
-      console.error("Indexed search error:", error)
-      setError(`Failed to load terms for letter ${letter}. Please try again.`)
-      setIsLoading(false)
-    }
-  }
-
-  const handleTermSelect = async (term) => {
-    // Use the original categories (allCategories) for the details view if available
-    if (term.allCategories) {
-      term.categories = term.allCategories
-    }
-
-    setSelectedTerm(term)
-    try {
-      // If we're in graph search mode, fetch the graph data
-      if (selectedSearchType === "graphic") {
-        setIsLoading(true)
-        const results = await graphSearch(term.name, 2)
-        setGraphData(results)
-        setIsLoading(false)
-      }
-    } catch (error) {
-      console.error("Term selection error:", error)
-      setError("Failed to load graph data. Please try again.")
-      setIsLoading(false)
-    }
-  }
-
-  const handleApplyAlgorithm = async (algorithmId, params = {}) => {
-    if (!algorithmId) {
-      // Just clearing results
-      setAlgorithmResults(null)
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const results = await runGraphAlgorithm(algorithmId, params)
-      setAlgorithmResults(results)
-
-      // Update graph visualization based on algorithm results
-      let updatedNodes = [...graphData.nodes]
-      let updatedEdges = [...graphData.edges]
-
-      switch (algorithmId) {
-        case "dijkstra":
-          updatedNodes = updatedNodes.map((node) => {
-            if (results.path && results.path.includes(node.label)) {
-              return { ...node, color: "#FF6B6B", borderWidth: 3 }
-            }
-            return { ...node, color: node.color, borderWidth: 1 }
-          })
-
-          updatedEdges = updatedEdges.map((edge) => {
-            const fromNode = updatedNodes.find((n) => n.id === edge.from)
-            const toNode = updatedNodes.find((n) => n.id === edge.to)
-
-            if (
-              fromNode &&
-              toNode &&
-              results.path &&
-              results.path.includes(fromNode.label) &&
-              results.path.includes(toNode.label) &&
-              results.path.indexOf(fromNode.label) === results.path.indexOf(toNode.label) - 1
-            ) {
-              return { ...edge, color: "#FF6B6B", width: 3 }
-            }
-            return { ...edge, color: undefined, width: 1 }
-          })
-          break
-
-        case "pagerank":
-        case "betweenness-centrality":
-        case "closeness-centrality":
-          // Adjust node sizes based on importance scores
-          if (results.topNodes) {
-            updatedNodes = updatedNodes.map((node) => {
-              const rankNode = results.topNodes.find((n) => n.name === node.label)
-              if (rankNode) {
-                return {
-                  ...node,
-                  size: 20 + rankNode.score * 30,
-                  color: rankNode.score > 0.7 ? "#FF6B6B" : rankNode.score > 0.5 ? "#FFA500" : node.color,
-                }
-              }
-              return { ...node, size: 15 }
-            })
-          }
-          break
-
-        case "connected-components":
-          const componentColors = ["#FF6B6B", "#46BDC6", "#FFA500", "#7B61FF", "#34A853"]
-
-          if (results.components) {
-            updatedNodes = updatedNodes.map((node) => {
-              for (let i = 0; i < results.components.length; i++) {
-                if (results.components[i].nodes.includes(node.label)) {
-                  return {
-                    ...node,
-                    color: componentColors[i % componentColors.length],
-                    borderWidth: 2,
-                  }
-                }
-              }
-              return node
-            })
-          }
-          break
-      }
-
-      setGraphData({ nodes: updatedNodes, edges: updatedEdges })
-      setIsLoading(false)
-    } catch (error) {
-      console.error("Algorithm error:", error)
-      setError("Failed to execute algorithm. Please try again.")
-      setIsLoading(false)
-    }
-  }
-
-  const renderSearchComponent = () => {
-    switch (selectedSearchType) {
-      case "indexed":
-        return (
-          <IndexedSearch
-            terms={terms}
-            selectedLetter={selectedLetter}
-            onLetterSelect={handleLetterSelect}
-            onTermSelect={handleTermSelect}
-            categoryTranslations={categoryTranslations}
-            getCategoryColor={getCategoryColor}
-          />
-        )
-      case "graphic":
-        return (
-          <GraphSearch
-            graphData={graphData}
-            onTermSelect={handleTermSelect}
-            categoryTranslations={categoryTranslations}
-            darkMode={darkMode}
-            getCategoryColor={getCategoryColor}
-          />
-        )
-      case "algorithms":
-        return (
-          <div className="search-page-algorithms-container">
-            <GraphAlgorithms
-              graphData={graphData}
-              onApplyAlgorithm={handleApplyAlgorithm}
-              darkMode={darkMode}
-              algorithmResults={algorithmResults}
-            />
-          </div>
-        )
-      case "classic":
-      default:
-        return (
-          <ClassicSearch
-            terms={terms}
-            onSearch={handleSearch}
-            onTermSelect={handleTermSelect}
-            categoryTranslations={categoryTranslations}
-            getCategoryColor={getCategoryColor}
-          />
-        )
-    }
+    })
   }
 
   return (
-    <div className={`search-page-container ${darkMode ? "dark" : ""}`}>
-      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
+    <div className="search-page">
+      <Header />
+      <div className="main-content">
+        <Sidebar />
+        <div className="content-area">
+          <div className="search-controls-wrapper">
+            <div className="search-controls">
+              <div className="language-selector">
+                <label htmlFor="language-select">Language:</label>
+                <select
+                  id="language-select"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                >
+                  <option value="english">English</option>
+                  <option value="french">French</option>
+                  <option value="arabic">Arabic</option>
+                </select>
+              </div>
 
-      <div className="search-page-layout">
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar}
-          mobileOpen={mobileMenuOpen}
-          closeMobileMenu={closeMobileMenu}
-          darkMode={darkMode}
-          toggleDarkMode={toggleDarkMode}
-        />
-
-        <div className="search-page-main">
-          <header className="search-page-header">
-            <div className="search-page-header-left">
-              <h1 className="search-page-title">ICT Terms Dictionary</h1>
-              <p className="search-page-subtitle">
-                Explore and discover information & communication technology terminology
-              </p>
+              <div className="search-types">
+                <button
+                  className={`search-type-btn ${searchType === "classic" ? "active" : ""}`}
+                  onClick={() => setSearchType("classic")}
+                >
+                  <span className="icon classic-icon"></span>
+                  <span className="label">Classic Search</span>
+                </button>
+                <button
+                  className={`search-type-btn ${searchType === "indexed" ? "active" : ""}`}
+                  onClick={() => setSearchType("indexed")}
+                >
+                  <span className="icon indexed-icon"></span>
+                  <span className="label">Indexed Search</span>
+                </button>
+              </div>
             </div>
-
-            <div className="search-page-header-right">{/* Header right content can be added here if needed */}</div>
-          </header>
-
-          <div className="search-page-type-selector">
-            <button
-              className={`search-page-type-btn ${selectedSearchType === "classic" ? "active" : ""}`}
-              onClick={() => handleSearchTypeChange("classic")}
-            >
-              <Search size={18} />
-              <span>Classic Search</span>
-            </button>
-            <button
-              className={`search-page-type-btn ${selectedSearchType === "indexed" ? "active" : ""}`}
-              onClick={() => handleSearchTypeChange("indexed")}
-            >
-              <GitBranch size={18} />
-              <span>Indexed Search</span>
-            </button>
-            <button
-              className={`search-page-type-btn ${selectedSearchType === "graphic" ? "active" : ""}`}
-              onClick={() => handleSearchTypeChange("graphic")}
-            >
-              <Network size={18} />
-              <span>Graph Search</span>
-            </button>
-            <button
-              className={`search-page-type-btn ${selectedSearchType === "algorithms" ? "active" : ""}`}
-              onClick={() => handleSearchTypeChange("algorithms")}
-            >
-              <Calculator size={18} />
-              <span>Graph Algorithms</span>
-            </button>
           </div>
 
-          <main className="search-page-content">
-            {isLoading && <div className="global-loading-indicator">Loading data...</div>}
-            {error && <div className="global-error-message">{error}</div>}
+          <div className="terms-search-input">
+            <span className="terms-search-icon"></span>
+            <input
+              type="text"
+              placeholder="Search terms starting with..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="terms-search-field"
+            />
+            <button className="terms-search-button">Search</button>
+          </div>
 
-            <div className="search-page-search-container">{renderSearchComponent()}</div>
+          <div className="category-section">
+            <h3 className="category-title">Filter by Category</h3>
+            <div className="category-filter">
+              {categories.map((category, index) => (
+                <button
+                  key={index}
+                  className={`category-btn ${activeCategories.includes(category) ? "active" : ""}`}
+                  onClick={() => handleCategoryToggle(category)}
+                  data-category={category}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            {selectedTerm && (
-              <div className="search-page-term-details">
-                <div className="search-page-term-details-header">
-                  <h2>{selectedTerm.name}</h2>
-                  <button
-                    className="search-page-close-btn"
-                    onClick={() => setSelectedTerm(null)}
-                    aria-label="Close details"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="search-page-term-details-content">
-                  {selectedTerm.categories &&
-                    selectedTerm.categories.map((category, index) => (
-                      <div key={index} className="search-page-term-category">
-                        <div
-                          className="search-page-term-category-header"
-                          style={{
-                            backgroundColor: getCategoryColor(category.name) + "20",
-                            color: getCategoryColor(category.name),
-                          }}
-                        >
-                          {categoryTranslations[category.name] || category.name}
-                        </div>
-                        <div className="search-page-term-definition">
-                          <p>{category.principal_definition.text}</p>
-                          {category.principal_definition.reference && (
-                            <div className="search-page-term-reference">
-                              <Info size={14} />
-                              <span>{category.principal_definition.reference}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-
-                  {selectedTerm.relations && selectedTerm.relations.length > 0 && (
-                    <div className="search-page-term-relations">
-                      <h3>Related Terms</h3>
-                      <div className="search-page-relation-tags">
-                        {selectedTerm.relations.map((relation, index) => (
-                          <span key={index} className="search-page-relation-tag">
-                            <Share2 size={14} />
-                            {relation}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+          {searchType === "classic" && (
+            <div className="search-content">
+              <div className="content-header">
+                <h2>Computer Science Terms</h2>
+                <span className="results-count">{filteredTerms.length} results</span>
               </div>
-            )}
-          </main>
+              <ClassicSearch terms={filteredTerms} language={selectedLanguage} />
+            </div>
+          )}
+
+          {searchType === "indexed" && (
+            <div className="search-content">
+              <IndexedSearch language={selectedLanguage} />
+            </div>
+          )}
+
+          <div className="suggestions-section">
+            <h3 className="section-title">Suggested Terms</h3>
+            <Suggestions />
+          </div>
         </div>
       </div>
-
-      <footer className="search-page-footer-wrapper">
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
-      </footer>
+      <Footer />
     </div>
   )
 }
 
-
-
-
+export default SearchPage
 

@@ -1,0 +1,123 @@
+.graph-info-panel {
+  width: 300px;
+  background-color: white;
+  border-left: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.close-panel-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-panel-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.panel-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel-section h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
+}
+
+.panel-section p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.label-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.node-label-badge,
+.relationship-type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #f0edff;
+  color: #7a68c6;
+}
+
+.relationship-type-badge {
+  background-color: #e8f4fd;
+  color: #3498db;
+}
+
+.selected-node-info {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.node-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.view-details-button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #9b87f5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.view-details-button:hover {
+  background-color: #8a74e8;
+}

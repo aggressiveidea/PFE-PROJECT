@@ -6,8 +6,8 @@ import Signin from "./views/Signin"
 import SearchPage from "./views/SearchPage"
 import Dashboard from "./views/Dashboard"
 import UserManagement from "./views/user-management"
-import Profilelibrary from "./components/forProfile/profileLibrary"
-import Setting from "./components/forProfile/SettingsPage"
+import Library from "./views/Library" // Updated import
+import Setting from "./components/forProfile/Settings"
 import Faq from "./components/forFAQ/FaqPage"
 import ICTDictionary from "./views/ICTDictionary"
 import PersonalInfo from "./components/forTest/PersonalInfo"
@@ -17,6 +17,7 @@ import VerificationSuccess from "./components/VerificationSuccess"
 import UserProfile from "./components/forUserProfile/user-profile"
 import ContentAdminDashboard from "./views/DashboardContentAdmin"
 import QuizPage from "./views/QuizPage"
+import ChatBot from "./views/ChatBot"
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Setting />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/library" element={<Profilelibrary />} />
+        <Route path="/library" element={<Library />} />
         <Route path="/dictionary" element={<ICTDictionary />} />
         <Route path="/profile" element={<PersonalInfo />} />
         <Route path="/articles" element={<Articlepage />} />
@@ -40,9 +41,11 @@ function App() {
         <Route path="/articles/:id" element={<ArticleDetail />} />
         <Route path="/terms" element={<SearchPage />} />
         <Route path="/quiz/*" element={<QuizPage />} />
+        <Route path="/ia" element={<ChatBot />} />
       </Routes>
     </Router>
   )
 }
 
 export default App
+
