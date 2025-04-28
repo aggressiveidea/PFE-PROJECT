@@ -1,4 +1,4 @@
-
+import axios from "axios"
 export const registerUser = async (userData) => {
   try {
     const response = await fetch("http://localhost:5000/auth/register", {
@@ -608,15 +608,12 @@ export const submitExpertApplication = async (applicationData) => {
   }
 }
 
-// Updated search functions in Api.js
 
-// Classic search function with pagination
 export const classicSearch = async (query, page = 1, limit = 8) => {
   try {
-    // Build URL with query parameters
+
     const url = new URL("http://localhost:3001/api/search/classic")
 
-    // Add query parameters
     if (query) url.searchParams.append("query", query)
     url.searchParams.append("page", page.toString())
     url.searchParams.append("limit", limit.toString())
@@ -1075,4 +1072,150 @@ export const getFallbackQuestions = (level) => {
   const levelQuestions = questions[level.toLowerCase()] || questions.medium
 
   return levelQuestions.sort(() => Math.random() - 0.5).slice(0, 5)
+}
+//hadi for books les loulous
+
+const API_BASE_URL = "http://localhost:5000" 
+
+// Get all books
+export const getBooks = async () => {
+  try {
+    console.log("API: Fetching books...")
+    const response = await axios.get(`${API_BASE_URL}/books`)
+    console.log("API: Books fetched successfully:", response.data)
+    return response.data
+  } catch (error) {
+    console.error("API: Error fetching books:", error)
+    throw error
+  }
+}
+export const createNewBook = async (bookData) => {
+  try {
+    console.log("API: Creating new book...")
+
+    const isFormData = bookData instanceof FormData
+
+    const headers = isFormData ? { "Content-Type": "multipart/form-data" } : { "Content-Type": "application/json" }
+
+    console.log("API: Using headers:", headers)
+    console.log("API: Is FormData:", isFormData)
+
+    const response = await axios.post(`${API_BASE_URL}/books`, bookData, { headers })
+
+    console.log("API: Book created successfully:", response.data)
+    return response.data
+  } catch (error) {
+    console.error("API: Error creating book:", error.response?.data || error.message)
+    throw error
+  }
+}
+/**
+ * Request a password reset email
+ * @param {string} email - User's email address
+ * @returns {Promise<{success: boolean, message: string}>}
+ */
+export const requestPasswordReset = async (email) => {
+  try {
+    console.log("Requesting password reset for:", email)
+
+    const response = await fetch("http://localhost:5000/auth/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    })
+
+    const data = await response.json()
+    console.log("Password reset request response:", data)
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to request password reset")
+    }
+
+    return { success: true, message: data.message || "Password reset instructions sent" }
+  } catch (error) {
+    console.error("Error requesting password reset:", error)
+    throw error
+  }
+}
+
+/**
+ * Verify if a password reset link is valid
+ * @param {string} userId - The user ID
+ * @returns {Promise<{isValid: boolean, userId: string, message: string}>}
+ */
+export const verifyResetLink = async (userId) => {
+  try {
+    console.log("Verifying reset link for user:", userId)
+
+    // Check if parameter exists
+    if (!userId) {
+      console.error("Missing userId")
+      return { isValid: false, message: "Reset link is incomplete" }
+    }
+
+    const response = await fetch(`http://localhost:5000/auth/verify-reset?id=${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).catch((error) => {
+      console.error("Network error when verifying reset link:", error)
+      throw new Error("Network error. Please check your connection and try again.")
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error("Reset link verification failed:", data)
+      return { isValid: false, message: data.message || "Invalid reset link" }
+    }
+
+    return {
+      isValid: true,
+      userId: data.data?.userId || userId,
+      message: "Reset link is valid",
+    }
+  } catch (error) {
+    console.error("Error verifying reset link:", error)
+    return { isValid: false, message: error.message || "Error verifying reset link" }
+  }
+}
+
+/**
+ * Reset password with user ID
+ * @param {string} userId - The user ID
+ * @param {string} password - The new password
+ * @returns {Promise<{success: boolean, data: any}>}
+ */
+export const resetPassword = async (userId, password) => {
+  try {
+    console.log("Resetting password for user:", userId)
+
+    const response = await fetch(`http://localhost:5000/auth/reset-password/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password }),
+    })
+
+    const data = await response.json()
+    console.log("Reset password response:", data)
+
+    if (!response.ok) {
+      console.error("Password reset failed:", data)
+      throw new Error(data.message || "Failed to reset password")
+    }
+
+    // Clear any stored auth data to ensure user is logged out
+    localStorage.removeItem("authData")
+    localStorage.removeItem("user")
+
+    return { success: true, data }
+  } catch (error) {
+    console.error("Error resetting password:", error)
+    throw error
+  }
 }

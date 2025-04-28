@@ -1,0 +1,379 @@
+.BookLibAddForm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: BookLibAddFormFadeIn 0.3s ease;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+  }
+  
+  @keyframes BookLibAddFormFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .BookLibAddForm-container {
+    background-color: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: BookLibAddFormSlideUp 0.4s ease;
+    padding: 40px;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-container {
+    background-color: #1e1e2e;
+    color: #f0f0f0;
+  }
+  
+  @keyframes BookLibAddFormSlideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .BookLibAddForm-title {
+    margin: 0 0 30px 0;
+    font-size: 28px;
+    color: #333;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+  }
+  
+  .BookLibAddForm-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #8a2be2, #da70d6);
+    border-radius: 3px;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-title {
+    color: #f0f0f0;
+  }
+  
+  .BookLibAddForm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .BookLibAddForm-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .BookLibAddForm-field label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-field label {
+    color: #ccc;
+  }
+  
+  .BookLibAddForm-field input,
+  .BookLibAddForm-field textarea,
+  .BookLibAddForm-field select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background-color: white;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-field input,
+  .BookLibAddForm-dark .BookLibAddForm-field textarea,
+  .BookLibAddForm-dark .BookLibAddForm-field select {
+    background-color: #2d2d3a;
+    border-color: #444;
+    color: #f0f0f0;
+  }
+  
+  .BookLibAddForm-field input:focus,
+  .BookLibAddForm-field textarea:focus,
+  .BookLibAddForm-field select:focus {
+    outline: none;
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+  }
+  
+  .BookLibAddForm-hint {
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-hint {
+    color: #aaa;
+  }
+  
+  .BookLibAddForm-input-error {
+    border-color: #ff4e4e !important;
+  }
+  
+  .BookLibAddForm-error {
+    color: #ff4e4e;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .BookLibAddForm-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .BookLibAddForm-row .BookLibAddForm-field {
+    flex: 1;
+  }
+  
+  .BookLibAddForm-tag-input {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .BookLibAddForm-tag-input select {
+    flex: 1;
+  }
+  
+  .BookLibAddForm-tag-add {
+    padding: 0 15px;
+    background: linear-gradient(90deg, #8a2be2, #da70d6);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .BookLibAddForm-tag-add:hover {
+    box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .BookLibAddForm-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .BookLibAddForm-tag {
+    background: linear-gradient(90deg, rgba(138, 43, 226, 0.1), rgba(218, 112, 214, 0.1));
+    color: #8a2be2;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .BookLibAddForm-tag:hover {
+    background: linear-gradient(90deg, rgba(138, 43, 226, 0.15), rgba(218, 112, 214, 0.15));
+    transform: translateY(-2px);
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-tag {
+    background: linear-gradient(90deg, rgba(138, 43, 226, 0.2), rgba(218, 112, 214, 0.2));
+    border-color: rgba(138, 43, 226, 0.4);
+  }
+  
+  .BookLibAddForm-tag-remove {
+    background: none;
+    border: none;
+    color: #8a2be2;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .BookLibAddForm-tag-remove:hover {
+    color: #da70d6;
+    transform: rotate(90deg);
+  }
+  
+  .BookLibAddForm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  .BookLibAddForm-cancel,
+  .BookLibAddForm-submit {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .BookLibAddForm-cancel {
+    background-color: #f0f0f0;
+    color: #555;
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-cancel {
+    background-color: #444;
+    color: #f0f0f0;
+  }
+  
+  .BookLibAddForm-cancel:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+  }
+  
+  .BookLibAddForm-dark .BookLibAddForm-cancel:hover {
+    background-color: #555;
+  }
+  
+  .BookLibAddForm-submit {
+    background: linear-gradient(90deg, #8a2be2, #da70d6);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .BookLibAddForm-submit::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+  
+  .BookLibAddForm-submit:hover::before {
+    transform: translateX(100%);
+  }
+  
+  .BookLibAddForm-submit:hover {
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  @media (max-width: 768px) {
+    .BookLibAddForm-container {
+      padding: 30px 20px;
+    }
+  
+    .BookLibAddForm-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+ /* Add these styles to your existing BookLibAddForm.css file */
+
+.BookLibAddForm-image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.BookLibAddForm-image-preview {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.BookLib-dark-mode .BookLibAddForm-image-preview {
+  border-color: #444;
+  background-color: #2d2d3a;
+}
+
+.BookLibAddForm-image-preview:hover {
+  border-color: #8a2be2;
+  background-color: rgba(138, 43, 226, 0.05);
+}
+
+.BookLibAddForm-image-preview.BookLibAddForm-input-error {
+  border-color: #ff4e4e;
+}
+
+.BookLibAddForm-image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.BookLibAddForm-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.BookLibAddForm-image-placeholder span {
+  margin-top: 8px;
+}
+
+.BookLibAddForm-image-button {
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #8a2be2, #da70d6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.BookLibAddForm-image-button:hover {
+  box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+  transform: translateY(-2px);
+}
+ 
+  

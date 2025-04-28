@@ -1,0 +1,56 @@
+/* Add these styles to your existing library.css file */
+
+.library-saved-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  
+  .library-saved-remove-button {
+    padding: 0.5rem 1rem;
+    background-color: rgba(245, 101, 101, 0.1);
+    color: #e53e3e;
+    border: 1px solid rgba(245, 101, 101, 0.3);
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+  }
+  
+  .library-saved-remove-button:hover {
+    background-color: rgba(245, 101, 101, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .library-dark .library-saved-remove-button {
+    background-color: rgba(245, 101, 101, 0.2);
+    color: #fc8181;
+    border-color: rgba(245, 101, 101, 0.4);
+  }
+  
+  .library-dark .library-saved-remove-button:hover {
+    background-color: rgba(245, 101, 101, 0.3);
+  }
+  
+  /* Add a badge to show saved status */
+  .library-saved-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #48bb78;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+  }
+  
+  .library-dark .library-saved-badge {
+    background-color: #38a169;
+  }
+  

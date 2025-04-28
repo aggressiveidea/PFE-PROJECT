@@ -1,0 +1,92 @@
+.search-filter {
+    background: linear-gradient(135deg, #f5f7fa, #e4e7eb);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .search-filter form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .search-input-container {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: white;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #4e8cff;
+    box-shadow: 0 0 0 3px rgba(78, 140, 255, 0.2);
+  }
+  
+  .search-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #4e8cff;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+  
+  .search-button:hover {
+    background-color: rgba(78, 140, 255, 0.1);
+  }
+  
+  .filter-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .category-select {
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: white;
+    font-size: 16px;
+    min-width: 180px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234e8cff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px;
+    transition: all 0.3s ease;
+  }
+  
+  .category-select:focus {
+    outline: none;
+    border-color: #4e8cff;
+    box-shadow: 0 0 0 3px rgba(78, 140, 255, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .search-filter form {
+      flex-direction: column;
+    }
+  
+    .search-input-container,
+    .filter-container {
+      width: 100%;
+    }
+  }
+  

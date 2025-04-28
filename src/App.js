@@ -1,3 +1,5 @@
+"use client"
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "./views/Home"
 import Header from "./components/forHome/Header"
@@ -18,8 +20,13 @@ import UserProfile from "./components/forUserProfile/user-profile"
 import ContentAdminDashboard from "./views/DashboardContentAdmin"
 import QuizPage from "./views/QuizPage"
 import ChatBot from "./views/ChatBot"
+import BookLib from "./views/BooksLib"
+import PasswordReset from "./components/password-reset"
 
 function App() {
+  // For debugging route issues
+  console.log("App rendering, current path:", window.location.pathname)
+
   return (
     <Router>
       <Header />
@@ -42,10 +49,25 @@ function App() {
         <Route path="/terms" element={<SearchPage />} />
         <Route path="/quiz/*" element={<QuizPage />} />
         <Route path="/ia" element={<ChatBot />} />
+        <Route path="/book" element={<BookLib />} />
+
+        {/* Password reset route */}
+        <Route path="/reset-password" element={<PasswordReset />} />
+
+        {/* Add a fallback redirect for any unmatched routes */}
+        <Route
+          path="*"
+          element={
+            <div style={{ padding: "50px", textAlign: "center" }}>
+              <h1>Page Not Found</h1>
+              <p>The requested page {window.location.pathname} does not exist.</p>
+              <button onClick={() => (window.location.href = "/")}>Go to Home</button>
+            </div>
+          }
+        />
       </Routes>
     </Router>
   )
 }
 
 export default App
-

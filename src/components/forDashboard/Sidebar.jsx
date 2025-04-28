@@ -1,12 +1,32 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Users, FileText, Settings, Moon, Sun, LayoutDashboard, Bell, LogOut, Grid, User, BookOpen, Bot, Book } from "lucide-react"
+import {
+  Users,
+  FileText,
+  Settings,
+  Moon,
+  Sun,
+  LayoutDashboard,
+  Bell,
+  LogOut,
+  Grid,
+  User,
+  BookOpen,
+  Bot,
+  Book,
+} from "lucide-react"
 import "./Sidebar.css"
 
 export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode, toggleDarkMode }) {
   const [activeItem, setActiveItem] = useState("content")
   const [userRole, setUserRole] = useState("User")
+  const [localDarkMode, setLocalDarkMode] = useState(darkMode)
+
+  useEffect(() => {
+    // Update local state when prop changes
+    setLocalDarkMode(darkMode)
+  }, [darkMode])
 
   useEffect(() => {
     const getUserRole = () => {
@@ -25,8 +45,16 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     const handleUserUpdate = () => getUserRole()
     window.addEventListener("userUpdated", handleUserUpdate)
 
+    // Listen for dark mode changes from other components
+    const handleDarkModeChange = () => {
+      const isDarkMode = localStorage.getItem("darkMode") === "true"
+      setLocalDarkMode(isDarkMode)
+    }
+    window.addEventListener("darkModeChanged", handleDarkModeChange)
+
     return () => {
       window.removeEventListener("userUpdated", handleUserUpdate)
+      window.removeEventListener("darkModeChanged", handleDarkModeChange)
     }
   }, [])
 
@@ -49,6 +77,27 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     }
   }, [])
 
+  const handleToggleDarkMode = () => {
+    if (toggleDarkMode) {
+      const newDarkMode = !localDarkMode
+      toggleDarkMode(newDarkMode)
+      setLocalDarkMode(newDarkMode)
+
+      // Update body class for global dark mode
+      if (newDarkMode) {
+        document.body.classList.add("dark")
+      } else {
+        document.body.classList.remove("dark")
+      }
+
+      // Store preference in localStorage
+      localStorage.setItem("darkMode", newDarkMode.toString())
+
+      // Dispatch an event to notify other components
+      window.dispatchEvent(new Event("darkModeChanged"))
+    }
+  }
+
   const allNavLinks = [
     {
       id: "dashboard",
@@ -62,49 +111,56 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       label: "All users",
       icon: Users,
       href: "/usermanagement",
-      roles: ["Admin"], 
+      roles: ["Admin"],
     },
     {
       id: "notifications",
       label: "Notifications",
       icon: Bell,
       href: "/notifs",
-      roles: ["Content-admin"], 
+      roles: ["Content-admin"],
     },
     {
-      id: "library",
-      label: "Library",
-      icon: Book,
+      id: "Degital saver",
+      label: "Degital saver",
+      icon: FileText,
       href: "/library",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"],  
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
+    },
+    {
+      id: "Degital Library",
+      label: "Degital Library ",
+      icon: Book,
+      href: "/book",
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
       href: "/settings",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
     {
       id: "personal",
       label: "Personal infos",
       icon: User,
       href: "/profile",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
     {
       id: "quiz",
       label: "ICT Quiz",
       icon: BookOpen,
       href: "/quiz",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
     {
       id: "ICT Assistant",
       label: "ICT Assistant",
       icon: Bot,
       href: "/ia",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"], 
+      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
   ]
 
@@ -114,7 +170,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={closeMobileMenu}></div>}
       <aside
-        className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""} ${darkMode ? "dark-mode" : ""}`}
+        className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""} ${localDarkMode ? "dark-mode" : ""}`}
       >
         <div className="sidebar-header">
           <div className="logo-container">
@@ -155,9 +211,9 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         </div>
 
         <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleDarkMode}>
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+          <button className="theme-toggle" onClick={handleToggleDarkMode}>
+            {localDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <span>{localDarkMode ? "Light Mode" : "Dark Mode"}</span>
           </button>
 
           <a href="/" className="logout-link">
@@ -169,9 +225,3 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     </>
   )
 }
-
-
-
-
-
-

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
+import { getUserById } from "../../services/Api"
 import "./Header.css"
 
 const Header = ({ language = "en", setLanguage, darkMode }) => {
@@ -11,27 +12,70 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        setLoading(true)
-        const storedUser = localStorage.getItem("user")
+  // Function to load user data from API or localStorage
+  const loadUserData = async () => {
+    try {
+      setLoading(true)
+      const storedUser = localStorage.getItem("user")
+      const authData = JSON.parse(localStorage.getItem("authData") || "{}")
 
-        if (storedUser) {
-          const userData = JSON.parse(storedUser)
-          setUser(userData)
+      if (storedUser) {
+        const userData = JSON.parse(storedUser)
+
+        // If we have a user ID and token, try to get fresh data from API
+        if (userData._id && authData.token) {
+          try {
+            const freshUserData = await getUserById(userData._id)
+            if (freshUserData) {
+              // Update localStorage with fresh data
+              const updatedUser = {
+                ...userData,
+                ...freshUserData,
+                firstName: freshUserData.firstName || userData.firstName || "",
+                lastName: freshUserData.lastName || userData.lastName || "",
+                email: freshUserData.email || userData.email || "",
+                profileImgUrl: freshUserData.profileImgUrl || userData.profileImgUrl || "",
+                role: freshUserData.role || userData.role || "User",
+              }
+
+              localStorage.setItem("user", JSON.stringify(updatedUser))
+              setUser(updatedUser)
+              console.log("Header: Updated user data from API:", updatedUser)
+            } else {
+              setUser(userData)
+            }
+          } catch (apiError) {
+            console.error("Header: Error fetching fresh user data:", apiError)
+            setUser(userData)
+          }
         } else {
-          setUser(null)
+          setUser(userData)
         }
-      } catch (error) {
-        console.error("Error in loadUserData:", error)
+      } else {
         setUser(null)
-      } finally {
-        setLoading(false)
       }
+    } catch (error) {
+      console.error("Header: Error in loadUserData:", error)
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadUserData()
+
+    // Listen for userUpdated event to refresh user data
+    const handleUserUpdate = () => {
+      console.log("Header: User updated event received")
+      loadUserData()
     }
 
-    loadUserData()
+    window.addEventListener("userUpdated", handleUserUpdate)
+
+    return () => {
+      window.removeEventListener("userUpdated", handleUserUpdate)
+    }
   }, [])
 
   // Close dropdown when clicking outside
@@ -277,14 +321,12 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     </svg>
                     <span>Logout</span>
                   </button>
-                 
                 </div>
               )}
             </div>
           ) : (
             <div className="auth-buttons">
-            {
-              user && user.isVerified ? (
+              {user && user.isVerified ? (
                 <Link to="/login">
                   <button className="lib-btn">Digital Library</button>
                 </Link>
@@ -297,10 +339,8 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     <button className="btn-login">Login</button>
                   </Link>
                 </>
-              )
-            }
-          </div>
-          
+              )}
+            </div>
           )}
         </div>
 
@@ -335,7 +375,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     Profile
                   </a>
                 </li>
-                
+
                 <li>
                   <a href="/library">
                     <svg
@@ -399,7 +439,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     {t.home}
                   </a>
                 </li>
-               
               </ul>
             )}
           </nav>
@@ -439,31 +478,10 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
               </button>
             </div>
           )}
-
         </div>
       )}
-      
     </header>
   )
 }
 
 export default Header
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

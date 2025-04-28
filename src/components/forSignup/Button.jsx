@@ -1,9 +1,8 @@
 "use client"
-import "./Button.css"
 
-function Button({ text, type, onClick }) {
+const Button = ({ text, type = "button", onClick, disabled = false, className = "" }) => {
   return (
-    <button className="custom-button" type={type} onClick={onClick}>
+    <button type={type} onClick={onClick} disabled={disabled} className={`custom-button ${className}`}>
       {text}
     </button>
   )

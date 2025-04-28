@@ -1,0 +1,457 @@
+:root {
+  --sidebar-z-index: 50;
+  --primary-color: #8a2be2;
+  --secondary-color: #da70d6;
+  --light-bg: #f8f9fa;
+  --dark-bg: #1a1a2e;
+  --light-text: #333;
+  --dark-text: #f0f0f0;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --gradient-light: linear-gradient(90deg, #8a2be2, #da70d6);
+  --gradient-dark: linear-gradient(90deg, #6a1cb2, #ba50b6);
+  --transition-speed: 0.3s;
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 80px;
+}
+
+/* Global styles for dark mode */
+.BookLib-body-dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+.BookLib-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--light-bg);
+  color: var(--light-text);
+  position: relative;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.BookLib-dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+/* Custom header styles */
+.BookLib-custom-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.BookLib-dark-header,
+.BookLib-dark-mode .BookLib-custom-header {
+  background-color: #16213e !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+  color: var(--dark-text) !important;
+}
+
+/* Apply dark mode to the main app header if it exists */
+.BookLib-dark-header {
+  background-color: #16213e !important;
+  color: var(--dark-text) !important;
+}
+
+.BookLib-logo h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  background: var(--gradient-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.BookLib-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.BookLib-dark-mode-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-speed) ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+}
+
+.BookLib-dark-mode .BookLib-dark-mode-toggle {
+  background-color: #2a2a3a;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.BookLib-dark-mode-toggle:hover {
+  background-color: rgba(138, 43, 226, 0.1);
+  transform: translateY(-2px);
+}
+
+.BookLib-dark-mode .BookLib-dark-mode-toggle:hover {
+  background-color: rgba(218, 112, 214, 0.2);
+}
+
+/* Updated main content to work with sidebar */
+.BookLib-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px; /* Account for fixed header */
+  margin-left: var(--sidebar-width); /* Account for sidebar */
+  transition: margin-left var(--transition-speed) ease;
+  position: relative;
+  z-index: 10; /* Ensure main content is above sidebar */
+  width: calc(100% - var(--sidebar-width));
+}
+
+/* When sidebar is collapsed */
+.BookLib-main-expanded {
+  margin-left: var(--sidebar-collapsed-width);
+  width: calc(100% - var(--sidebar-collapsed-width));
+}
+
+.BookLib-content {
+  flex: 1;
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.BookLib-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.BookLib-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: var(--gradient-light);
+  border-radius: 3px;
+}
+
+.BookLib-dark-mode .BookLib-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.BookLib-header h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  background: var(--gradient-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.BookLib-header p {
+  font-size: 18px;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.BookLib-dark-mode .BookLib-header p {
+  color: #aaa;
+}
+
+.BookLib-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.BookLib-add-button {
+  align-self: flex-end;
+  padding: 12px 24px;
+  background: var(--gradient-light);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.BookLib-add-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.BookLib-add-button:hover::before {
+  transform: translateX(100%);
+}
+
+.BookLib-add-button:hover {
+  box-shadow: 0 6px 15px rgba(138, 43, 226, 0.4);
+  transform: translateY(-2px);
+}
+
+.BookLib-add-icon {
+  font-size: 18px;
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.BookLib-shelves {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.BookLib-no-results {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: var(--card-shadow);
+  animation: fadeIn 0.5s ease;
+}
+
+.BookLib-dark-mode .BookLib-no-results {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.BookLib-no-results h3 {
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 20px;
+}
+
+.BookLib-dark-mode .BookLib-no-results h3 {
+  color: #ccc;
+}
+
+.BookLib-no-results p {
+  margin-bottom: 20px;
+  color: #777;
+  font-size: 16px;
+}
+
+.BookLib-dark-mode .BookLib-no-results p {
+  color: #999;
+}
+
+.BookLib-reset-search {
+  padding: 10px 20px;
+  background: var(--gradient-light);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
+}
+
+.BookLib-reset-search:hover {
+  box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+  transform: translateY(-2px);
+}
+
+.BookLib-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 18px;
+  color: #666;
+  animation: pulse 1.5s infinite;
+}
+
+.BookLib-dark-mode .BookLib-loading {
+  color: #aaa;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.BookLib-error {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #fff3f3;
+  border-radius: 10px;
+  margin: 30px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.1);
+}
+
+.BookLib-dark-mode .BookLib-error {
+  background-color: #2a1a1a;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+}
+
+.BookLib-error p {
+  color: #e53935;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.BookLib-dark-mode .BookLib-error p {
+  color: #ff6b6b;
+}
+
+.BookLib-retry-button {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #e53935, #ff6b6b);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+}
+
+.BookLib-retry-button:hover {
+  box-shadow: 0 5px 15px rgba(229, 57, 53, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Technology-themed decorative elements */
+.BookLib-content::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, rgba(218, 112, 214, 0.05) 50%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.BookLib-content::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(218, 112, 214, 0.1) 0%, rgba(138, 43, 226, 0.05) 50%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.BookLib-dark-mode .BookLib-content::before {
+  background: radial-gradient(circle, rgba(138, 43, 226, 0.05) 0%, rgba(218, 112, 214, 0.02) 50%, transparent 70%);
+}
+
+.BookLib-dark-mode .BookLib-content::after {
+  background: radial-gradient(circle, rgba(218, 112, 214, 0.05) 0%, rgba(138, 43, 226, 0.02) 50%, transparent 70%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .BookLib-main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .BookLib-main-expanded {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .BookLib-content {
+    padding: 20px 15px;
+  }
+
+  .BookLib-header h1 {
+    font-size: 28px;
+  }
+
+  .BookLib-header p {
+    font-size: 16px;
+  }
+
+  .BookLib-actions {
+    flex-direction: column;
+  }
+
+  .BookLib-add-button {
+    align-self: center;
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .BookLib-custom-header {
+    padding: 0 15px;
+  }
+
+  .BookLib-logo h1 {
+    font-size: 18px;
+  }
+}

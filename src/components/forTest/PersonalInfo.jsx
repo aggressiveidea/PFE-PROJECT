@@ -6,7 +6,7 @@ import Sidebar from "../forDashboard/Sidebar"
 import Header from "../forHome/Header"
 import Footer from "../forHome/Footer"
 import "./PersonalInfo.css"
-import { updateUser, getProfile } from "../../services/Api"
+import { updateUser, getProfile, getUserById } from "../../services/Api"
 
 export default function PersonalInfo() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -62,87 +62,113 @@ export default function PersonalInfo() {
         // Check if we have a token in localStorage
         const authData = JSON.parse(localStorage.getItem("authData") || "{}")
         const token = authData.token
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
+        const userId = storedUser._id || storedUser.id
 
-        if (token) {
+        console.log("PersonalInfo: Fetching user data with token:", !!token, "and userId:", userId)
+
+        if (token && userId) {
           try {
-            // If we have a token, fetch the user profile from the API
-            const profileData = await getProfile(token)
-            console.log("Profile data from API:", profileData)
+            // First try to get user by ID
+            const userData = await getUserById(userId)
+            console.log("PersonalInfo: User data from API by ID:", userData)
 
-            if (profileData && profileData.user) {
-              // Make sure to extract the ID correctly
-              const userId = profileData.user._id || profileData.user.id
-
-              // Set the user data from the API response
-              const userData = {
-                firstName: profileData.user.firstName || "",
-                lastName: profileData.user.lastName || "",
-                email: profileData.user.email || "",
-                userBio: profileData.user.userBio || "",
-                profileImgUrl: profileData.user.profileImgUrl || "/placeholder.svg?height=200&width=200",
-                role: profileData.user.role || "User",
-                _id: userId, // Ensure ID is set correctly
+            if (userData) {
+              const updatedUserData = {
+                firstName: userData.firstName || storedUser.firstName || "",
+                lastName: userData.lastName || storedUser.lastName || "",
+                email: userData.email || storedUser.email || "",
+                userBio: userData.userBio || storedUser.userBio || "",
+                profileImgUrl:
+                  userData.profileImgUrl || storedUser.profileImgUrl || "/placeholder.svg?height=200&width=200",
+                role: userData.role || storedUser.role || "User",
+                _id: userId,
+                isVerified: userData.isVerified || storedUser.isVerified || false,
               }
 
-              console.log("Setting user data with ID:", userId)
-              setUser(userData)
-              setEditedUser(userData)
+              setUser(updatedUserData)
+              setEditedUser(updatedUserData)
 
-              // Update localStorage with the latest data including ID
-              localStorage.setItem("user", JSON.stringify(userData))
+              // Update localStorage with the latest data
+              localStorage.setItem("user", JSON.stringify(updatedUserData))
+
+              // Dispatch event to notify other components
+              window.dispatchEvent(new Event("userUpdated"))
+              return
             }
-          } catch (apiError) {
-            console.error("API fetch failed, falling back to localStorage:", apiError)
-            // Fall back to localStorage if API fetch fails
-            fallbackToLocalStorage()
+          } catch (idError) {
+            console.error("PersonalInfo: Error fetching user by ID, trying profile API:", idError)
+
+            // If getUserById fails, try the profile API
+            try {
+              const profileData = await getProfile(token)
+              console.log("PersonalInfo: Profile data from API:", profileData)
+
+              if (profileData && profileData.user) {
+                const userId = profileData.user._id || profileData.user.id
+
+                const updatedUserData = {
+                  firstName: profileData.user.firstName || storedUser.firstName || "",
+                  lastName: profileData.user.lastName || storedUser.lastName || "",
+                  email: profileData.user.email || storedUser.email || "",
+                  userBio: profileData.user.userBio || storedUser.userBio || "",
+                  profileImgUrl:
+                    profileData.user.profileImgUrl ||
+                    storedUser.profileImgUrl ||
+                    "/placeholder.svg?height=200&width=200",
+                  role: profileData.user.role || storedUser.role || "User",
+                  _id: userId,
+                  isVerified: profileData.user.isVerified || storedUser.isVerified || false,
+                }
+
+                setUser(updatedUserData)
+                setEditedUser(updatedUserData)
+
+                // Update localStorage with the latest data
+                localStorage.setItem("user", JSON.stringify(updatedUserData))
+
+                // Dispatch event to notify other components
+                window.dispatchEvent(new Event("userUpdated"))
+                return
+              }
+            } catch (profileError) {
+              console.error("PersonalInfo: Error fetching profile, falling back to localStorage:", profileError)
+            }
           }
+        }
+
+        // Fall back to localStorage if API calls fail or no token/userId
+        if (storedUser && storedUser.email) {
+          setUser(storedUser)
+          setEditedUser(storedUser)
         } else {
-          // If no token, try to get user data from localStorage
-          fallbackToLocalStorage()
+          setError("No user data found. Please log in again.")
         }
       } catch (err) {
-        console.error("Error fetching user data:", err)
+        console.error("PersonalInfo: Error fetching user data:", err)
         setError("Failed to load profile data. Please try again later.")
-        // Try to fall back to localStorage as a last resort
-        fallbackToLocalStorage()
       } finally {
         setLoading(false)
       }
     }
 
-    // Helper function to get user data from localStorage
-    const fallbackToLocalStorage = () => {
-      try {
-        const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
-        console.log("User data from localStorage:", storedUser)
+    fetchUserData()
 
-        if (storedUser && storedUser.email) {
-          // Make sure to extract the ID correctly
-          const userId = storedUser._id || storedUser.id
-
-          const userData = {
-            firstName: storedUser.firstName || "",
-            lastName: storedUser.lastName || "",
-            email: storedUser.email || "",
-            userBio: storedUser.userBio || "",
-            profileImgUrl: storedUser.profileImgUrl || "/placeholder.svg?height=200&width=200",
-            role: storedUser.role || "User",
-            _id: userId, // Ensure ID is set correctly
-          }
-
-          console.log("Setting user data with ID from localStorage:", userId)
-          setUser(userData)
-          setEditedUser(userData)
-        } else {
-          setError("No user data found. Please log in again.")
-        }
-      } catch (localStorageError) {
-        console.error("Error parsing localStorage data:", localStorageError)
-        setError("Failed to load profile data. Please log in again.")
+    // Listen for userUpdated event
+    const handleUserUpdate = () => {
+      console.log("PersonalInfo: User updated event received")
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
+      if (storedUser && storedUser.email) {
+        setUser(storedUser)
+        setEditedUser(storedUser)
       }
     }
 
-    fetchUserData()
+    window.addEventListener("userUpdated", handleUserUpdate)
+
+    return () => {
+      window.removeEventListener("userUpdated", handleUserUpdate)
+    }
   }, [])
 
   const toggleSidebar = () => {
@@ -183,39 +209,24 @@ export default function PersonalInfo() {
   const handleSave = async () => {
     try {
       setIsEditing(false) // Disable editing mode immediately to prevent multiple submissions
+      setUpdateLoading(true)
 
       // Log the entire user object to see what's available
-      console.log("Current user object:", user)
+      console.log("PersonalInfo: Current user object:", user)
 
       // Check for ID in different possible locations
       const userId =
         user._id || user.id || editedUser._id || editedUser.id || JSON.parse(localStorage.getItem("user") || "{}")._id
 
       if (!userId) {
-        console.error("User ID is missing:", user)
+        console.error("PersonalInfo: User ID is missing:", user)
         alert("Cannot update profile: User ID is missing")
         setIsEditing(true) // Re-enable editing if there's an error
+        setUpdateLoading(false)
         return
       }
 
-      // Check if the backend server is running
-      try {
-        const serverCheckResponse = await fetch("http://localhost:5000/", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        })
-
-        if (!serverCheckResponse.ok) {
-          throw new Error("Backend server is not responding properly")
-        }
-      } catch (serverError) {
-        console.error("Backend server check failed:", serverError)
-        alert("Cannot connect to the server. Please make sure the backend is running.")
-        setIsEditing(true) // Re-enable editing if there's an error
-        return
-      }
-
-      console.log("Updating user with ID:", userId)
+      console.log("PersonalInfo: Updating user with ID:", userId)
 
       // Create a clean copy of the data to update
       const updateData = {
@@ -229,19 +240,22 @@ export default function PersonalInfo() {
       }
 
       const response = await updateUser(userId, updateData)
-      console.log("Update response:", response)
+      console.log("PersonalInfo: Update response:", response)
 
       // Check for success based on your backend response format
       if (response && response.success === true) {
         // Update the local user state with the response data
         const updatedUserData = response.data || updateData
 
-        setUser({
+        const newUserData = {
           ...user,
           ...updatedUserData,
           _id: userId, // Ensure ID is preserved
-        })
+        }
 
+        setUser(newUserData)
+
+        // Update localStorage with the latest data
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
         const updatedStoredData = {
           ...storedUser,
@@ -253,6 +267,8 @@ export default function PersonalInfo() {
         }
 
         localStorage.setItem("user", JSON.stringify(updatedStoredData))
+
+        // Notify other components about the update
         window.dispatchEvent(new Event("userUpdated"))
 
         setPreviewImage(null)
@@ -261,9 +277,11 @@ export default function PersonalInfo() {
         throw new Error("Failed to update profile")
       }
     } catch (err) {
-      console.error("Error updating profile:", err)
+      console.error("PersonalInfo: Error updating profile:", err)
       alert("Failed to update profile: " + (err.message || "Unknown error"))
       setIsEditing(true) // Re-enable editing if there's an error
+    } finally {
+      setUpdateLoading(false)
     }
   }
 

@@ -6,6 +6,7 @@ import Sidebar from "../forDashboard/Sidebar"
 import Footer from "../forHome/Footer"
 import { User, Lock, LogOut, Trash2, Bell, ImageIcon, Eye, EyeOff, AlertTriangle } from "lucide-react"
 import "./Settings.css"
+import { requestPasswordReset } from "../../services/Api"
 
 const Settings = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -37,6 +38,10 @@ const Settings = () => {
   const [pushNotifications, setPushNotifications] = useState(true)
   const [newsletterSubscription, setNewsletterSubscription] = useState(false)
 
+  // New state for reset password email
+  const [resetEmail, setResetEmail] = useState("")
+  const [resetEmailStatus, setResetEmailStatus] = useState({ loading: false, success: false, error: "" })
+
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true"
     setDarkMode(savedDarkMode)
@@ -61,6 +66,11 @@ const Settings = () => {
           setEmailNotifications(userData.emailNotifications !== false)
           setPushNotifications(userData.pushNotifications !== false)
           setNewsletterSubscription(userData.newsletterSubscription === true)
+
+          // Pre-fill reset email with user's email
+          if (userData.email) {
+            setResetEmail(userData.email)
+          }
         }
       } catch (error) {
         console.error("Error loading user data:", error)
@@ -202,6 +212,64 @@ const Settings = () => {
     localStorage.removeItem("authData")
     localStorage.removeItem("user")
     window.location.href = "/"
+  }
+
+  // New function to handle password reset request
+  const handleResetPasswordRequest = async (e) => {
+    e.preventDefault()
+
+    if (!resetEmail) {
+      setResetEmailStatus({
+        loading: false,
+        success: false,
+        error: "Please enter your email address",
+      })
+      return
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(resetEmail)) {
+      setResetEmailStatus({
+        loading: false,
+        success: false,
+        error: "Please enter a valid email address",
+      })
+      return
+    }
+
+    setResetEmailStatus({
+      loading: true,
+      success: false,
+      error: "",
+    })
+
+    try {
+      // Use the updated requestPasswordReset function
+      const result = await requestPasswordReset(resetEmail)
+
+      // Always show success message even if email doesn't exist (security best practice)
+      setResetEmailStatus({
+        loading: false,
+        success: true,
+        error: "",
+      })
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setResetEmailStatus((prev) => ({
+          ...prev,
+          success: false,
+        }))
+      }, 5000)
+    } catch (error) {
+      console.error("Error sending reset email:", error)
+      setResetEmailStatus({
+        loading: false,
+        success: false,
+        error: "An error occurred. Please try again later.",
+      })
+    }
   }
 
   return (
@@ -401,25 +469,44 @@ const Settings = () => {
                     Forgot your password? No problem. Enter your email address below and we'll send you instructions to
                     reset your password.
                   </p>
-                  <form
-                    className="forgot-password-form"
-                    onSubmit={(e) => {
-                      e.preventDefault()
-                      alert("Password reset instructions sent to your email!")
-                    }}
-                  >
+                  <form className="forgot-password-form" onSubmit={handleResetPasswordRequest}>
                     <div className="form-group">
                       <label htmlFor="resetEmail">Email Address</label>
                       <input
                         type="email"
                         id="resetEmail"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
                         placeholder="Enter your email address"
                         className="reset-email-input"
+                        required
                       />
                     </div>
+
+                    {resetEmailStatus.error && (
+                      <div className="password-error">
+                        <AlertTriangle size={16} />
+                        {resetEmailStatus.error}
+                      </div>
+                    )}
+
+                    {resetEmailStatus.success && (
+                      <div className="password-success">
+                        If your email exists in our system, you will receive password reset instructions shortly. Please
+                        check your inbox and spam folder.
+                      </div>
+                    )}
+
                     <div className="reset-actions">
-                      <button type="submit" className="reset-password-button">
-                        Send Reset Instructions
+                      <button type="submit" className="reset-password-button" disabled={resetEmailStatus.loading}>
+                        {resetEmailStatus.loading ? (
+                          <span className="loading-spinner">
+                            <span className="spinner"></span>
+                            Sending...
+                          </span>
+                        ) : (
+                          "Send Reset Instructions"
+                        )}
                       </button>
                     </div>
                   </form>
@@ -555,5 +642,3 @@ const Settings = () => {
 }
 
 export default Settings
-
-

@@ -29,6 +29,8 @@ export default function UserManagement() {
   const [roleFilter, setRoleFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [roleUpdateSuccess, setRoleUpdateSuccess] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
+  const [language, setLanguage] = useState("en")
 
   const [newUser, setNewUser] = useState({
     firstName: "",
@@ -39,20 +41,46 @@ export default function UserManagement() {
     status: "Active",
   })
 
-  const [darkMode, setDarkMode] = useState(false)
-  const [language, setLanguage] = useState("en")
-
   // Available roles and statuses for filtering
   const availableRoles = ["User", "Ict-expert", "Content-admin", "Admin"]
   const availableStatuses = ["Active", "Inactive", "Pending"]
 
+  // Initialize dark mode from localStorage
   useEffect(() => {
-    if (darkMode) {
+    const savedDarkMode = localStorage.getItem("darkMode") === "true"
+    setDarkMode(savedDarkMode)
+
+    if (savedDarkMode) {
       document.body.classList.add("dark")
     } else {
       document.body.classList.remove("dark")
     }
-  }, [darkMode])
+
+    // Listen for dark mode changes from other components
+    const handleDarkModeChange = () => {
+      const isDarkMode = localStorage.getItem("darkMode") === "true"
+      setDarkMode(isDarkMode)
+    }
+    window.addEventListener("darkModeChanged", handleDarkModeChange)
+
+    return () => {
+      window.removeEventListener("darkModeChanged", handleDarkModeChange)
+    }
+  }, [])
+
+  const toggleDarkMode = (value) => {
+    const newDarkMode = value !== undefined ? value : !darkMode
+    setDarkMode(newDarkMode)
+
+    if (newDarkMode) {
+      document.body.classList.add("dark")
+    } else {
+      document.body.classList.remove("dark")
+    }
+
+    localStorage.setItem("darkMode", newDarkMode.toString())
+    window.dispatchEvent(new Event("darkModeChanged"))
+  }
 
   const fetchUsers = async () => {
     try {
@@ -291,24 +319,24 @@ export default function UserManagement() {
   const getRoleClass = (role) => {
     switch (role?.toLowerCase()) {
       case "admin":
-        return "role-admin"
+        return "usermanagement-role-admin"
       case "ict-expert":
-        return "role-ict-expert"
+        return "usermanagement-role-ict-expert"
       case "content-admin":
-        return "role-content-admin"
+        return "usermanagement-role-content-admin"
       default:
-        return "role-user"
+        return "usermanagement-role-user"
     }
   }
 
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
       case "active":
-        return "status-active"
+        return "usermanagement-status-active"
       case "inactive":
-        return "status-inactive"
+        return "usermanagement-status-inactive"
       case "pending":
-        return "status-pending"
+        return "usermanagement-status-pending"
       default:
         return ""
     }
@@ -339,7 +367,7 @@ export default function UserManagement() {
         <img
           src={user.profileImgUrl || "/placeholder.svg"}
           alt={`${user.firstName} ${user.lastName}`}
-          className="user-avatar-img"
+          className="usermanagement-avatar-img"
           onError={(e) => {
             e.target.onerror = null
             e.target.style.display = "none"
@@ -359,66 +387,68 @@ export default function UserManagement() {
         toggleSidebar={toggleSidebar}
         mobileOpen={mobileMenuOpen}
         closeMobileMenu={closeMobileMenu}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
       />
 
       <div className={`main-content ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         <Header language={language} setLanguage={setLanguage} darkMode={darkMode} openMobileMenu={openMobileMenu} />
 
-        <div className="user-management-container">
-          <div className="page-header">
+        <div className="usermanagement-container">
+          <div className="usermanagement-header">
             <h1>User Management</h1>
             <p>View and manage all users in the system</p>
           </div>
 
           {roleUpdateSuccess && (
-            <div className="success-message">
+            <div className="usermanagement-success">
               <Check size={18} />
               <span>Role updated successfully! Changes take effect immediately - no logout required.</span>
             </div>
           )}
 
-          <div className="controls-container">
-            <div className="search-container">
-              <Search className="search-icon" size={18} />
+          <div className="usermanagement-controls">
+            <div className="usermanagement-search">
+              <Search className="usermanagement-search-icon" size={18} />
               <input
                 type="text"
                 placeholder="Search by name, email, role..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="search-input"
+                className="usermanagement-search-input"
               />
             </div>
 
-            <div className="action-buttons">
-              <button className="refresh-button" onClick={fetchUsers} title="Refresh user list">
+            <div className="usermanagement-actions">
+              <button className="usermanagement-refresh-btn" onClick={fetchUsers} title="Refresh user list">
                 <RefreshCw size={18} />
               </button>
-              <button className={`filter-button ${showFilters ? "active" : ""}`} onClick={toggleFilters}>
-                <Filter size={16} /> Filters {showFilters && <span className="filter-count">•</span>}
+              <button className={`usermanagement-filter-btn ${showFilters ? "active" : ""}`} onClick={toggleFilters}>
+                <Filter size={16} /> Filters {showFilters && <span className="usermanagement-filter-count">•</span>}
               </button>
-              <button className="add-button" onClick={openAddUserModal}>
+              <button className="usermanagement-add-btn" onClick={openAddUserModal}>
                 <UserPlus size={16} /> Add User
               </button>
             </div>
           </div>
 
           {showFilters && (
-            <div className="filters-panel">
-              <div className="filters-header">
+            <div className="usermanagement-filters">
+              <div className="usermanagement-filters-header">
                 <h3>Filter Users</h3>
-                <button className="clear-filters" onClick={clearFilters}>
+                <button className="usermanagement-clear-filters" onClick={clearFilters}>
                   Clear all
                 </button>
-                <button className="close-filters" onClick={toggleFilters}>
+                <button className="usermanagement-close-filters" onClick={toggleFilters}>
                   <X size={18} />
                 </button>
               </div>
-              <div className="filters-content">
-                <div className="filter-group">
+              <div className="usermanagement-filters-content">
+                <div className="usermanagement-filter-group">
                   <label>Role</label>
-                  <div className="filter-options">
+                  <div className="usermanagement-filter-options">
                     <button
-                      className={`filter-option ${roleFilter === "all" ? "selected" : ""}`}
+                      className={`usermanagement-filter-option ${roleFilter === "all" ? "selected" : ""}`}
                       onClick={() => setRoleFilter("all")}
                     >
                       All
@@ -426,7 +456,7 @@ export default function UserManagement() {
                     {availableRoles.map((role) => (
                       <button
                         key={role}
-                        className={`filter-option ${roleFilter === role ? "selected" : ""}`}
+                        className={`usermanagement-filter-option ${roleFilter === role ? "selected" : ""}`}
                         onClick={() => setRoleFilter(role)}
                       >
                         {role}
@@ -434,11 +464,11 @@ export default function UserManagement() {
                     ))}
                   </div>
                 </div>
-                <div className="filter-group">
+                <div className="usermanagement-filter-group">
                   <label>Status</label>
-                  <div className="filter-options">
+                  <div className="usermanagement-filter-options">
                     <button
-                      className={`filter-option ${statusFilter === "all" ? "selected" : ""}`}
+                      className={`usermanagement-filter-option ${statusFilter === "all" ? "selected" : ""}`}
                       onClick={() => setStatusFilter("all")}
                     >
                       All
@@ -446,7 +476,7 @@ export default function UserManagement() {
                     {availableStatuses.map((status) => (
                       <button
                         key={status}
-                        className={`filter-option ${statusFilter === status ? "selected" : ""}`}
+                        className={`usermanagement-filter-option ${statusFilter === status ? "selected" : ""}`}
                         onClick={() => setStatusFilter(status)}
                       >
                         {status}
@@ -459,88 +489,92 @@ export default function UserManagement() {
           )}
 
           {error && (
-            <div className="error-message">
+            <div className="usermanagement-error">
               <p>{error}</p>
               <button onClick={fetchUsers}>Try Again</button>
             </div>
           )}
 
-          <div className="table-container">
+          <div className="usermanagement-table-container">
             {isLoading && !isDeleting ? (
-              <div className="loading-container">
-                <div className="loading-spinner" />
+              <div className="usermanagement-loading">
+                <div className="usermanagement-spinner" />
                 <p>Loading users...</p>
               </div>
             ) : (
-              <table className="users-table">
+              <table className="usermanagement-table">
                 <thead>
                   <tr>
-                    <th className="checkbox-column">
-                      <label className="checkbox-container">
+                    <th className="usermanagement-checkbox-col">
+                      <label className="usermanagement-checkbox">
                         <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
-                        <span className="checkmark"></span>
+                        <span className="usermanagement-checkmark"></span>
                       </label>
                     </th>
-                    <th className="id-column">ID</th>
-                    <th className="user-column">User</th>
-                    <th className="role-column">Role</th>
-                    <th className="status-column">Status</th>
-                    <th className="login-column">Last Login</th>
-                    <th className="actions-column">Actions</th>
+                    <th className="usermanagement-id-col">ID</th>
+                    <th className="usermanagement-user-col">User</th>
+                    <th className="usermanagement-role-col">Role</th>
+                    <th className="usermanagement-status-col">Status</th>
+                    <th className="usermanagement-login-col">Last Login</th>
+                    <th className="usermanagement-actions-col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
                     <tr key={getUserId(user)} className={selectedUsers.includes(getUserId(user)) ? "selected" : ""}>
                       <td>
-                        <label className="checkbox-container">
+                        <label className="usermanagement-checkbox">
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(getUserId(user))}
                             onChange={() => handleSelectUser(getUserId(user))}
                           />
-                          <span className="checkmark"></span>
+                          <span className="usermanagement-checkmark"></span>
                         </label>
                       </td>
-                      <td className="user-id">{getUserId(user)}</td>
+                      <td className="usermanagement-user-id">{getUserId(user)}</td>
                       <td>
-                        <div className="user-info">
-                          <div className="user-avatar">{getUserAvatar(user)}</div>
-                          <div className="user-details">
-                            <div className="user-name">
+                        <div className="usermanagement-user-info">
+                          <div className="usermanagement-avatar">{getUserAvatar(user)}</div>
+                          <div className="usermanagement-user-details">
+                            <div className="usermanagement-user-name">
                               {user.firstName} {user.lastName}
                             </div>
-                            <div className="user-email">{user.email}</div>
+                            <div className="usermanagement-user-email">{user.email}</div>
                           </div>
                         </div>
                       </td>
                       <td>
-                        <span className={`role-badge ${getRoleClass(user.role)}`}>{user.role || "User"}</span>
+                        <span className={`usermanagement-role-badge ${getRoleClass(user.role)}`}>
+                          {user.role || "User"}
+                        </span>
                       </td>
                       <td>
-                        <span className={`status-badge ${getStatusClass(getUserStatus(user))}`}>
-                          {getUserStatus(user) === "Active" && <Check size={12} className="status-icon" />}
+                        <span className={`usermanagement-status-badge ${getStatusClass(getUserStatus(user))}`}>
+                          {getUserStatus(user) === "Active" && (
+                            <Check size={12} className="usermanagement-status-icon" />
+                          )}
                           {getUserStatus(user)}
                         </span>
                       </td>
                       <td>{getUserLastLogin(user)}</td>
                       <td>
-                        <div className="actions">
+                        <div className="usermanagement-actions">
                           <button
-                            className="action-button edit-action"
+                            className="usermanagement-action-btn edit"
                             onClick={() => openModal("changeRole", user)}
                             title="Change Role"
                           >
                             <UserCog size={22} />
                           </button>
                           <button
-                            className="action-button delete-action"
+                            className="usermanagement-action-btn delete"
                             onClick={() => openModal("delete", user)}
                             title="Delete User"
                           >
                             <Trash2 size={22} />
                           </button>
-                          <button className="action-button more-action" title="More Options">
+                          <button className="usermanagement-action-btn more" title="More Options">
                             <MoreHorizontal size={22} />
                           </button>
                         </div>
@@ -552,7 +586,7 @@ export default function UserManagement() {
             )}
 
             {filteredUsers.length === 0 && !isLoading && (
-              <div className="no-results">
+              <div className="usermanagement-no-results">
                 <h3>No users found</h3>
                 <p>Try adjusting your search criteria or filters</p>
               </div>
@@ -573,16 +607,16 @@ export default function UserManagement() {
           )}
 
           {isAddUserModalOpen && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <div className="modal-header">
+            <div className="usermanagement-modal-overlay">
+              <div className="usermanagement-modal">
+                <div className="usermanagement-modal-header">
                   <h3>Add New User</h3>
-                  <button className="close-button" onClick={closeAddUserModal}>
+                  <button className="usermanagement-close-btn" onClick={closeAddUserModal}>
                     ×
                   </button>
                 </div>
-                <div className="modal-content">
-                  <div className="form-group">
+                <div className="usermanagement-modal-content">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="firstName">First Name</label>
                     <input
                       type="text"
@@ -593,7 +627,7 @@ export default function UserManagement() {
                       placeholder="Enter first name"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="lastName">Last Name</label>
                     <input
                       type="text"
@@ -604,7 +638,7 @@ export default function UserManagement() {
                       placeholder="Enter last name"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="email">Email</label>
                     <input
                       type="email"
@@ -615,7 +649,7 @@ export default function UserManagement() {
                       placeholder="Enter email address"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="password">Password</label>
                     <input
                       type="password"
@@ -626,7 +660,7 @@ export default function UserManagement() {
                       placeholder="Enter a password"
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="newUserRole">Role</label>
                     <select id="newUserRole" name="role" value={newUser.role} onChange={handleNewUserChange}>
                       {availableRoles.map((role) => (
@@ -636,7 +670,7 @@ export default function UserManagement() {
                       ))}
                     </select>
                   </div>
-                  <div className="form-group">
+                  <div className="usermanagement-form-group">
                     <label htmlFor="status">Status</label>
                     <select id="status" name="status" value={newUser.status} onChange={handleNewUserChange}>
                       {availableStatuses.map((status) => (
@@ -646,12 +680,12 @@ export default function UserManagement() {
                       ))}
                     </select>
                   </div>
-                  <div className="modal-footer">
-                    <button className="cancel-button" onClick={closeAddUserModal}>
+                  <div className="usermanagement-modal-footer">
+                    <button className="usermanagement-cancel-btn" onClick={closeAddUserModal}>
                       Cancel
                     </button>
                     <button
-                      className="confirm-button"
+                      className="usermanagement-confirm-btn"
                       onClick={handleAddUser}
                       disabled={
                         !newUser.firstName || !newUser.lastName || !newUser.email || !newUser.password || isLoading
@@ -666,15 +700,8 @@ export default function UserManagement() {
           )}
         </div>
 
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+        <Footer darkMode={darkMode} setDarkMode={toggleDarkMode} language={language} />
       </div>
     </div>
   )
 }
-
-
-
-
-
-
-

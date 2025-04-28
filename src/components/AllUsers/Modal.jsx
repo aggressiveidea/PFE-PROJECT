@@ -15,11 +15,11 @@ const Modal = ({
   if (!isOpen) return null
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
+    <div className="usermanagement-modal-overlay">
+      <div className="usermanagement-modal">
+        <div className="usermanagement-modal-header">
           <h3>{modalType === "delete" ? "Delete User" : "Change User Role"}</h3>
-          <button className="close-button" onClick={closeModal}>
+          <button className="usermanagement-close-btn" onClick={closeModal}>
             ×
           </button>
         </div>
@@ -41,4 +41,3 @@ const Modal = ({
 }
 
 export default Modal
-

@@ -1,0 +1,364 @@
+/* BookLibShelf.css - Enhanced version */
+.BookLibShelf {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.BookLibShelf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.BookLib-dark-mode .BookLibShelf-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.BookLibShelf-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.BookLibShelf-title-dot {
+  color: #8a2be2;
+  margin-right: 8px;
+  font-size: 28px;
+  line-height: 0;
+}
+
+.BookLibShelf-view-all {
+  color: #8a2be2;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: rgba(138, 43, 226, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.BookLibShelf-view-all:hover {
+  background-color: rgba(138, 43, 226, 0.2);
+  transform: translateX(3px);
+}
+
+.BookLibShelf-container {
+  position: relative;
+  padding: 20px 0;
+}
+
+.BookLibShelf-books {
+  display: flex;
+  gap: 25px;
+  overflow-x: auto;
+  padding: 20px 5px;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  position: relative;
+}
+
+.BookLibShelf-books::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Enhanced 3D book effect */
+.BookLibShelf-book {
+  flex: 0 0 auto;
+  width: 180px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  perspective: 1000px;
+}
+
+.BookLibShelf-book:hover {
+  transform: translateY(-10px);
+}
+
+.BookLibShelf-book-cover {
+  height: 250px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.BookLibShelf-book:hover .BookLibShelf-book-cover {
+  transform: rotateY(5deg);
+}
+
+.BookLibShelf-book-cover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%) rotateY(90deg);
+  transform-origin: right;
+}
+
+.BookLibShelf-book-cover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+.BookLibShelf-book img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.BookLibShelf-book-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #8a2be2 0%, #da70d6 100%);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.BookLibShelf-book-placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.BookLibShelf-book-placeholder span {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.BookLibShelf-book-info {
+  padding: 15px 5px 5px;
+  text-align: center;
+}
+
+.BookLibShelf-book-title {
+  margin: 0 0 5px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.BookLib-dark-mode .BookLibShelf-book-title {
+  color: #e0e0e0;
+}
+
+.BookLibShelf-book-author {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.BookLib-dark-mode .BookLibShelf-book-author {
+  color: #aaa;
+}
+
+.BookLibShelf-scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(138, 43, 226, 0.9);
+  color: white;
+  border: none;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.BookLibShelf-scroll-button:hover {
+  background: rgba(138, 43, 226, 1);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.BookLibShelf-scroll-left {
+  left: -20px;
+}
+
+.BookLibShelf-scroll-right {
+  right: -20px;
+}
+
+/* Book overlay with Add to Library button */
+.BookLibShelf-book-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.BookLibShelf-book-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.BookLibShelf-book-overlay-content {
+  padding: 15px;
+  color: white;
+  text-align: center;
+}
+
+.BookLibShelf-book-overlay-content h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.BookLibShelf-book-overlay-content p {
+  margin: 0 0 15px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.BookLibShelf-add-library-btn {
+  background: linear-gradient(90deg, #8a2be2, #da70d6);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  margin-top: 10px;
+}
+
+.BookLibShelf-add-library-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.BookLibShelf-add-library-btn.BookLibShelf-saved {
+  background: linear-gradient(90deg, #4caf50, #45a049);
+  color: white;
+}
+
+.BookLibShelf-add-library-btn.BookLibShelf-saved:hover {
+  background: linear-gradient(90deg, #45a049, #3d8b3d);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .BookLibShelf-book {
+    width: 140px;
+  }
+
+  .BookLibShelf-book-cover {
+    height: 200px;
+  }
+
+  .BookLibShelf-scroll-button {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+
+  .BookLibShelf-scroll-left {
+    left: -10px;
+  }
+
+  .BookLibShelf-scroll-right {
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .BookLibShelf-book {
+    width: 120px;
+  }
+
+  .BookLibShelf-book-cover {
+    height: 170px;
+  }
+
+  .BookLibShelf-title {
+    font-size: 20px;
+  }
+
+  .BookLibShelf-view-all {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+/* Add a subtle shelf effect */
+.BookLibShelf-books::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15px;
+  background: linear-gradient(
+    90deg,
+    rgba(138, 43, 226, 0.2) 0%,
+    rgba(138, 43, 226, 0.3) 50%,
+    rgba(138, 43, 226, 0.2) 100%
+  );
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+

@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Button from "../components/forSignup/Button"
 import InputField from "../components/forSignup/InputField"
 import AlertBox from "../components/alertBox"
 import NetworkGraph from "../components/NetworkGraph"
 import VerificationAlert from "../components/VerificationAlert"
+import { motion } from "framer-motion"
 import "./Signup.css"
 import { registerUser } from "../services/Api"
+
 const countries = [
   "Afghanistan",
   "Albania",
@@ -221,6 +223,31 @@ function Signup() {
   const [isLoading, setIsLoading] = useState(false)
   const [showVerification, setShowVerification] = useState(false)
   const [registeredEmail, setRegisteredEmail] = useState("")
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [typingComplete, setTypingComplete] = useState(false)
+
+  useEffect(() => {
+    // Check if dark mode is enabled in localStorage or system preference
+    const darkModeEnabled =
+      localStorage.getItem("darkMode") === "true" ||
+      (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+    setIsDarkMode(darkModeEnabled)
+
+    // Apply dark mode class to body if needed
+    if (darkModeEnabled) {
+      document.body.classList.add("dark-mode")
+    } else {
+      document.body.classList.remove("dark-mode")
+    }
+
+    // Set typing animation to complete after delay
+    const timer = setTimeout(() => {
+      setTypingComplete(true)
+    }, 2500)
+
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -296,6 +323,7 @@ function Signup() {
         }
         return
       }
+
       console.log("Full registration response:", JSON.stringify(response, null, 2))
       let userId = null
 
@@ -318,10 +346,6 @@ function Signup() {
       }
 
       console.log("Extracted user ID:", userId)
-      // if (!userId) {
-      //   console.warn("Could not extract user ID from response, using email as temporary ID")
-      //   userId = `temp_${formData.email.replace(/[^a-zA-Z0-9]/g, "_")}`
-      // }
 
       const userDataToStore = {
         firstName: formData.firstName,
@@ -376,89 +400,186 @@ function Signup() {
     }
   }
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5 },
+    },
+  }
+
+  // Typewriter animation for the heading
+  const headingText = "Join the Network"
+  const subText = "Explore the future of technology"
+
+  const TypewriterText = ({ text, className, delay = 0 }) => {
+    const [displayText, setDisplayText] = useState("")
+
+    useEffect(() => {
+      let currentIndex = 0
+      const timer = setTimeout(() => {
+        const interval = setInterval(() => {
+          if (currentIndex <= text.length) {
+            setDisplayText(text.substring(0, currentIndex))
+            currentIndex++
+          } else {
+            clearInterval(interval)
+          }
+        }, 100) // Speed of typing
+
+        return () => clearInterval(interval)
+      }, delay)
+
+      return () => clearTimeout(timer)
+    }, [text, delay])
+
+    return <span className={className}>{displayText}</span>
+  }
+
   return (
-    <div className="signUp">
+    <div className={`signup-container ${isDarkMode ? "signup-dark-mode" : ""}`}>
       {alertMessage && <AlertBox message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />}
 
       {showVerification && <VerificationAlert email={registeredEmail} onClose={() => setShowVerification(false)} />}
 
-      <div className="layout-container">
-        <div className="left-section">
-          <h2>Sign Up</h2>
-          <p className="subtitle">Create your account to get started.</p>
+      <div className="signup-layout">
+        <motion.div className="signup-form-section" initial="hidden" animate="visible" variants={containerVariants}>
+          <motion.div className="signup-header" variants={itemVariants}>
+            <h2>Sign Up</h2>
+            <p className="signup-subtitle">Create your account to get started.</p>
+          </motion.div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="input-container">
-              <InputField
-                placeholder="Enter your first name"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-              <InputField
-                placeholder="Enter your last name"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-              <InputField
-                placeholder="Enter your email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-              <InputField
-                placeholder="Create a password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <InputField
-                placeholder="Confirm password"
-                type="password"
-                name="passwordConfirmed"
-                value={formData.passwordConfirmed}
-                onChange={handleChange}
-              />
+          <motion.form onSubmit={handleSubmit} variants={itemVariants}>
+            <div className="signup-input-container">
+              <motion.div variants={itemVariants}>
+                <InputField
+                  placeholder="Enter your first name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="signup-input"
+                />
+              </motion.div>
 
-              <select name="country" value={formData.country} onChange={handleChange} className="country-dropdown">
-                <option value="">Select your country</option>
-                {countries.map((country, index) => (
-                  <option key={index} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
+              <motion.div variants={itemVariants}>
+                <InputField
+                  placeholder="Enter your last name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="signup-input"
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <InputField
+                  placeholder="Enter your email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="signup-input"
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <InputField
+                  placeholder="Create a password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="signup-input"
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <InputField
+                  placeholder="Confirm password"
+                  type="password"
+                  name="passwordConfirmed"
+                  value={formData.passwordConfirmed}
+                  onChange={handleChange}
+                  className="signup-input"
+                />
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <select
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="signup-country-dropdown"
+                >
+                  <option value="">Select your country</option>
+                  {countries.map((country, index) => (
+                    <option key={index} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </motion.div>
             </div>
 
-            <Button text={isLoading ? "Signing Up..." : "Sign Up"} type="submit" disabled={isLoading} />
-          </form>
+            <motion.div className="signup-button-container" variants={itemVariants}>
+              <Button
+                text={isLoading ? "Signing Up..." : "Sign Up"}
+                type="submit"
+                disabled={isLoading}
+                className="signup-button"
+              />
+            </motion.div>
+          </motion.form>
 
-          <p className="signin-link">
+          <motion.p className="signup-signin-link" variants={itemVariants}>
             Already have an account? <a href="/signin">Sign in</a>
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="right-section">
+        <div className="signup-visual-section">
           <NetworkGraph />
-          <div className="stars">
-            {[...Array(20)].map((_, i) => (
+          <div className="signup-stars">
+            {[...Array(30)].map((_, i) => (
               <div
                 key={i}
-                className="star"
+                className="signup-star"
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 3}s`,
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
                 }}
               />
             ))}
           </div>
-          <div className="content">
-            <h1>Join the Network</h1>
-            <p>Explore the future of technology</p>
+          <div className="signup-content">
+            <div className="signup-animated-text">
+              <h1 className="signup-heading">
+                {typingComplete ? headingText : <TypewriterText text={headingText} className="signup-typewriter" />}
+              </h1>
+              <p className="signup-subheading">
+                {typingComplete ? (
+                  subText
+                ) : (
+                  <TypewriterText text={subText} className="signup-typewriter" delay={1500} />
+                )}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -467,8 +588,3 @@ function Signup() {
 }
 
 export default Signup
-
-
-
-
-
