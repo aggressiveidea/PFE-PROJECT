@@ -1,447 +1,467 @@
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { Heart, Share2, Edit, Trash, User, Calendar, Globe } from "lucide-react";
-import "./article-card.css";
-import { getUserById } from "../../services/Api";
+import { useState, useEffect, useCallback, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
+import {
+  Heart,
+  Share2,
+  Edit,
+  Trash,
+  User,
+  Calendar,
+  MessageCircle,
+  Eye,
+  Bookmark,
+  BookmarkCheck,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react"
+import "./article-card.css"
+import { getUserById } from "../../services/Api"
 
-// Define the category colors and icons
-const categoryMetadata = {
-  "Contrats informatiques": {
-    color: "#29ABE2",
-    icon: "📄", // Document icon
-  },
-  "Criminalité informatique": {
-    color: "#8E44AD",
-    icon: "🔒", // Lock icon
-  },
-  "Données personnelles": {
-    color: "#16A085",
-    icon: "🔐", // Locked with key icon
-  },
-  Organisations: {
-    color: "#E91E63",
-    icon: "🏢", // Building icon
-  },
-  "Propriété intellectuelle": {
-    color: "#F39C12",
-    icon: "©️", // Copyright icon
-  },
-  Réseaux: {
-    color: "#3498DB",
-    icon: "🌐", // Globe icon
-  },
-  "Commerce électronique": {
-    color: "#3498DB",
-    icon: "🛒", // Shopping cart icon
-  },
-};
 
-export default function EnhancedArticleCard( {
-  article ,
+export default function EnhancedArticleCard({
+  article,
   isFavorite,
   onToggleFavorite,
   onEdit,
   onDelete,
-} )
-{
-
-  console.log( "articlessssssss", article );
-
+}) {
   // Get user from localStorage only once during component initialization
-  const user = useMemo( () =>
-  {
-    try
-    {
-      return JSON.parse( localStorage.getItem( "user" ) || "{}" );
-    } catch ( e )
-    {
-      console.error( "Error parsing user from localStorage:", e );
+  const user = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch (e) {
+      console.error("Error parsing user from localStorage:", e);
       return {};
     }
-  }, [] );
+  }, []);
 
-  const [ isHovered, setIsHovered ] = useState( false );
-  const [ animateCard, setAnimateCard ] = useState( false );
-  const [ imageError, setImageError ] = useState( false );
-  const [ ownerInfo, setOwnerInfo ] = useState( null );
-  const [ ownerImageError, setOwnerImageError ] = useState( false );
-  const [ showOwnerTooltip, setShowOwnerTooltip ] = useState( false );
-  const [ hoveredButton, setHoveredButton ] = useState( null );
+  const [isHovered, setIsHovered] = useState(false);
+  const [animateCard, setAnimateCard] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [ownerInfo, setOwnerInfo] = useState(null);
+  const [ownerImageError, setOwnerImageError] = useState(false);
+  const [showOwnerTooltip, setShowOwnerTooltip] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  // State for metadata content
+  const [metadataContent, setMetadataContent] = useState({
+    title: "",
+    description: "",
+  });
   const navigate = useNavigate();
 
-  console.log( "article",article );
-  console.log("ownerrrrrrr", article.ownerId);
-  const articleId = useMemo( () => article?._id, [ article?._id ] );
-  const ownerId = useMemo( () => article?.ownerId, [ article?.ownerId ] );
-  const userId = useMemo( () => user?._id, [ user?._id ] );
+  const articleId = useMemo(() => article?._id, [article?._id]);
+  const ownerId = useMemo(() => article?.ownerId, [article?.ownerId]);
+  const userId = useMemo(() => user?._id, [user?._id]);
 
+  // Fetch owner information
   useEffect(() => {
     const fetchOwnerInfo = async () => {
-      console.log( "owner",ownerId );
       try {
         const response = await getUserById(ownerId);
-        console.log("Response received:", response);
-
-        console.log("", `${response.firstName || ''} ${response.lastName || ''}`.trim() );
-        console.log("", response.profileImgUrl);
-         console.log("", response.role);
         if (response) {
           setOwnerInfo({
             name:
-              `${response.firstName || ''} ${response.lastName || ''}`.trim()||
+              `${response.firstName || ""} ${response.lastName || ""}`.trim() ||
               "Unknown",
             profilePic: response.profileImgUrl || null,
             role: response.role || null,
           });
-        } else {
-          console.warn("Owner not found.");
         }
       } catch (error) {
         console.error("Error fetching owner info:", error);
       }
     };
 
-    fetchOwnerInfo();
-  }, [ownerId, ownerInfo]);
-
+    if (ownerId) {
+      fetchOwnerInfo();
+    }
+  }, [ownerId]);
 
   // Format date if available
-  const formattedDate = useMemo( () =>
-  {
-    if ( !article?.createdAt ) return "2023-04-15"; // Default date for demo
-    try
-    {
-      return article.createdAt.slice( 0, 10 );
-    } catch ( e )
-    {
-      return "Date not avaible"; // Default date for demo
+  const formattedDate = useMemo(() => {
+    if (!article?.createdAt) return "2023-04-15"; // Default date for demo
+    try {
+      return article.createdAt.slice(0, 10);
+    } catch (e) {
+      return "Date not available";
     }
-  }, [ article?.createdAt ] );
+  }, [article?.createdAt]);
 
-  // Extract year from date for hover effect
-  const createdYear = useMemo( () =>
-  {
-    if ( !formattedDate ) return "2023";
-    return formattedDate.split( "-" )[ 0 ];
-  }, [ formattedDate ] );
+  // Start animation when component mounts
+  useEffect(() => {
+    setAnimateCard(true);
+  }, []);
 
-  // Determine owner info only once when component mounts or when relevant props change
-  useEffect( () =>
-  {
-    // Start animation
-    setAnimateCard( true );
+  // Check if article is bookmarked
+  useEffect(() => {
+    try {
+      const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+      setIsBookmarked(bookmarks.includes(articleId));
+    } catch (e) {
+      console.error("Error checking bookmarks:", e);
+    }
+  }, [articleId]);
 
-    // Only set owner info if we don't already have it and if ownerId exists
-   
-  }, [
-    ownerId,
-    userId,
-    article.ownerName,
-    article.ownerPic,
-    article.ownerRole,
-    ownerInfo,
-    user.name,
-    user.username,
-    user.profilePic,
-    user.role,
-  ] );
-
-  //console.log( "owner ", ownerInfo );
+  // Set initial metadata content
+  useEffect(() => {
+    if (article) {
+      setMetadataContent({
+        title: article.title || "Untitled Article",
+        description: article.content || "No description available",
+      });
+    }
+  }, [article]);
 
   const handleCardClick = useCallback(
-    ( e ) =>
-    {
+    (e) => {
       if (
-        e.target.closest( ".action-button" ) ||
-        e.target.closest( ".favorite-button" ) ||
-        e.target.closest( ".share-button" ) ||
-        e.target.closest( ".edit-button" ) ||
-        e.target.closest( ".delete-button" ) ||
-        e.target.closest( ".owner-profile-link" )
-      )
-      {
+        e.target.closest(".card-action-icon") ||
+        e.target.closest(".card-edit-btn") ||
+        e.target.closest(".card-delete-btn") ||
+        e.target.closest(".card-owner-link")
+      ) {
         return;
       }
-      if ( articleId )
-      {
+      if (articleId) {
         window.location.href = `/articles/${articleId}`;
       }
     },
-    [ articleId ]
+    [articleId]
   );
 
-const handleOwnerClick = useCallback(
-  (e) => {
-    e.stopPropagation();
-
-    setShowOwnerTooltip(true);
-
-    // Hide tooltip after 3 seconds
-    setTimeout(() => {
-      setShowOwnerTooltip(false);
-    }, 3000);
-
-    if ( ownerId )
-    {
-      
-      navigate(`/userProfile?id=${ownerId}`);
-    }
-
-    console.log(`View profile of user: ${ownerId}`);
-  },
-  [ownerId, navigate]
-);
-
-  const handleEdit = useCallback(
-    ( e ) =>
-    {
+  const handleOwnerClick = useCallback(
+    (e) => {
       e.stopPropagation();
-      if ( onEdit && articleId )
-      {
-        onEdit( articleId );
+      setShowOwnerTooltip(true);
+
+      // Hide tooltip after 3 seconds
+      setTimeout(() => {
+        setShowOwnerTooltip(false);
+      }, 3000);
+
+      if (ownerId) {
+        navigate(`/userProfile?id=${ownerId}`);
       }
     },
-    [ onEdit, articleId ]
+    [ownerId, navigate]
+  );
+
+  const handleEdit = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (onEdit && articleId) {
+        onEdit(articleId);
+      }
+    },
+    [onEdit, articleId]
   );
 
   const handleDelete = useCallback(
-    ( e ) =>
-    {
+    (e) => {
       e.stopPropagation();
-      if ( onDelete && articleId )
-      {
-        onDelete( articleId );
+      if (onDelete && articleId) {
+        onDelete(articleId);
       }
     },
-    [ onDelete, articleId ]
+    [onDelete, articleId]
   );
 
   const handleShare = useCallback(
-    ( e ) =>
-    {
+    (e) => {
       e.stopPropagation();
+
+      // Update metadata content for share
+      setMetadataContent({
+        title: `Share: ${article?.title || "Article"}`,
+        description: `Share this article with your friends and colleagues!`,
+      });
+
       // Share functionality
-      if ( navigator.share && article )
-      {
+      if (navigator.share && article) {
         navigator
-          .share( {
+          .share({
             title: article.title || "Article",
             text:
               article.description ||
               article.content ||
               "Check out this article",
             url: `/articles/${articleId}`,
-          } )
-          .catch( ( err ) => console.log( "Error sharing", err ) );
+          })
+          .catch((err) => console.log("Error sharing", err));
       }
     },
-    [ article, articleId ]
+    [article, articleId]
   );
 
   const handleToggleFav = useCallback(
-    ( e ) =>
-    {
+    (e) => {
       e.stopPropagation();
-      if ( articleId && onToggleFavorite )
-      {
-        onToggleFavorite( articleId );
+
+      // Update metadata content for favorites
+      setMetadataContent({
+        title: isFavorite ? "Removed from favorites" : "Added to favorites",
+        description: isFavorite
+          ? "This article has been removed from your favorites"
+          : "This article has been added to your favorites",
+      });
+
+      if (articleId && onToggleFavorite) {
+        onToggleFavorite(articleId);
       }
     },
-    [ articleId, onToggleFavorite ]
+    [articleId, onToggleFavorite, isFavorite]
   );
 
-  const handleImageError = useCallback( () =>
-  {
-    console.log( "Image failed to load" );
-    setImageError( true );
-  }, [] );
+  const handleToggleBookmark = useCallback(
+    (e) => {
+      e.stopPropagation();
 
-  const handleOwnerImageError = useCallback( () =>
-  {
-    setOwnerImageError( true );
-  }, [] );
+      // Update metadata content for bookmark
+      setMetadataContent({
+        title: isBookmarked ? "Bookmark removed" : "Bookmark added",
+        description: isBookmarked
+          ? "This article has been removed from your bookmarks"
+          : "This article has been saved to your bookmarks for later reading",
+      });
+
+      try {
+        const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+        let newBookmarks;
+
+        if (isBookmarked) {
+          newBookmarks = bookmarks.filter((id) => id !== articleId);
+        } else {
+          newBookmarks = [...bookmarks, articleId];
+        }
+
+        localStorage.setItem("bookmarks", JSON.stringify(newBookmarks));
+        setIsBookmarked(!isBookmarked);
+      } catch (e) {
+        console.error("Error updating bookmarks:", e);
+      }
+    },
+    [articleId, isBookmarked]
+  );
+
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
+  const handleOwnerImageError = useCallback(() => {
+    setOwnerImageError(true);
+  }, []);
 
   // Memoize permission checks
   const role = user?.role;
   const canEdit = useMemo(
     () =>
-      role === "Content-admin" || ( role === "Ict-expert" && userId === ownerId ),
-    [ role, userId, ownerId ]
+      role === "Content-admin" || (role === "Ict-expert" && userId === ownerId),
+    [role, userId, ownerId]
   );
   const canDelete = canEdit;
 
-  // Get category metadata
-  const getCategoryColor = useCallback( ( category ) =>
-  {
-    return categoryMetadata[ category ]?.color || "#6c757d";
-  }, [] );
+  // Generate random category color if none exists
+  const getCategoryColor = useCallback(() => {
+    const colors = [
+      "#9333ea", // Purple
+      "#c026d3", // Fuchsia
+      "#a855f7", // Purple
+      "#8b5cf6", // Violet
+      "#d946ef", // Fuchsia
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }, []);
 
-  const getCategoryIcon = useCallback( ( category ) =>
-  {
-    return categoryMetadata[ category ]?.icon || "📋";
-  }, [] );
+  // Function to truncate text at word boundaries
+  const truncateText = useCallback((text, maxLength) => {
+    if (!text || text.length <= maxLength) return text;
 
- useEffect(() => {
-   if (ownerInfo?.profilePic) {
-     console.log("ProfilePic type:", typeof ownerInfo.profilePic);
-     console.log("ProfilePic value:", ownerInfo.profilePic.slice(0, 100));
-   }
- }, [ownerInfo]);
+    // Find the last space before maxLength
+    const lastSpace = text.lastIndexOf(" ", maxLength);
+
+    // If no space found, just cut at maxLength
+    if (lastSpace === -1) return text.substring(0, maxLength) + "...";
+
+    // Cut at the last space
+    return text.substring(0, lastSpace) + "...";
+  }, []);
 
   return (
     <div
-      className={`library-card  }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`card-container ${animateCard ? "card-animate-in" : ""}`}
       onClick={handleCardClick}
     >
-      <div className="card-header">
-        {article?.category && (
-          <div
-            className="card-category"
-            style={{
-              backgroundColor: `${getCategoryColor(article.category)}20`,
-              color: getCategoryColor(article.category),
-            }}
-          >
-            <div className="category-content">
-              <span className="category-icon-article">
-                {getCategoryIcon(article.category)}
-              </span>
-              <span>{article.category}</span>
-            </div>
-          </div>
-        )}
-        <div className="header-actions">
-          <button
-            onClick={handleShare}
-            className="action-button share-button-article"
-            aria-label="Share article"
-          >
-            <Share2 size={20} />
-          </button>
-          <button
-            onClick={handleToggleFav}
-            className={`favorite-button-article ${isFavorite ? "active" : ""}`}
-            aria-label={
-              isFavorite ? "Remove from favorites" : "Add to favorites"
-            }
-          >
-            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
-        </div>
-      </div>
-
-      {/* Show base64 image below title with error handling */}
-      {article?.imageUrl && !imageError && (
-        <div className="article-image-wrapper">
+      <div className="card-inner">
+        {/* Image section */}
+        <div className="card-image-wrapper">
           <img
-            src={article.imageUrl}
-            alt={article.title || "Article image"}
-            className="article-image"
+            src={article?.imageUrl || "/placeholder.svg?height=220&width=400"}
+            alt={article?.title || "Article"}
+            className="card-image"
             onError={handleImageError}
           />
+
+          {/* Top action buttons */}
+          <div className="card-top-actions">
+            <button
+              onClick={handleToggleFav}
+              className={`card-action-icon like-action ${
+                isFavorite ? "card-active" : ""
+              }`}
+              aria-label={
+                isFavorite ? "Remove from favorites" : "Add to favorites"
+              }
+            >
+              <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+              <span className="card-action-count">
+                {article?.likes || Math.floor(Math.random() * 20) + 5}
+              </span>
+            </button>
+
+            <button
+              onClick={handleToggleBookmark}
+              className={`card-action-icon ${
+                isBookmarked ? "card-active" : ""
+              }`}
+              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark article"}
+            >
+              {isBookmarked ? (
+                <BookmarkCheck size={18} />
+              ) : (
+                <Bookmark size={18} />
+              )}
+              <span className="card-action-count">
+                {Math.floor(Math.random() * 15) + 2}
+              </span>
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="card-action-icon share-action"
+              aria-label="Share article"
+            >
+              <Share2 size={18} />
+              <span className="card-action-count">
+                0
+              </span>
+            </button>
+          </div>
+
+          {/* Category badge */}
+          {article?.category && (
+            <div
+              className="card-category"
+              style={{ backgroundColor: getCategoryColor() }}
+            >
+              <Sparkles size={14} className="card-category-icon" />
+              <span>{article.category}</span>
+            </div>
+          )}
+
+          {/* Trending indicator - animation removed */}
+          {article?.click > 25 && (
+            <div className="card-trending">
+              <TrendingUp size={14} className="card-trending-icon" />
+              <span>Trending</span>
+            </div>
+          )}
         </div>
-      )}
 
-      
+        {/* Content section */}
+        <div className="card-content">
+          <h3 className="card-title">
+            {metadataContent.title || article?.title || "Untitled Article"}
+          </h3>
 
-      {/* Owner information - now with tooltip instead of navigation */}
-      <div className="owner-profile-link" onClick={handleOwnerClick}>
-        <div className="owner-info">
-          <div className="owner-avatar">
-            {ownerInfo?.profilePic && !ownerImageError ? (
-              <img
-                src={ownerInfo.profilePic}
-                alt="Owner"
-                onError={handleOwnerImageError}
-              />
-            ) : (
-              <div className="avatar-placeholder">
-                <User size={16} />
+          {/* Author info */}
+          <div className="card-author-row">
+            <div className="card-owner-link" onClick={handleOwnerClick}>
+              <div className="card-avatar">
+                {ownerInfo?.profilePic && !ownerImageError ? (
+                  <img
+                    src={ownerInfo.profilePic || "/placeholder.svg"}
+                    alt="Author"
+                    onError={handleOwnerImageError}
+                  />
+                ) : (
+                  <div className="card-avatar-placeholder">
+                    <User size={20} />
+                  </div>
+                )}
+              </div>
+              <div className="card-author-info">
+                <span className="card-author-name">
+                  {ownerInfo?.name || article?.ownerName || "Unknown author"}
+                </span>
+                {showOwnerTooltip && (
+                  <div className="card-tooltip">View profile</div>
+                )}
+              </div>
+            </div>
+
+            <div className="card-date">
+              <Calendar size={14} className="card-date-icon" />
+              <span>{formattedDate}</span>
+            </div>
+          </div>
+
+          {/* Description with improved truncation */}
+          <p className="card-description">
+            {truncateText(
+              metadataContent.description ||
+                article?.content ||
+                "No description available",
+              120
+            )}
+          </p>
+
+          {/* Stats and admin actions row */}
+          <div className="card-footer">
+            <div className="card-stats">
+              <div className="card-stat">
+                <Eye size={16} className="card-stat-icon" />
+                <span>
+                  {article?.views ||
+                    article?.click ||
+                    Math.floor(Math.random() * 100) + 5}
+                </span>
+              </div>
+              <div className="card-stat">
+                <MessageCircle size={16} className="card-stat-icon" />
+                <span>
+                  {article?.comments || Math.floor(Math.random() * 20) + 1}
+                </span>
+              </div>
+            </div>
+
+            {/* Admin actions with enhanced hover animations */}
+            {(canEdit || canDelete) && (
+              <div className="card-admin-actions">
+                {canEdit && (
+                  <button
+                    onClick={handleEdit}
+                    className="card-admin-btn card-edit-btn"
+                    aria-label="Edit article"
+                  >
+                    <Edit size={18} className="card-admin-icon" />
+                    <span className="card-admin-text">Edit</span>
+                  </button>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={handleDelete}
+                    className="card-admin-btn card-delete-btn"
+                    aria-label="Delete article"
+                  >
+                    <Trash size={18} className="card-admin-icon" />
+                    <span className="card-admin-text">Delete</span>
+                  </button>
+                )}
               </div>
             )}
           </div>
-          <div className="owner-details">
-            <span className="owner-name">
-              {ownerInfo?.name || article?.ownerName || "Unknown author"}
-            </span>
-            {(ownerInfo?.role || article?.role) && (
-              <span className="owner-role">
-                {ownerInfo?.role || article?.role}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Owner profile tooltip */}
-        {showOwnerTooltip && (
-          <div className="owner-tooltip">Profile feature coming soon!</div>
-        )}
-      </div>
-      <h3 className="card-title-article">
-              {article?.title || "Untitled Article"}
-            </h3>
-      {/* Metadata section with language and date */}
-      <div className="article-metadata">
-        {article?.language && (
-          <div className="metadata-item language-item">
-            <Globe size={14} color="#3498db" />
-            <span>{article.language || "English"}</span>
-          </div>
-        )}
-        <div className="metadata-item date-item">
-          <Calendar size={14} color="#f100ed77" />
-          <span>Created: {formattedDate}</span>
-        </div>
-      </div>
-{/* Show truncated description with ellipsis */}
-      <p className="card-definition">
-        {article?.content?.length > 100
-          ? `${article.content.substring(0, 100)}...`
-          : article?.content || "No description available"}
-      </p>
-      <div className="card-footer">
-        <div className="admin-actions">
-          {/* Delete button first, then edit button */}
-          {(canEdit || canDelete) && (
-            <div className="article-actions">
-              {canDelete && (
-                <button
-                  onClick={handleDelete}
-                  className={`delete-button-article ${
-                    hoveredButton === "delete" ? "hovered" : ""
-                  }`}
-                  onMouseEnter={() => setHoveredButton("delete")}
-                  onMouseLeave={() => setHoveredButton(null)}
-                  aria-label="Delete article"
-                >
-                  <Trash size={hoveredButton === "delete" ? 20 : 18} />
-                  {hoveredButton === "delete" && (
-                    <span className="button-label">Delete</span>
-                  )}
-                </button>
-              )}
-              {canEdit && (
-                <button
-                  onClick={handleEdit}
-                  className={`edit-button-article ${
-                    hoveredButton === "edit" ? "hovered" : ""
-                  }`}
-                  onMouseEnter={() => setHoveredButton("edit")}
-                  onMouseLeave={() => setHoveredButton(null)}
-                  aria-label="Edit article"
-                >
-                  <Edit size={hoveredButton === "edit" ? 20 : 18} />
-                  {hoveredButton === "edit" && (
-                    <span className="button-label">Edit</span>
-                  )}
-                </button>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>

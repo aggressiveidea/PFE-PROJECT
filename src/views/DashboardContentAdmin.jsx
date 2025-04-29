@@ -9,6 +9,8 @@ import {
   SortDesc,
   CheckCircle,
   XCircle,
+  MessageSquare,
+  BookOpen,
 } from "lucide-react";
 import Header from "../components/forHome/Header";
 import Sidebar from "../components/forDashboard/Sidebar";
@@ -33,6 +35,9 @@ export default function ContentAdminDashboard() {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
+  // New state for active tab
+  const [activeTab, setActiveTab] = useState("articles");
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
@@ -49,7 +54,6 @@ export default function ContentAdminDashboard() {
   };
 
   useEffect(() => {
-    
     const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
 
     const fetchArticlesWithUsers = async () => {
@@ -100,30 +104,33 @@ export default function ContentAdminDashboard() {
 
   const handleValidateArticle = (article) =>
     setArticleStatuses((prev) => ({ ...prev, [article._id]: "validated" }));
-const handleRejectArticle = async (article) => {
-  try
-  {
-    console.log("article id for the delete ", article._id);
-    const response = await deletearticle(article._id);
-    if (response.succes!== true ) throw new Error("Delete failed");
-    console.log("✅ Successfully deleted from server");
-  } catch (error) {
-    console.error("❌ Delete error:", error);
-  }
 
-  // Load articles from localStorage
-  const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
+  const handleRejectArticle = async (article) => {
+    try {
+      console.log("article id for the delete ", article._id);
+      const response = await deletearticle(article._id);
+      if (response.succes !== true) throw new Error("Delete failed");
+      console.log("✅ Successfully deleted from server");
+    } catch (error) {
+      console.error("❌ Delete error:", error);
+    }
 
-  // Filter out the deleted article
-  const updatedArticles = storedArticles.filter(
-    (a) => a && a._id !== article._id
-  );
+    // Load articles from localStorage
+    const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
 
-  // Save back to localStorage
-  localStorage.setItem("articles", JSON.stringify(updatedArticles));
+    // Filter out the deleted article
+    const updatedArticles = storedArticles.filter(
+      (a) => a && a._id !== article._id
+    );
 
-  console.log("✅ Updated localStorage after deletion");
-};
+    // Save back to localStorage
+    localStorage.setItem("articles", JSON.stringify(updatedArticles));
+
+    console.log("✅ Updated localStorage after deletion");
+
+    // Update status
+    setArticleStatuses((prev) => ({ ...prev, [article._id]: "rejected" }));
+  };
 
   const handleEditArticle = (id) => {
     const article = articles.find((a) => a._id === id);
@@ -161,6 +168,18 @@ const handleRejectArticle = async (article) => {
     );
   };
 
+  // Format date function
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className={`content-admin-container ${darkMode ? "dark-mode" : ""}`}>
       <Header
@@ -185,6 +204,37 @@ const handleRejectArticle = async (article) => {
         <div className="content-admin-wrapper">
           <div className="content-admin-header">
             <WelcomeSection role="Content-admin" />
+
+            {/* New Tabs Section */}
+            <div className="content-admin-tabs">
+              <button
+                className={`content-admin-tab ${
+                  activeTab === "articles" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("articles")}
+              >
+                <FileText size={18} className="content-admin-tab-icon" />
+                Articles
+              </button>
+              <button
+                className={`content-admin-tab ${
+                  activeTab === "messages" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("messages")}
+              >
+                <MessageSquare size={18} className="content-admin-tab-icon" />
+                Messages
+              </button>
+              <button
+                className={`content-admin-tab ${
+                  activeTab === "terms" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("terms")}
+              >
+                <BookOpen size={18} className="content-admin-tab-icon" />
+                Terms
+              </button>
+            </div>
 
             <div className="content-admin-controls">
               <div className="content-admin-search">

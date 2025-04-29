@@ -1,0 +1,318 @@
+:root {
+    /* More vibrant purple-focused color palette for cards */
+    --card-color-1: rgba(243, 232, 255, 0.95);
+    /* Light lavender */
+    --card-color-2: rgba(237, 233, 254, 0.95);
+    /* Light purple */
+    --card-color-3: rgba(233, 213, 255, 0.95);
+    /* Light violet */
+    --card-color-4: rgba(221, 214, 254, 0.95);
+    /* Light indigo-purple */
+    --card-color-5: rgba(216, 180, 254, 0.95);
+    /* Light medium purple */
+
+    --card-border-1: linear-gradient(135deg, #8b5cf6, #a855f7);
+    --card-border-2: linear-gradient(135deg, #9333ea, #c084fc);
+    --card-border-3: linear-gradient(135deg, #7e22ce, #a855f7);
+    --card-border-4: linear-gradient(135deg, #6d28d9, #8b5cf6);
+    --card-border-5: linear-gradient(135deg, #7c3aed, #c084fc);
+
+    --card-hover-1: rgba(233, 213, 255, 0.4);
+    --card-hover-2: rgba(221, 214, 254, 0.4);
+    --card-hover-3: rgba(216, 180, 254, 0.4);
+    --card-hover-4: rgba(192, 132, 252, 0.3);
+    --card-hover-5: rgba(168, 85, 247, 0.3);
+}
+
+.dark {
+    /* Dark mode colors - deeper purples */
+    --card-color-1: rgba(91, 33, 182, 0.8);
+    /* Dark purple */
+    --card-color-2: rgba(107, 33, 168, 0.8);
+    /* Dark violet */
+    --card-color-3: rgba(126, 34, 206, 0.8);
+    /* Dark fuchsia */
+    --card-color-4: rgba(147, 51, 234, 0.8);
+    /* Dark orchid */
+    --card-color-5: rgba(168, 85, 247, 0.8);
+    /* Dark lavender */
+
+    --card-hover-1: rgba(109, 40, 217, 0.5);
+    --card-hover-2: rgba(124, 58, 237, 0.5);
+    --card-hover-3: rgba(139, 92, 246, 0.5);
+    --card-hover-4: rgba(167, 139, 250, 0.5);
+    --card-hover-5: rgba(192, 132, 252, 0.5);
+}
+
+/* Creator Card Component */
+.creator_card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(129, 72, 244, 0.275);
+    padding: 1.2rem 1.5rem;
+    border-radius: 1rem;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+    width: calc(33.333% - 1rem);
+    min-width: 0px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.creator_card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--card-hover-1);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 0;
+}
+
+.creator_card::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 120%;
+    height: 120%;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.3), rgba(139, 92, 246, 0.3));
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 1.8s ease;
+    transform: rotate(35deg);
+    z-index: 0;
+    -webkit-transition: opacity 0.6s ease, transform 1.8s ease;
+    -moz-transition: opacity 0.6s ease, transform 1.8s ease;
+    -ms-transition: opacity 0.6s ease, transform 1.8s ease;
+    -o-transition: opacity 0.6s ease, transform 1.8s ease;
+}
+
+.creator_card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.35);
+    border-color: rgba(139, 92, 246, 0.6);
+}
+
+.creator_card:hover::before {
+    opacity: 1;
+}
+
+.creator_card:hover::after {
+    opacity: 0.7;
+    transform: rotate(35deg) translate(100%, 100%);
+}
+
+.creator_avatar_container {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.creator_img {
+    width: 60px;
+    height: 60px;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 3px solid #8b5cf6;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.6s ease;
+}
+
+.creator_card:hover .creator_img {
+    transform: scale(1.15) rotate(8deg);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.7);
+}
+
+.creator_avatar_placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 9999px;
+    background-color: rgba(233, 213, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #8b5cf6;
+    color: #8b5cf6;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.6s ease;
+}
+
+.creator_card:hover .creator_avatar_placeholder {
+    transform: scale(1.15) rotate(8deg);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.7);
+}
+
+.creator_info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1;
+    flex: 1;
+}
+
+.creator_name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5b21b6;
+    /* Dark blue for better contrast */
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.4s ease, transform 0.4s ease;
+}
+
+.creator_card:hover .creator_name {
+    color: #7c3aed;
+    /* Indigo on hover */
+    transform: translateX(5px);
+}
+
+.creator_role {
+    margin: 0;
+    color: #7c3aed;
+    /* Indigo */
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.4s ease, transform 0.4s ease;
+    opacity: 0.9;
+}
+
+.creator_card:hover .creator_role {
+    color: #8b5cf6;
+    /* Lighter indigo on hover */
+    transform: translateX(5px);
+    opacity: 1;
+}
+
+/* Added article count badge */
+.creator_article_count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(139, 92, 246, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.creator_article_count_icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Animation for creator entrance */
+@keyframes creatorFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pulse animation for avatar */
+@keyframes avatarPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.8);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(139, 92, 246, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+    }
+}
+
+.creator_card:hover .creator_img,
+.creator_card:hover .creator_avatar_placeholder {
+    animation: avatarPulse 2s infinite;
+}
+
+/* Dark mode support */
+.dark .creator_card {
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dark .creator_name {
+    color: #e0e7ff;
+    /* Very light indigo for dark mode */
+}
+
+.dark .creator_role {
+    color: #a5b4fc;
+    /* Light indigo for dark mode */
+}
+
+.dark .creator_card:hover .creator_name {
+    color: #c7d2fe;
+    /* Lighter indigo on hover for dark mode */
+}
+
+.dark .creator_card:hover .creator_role {
+    color: #a5b4fc;
+    /* Light indigo for dark mode */
+}
+
+.dark .creator_avatar_placeholder {
+    background-color: rgba(67, 56, 202, 0.3);
+    color: #a5b4fc;
+    border-color: #6366f1;
+}
+
+.dark .creator_card::after {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.3), rgba(99, 102, 241, 0.3));
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+    .creator_card {
+        width: calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .creator_card {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .creator_avatar_container {
+        width: 50px;
+        height: 50px;
+    }
+
+    .creator_img,
+    .creator_avatar_placeholder {
+        width: 50px;
+        height: 50px;
+    }
+
+    .creator_name {
+        font-size: 1.1rem;
+    }
+
+    .creator_role {
+        font-size: 0.9rem;
+    }
+}

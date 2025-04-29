@@ -88,23 +88,17 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--content-admin-radius-md);
+  padding: 8px 12px;
+  border-radius: 8px;
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   transition: var(--content-admin-transition);
   border: none;
-}
-
-.btn-read {
-  background-color: var(--content-admin-primary);
-  color: white;
-}
-
-.btn-read:hover {
-  background-color: var(--content-admin-primary-hover);
-  box-shadow: var(--content-admin-shadow-md);
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
 }
 
 .btn-validate {
@@ -113,7 +107,7 @@
 }
 
 .btn-validate:hover {
-  background-color: var(--content-admin-success-hover);
+  background-color:rgb(21, 216, 138);
   box-shadow: var(--content-admin-shadow-md);
 }
 

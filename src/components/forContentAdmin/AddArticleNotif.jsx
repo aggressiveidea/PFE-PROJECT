@@ -49,9 +49,6 @@ function AddArticleNotif({ image, userName, time, onReadArticle, onValidate, onR
             <span>Rejected</span>
           </div>
         )}
-        <button className="btn btn-read" onClick={onReadArticle}>
-          Read
-        </button>
       </div>
     </div>
   )

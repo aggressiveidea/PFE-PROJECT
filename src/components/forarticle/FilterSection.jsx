@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { PlusCircle, X, Search } from "lucide-react";
+import AddArticleForm from "./AddArticleForm";
 import "./filter-section.css";
 
 export default function FilterSection({
   onSearch,
   onCategoryChange,
   onLanguageChange,
+  setArticles,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   const categories = [
     "All Categories",
@@ -24,63 +29,98 @@ export default function FilterSection({
 
   const languages = ["All Languages", "English", "French", "Arabic"];
 
+  // Check user role on component mount
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      setUserRole(user.role || null);
+    } catch (error) {
+      console.error("Error getting user role:", error);
+      setUserRole(null);
+    }
+  }, []);
+
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     onSearch(value); // Trigger search on every keystroke
   };
 
+  const handleOpenModal = () => {
+    setShowAddModal(true);
+    // Prevent body scrolling when modal is open
+    document.body.style.overflow = "hidden";
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    // Re-enable body scrolling
+    document.body.style.overflow = "auto";
+  };
+
+  // Check if user can add articles
+  const canAddArticles =
+    userRole === "Ict-expert" || userRole === "Content-admin";
+
   return (
-    <div className="filter-container-filtersection">
-      <div className="filter-group">
-        <span className="filter-label">Filter by:</span>
-        <select
-          className="filter-select"
-          onChange={(e) => onCategoryChange(e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-        <select
-          className="filter-select"
-          onChange={(e) => onLanguageChange(e.target.value)}
-        >
-          {languages.map((language) => (
-            <option key={language} value={language}>
-              {language}
-            </option>
-          ))}
-        </select>
+    <>
+      <div className="filter-container-filtersection">
+        {canAddArticles && (
+          <div className="filter-actions-filtersection">
+            <button className="add-article-button" onClick={handleOpenModal}>
+              <PlusCircle size={18} />
+              <span>Add Article</span>
+            </button>
+          </div>
+        )}
+
+        <div className="filter-group-filtersection">
+          <span className="filter-label">Filter by:</span>
+          <select
+            className="filter-select-filtersection"
+            onChange={(e) => onCategoryChange(e.target.value)}
+          >
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <select
+            className="filter-select-filtersection"
+            onChange={(e) => onLanguageChange(e.target.value)}
+          >
+            {languages.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="search-container-filtersection">
+          <input
+            type="text"
+            className="searchfilter-input-filtersection"
+            placeholder="Search for ICT laws and regulations..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <button className="searchfilter-button-filtersection">
+            <Search size={20} />
+          </button>
+        </div>
       </div>
 
-      <div className="search-container">
-        <input
-          type="text"
-          className="searchfilter-input"
-          placeholder="Search for ICT laws and regulations..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <button className="searchfilter-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-        </button>
+      {/* Add Article Modal */}
+      <div className={`add-article-modal ${showAddModal ? "open" : ""}`}>
+        <div className="modal-content">
+          <button className="modal-close" onClick={handleCloseModal}>
+            <X size={20} />
+          </button>
+          <AddArticleForm setArticles={setArticles} />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
