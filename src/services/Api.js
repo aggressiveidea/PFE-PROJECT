@@ -1218,4 +1218,111 @@ export const resetPassword = async (userId, password) => {
     console.error("Error resetting password:", error)
     throw error
   }
+
+  
 }
+
+export const toparticles = async () => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to bring article");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error in article :", error);
+    throw error;
+  }
+};
+export const topauthors = async () => {
+  try {
+    const response = await fetch(`http://localhost:5000/user/author`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to bring users");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error in article :", error);
+    throw error;
+  }
+};
+
+export const GetAllMessages = async (id) => {
+  try {
+    console.log("id ", id);
+    const response = await fetch(`http://localhost:5000/chat/article/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch all messages");
+    }
+
+    // Parse the JSON body
+    const result = await response.json();
+    console.log("Parsed response:", result);
+
+    // Check if the response has the expected structure
+    if (result.success && Array.isArray(result.data)) {
+      console.log("Messages array:", result.data);
+      return result.data;
+    } else {
+      console.error("Unexpected response format:", result);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    throw error;
+  }
+};
+
+// First, let's fix the sendMessage function:
+export const sendMessage = async (id, data) => {
+  try {
+    console.log("Sending message for article:", id);
+    const response = await fetch(`http://localhost:5000/chat/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send message: ${response.status}`);
+    }
+
+    // Parse the JSON body
+    const result = await response.json();
+    console.log("Message sent successfully:", result);
+
+    if (result && result.success && result.data) {
+      return result;
+    } else {
+      console.error("Unexpected response format:", result);
+      throw new Error("Invalid response format");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+};
