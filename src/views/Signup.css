@@ -6,7 +6,7 @@
   --signup-gradient: linear-gradient(135deg, var(--signup-primary) 0%, var(--signup-secondary) 100%);
   --signup-text-primary: #f8fafc;
   --signup-text-secondary: #cbd5e1;
-  --signup-input-bg: rgba(30, 41, 59, 0.8);
+  --signup-input-bg: rgba(255, 255, 255, 0.8);
   --signup-input-border: #4c1d95;
   --signup-input-focus: #a78bfa;
   --signup-white: #ffffff;
@@ -23,7 +23,7 @@
   --signup-secondary: #4f46e5;
   --signup-text-primary: #1e293b;
   --signup-text-secondary: #64748b;
-  --signup-input-bg: rgba(248, 250, 252, 0.8);
+  --signup-input-bg: rgba(255, 255, 255, 0.8);
   --signup-input-border: #c4b5fd;
   --signup-input-focus: #8b5cf6;
   --signup-form-bg: #ede9fe;
@@ -99,8 +99,6 @@ body.dark-mode {
   margin-right: auto;
   width: 100%;
 }
-
-/* Input styling */
 .signup-input {
   width: 100%;
   padding: 0.875rem 1rem;

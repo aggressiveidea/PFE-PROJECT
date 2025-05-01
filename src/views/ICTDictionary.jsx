@@ -141,8 +141,6 @@ const ICTDictionary = () => {
         <div className="footer-container">
           <Footer darkMode={darkMode} setDarkMode={toggleDarkMode} language={selectedLanguage} />
         </div>
-
-        {/* Show access lock overlay for unverified users */}
         {!isUserVerified && <AccessLock />}
       </div>
     </div>
