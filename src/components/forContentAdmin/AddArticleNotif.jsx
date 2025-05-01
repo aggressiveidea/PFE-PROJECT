@@ -1,58 +1,84 @@
-"use client"
+"use client";
 
-import { CheckCircle, XCircle } from "lucide-react"
-import "./ArticleNotification.css"
+import { CheckCircle, XCircle } from "lucide-react";
+import "./ArticleNotification.css";
 
-function AddArticleNotif({ image, userName, time, onReadArticle, onValidate, onReject, status, title, category }) {
+function AddArticleNotif({
+  profileImgUrl,
+  userName,
+  time,
+  onReadArticle,
+  onValidate,
+  onReject,
+  status,
+  title,
+  category,
+
+  
+} )
+{
+  console.log( "profileImgUrl here ",profileImgUrl );
   return (
-    <div className={`article-notification ${status ? `article-${status}` : ""}`}>
-      <div className="article-notification-avatar">
-        <img src={image || "/placeholder.svg?height=40&width=40"} alt={`${userName}'s avatar`} />
+    <div className={`article-notif ${status ? `article-notif-${status}` : ""}`}>
+      <div className="article-notif-avatar">
+        <img
+          src={profileImgUrl || "/placeholder.svg?height=40&width=40"}
+          alt={`${userName}'s avatar`}
+        />
       </div>
-      <div className="article-notification-content">
-        <div className="article-notification-header">
-          <h4 className="article-notification-username">{userName}</h4>
-          <span className="article-notification-time">{time || "2 hours ago"}</span>
+      <div className="article-notif-content">
+        <div className="article-notif-header">
+          <h4 className="article-notif-username">{userName}</h4>
+          <span className="article-notif-time">{time || "2 hours ago"}</span>
         </div>
-        <p className="article-notification-message">Added a new article to the platform</p>
+        <p className="article-notif-message">
+          Added a new article to the platform
+        </p>
 
         {/* Added article title and category */}
         {title && (
-          <div className="content-admin-article-details">
-            <span className="content-admin-article-title">{title}</span>
-            {category && <span className="content-admin-article-category">{category}</span>}
+          <div className="article-notif-details">
+            <span className="article-notif-title">{title}</span>
+            {category && (
+              <span className="article-notif-category">{category}</span>
+            )}
           </div>
         )}
       </div>
-      <div className="article-notification-actions">
+      <div className="article-notif-actions">
         {!status && (
           <>
-            <button className="btn btn-validate" onClick={onValidate}>
+            <button
+              className="article-notif-btn article-notif-btn-validate"
+              onClick={onValidate}
+            >
               <CheckCircle size={16} />
               <span>Validate</span>
             </button>
-            <button className="btn btn-reject" onClick={onReject}>
+            <button
+              className="article-notif-btn article-notif-btn-reject"
+              onClick={onReject}
+            >
               <XCircle size={16} />
               <span>Reject</span>
             </button>
           </>
         )}
         {status === "validated" && (
-          <div className="article-status validated">
+          <div className="article-notif-status article-notif-validated">
             <CheckCircle size={16} />
             <span>Validated</span>
           </div>
         )}
         {status === "rejected" && (
-          <div className="article-status rejected">
+          <div className="article-notif-status article-notif-rejected">
             <XCircle size={16} />
             <span>Rejected</span>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default AddArticleNotif
-
+export default AddArticleNotif;

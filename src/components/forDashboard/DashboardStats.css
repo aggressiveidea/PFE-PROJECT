@@ -1,0 +1,134 @@
+/* Dashboard Stats Component Styles */
+.cadmin-stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.cadmin-stat-card {
+    background-color: var(--cadmin-white, #ffffff);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.cadmin-dark-mode .cadmin-stat-card {
+    background-color: var(--cadmin-black, #0f172a);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.cadmin-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.12);
+    border-color: rgba(79, 70, 229, 0.3);
+}
+
+.cadmin-stat-card.active {
+    border-color: var(--cadmin-blue, #4f46e5);
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.cadmin-dark-mode .cadmin-stat-card.active {
+    border-color: var(--cadmin-blue-light, #6366f1);
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+.cadmin-stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.cadmin-stat-card.active::before {
+    background: var(--cadmin-blue, #4f46e5);
+}
+
+.cadmin-dark-mode .cadmin-stat-card.active::before {
+    background: var(--cadmin-blue-light, #6366f1);
+}
+
+.cadmin-stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.cadmin-stat-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--cadmin-gray-dark, #334155);
+    margin: 0;
+}
+
+.cadmin-dark-mode .cadmin-stat-title {
+    color: var(--cadmin-gray-light, #e2e8f0);
+}
+
+.cadmin-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.cadmin-stat-icon-articles {
+    background-color: var(--cadmin-blue, #4f46e5);
+}
+
+.cadmin-stat-icon-messages {
+    background-color: var(--cadmin-purple, #8b5cf6);
+}
+
+.cadmin-stat-icon-terms {
+    background-color: #10b981;
+}
+
+.cadmin-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--cadmin-black, #0f172a);
+    margin: 0 0 12px 0;
+}
+
+.cadmin-dark-mode .cadmin-stat-value {
+    color: var(--cadmin-white, #ffffff);
+}
+
+.cadmin-stat-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cadmin-stat-pending {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+    .cadmin-stats-container {
+        grid-template-columns: 1fr;
+    }
+}

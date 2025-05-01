@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { ArticleDebugger } from "./debug-helper";
 import {
   Heart,
   Share2,
@@ -132,7 +133,8 @@ const ArticleDetail = () => {
           setMessages([]);
         }
       } catch (err) {
-        console.error("Error loading messages:", err);
+        console.error( "Error loading messages:", err );
+        
         // Set to empty array on error
         setMessages([]);
       }
@@ -1042,7 +1044,7 @@ const ArticleDetail = () => {
           </div>
           <div className="artd-meta-item">
             <Bookmark size={16} />
-            <span>{ library.length} saves</span> {/* idem ici */}
+            <span> saves</span> {/* idem ici */}
           </div>
         </div>
 
@@ -1090,7 +1092,15 @@ const ArticleDetail = () => {
             {article.description || article.content?.substring(0, 200)}
           </p>
 
-          <div className="artd-content-text">{article.content}</div>
+          <div
+            className="artd-content-text"
+            dangerouslySetInnerHTML={{
+              __html:
+                typeof article.content === "string"
+                  ? article.content
+                  : JSON.stringify(article.content),
+            }}
+          />
         </div>
 
         {/* Actions */}
@@ -1129,12 +1139,10 @@ const ArticleDetail = () => {
         <div className="artd-comments">
           <h2 className="artd-comments-title">
             <MessageCircle size={22} />
-             Chat ({messages?.length || 0})
+            Chat ({messages?.length || 0})
           </h2>
 
           <div className="artd-comments-list">
-            
-
             {/* Chat Messages */}
             {/* Chat Messages */}
             {messages.length === 0 ? (

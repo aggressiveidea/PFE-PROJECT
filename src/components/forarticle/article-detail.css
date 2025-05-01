@@ -43,7 +43,7 @@
 /* Main content */
 .artd-content {
   max-width: 900px;
-  margin: 0 auto;
+  margin: 50px auto;
   position: relative;
   z-index: 1;
   animation: artdFadeIn 0.8s ease-out;

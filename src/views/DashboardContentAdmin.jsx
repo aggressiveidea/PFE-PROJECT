@@ -11,31 +11,58 @@ import {
   XCircle,
   MessageSquare,
   BookOpen,
+  AlertCircle,
+  Bell,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import Header from "../components/forHome/Header";
 import Sidebar from "../components/forDashboard/Sidebar";
-import WelcomeSection from "../components/forDashboard/WelcomeSection";
+import DashboardStats from "../components/forDashboard/DashboardStats";
 import AddArticleNotif from "../components/forContentAdmin/AddArticleNotif";
 import ArticleCard from "../components/forarticle/ArticleCard";
+import MessagePreview from "../components/forDashboard/MessagePreview";
+import TermPreview from "../components/forDashboard/TermPreview";
 import "./DashboardContentAdmin.css";
-import { getUserById, deletearticle } from "../services/Api";
+import {
+  getUserById,
+  deletearticle,
+  approveArticle,
+  getUnverifiedMessages,
+  GetUnverifiedarticle,
+  deleteMessage,
+} from "../services/Api";
 
 export default function ContentAdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("en");
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [articles, setArticles] = useState([]);
-  const [articleStatuses, setArticleStatuses] = useState({});
+  const [terms, setTerms] = useState([]);
+  const [notifMessages, setNotifMessages] = useState([]);
+  const [itemStatuses, setItemStatuses] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
-  const [articleToEdit, setArticleToEdit] = useState(null);
-  const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [notification, setNotification] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
+  const [stats, setStats] = useState({
+    totalArticles: 0,
+    pendingArticles: 0,
+    totalMessages: 0,
+    pendingMessages: 0,
+    totalTerms: 0,
+    pendingTerms: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
-  // New state for active tab
+  // Active tab state
   const [activeTab, setActiveTab] = useState("articles");
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -45,120 +72,454 @@ export default function ContentAdminDashboard() {
       "(prefers-color-scheme: dark)"
     ).matches;
     setDarkMode(prefersDark);
-    if (prefersDark) document.body.classList.add("dark-mode");
+    if (prefersDark) document.body.classList.add("dashboard-dark-mode");
   }, []);
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
-    document.body.classList.toggle("dark-mode");
+    document.body.classList.toggle("dashboard-dark-mode");
+  };
+
+  // Calculate dashboard stats from API data
+  const fetchStats = async () => {
+    try {
+      // Get all data for stats calculation
+      const [allArticles, allMessages, allTerms] = await Promise.all([]);
+
+         const calculateStats = () => {
+           const storedArticles = JSON.parse(
+             localStorage.getItem("articles") || "[]"
+           );
+           const storedMessages = JSON.parse(
+             localStorage.getItem("notifMessages") || "[]"
+           );
+           const storedTerms = JSON.parse(
+             localStorage.getItem("terms") || "[]"
+           );
+
+           setStats({
+             totalArticles: storedArticles.length,
+             pendingArticles: storedArticles.filter(
+               (a) => !a.status || a.status === "pending"
+             ).length,
+             totalMessages: storedMessages.length,
+             pendingMessages: storedMessages.filter(
+               (m) => !m.status || m.status === "pending"
+             ).length,
+             totalTerms: storedTerms.length,
+             pendingTerms: storedTerms.filter(
+               (t) => !t.status || t.status === "pending"
+             ).length,
+           });
+         };
+
+         calculateStats();
+      // Get unverified/pending items
+      const [unverifiedArticles, unverifiedMessages, unverifiedTerms] =
+        await Promise.all([
+          GetUnverifiedarticle(),
+          getUnverifiedMessages(),
+          [], // Assuming there's no API for unverified terms yet
+        ]);
+
+      setStats({
+        totalArticles: allArticles?.length || 0,
+        pendingArticles: unverifiedArticles?.length || 0,
+        totalMessages: allMessages?.length || 0,
+        pendingMessages: unverifiedMessages?.length || 0,
+        totalTerms: allTerms?.length || 0,
+        pendingTerms: unverifiedTerms?.length || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      showNotification("error", "Failed to load dashboard statistics");
+    }
   };
 
   useEffect(() => {
-    const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
-
-    const fetchArticlesWithUsers = async () => {
-      const articlesWithUsers = await Promise.all(
-        storedArticles.map(async (article) => {
-          try {
-            const user = await getUserById(article.ownerId);
-            return {
-              ...article,
-              userName: `${user?.firstName || "Unknown"} ${
-                user?.lastName || ""
-              }`,
-            };
-          } catch (err) {
-            console.error("Error fetching user:", err);
-            return { ...article, userName: "Unknown User" };
-          }
-        })
-      );
-      setArticles(articlesWithUsers);
-    };
-
-    fetchArticlesWithUsers();
+    fetchStats();
   }, []);
 
-  const categories = ["all", ...new Set(articles.map((a) => a.category))];
-
-  const filteredArticles = articles
-    .filter((article) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.userName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.category?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesCategory =
-        filterCategory === "all" || article.category === filterCategory;
-
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      return sortOrder === "newest"
-        ? new Date(b.createdAt) - new Date(a.createdAt)
-        : new Date(a.createdAt) - new Date(b.createdAt);
-    });
-
-  const handleReadArticle = (article) => setSelectedArticle(article);
-
-  const handleValidateArticle = (article) =>
-    setArticleStatuses((prev) => ({ ...prev, [article._id]: "validated" }));
-
-  const handleRejectArticle = async (article) => {
+  // Load data from API based on active tab
+  const fetchData = async () => {
+    setIsLoading(true);
     try {
-      console.log("article id for the delete ", article._id);
-      const response = await deletearticle(article._id);
-      if (response.succes !== true) throw new Error("Delete failed");
-      console.log("✅ Successfully deleted from server");
-    } catch (error) {
-      console.error("❌ Delete error:", error);
-    }
+      // Clear selected item when changing tabs
+      setSelectedItem(null);
 
-    // Load articles from localStorage
-    const storedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
+      // Load data based on active tab
+      if (activeTab === "articles") {
+        try {
+          const unverifiedArticles = await GetUnverifiedarticle();
 
-    // Filter out the deleted article
-    const updatedArticles = storedArticles.filter(
-      (a) => a && a._id !== article._id
-    );
+          if (unverifiedArticles && Array.isArray(unverifiedArticles)) {
+            const articlesWithUsers = await Promise.all(
+              unverifiedArticles.map(async (article) => {
+                try {
+                  const user = await getUserById(article.ownerId);
+                  return {
+                    ...article,
+                    userName: `${user?.firstName || "Unknown"} ${
+                      user?.lastName || ""
+                    }`,
+                  };
+                } catch (err) {
+                  console.error("Error fetching user:", err);
+                  return { ...article, userName: "Unknown User" };
+                }
+              })
+            );
+            setArticles(articlesWithUsers);
+          } else {
+            setArticles([]);
+            console.error("Invalid articles data format:", unverifiedArticles);
+          }
+        } catch (error) {
+          console.error("Error fetching unverified articles:", error);
+          showNotification("error", "Failed to load articles");
+          setArticles([]);
+        }
+      } else if (activeTab === "terms") {
+        try {
+          const unverifiedTerms = await getUnverifiedMessages();
+          setTerms(Array.isArray(unverifiedTerms) ? unverifiedTerms : []);
+        } catch (error) {
+          console.error("Error fetching unverified terms:", error);
+          showNotification("error", "Failed to load terms");
+          setTerms([]);
+        }
+      } else if (activeTab === "messages") {
+        try {
+          const unverifiedMessages = await getUnverifiedMessages();
 
-    // Save back to localStorage
-    localStorage.setItem("articles", JSON.stringify(updatedArticles));
-
-    console.log("✅ Updated localStorage after deletion");
-
-    // Update status
-    setArticleStatuses((prev) => ({ ...prev, [article._id]: "rejected" }));
-  };
-
-  const handleEditArticle = (id) => {
-    const article = articles.find((a) => a._id === id);
-    const canEdit =
-      user.role === "Content-admin" ||
-      (user.role === "Ict-expert" && user.id === article.ownerId);
-
-    if (canEdit) {
-      setArticleToEdit(article);
-      setShowUpdateForm(true);
-    }
-  };
-
-  const handleDeleteArticle = async (id) => {
-    const article = articles.find((a) => a._id === id);
-
-    if (
-      user.role === "Content-admin" ||
-      (user.role === "Ict-expert" && user.id === article.ownerId)
-    ) {
-      setArticles((prev) => prev.filter((a) => a._id !== id));
-      try {
-        const response = await deletearticle(id);
-        if (!response.ok) throw new Error("Delete failed");
-        console.log("Successfully deleted");
-      } catch (error) {
-        console.error("Delete error:", error);
+          if (unverifiedMessages && Array.isArray(unverifiedMessages)) {
+            const messagesWithUsers = await Promise.all(
+              unverifiedMessages.map(async (msg) => {
+                try {
+                  const user = await getUserById(msg.userID);
+                  return {
+                    ...msg,
+                    userName: `${user?.firstName || "Unknown"} ${
+                      user?.lastName || ""
+                    }`,
+                  };
+                } catch (err) {
+                  console.error("Error fetching user:", err);
+                  return { ...msg, userName: "Unknown User" };
+                }
+              })
+            );
+            setNotifMessages(messagesWithUsers);
+          } else {
+            setNotifMessages([]);
+            console.error("Invalid messages data format:", unverifiedMessages);
+          }
+        } catch (error) {
+          console.error("Error fetching unverified messages:", error);
+          showNotification("error", "Failed to load messages");
+          setNotifMessages([]);
+        }
       }
+    } catch (error) {
+      console.error(`Error loading ${activeTab}:`, error);
+      showNotification(
+        "error",
+        `Failed to load ${activeTab}. Please try again.`
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
+
+  // Show notification function
+  const showNotification = (type, message) => {
+    setNotification({ show: true, type, message });
+
+    // Auto-hide notification after 3 seconds
+    setTimeout(() => {
+      setNotification({ show: false, type: "", message: "" });
+    }, 3000);
+  };
+
+  // Get categories based on active tab
+  const getCategories = () => {
+    if (activeTab === "articles") {
+      return [
+        "all",
+        ...new Set(articles.map((a) => a.category).filter(Boolean)),
+      ];
+    } else if (activeTab === "terms") {
+      return ["all", ...new Set(terms.map((t) => t.category).filter(Boolean))];
+    } else if (activeTab === "messages") {
+      return [
+        "all",
+        ...new Set(notifMessages.map((m) => m.type).filter(Boolean)),
+      ];
+    }
+    return ["all"];
+  };
+
+  const categories = getCategories();
+
+  // Filter items based on active tab
+  const getFilteredItems = () => {
+    if (activeTab === "articles") {
+      return articles
+        .filter((article) => {
+          const matchesSearch =
+            searchQuery === "" ||
+            article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            article.userName
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            article.category?.toLowerCase().includes(searchQuery.toLowerCase());
+
+          const matchesCategory =
+            filterCategory === "all" || article.category === filterCategory;
+
+          return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+          return sortOrder === "newest"
+            ? new Date(b.createdAt || Date.now()) -
+                new Date(a.createdAt || Date.now())
+            : new Date(a.createdAt || Date.now()) -
+                new Date(b.createdAt || Date.now());
+        });
+    } else if (activeTab === "terms") {
+      return terms
+        .filter((term) => {
+          const matchesSearch =
+            searchQuery === "" ||
+            term.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            term.content?.toLowerCase().includes(searchQuery.toLowerCase());
+
+          const matchesCategory =
+            filterCategory === "all" || term.category === filterCategory;
+
+          return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+          return sortOrder === "newest"
+            ? new Date(b.createdAt || Date.now()) -
+                new Date(a.createdAt || Date.now())
+            : new Date(a.createdAt || Date.now()) -
+                new Date(b.createdAt || Date.now());
+        });
+    } else if (activeTab === "messages") {
+      return notifMessages
+        .filter((message) => {
+          const matchesSearch =
+            searchQuery === "" ||
+            message.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            message.content?.toLowerCase().includes(searchQuery.toLowerCase());
+
+          const matchesCategory =
+            filterCategory === "all" || message.type === filterCategory;
+
+          return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+          return sortOrder === "newest"
+            ? new Date(b.createdAt || Date.now()) -
+                new Date(a.createdAt || Date.now())
+            : new Date(a.createdAt || Date.now()) -
+                new Date(b.createdAt || Date.now());
+        });
+    }
+    return [];
+  };
+
+  const filteredItems = getFilteredItems();
+  console.log( user.profileImgUrl );
+  const handleSelectItem = (item) => {
+    // Ensure the item has the user's profile picture
+    const itemWithProfilePic = {
+      ...item,
+      // Use the item's profileImgUrl or avatar if available, otherwise use the user's profileImgUrl
+     
+      profileImgUrl:
+        item.profileImgUrl ||
+        item.avatar ||
+        user.profileImgUrl ||
+        "/placeholder.svg?height=40&width=40",
+    };
+    setSelectedItem(itemWithProfilePic);
+  };
+
+  const handleValidateItem = async (item) => {
+    try {
+      if (activeTab === "articles") {
+        // Call API to approve article
+        const response = await approveArticle(item._id);
+
+        if (response && response.success) {
+          // Update local status
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }));
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            pendingArticles: prev.pendingArticles - 1,
+          }));
+
+          // Show success notification
+          showNotification("success", "Article successfully approved!");
+
+          // Refresh the data
+          fetchData();
+        } else {
+          throw new Error("Approval failed");
+        }
+      } else if (activeTab === "messages") {
+        // Handle message approval - assuming there's an API for this
+        try {
+          // Update local status
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }));
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            pendingMessages: prev.pendingMessages - 1,
+          }));
+
+          showNotification("success", "Message successfully approved!");
+
+          // Refresh the data
+          fetchData();
+        } catch (error) {
+          console.error("Error approving message:", error);
+          throw error;
+        }
+      } else if (activeTab === "terms") {
+        // Handle terms approval - assuming there's an API for this
+        try {
+          // Update local status
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }));
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            pendingTerms: prev.pendingTerms - 1,
+          }));
+
+          showNotification("success", "Term successfully approved!");
+
+          // Refresh the data
+          fetchData();
+        } catch (error) {
+          console.error("Error approving term:", error);
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error(`Error approving ${activeTab.slice(0, -1)}:`, error);
+      showNotification(
+        "error",
+        `Failed to approve ${activeTab.slice(0, -1)}. Please try again.`
+      );
+    }
+  };
+
+  const handleRejectItem = async (item) => {
+    try {
+      if (activeTab === "articles") {
+        console.log("article id for the delete ", item._id);
+        const response = await deletearticle(item._id);
+
+        if (!response || response.success !== true)
+          throw new Error("Delete failed");
+
+        console.log("✅ Successfully deleted article from server");
+
+        // Update status
+        setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }));
+
+        // Update stats
+        setStats((prev) => ({
+          ...prev,
+          totalArticles: prev.totalArticles - 1,
+          pendingArticles: prev.pendingArticles - 1,
+        }));
+
+        // Show success notification
+        showNotification("error", "Article has been rejected and removed.");
+
+        // If the rejected article is currently selected, clear selection
+        if (selectedItem && selectedItem._id === item._id) {
+          setSelectedItem(null);
+        }
+
+        // Refresh the data
+        fetchData();
+      } else if (activeTab === "messages") {
+        // Handle message rejection
+        try {
+          const response = await deleteMessage(item._id);
+
+          if (!response )
+            throw new Error("Delete message failed");
+
+          // Update status
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }));
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            totalMessages: prev.totalMessages - 1,
+            pendingMessages: prev.pendingMessages - 1,
+          }));
+
+          // If the rejected message is currently selected, clear selection
+          if (selectedItem && selectedItem._id === item._id) {
+            setSelectedItem(null);
+          }
+
+          showNotification("error", "Message has been rejected and removed.");
+
+          // Refresh the data
+          fetchData();
+        } catch (error) {
+          console.error("Error deleting message:", error);
+          throw error;
+        }
+      } else if (activeTab === "terms") {
+        // Handle terms rejection - assuming there's an API for this
+        try {
+          // Update status
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }));
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            totalTerms: prev.totalTerms - 1,
+            pendingTerms: prev.pendingTerms - 1,
+          }));
+
+          // If the rejected term is currently selected, clear selection
+          if (selectedItem && selectedItem._id === item._id) {
+            setSelectedItem(null);
+          }
+
+          showNotification("error", "Term has been rejected and removed.");
+
+          // Refresh the data
+          fetchData();
+        } catch (error) {
+          console.error("Error rejecting term:", error);
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error(`Error rejecting ${activeTab.slice(0, -1)}:`, error);
+      showNotification(
+        "error",
+        `Failed to reject ${activeTab.slice(0, -1)}. Please try again.`
+      );
     }
   };
 
@@ -180,8 +541,70 @@ export default function ContentAdminDashboard() {
     });
   };
 
+  // Get section title based on active tab
+  const getSectionTitle = () => {
+    switch (activeTab) {
+      case "articles":
+        return "New Articles";
+      case "terms":
+        return "Terms & Conditions";
+      case "messages":
+        return "Notification Messages";
+      default:
+        return "Items";
+    }
+  };
+
+  // Get section icon based on active tab
+  const getSectionIcon = () => {
+    switch (activeTab) {
+      case "articles":
+        return <FileText size={18} />;
+      case "terms":
+        return <BookOpen size={18} />;
+      case "messages":
+        return <Bell size={18} />;
+      default:
+        return <FileText size={18} />;
+    }
+  };
+
+  // Get preview component based on active tab
+  const renderPreview = () => {
+    if (!selectedItem) {
+      return (
+        <div className="dashboard-empty-preview">
+          {activeTab === "articles" && <FileText size={48} />}
+          {activeTab === "messages" && <MessageSquare size={48} />}
+          {activeTab === "terms" && <BookOpen size={48} />}
+          <p>Select an {activeTab.slice(0, -1)} to preview</p>
+        </div>
+      );
+    }
+
+    switch (activeTab) {
+      case "articles":
+        return (
+          <ArticleCard
+            article={selectedItem}
+            isFavorite={favorites.includes(selectedItem._id)}
+            onToggleFavorite={() => toggleFavorite(selectedItem._id)}
+          />
+        );
+      case "messages":
+        return <MessagePreview message={selectedItem} />;
+      case "terms":
+        return <TermPreview term={selectedItem} />;
+      default:
+        return <div>No preview available</div>;
+    }
+  };
+
+  console.log("^^",user.profileImgUrl);
   return (
-    <div className={`content-admin-container ${darkMode ? "dark-mode" : ""}`}>
+    <div
+      className={`dashboard-container ${darkMode ? "dashboard-dark-mode" : ""}`}
+    >
       <Header
         language={language}
         setLanguage={setLanguage}
@@ -197,195 +620,248 @@ export default function ContentAdminDashboard() {
       />
 
       <main
-        className={`content-admin-main ${
-          sidebarCollapsed ? "sidebar-collapsed" : ""
+        className={`dashboard-main ${
+          sidebarCollapsed ? "dashboard-sidebar-collapsed" : ""
         }`}
       >
-        <div className="content-admin-wrapper">
-          <div className="content-admin-header">
-            <WelcomeSection role="Content-admin" />
-
-            {/* New Tabs Section */}
-            <div className="content-admin-tabs">
-              <button
-                className={`content-admin-tab ${
-                  activeTab === "articles" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("articles")}
-              >
-                <FileText size={18} className="content-admin-tab-icon" />
-                Articles
-              </button>
-              <button
-                className={`content-admin-tab ${
-                  activeTab === "messages" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("messages")}
-              >
-                <MessageSquare size={18} className="content-admin-tab-icon" />
-                Messages
-              </button>
-              <button
-                className={`content-admin-tab ${
-                  activeTab === "terms" ? "active" : ""
-                }`}
-                onClick={() => setActiveTab("terms")}
-              >
-                <BookOpen size={18} className="content-admin-tab-icon" />
-                Terms
-              </button>
+        <div className="dashboard-wrapper">
+          {/* Enhanced Welcome Section */}
+          <div className="dashboard-welcome-section">
+            <div className="dashboard-welcome-content">
+              <h1 className="dashboard-welcome-title">Content Management</h1>
+              <p className="dashboard-welcome-subtitle">
+                Welcome back,{" "}
+                <span className="dashboard-welcome-name">
+                  {user.firstName || "Admin"}
+                </span>
+              </p>
             </div>
-
-            <div className="content-admin-controls">
-              <div className="content-admin-search">
-                <Search size={18} className="content-admin-search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search articles..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="content-admin-search-input"
-                />
+            <div className="dashboard-welcome-date">
+              <div className="dashboard-date-item">
+                <Calendar size={16} />
+                <span>
+                  {new Date().toLocaleDateString(undefined, {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
-
-              <div className="content-admin-filters">
-                <div className="content-admin-filter">
-                  <Filter size={16} />
-                  <select
-                    value={filterCategory}
-                    onChange={(e) => setFilterCategory(e.target.value)}
-                    className="content-admin-select"
-                  >
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category === "all" ? "All Categories" : category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="content-admin-filter">
-                  <SortDesc size={16} />
-                  <select
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className="content-admin-select"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                  </select>
-                </div>
+              <div className="dashboard-date-item">
+                <Clock size={16} />
+                <span>
+                  {new Date().toLocaleTimeString(undefined, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="content-admin-grid">
-            <section className="content-admin-articles">
-              <div className="content-admin-section-header">
-                <h2 className="content-admin-section-title">
-                  <FileText size={18} />
-                  New Articles
-                </h2>
-                <span className="content-admin-count">
-                  {filteredArticles.length}
-                </span>
+          {/* Dashboard Stats */}
+          <DashboardStats
+            stats={stats}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+
+          {/* Notification alert */}
+          {notification.show && (
+            <div
+              className={`dashboard-notification dashboard-notification-${notification.type}`}
+            >
+              {notification.type === "success" ? (
+                <CheckCircle
+                  size={18}
+                  className="dashboard-notification-icon"
+                />
+              ) : (
+                <AlertCircle
+                  size={18}
+                  className="dashboard-notification-icon"
+                />
+              )}
+              <span>{notification.message}</span>
+            </div>
+          )}
+
+          {/* Tabs Section */}
+          <div className="dashboard-tabs">
+            <button
+              className={`dashboard-tab ${
+                activeTab === "articles" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("articles")}
+            >
+              <FileText size={18} className="dashboard-tab-icon" />
+              Articles
+            </button>
+            <button
+              className={`dashboard-tab ${
+                activeTab === "messages" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("messages")}
+            >
+              <MessageSquare size={18} className="dashboard-tab-icon" />
+              Messages
+            </button>
+            <button
+              className={`dashboard-tab ${
+                activeTab === "terms" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("terms")}
+            >
+              <BookOpen size={18} className="dashboard-tab-icon" />
+              Terms
+            </button>
+          </div>
+
+          <div className="dashboard-controls">
+            <div className="dashboard-search">
+              <Search size={18} className="dashboard-search-icon" />
+              <input
+                type="text"
+                placeholder={`Search ${activeTab}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="dashboard-search-input"
+              />
+            </div>
+
+            <div className="dashboard-filters">
+              <div className="dashboard-filter">
+                <Filter size={16} />
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="dashboard-select"
+                >
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category === "all" ? "All Categories" : category}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="content-admin-articles-list">
-                {filteredArticles.length > 0 ? (
-                  filteredArticles.map((article) => (
+              <div className="dashboard-filter">
+                <SortDesc size={16} />
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="dashboard-select"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-grid">
+            <section className="dashboard-items-section">
+              <div className="dashboard-section-header">
+                <h2 className="dashboard-section-title">
+                  {getSectionIcon()}
+                  {getSectionTitle()}
+                </h2>
+                <span className="dashboard-count">{filteredItems.length}</span>
+              </div>
+
+              <div className="dashboard-items-list">
+                {isLoading ? (
+                  <div className="dashboard-loading">
+                    <div className="dashboard-loading-spinner"></div>
+                    <p>Loading {activeTab}...</p>
+                  </div>
+                ) : filteredItems.length > 0 ? (
+                  filteredItems.map((item) => (
                     <div
-                      key={article._id}
-                      className={`content-admin-article-card ${
-                        selectedArticle?._id === article._id
-                          ? "content-admin-article-selected"
+                      key={item._id}
+                      className={`dashboard-item-card ${
+                        selectedItem?._id === item._id
+                          ? "dashboard-item-selected"
                           : ""
                       }`}
-                      onClick={() => handleReadArticle(article)}
+                      onClick={() => handleSelectItem(item)}
                     >
                       <AddArticleNotif
-                        image={article.imageUrl}
-                        userName={article.userName}
-                        time={article.createdAt}
-                        onReadArticle={() => handleReadArticle(article)}
-                        onValidate={() => handleValidateArticle(article)}
-                        onReject={() => handleRejectArticle(article)}
-                        status={articleStatuses[article._id]}
-                        title={article.title}
-                        category={article.category}
+                        profileImgUrl={
+                          user.profileImgUrl 
+                        }
+                        userName={
+                          item.userName || item.author || "Unknown User"
+                        }
+                        time={item.createdAt}
+                        onReadArticle={() => handleSelectItem(item)}
+                        onValidate={() => handleValidateItem(item)}
+                        onReject={() => handleRejectItem(item)}
+                        status={itemStatuses[item._id]}
+                        title={item.title}
+                        category={item.category || item.type}
                       />
                     </div>
                   ))
                 ) : (
-                  <div className="content-admin-empty">
-                    <FileText size={48} />
-                    <p>No articles found matching your criteria</p>
+                  <div className="dashboard-empty">
+                    {activeTab === "articles" && <FileText size={48} />}
+                    {activeTab === "messages" && <MessageSquare size={48} />}
+                    {activeTab === "terms" && <BookOpen size={48} />}
+                    <p>No {activeTab} found matching your criteria</p>
                   </div>
                 )}
               </div>
             </section>
 
-            <section className="content-admin-preview-section">
-              <div className="content-admin-section-header">
-                <h2 className="content-admin-section-title">
+            <section className="dashboard-preview-section">
+              <div className="dashboard-section-header">
+                <h2 className="dashboard-section-title">
                   <Eye size={18} />
-                  Article Preview
+                  {activeTab.slice(0, 1).toUpperCase() +
+                    activeTab.slice(1, -1)}{" "}
+                  Preview
                 </h2>
               </div>
 
-              <div className="content-admin-preview-wrapper">
-                {selectedArticle ? (
-                  <>
-                    <ArticleCard
-                      article={selectedArticle}
-                      isFavorite={favorites.includes(selectedArticle._id)}
-                      onToggleFavorite={() =>
-                        toggleFavorite(selectedArticle._id)
-                      }
-                      onEdit={() => handleEditArticle(selectedArticle._id)}
-                      onDelete={() => handleDeleteArticle(selectedArticle._id)}
-                    />
+              <div className="dashboard-preview-wrapper">
+                {renderPreview()}
 
-                    <div className="article-notification-actions">
-                      {!articleStatuses[selectedArticle._id] && (
-                        <>
-                          <button
-                            className="btn btn-validate"
-                            onClick={() =>
-                              handleValidateArticle(selectedArticle)
-                            }
-                          >
-                            <CheckCircle size={16} />
-                            <span>Validate</span>
-                          </button>
-                          <button
-                            className="btn btn-reject"
-                            onClick={() => handleRejectArticle(selectedArticle)}
-                          >
-                            <XCircle size={16} />
-                            <span>Reject</span>
-                          </button>
-                        </>
-                      )}
-                      {articleStatuses[selectedArticle._id] === "validated" && (
-                        <div className="article-status validated">
-                          <CheckCircle size={16} />
-                          <span>Validated</span>
-                        </div>
-                      )}
-                      {articleStatuses[selectedArticle._id] === "rejected" && (
-                        <div className="article-status rejected">
-                          <XCircle size={16} />
-                          <span>Rejected</span>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <p className="content-admin-no-preview">
-                    Select an article to preview
-                  </p>
+                {selectedItem && !itemStatuses[selectedItem._id] && (
+                  <div className="dashboard-notification-actions">
+                    <button
+                      className="dashboard-btn dashboard-btn-validate"
+                      onClick={() => handleValidateItem(selectedItem)}
+                    >
+                      <CheckCircle size={16} />
+                      <span>Validate</span>
+                    </button>
+                    <button
+                      className="dashboard-btn dashboard-btn-reject"
+                      onClick={() => handleRejectItem(selectedItem)}
+                    >
+                      <XCircle size={16} />
+                      <span>Reject</span>
+                    </button>
+                  </div>
                 )}
+
+                {selectedItem &&
+                  itemStatuses[selectedItem._id] === "validated" && (
+                    <div className="dashboard-status dashboard-validated">
+                      <CheckCircle size={16} />
+                      <span>Validated</span>
+                    </div>
+                  )}
+
+                {selectedItem &&
+                  itemStatuses[selectedItem._id] === "rejected" && (
+                    <div className="dashboard-status dashboard-rejected">
+                      <XCircle size={16} />
+                      <span>Rejected</span>
+                    </div>
+                  )}
               </div>
             </section>
           </div>

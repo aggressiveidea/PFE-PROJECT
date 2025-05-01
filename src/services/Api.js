@@ -418,7 +418,8 @@ export const updatearticle = async (id, data) => {
 
 export const deletearticle = async (id) => {
   try {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem( "token" )
+    console.log("the id",id)
     const response = await fetch(`http://localhost:5000/articles/${id}`, {
       method: "DELETE",
       headers: {
@@ -432,7 +433,7 @@ export const deletearticle = async (id) => {
     }
 
     const res = await response.json()
-    return res.data
+    return res
   } catch (error) {
     console.error("Error deleting article :", error)
     throw error
@@ -1326,3 +1327,191 @@ export const sendMessage = async (id, data) => {
     throw error;
   }
 };
+
+export const getUnverifiedMessages = async () => {
+  try
+  {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/unverified`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch unverified messages");
+    const result = await response.json();
+
+    if (result?.success && Array.isArray(result.data)) return result.data;
+    return [];
+  } catch (error) {
+    console.error("Error fetching unverified messages:", error);
+    throw error;
+  }
+};
+
+export const GetMessageById = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/chat/message/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch message");
+    const result = await response.json();
+
+    if (result?.success && result.data) return result.data;
+    throw new Error("Invalid response format");
+  } catch (error) {
+    console.error("Error fetching message by ID:", error);
+    throw error;
+  }
+};
+
+
+export const deleteMessage = async (id) => {
+  try
+  {
+    console.log("iddd",id);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to delete message");
+    const result = await response.json();
+
+    if (result?.success) return true;
+    throw new Error("Delete failed");
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    throw error;
+  }
+};
+
+
+export const approveArticle = async (id) => {
+  try
+  {
+    console.log("...........", id);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles//notif/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to approve article");
+    }
+  
+    const res = await response.json();
+    console.log(res)
+    return res;
+  } catch (error) {
+    console.error("Error approuving article :", error);
+    throw error;
+  }
+  
+};
+
+export const commentCounter = async (id) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/comment/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // No body content needed in the request
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to update comment counter");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Comment counter update failed");
+  } catch (error) {
+    console.error("Error updating comment counter:", error);
+    throw error;
+  }
+};
+
+
+export const favorCounter = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/favor/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // No body content needed in the request
+    });
+
+    if (!response.ok) throw new Error("Failed to update favor counter");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Favor counter update failed");
+  } catch (error) {
+    console.error("Error updating favor counter:", error);
+    throw error;
+  }
+};
+
+export const shareCounter = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/share/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // No body content needed in the request
+    });
+
+    if (!response.ok) throw new Error("Failed to update share counter");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Share counter update failed");
+  } catch (error) {
+    console.error("Error updating share counter:", error);
+    throw error;
+  }
+};
+
+
+export const GetUnverifiedarticle = async () => {
+  try
+  {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/notif`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to approve article");
+    const result = await response.json();
+
+    if (result?.success && result.data) return result.data;
+    throw new Error("Article approval failed");
+  } catch (error) {
+    console.error("Error approving article:", error);
+    throw error;
+  }
+};
+

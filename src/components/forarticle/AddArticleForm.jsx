@@ -36,9 +36,10 @@ export default function AddArticleForm({ setArticles }) {
 
   useEffect(() => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (storedUser && storedUser.id) {
-        setUserId(storedUser.id);
+      const storedUser = JSON.parse( localStorage.getItem( "user" ) );
+      console.log( "omg", storedUser );
+      if (storedUser && storedUser._id) {
+        setUserId(storedUser._id);
       } else {
         setError("Vous devez être connecté pour ajouter un article.");
       }
