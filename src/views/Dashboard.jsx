@@ -68,7 +68,7 @@ export default function Dashboard() {
         // Set statistics data
         setStatsData({
           totalUsers: totalUsersData?.User || 0,
-          totalExperts: totalUsersData?.["ICT-Expert"] || 0,
+          totalExperts: totalUsersData?.["Ict-expert"] || 0,
           activeUsers: activeUsersData?.activeUsers || 0,
           activeExperts: activeUsersData?.activeExperts || 0,
         })
@@ -87,8 +87,9 @@ export default function Dashboard() {
         if (activityStatsData && Array.isArray(activityStatsData)) {
           const formattedActivityData = activityStatsData.map((item) => ({
             name: getMonthName(item._id.month),
-            value: item.count,
-          }))
+            value: item.activeUsersCount,
+          }));
+          console.log(formattedActivityData)
           setActivityData(formattedActivityData)
         }
       } catch (error) {
