@@ -1425,13 +1425,17 @@ export const approveArticle = async (id) => {
 };
 
 export const commentCounter = async (id) => {
-  try {
+  try
+  {
+    const token = localStorage.getItem( "token" );
+
     const response = await fetch(
       `http://localhost:5000/articles/comment/${id}`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         // No body content needed in the request
       }
@@ -1450,20 +1454,25 @@ export const commentCounter = async (id) => {
 
 
 export const favorCounter = async (id) => {
-  try {
+  try
+  {
+    console.log( id );
+    const token = localStorage.getItem( "token" );
+
     const response = await fetch(`http://localhost:5000/articles/favor/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      // No body content needed in the request
     });
 
-    if (!response.ok) throw new Error("Failed to update favor counter");
     const result = await response.json();
+    console.log('result', result );
 
-    if (result?.success) return result;
-    throw new Error("Favor counter update failed");
+    if (response.success === "true") throw new Error("Failed to update favor counter");
+    console.log(result )
+    return result.success;
   } catch (error) {
     console.error("Error updating favor counter:", error);
     throw error;
@@ -1471,16 +1480,20 @@ export const favorCounter = async (id) => {
 };
 
 export const shareCounter = async (id) => {
-  try {
+  try
+  {
+    const token = localStorage.getItem( "token" );
+
     const response = await fetch(`http://localhost:5000/articles/share/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       // No body content needed in the request
     });
 
-    if (!response.ok) throw new Error("Failed to update share counter");
+    if (!response.sucees) throw new Error("Failed to update share counter");
     const result = await response.json();
 
     if (result?.success) return result;
@@ -1515,3 +1528,84 @@ export const GetUnverifiedarticle = async () => {
   }
 };
 
+
+export const removeFromFavorites = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:5000/user/favorites/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok)
+      throw new Error("Failed to remove article from favorites");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Removing favorite failed");
+  } catch (error) {
+    console.error("Error removing from favorites:", error);
+    throw error;
+  }
+};
+
+export const getFavorites = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/user/favorites/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to get favorite articles");
+    const result = await response.json();
+
+    console.log( "hellllooooo",result?.success );
+    console.log("hellllooooolll", result);
+    return result.favorites;
+   
+  } catch (error) {
+    console.error("Error getting favorites:", error);
+    throw error;
+  }
+};
+
+export const addToFavorites = async (id, userid) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("iddddddd", id);
+    const response = await fetch(
+      `http://localhost:5000/user/favorites/${userid}/${id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to add article to favorites");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Favorite action failed");
+  } catch (error) {
+    console.error("Error adding to favorites:", error);
+    throw error;
+  }
+};
+
+export const getownerswritng = async ( id ) =>
+{
+
+}

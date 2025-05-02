@@ -6,7 +6,6 @@ import FilterSection from "../components/forarticle/FilterSection";
 import UpdateArticleForm from "../components/forarticle/UpdateArticleForm";
 import ArticleCard from "../components/forarticle/ArticleCard";
 import { ThemeProvider } from "../components/forarticle/ThemeContext";
-import { useTheme } from "../components/forarticle/ThemeContext";
 import "../components/forarticle/globals.css";
 import Header from "../components/forHome/Header";
 import Trends from "../components/forarticle/TrendingTopics";
@@ -16,25 +15,46 @@ import { deletearticle } from "../services/Api";
 import { updatearticle } from "../services/Api";
 import { toparticles } from "../services/Api";
 import { X } from "lucide-react";
-import Footer from "../components/forHome/Footer"
-
+import Footer from "../components/forHome/Footer";
+import {
+  getFavorites,
+  addToFavorites,
+  removeFromFavorites,
+  favorCounter,
+} from "../services/Api";
 
 function Articlepage() {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
-  const [ darkMode, setDarkMode ] = useState( false );
+  const [darkMode, setDarkMode] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [languageFilter, setLanguageFilter] = useState("All Languages");
   const [articles, setArticles] = useState([]);
   const [articleToEdit, setArticleToEdit] = useState(null);
-  const [ showUpdateForm, setShowUpdateForm ] = useState( false );
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
-  const [favorites, setFavorites] = useState(() => {
-    const storedFavorites = localStorage.getItem("favorites");
-    return storedFavorites ? JSON.parse(storedFavorites) : [];
-  });
+  const [favorites, setFavorites] = useState([]);
+
+  // Fetch user's favorites from the database
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const favoritesData = await getFavorites(user._id);
+        if (Array.isArray(favoritesData)) {
+          setFavorites(favoritesData);
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
+
+    if (user) {
+      fetchFavorites();
+    }
+  }, [user]);
+
   const [language, setLanguage] = useState("en");
   const [index, setIndex] = useState(13);
 
@@ -127,16 +147,28 @@ function Articlepage() {
     };
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const toggleFavorite = (id) => {
+  const toggleFavorite = async (id) => {
     const updatedFavorites = favorites.includes(id)
       ? favorites.filter((favId) => favId !== id)
       : [...favorites, id];
 
     setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+
+    try {
+      // Update the database
+      if (favorites.includes(id)) {
+        // Remove from favorites
+        await removeFromFavorites(id);
+      } else {
+        // Add to favorites
+        await addToFavorites(id, user._id);
+      }
+      // Update the favorite counter
+      await favorCounter(id);
+    } catch (error) {
+      console.error("Error updating favorites in database:", error);
+    }
   };
 
   const handleEditArticle = (id) => {
@@ -145,7 +177,7 @@ function Articlepage() {
 
     const canEdit =
       user.role === "Content-admin" ||
-      (user.role === "Ict-expert" && user.id === article.ownerId);
+      (user.role === "Ict-expert" && user._id === article.ownerId);
 
     if (canEdit) {
       setArticleToEdit(article);
@@ -200,7 +232,7 @@ function Articlepage() {
 
     const canDelete =
       user.role === "Content-admin" ||
-      (user.role === "Ict-expert" && user.id === article.ownerId);
+      (user.role === "Ict-expert" && user._id === article.ownerId);
 
     if (canDelete) {
       setArticles(articles.filter((article) => article._id !== id));

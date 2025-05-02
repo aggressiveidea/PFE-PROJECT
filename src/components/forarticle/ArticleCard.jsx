@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Heart,
   Share2,
@@ -15,10 +15,9 @@ import {
   BookmarkCheck,
   Sparkles,
   TrendingUp,
-} from "lucide-react"
-import "./article-card.css"
-import { getUserById } from "../../services/Api"
-
+} from "lucide-react";
+import "./article-card.css";
+import { getUserById, favorCounter, shareCounter } from "../../services/Api";
 
 export default function EnhancedArticleCard({
   article,
@@ -189,7 +188,30 @@ export default function EnhancedArticleCard({
               "Check out this article",
             url: `/articles/${articleId}`,
           })
-          .catch((err) => console.log("Error sharing", err));
+          .then(async () => {
+            // Update share counter in database
+            try {
+              await shareCounter(articleId);
+            } catch (err) {
+              console.error("Error updating share counter:", err);
+            }
+          })
+          .catch((err) => {
+            if (err.name !== "AbortError") {
+              console.log("Error sharing", err);
+            }
+          });
+      } else {
+        // Fallback for browsers without Web Share API
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+
+        // Still update the counter
+        try {
+          shareCounter(articleId);
+        } catch (err) {
+          console.error("Error updating share counter:", err);
+        }
       }
     },
     [article, articleId]
@@ -209,6 +231,13 @@ export default function EnhancedArticleCard({
 
       if (articleId && onToggleFavorite) {
         onToggleFavorite(articleId);
+
+        // Update favorite counter in database
+        try {
+          favorCounter(articleId);
+        } catch (err) {
+          console.error("Error updating favorite counter:", err);
+        }
       }
     },
     [articleId, onToggleFavorite, isFavorite]
@@ -316,7 +345,7 @@ export default function EnhancedArticleCard({
             >
               <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
               <span className="card-action-count">
-                {article?.likes || Math.floor(Math.random() * 20) + 5}
+                {article?.favorites || 0}
               </span>
             </button>
 
@@ -332,9 +361,7 @@ export default function EnhancedArticleCard({
               ) : (
                 <Bookmark size={18} />
               )}
-              <span className="card-action-count">
-                {Math.floor(Math.random() * 15) + 2}
-              </span>
+              <span className="card-action-count">{article?.shares || 0}</span>
             </button>
 
             <button
@@ -343,9 +370,7 @@ export default function EnhancedArticleCard({
               aria-label="Share article"
             >
               <Share2 size={18} />
-              <span className="card-action-count">
-                0
-              </span>
+              <span className="card-action-count">{article?.shares || 0}</span>
             </button>
           </div>
 
@@ -422,17 +447,11 @@ export default function EnhancedArticleCard({
             <div className="card-stats">
               <div className="card-stat">
                 <Eye size={16} className="card-stat-icon" />
-                <span>
-                  {article?.views ||
-                    article?.click ||
-                    Math.floor(Math.random() * 100) + 5}
-                </span>
+                <span>{article?.views || article?.click || 0}</span>
               </div>
               <div className="card-stat">
                 <MessageCircle size={16} className="card-stat-icon" />
-                <span>
-                  {article?.comments || Math.floor(Math.random() * 20) + 1}
-                </span>
+                <span>{article?.comments || 0}</span>
               </div>
             </div>
 
