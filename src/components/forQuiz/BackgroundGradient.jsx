@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import "./BackgroundGradient.css"
+import "./background-gradient.css"
 
 const BackgroundGradient = ({ darkMode }) => {
   const canvasRef = useRef(null)
@@ -17,6 +17,9 @@ const BackgroundGradient = ({ darkMode }) => {
     const setCanvasDimensions = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
+
+      // Force redraw when resizing
+      drawBlobs()
     }
 
     setCanvasDimensions()
@@ -24,63 +27,84 @@ const BackgroundGradient = ({ darkMode }) => {
 
     // Create gradient blobs
     const blobs = []
-    const blobCount = 3
+    const blobCount = 4 // Increased for more visual interest
 
     for (let i = 0; i < blobCount; i++) {
       blobs.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 300 + 100,
-        xSpeed: (Math.random() - 0.5) * 0.5,
-        ySpeed: (Math.random() - 0.5) * 0.5,
-        hue: Math.random() * 60 + 240, // Blue to purple range
+        radius: Math.random() * 350 + 150, // Larger radius range
+        xSpeed: (Math.random() - 0.5) * 0.3, // Slower movement
+        ySpeed: (Math.random() - 0.5) * 0.3,
+        hue: Math.random() * 60 + (darkMode ? 240 : 220), // Blue to purple range
+        pulseSpeed: 0.005 + Math.random() * 0.005, // For size pulsing
+        pulseDirection: 1,
+        pulseAmount: 0,
+        originalRadius: 0, // Will be set in first draw
       })
     }
 
     // Animation loop
-    const animate = () => {
+    const drawBlobs = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Draw blobs
-      blobs.forEach((blob) => {
+      blobs.forEach((blob, index) => {
+        // Set original radius on first draw
+        if (blob.originalRadius === 0) {
+          blob.originalRadius = blob.radius
+        }
+
+        // Pulse effect
+        blob.pulseAmount += blob.pulseSpeed * blob.pulseDirection
+        if (blob.pulseAmount > 0.2 || blob.pulseAmount < -0.1) {
+          blob.pulseDirection *= -1
+        }
+
+        // Apply pulse to radius
+        const pulsedRadius = blob.originalRadius * (1 + blob.pulseAmount)
+
         // Move blob
         blob.x += blob.xSpeed
         blob.y += blob.ySpeed
 
-        // Bounce off edges
-        if (blob.x < -blob.radius) blob.x = canvas.width + blob.radius
-        if (blob.x > canvas.width + blob.radius) blob.x = -blob.radius
-        if (blob.y < -blob.radius) blob.y = canvas.height + blob.radius
-        if (blob.y > canvas.height + blob.radius) blob.y = -blob.radius
+        // Bounce off edges with a buffer
+        const buffer = pulsedRadius * 0.5
+        if (blob.x < -buffer) blob.x = canvas.width + buffer
+        if (blob.x > canvas.width + buffer) blob.x = -buffer
+        if (blob.y < -buffer) blob.y = canvas.height + buffer
+        if (blob.y > canvas.height + buffer) blob.y = -buffer
 
         // Draw gradient
-        const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, blob.radius)
+        const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, pulsedRadius)
 
         if (darkMode) {
-          gradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, 0.2)`)
+          gradient.addColorStop(0, `hsla(${blob.hue}, 80%, 65%, 0.25)`)
+          gradient.addColorStop(0.5, `hsla(${blob.hue}, 70%, 60%, 0.15)`)
           gradient.addColorStop(1, `hsla(${blob.hue}, 70%, 60%, 0)`)
         } else {
-          gradient.addColorStop(0, `hsla(${blob.hue}, 70%, 80%, 0.15)`)
+          gradient.addColorStop(0, `hsla(${blob.hue}, 80%, 85%, 0.2)`)
+          gradient.addColorStop(0.5, `hsla(${blob.hue}, 70%, 80%, 0.1)`)
           gradient.addColorStop(1, `hsla(${blob.hue}, 70%, 80%, 0)`)
         }
 
         ctx.fillStyle = gradient
         ctx.beginPath()
-        ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2)
+        ctx.arc(blob.x, blob.y, pulsedRadius, 0, Math.PI * 2)
         ctx.fill()
       })
 
-      requestAnimationFrame(animate)
+      requestAnimationFrame(drawBlobs)
     }
 
-    animate()
+    drawBlobs()
 
     return () => {
       window.removeEventListener("resize", setCanvasDimensions)
     }
   }, [darkMode])
 
-  return <canvas ref={canvasRef} className="background-gradient" />
+  return <canvas ref={canvasRef} className="background-gradient" aria-hidden="true" />
 }
 
 export default BackgroundGradient

@@ -2,9 +2,12 @@
 
 import { Moon, Sun } from "lucide-react"
 import { translations } from "../../utils/translations"
+import { useTheme } from "../../context/theme-context"
 import "./Footer.css"
 
-const Footer = ({ darkMode, setDarkMode, language = "en" }) => {
+const Footer = ({ language = "en" }) => {
+  const { darkMode, toggleDarkMode } = useTheme()
+
   const t = translations?.[language] || {
     navigation: "Navigation",
     home: "Home",
@@ -26,10 +29,6 @@ const Footer = ({ darkMode, setDarkMode, language = "en" }) => {
   }
 
   const isRtl = language === "ar"
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-  }
 
   return (
     <footer className={`footer ${darkMode ? "dark" : ""} ${isRtl ? "rtl" : ""}`}>
@@ -175,5 +174,3 @@ const Footer = ({ darkMode, setDarkMode, language = "en" }) => {
 }
 
 export default Footer
-
-

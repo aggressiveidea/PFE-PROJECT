@@ -1,33 +1,31 @@
-"use client"
+import React, { useState } from 'react';
+import './GraphSearch.css';
 
-import { useState } from "react"
-import "./GraphSearch.css"
-
-const GraphSearch = ({ onSearch, language = "english" }) => {
-  const [query, setQuery] = useState("")
+const GraphSearch = ({ onSearch, language }) => {
+  const [query, setQuery] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onSearch(query)
-  }
+    e.preventDefault();
+    onSearch(query);
+  };
 
   const getPlaceholder = () => {
     const placeholders = {
       english: "Search nodes in graph...",
       french: "Rechercher des nœuds dans le graphe...",
-      arabic: "البحث عن العقد في الرسم البياني...",
-    }
-    return placeholders[language] || placeholders.english
-  }
+      arabic: "البحث عن العقد في الرسم البياني..."
+    };
+    return placeholders[language] || placeholders.english;
+  };
 
   const getButtonText = () => {
     const buttonTexts = {
       english: "Search",
       french: "Rechercher",
-      arabic: "بحث",
-    }
-    return buttonTexts[language] || buttonTexts.english
-  }
+      arabic: "بحث"
+    };
+    return buttonTexts[language] || buttonTexts.english;
+  };
 
   return (
     <div className="graph-search">
@@ -46,8 +44,7 @@ const GraphSearch = ({ onSearch, language = "english" }) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default GraphSearch
-
+export default GraphSearch;

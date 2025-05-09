@@ -1,34 +1,65 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useState, useEffect, useContext } from "react"
 
-const ThemeContext = createContext()
+// Create a context for theme management
+export const ThemeContext = createContext({
+  darkMode: false,
+  toggleDarkMode: () => {},
+})
 
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light")
+// Custom hook to use the theme context
+export const useTheme = () => useContext(ThemeContext)
 
+export const ThemeProvider = ({ children }) => {
+  // Initialize dark mode from localStorage or system preference
+  const [darkMode, setDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Effect to initialize dark mode from localStorage or system preference
   useEffect(() => {
-    // Check for saved theme preference or system preference
-    const savedTheme = localStorage.getItem("ict-dictionary-theme")
-    if (savedTheme) {
-      setTheme(savedTheme)
-    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark")
+    // Check if we're in the browser
+    if (typeof window !== "undefined") {
+      // Get stored preference or check system preference
+      const storedDarkMode = localStorage.getItem("darkMode")
+
+      if (storedDarkMode !== null) {
+        // Use stored preference if available
+        setDarkMode(storedDarkMode === "true")
+      } else {
+        // Otherwise check system preference
+        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+        setDarkMode(systemPrefersDark)
+        localStorage.setItem("darkMode", systemPrefersDark.toString())
+      }
+
+      setMounted(true)
     }
+  }, [])
 
-    // Apply theme to document
-    document.documentElement.setAttribute("data-theme", theme)
-  }, [theme])
+  // Effect to apply dark mode to the document
+  useEffect(() => {
+    if (mounted) {
+      // Apply dark mode class to the document body
+      if (darkMode) {
+        document.body.classList.add("dark")
+      } else {
+        document.body.classList.remove("dark")
+      }
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light"
-    setTheme(newTheme)
-    localStorage.setItem("ict-dictionary-theme", newTheme)
+      // Store preference in localStorage
+      localStorage.setItem("darkMode", darkMode.toString())
+
+      // Dispatch an event for any non-React components
+      window.dispatchEvent(new Event("darkModeChanged"))
+    }
+  }, [darkMode, mounted])
+
+  // Toggle dark mode function
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode)
   }
 
-  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
-}
-
-export function useTheme() {
-  return useContext(ThemeContext)
+  // Provide the theme context to children
+  return <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>{children}</ThemeContext.Provider>
 }

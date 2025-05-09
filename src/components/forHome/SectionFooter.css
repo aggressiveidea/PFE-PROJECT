@@ -1,0 +1,100 @@
+.section-footer {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.section-arrow-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: inherit;
+}
+
+.section-arrow-button:hover {
+  transform: translateY(5px);
+  color: #9333ea;
+}
+
+.section-arrow-button:focus-visible {
+  outline: 2px solid #9333ea;
+  outline-offset: 2px;
+}
+
+.section-arrow-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.section-arrow-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1));
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: section-bounce 2s infinite;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section-arrow-button:hover .section-arrow-icon {
+  background: linear-gradient(90deg, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2));
+  box-shadow: 0 6px 16px rgba(147, 51, 234, 0.2);
+}
+
+@keyframes section-bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Make sure sections have position relative for absolute positioning of the footer */
+#home,
+#features,
+#knowledge-graph,
+#popular-terms {
+  position: relative;
+  padding-bottom: 100px; /* Add padding to make room for the arrow */
+}
+
+/* Dark mode support */
+.home-page-dark .section-arrow-icon {
+  background: linear-gradient(90deg, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.home-page-dark .section-arrow-button:hover .section-arrow-icon {
+  background: linear-gradient(90deg, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.3));
+  box-shadow: 0 6px 16px rgba(147, 51, 234, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-footer {
+    bottom: 20px;
+  }
+}

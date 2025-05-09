@@ -295,24 +295,26 @@ export default function PersonalInfo() {
     switch (role.toLowerCase()) {
       case "admin":
       case "super-admin":
-        return "badge-admin"
+        return "profileinfos-badge-admin"
       case "ict-expert":
-        return "badge-expert"
+        return "profileinfos-badge-expert"
       case "content-admin":
-        return "badge-content"
+        return "profileinfos-badge-content"
       default:
-        return "badge-user"
+        return "profileinfos-badge-user"
     }
   }
 
   return (
-    <div className={`app-container ${darkMode ? "dark" : ""} ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-      <div className="header-wrapper">
+    <div
+      className={`profileinfos-app-container ${darkMode ? "dark" : ""} ${sidebarCollapsed ? "profileinfos-sidebar-collapsed" : ""}`}
+    >
+      <div className="profileinfos-header-wrapper">
         <Header language={language} setLanguage={setLanguage} />
       </div>
 
-      <div className="content-wrapper">
-        <div className={`sidebar-wrapper ${mobileOpen ? "mobile-open" : ""}`}>
+      <div className="profileinfos-content-wrapper">
+        <div className={`profileinfos-sidebar-wrapper ${mobileOpen ? "profileinfos-mobile-open" : ""}`}>
           <Sidebar
             collapsed={sidebarCollapsed}
             toggleSidebar={toggleSidebar}
@@ -322,8 +324,8 @@ export default function PersonalInfo() {
           />
         </div>
 
-        <div className="main-content">
-          <button className="mobile-menu-button" onClick={openMobileMenu}>
+        <div className="profileinfos-main-content">
+          <button className="profileinfos-mobile-menu-button" onClick={openMobileMenu}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -341,37 +343,37 @@ export default function PersonalInfo() {
             </svg>
           </button>
 
-          <div className="personal-info-container">
-            <div className="feature-badge">Personal Profile</div>
-            <div className="personal-info-header">
+          <div className="profileinfos-personal-info-container">
+            <div className="profileinfos-feature-badge">Personal Profile</div>
+            <div className="profileinfos-personal-info-header">
               <h1>Personal Information</h1>
               <p>View and manage your profile information</p>
             </div>
 
             {loading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
+              <div className="profileinfos-loading-container">
+                <div className="profileinfos-loading-spinner"></div>
                 <p>Loading profile data...</p>
               </div>
             ) : error ? (
-              <div className="error-container">
+              <div className="profileinfos-error-container">
                 <p>{error}</p>
                 <button onClick={() => window.location.reload()}>Try Again</button>
               </div>
             ) : (
-              <div className="personal-info-content">
-                <div className="profile-card">
-                  <div className="profile-banner">
-                    <div className="banner-overlay"></div>
+              <div className="profileinfos-personal-info-content">
+                <div className="profileinfos-profile-card">
+                  <div className="profileinfos-profile-banner">
+                    <div className="profileinfos-banner-overlay"></div>
                   </div>
 
-                  <div className="profile-main">
-                    <div className="profile-image-container">
-                      <div className="profile-image">
+                  <div className="profileinfos-profile-main">
+                    <div className="profileinfos-profile-image-container">
+                      <div className="profileinfos-profile-image">
                         <img
                           src={isEditing ? previewImage || editedUser.profileImgUrl : user.profileImgUrl}
                           alt="Profile"
-                          className="profile-img"
+                          className="profileinfos-profile-img"
                           onError={(e) => {
                             e.target.onerror = null
                             e.target.src = "/placeholder.svg?height=200&width=200"
@@ -379,7 +381,7 @@ export default function PersonalInfo() {
                         />
                         {isEditing && (
                           <>
-                            <label htmlFor="profile-upload" className="profile-upload-label">
+                            <label htmlFor="profile-upload" className="profileinfos-profile-upload-label">
                               <Camera size={20} />
                               <span>Change</span>
                             </label>
@@ -388,37 +390,37 @@ export default function PersonalInfo() {
                               id="profile-upload"
                               accept="image/*"
                               onChange={handleImageChange}
-                              className="profile-upload-input"
+                              className="profileinfos-profile-upload-input"
                             />
                           </>
                         )}
                       </div>
                     </div>
 
-                    <div className="profile-info">
-                      <div className="profile-title">
+                    <div className="profileinfos-profile-info">
+                      <div className="profileinfos-profile-title">
                         <h2>
                           {user.firstName} {user.lastName}
                         </h2>
-                        <div className={`role-badge ${getRoleBadgeClass(user.role)}`}>
+                        <div className={`profileinfos-role-badge ${getRoleBadgeClass(user.role)}`}>
                           <Shield size={14} />
                           <span>{user.role}</span>
                         </div>
                       </div>
 
-                      <div className="profile-actions">
+                      <div className="profileinfos-profile-actions">
                         {!isEditing ? (
-                          <button className="edit-button" onClick={() => setIsEditing(true)}>
+                          <button className="profileinfos-edit-button" onClick={() => setIsEditing(true)}>
                             <Edit2 size={18} />
                             <span>Edit Profile</span>
                           </button>
                         ) : (
-                          <div className="edit-actions">
-                            <button className="save-button" onClick={handleSave} disabled={updateLoading}>
+                          <div className="profileinfos-edit-actions">
+                            <button className="profileinfos-save-button" onClick={handleSave} disabled={updateLoading}>
                               <Save size={18} />
                               <span>{updateLoading ? "Saving..." : "Save Changes"}</span>
                             </button>
-                            <button className="cancel-button" onClick={handleCancel}>
+                            <button className="profileinfos-cancel-button" onClick={handleCancel}>
                               <X size={18} />
                               <span>Cancel</span>
                             </button>
@@ -428,14 +430,14 @@ export default function PersonalInfo() {
                     </div>
                   </div>
 
-                  <div className="profile-body">
-                    <div className="info-section">
+                  <div className="profileinfos-profile-body">
+                    <div className="profileinfos-info-section">
                       <h3>
                         <User size={18} />
                         <span>Basic Information</span>
                       </h3>
-                      <div className="info-grid">
-                        <div className="info-item">
+                      <div className="profileinfos-info-grid">
+                        <div className="profileinfos-info-item">
                           <label>First Name</label>
                           {isEditing ? (
                             <input
@@ -443,13 +445,13 @@ export default function PersonalInfo() {
                               name="firstName"
                               value={editedUser.firstName}
                               onChange={handleInputChange}
-                              className="input-field"
+                              className="profileinfos-input-field"
                             />
                           ) : (
                             <p>{user.firstName}</p>
                           )}
                         </div>
-                        <div className="info-item">
+                        <div className="profileinfos-info-item">
                           <label>Last Name</label>
                           {isEditing ? (
                             <input
@@ -457,13 +459,13 @@ export default function PersonalInfo() {
                               name="lastName"
                               value={editedUser.lastName}
                               onChange={handleInputChange}
-                              className="input-field"
+                              className="profileinfos-input-field"
                             />
                           ) : (
                             <p>{user.lastName}</p>
                           )}
                         </div>
-                        <div className="info-item full-width">
+                        <div className="profileinfos-info-item profileinfos-full-width">
                           <label>
                             <Mail size={16} className="icon" />
                             <span>Email Address</span>
@@ -474,7 +476,7 @@ export default function PersonalInfo() {
                               name="email"
                               value={editedUser.email}
                               onChange={handleInputChange}
-                              className="input-field"
+                              className="profileinfos-input-field"
                               disabled // Email should typically not be editable
                             />
                           ) : (
@@ -484,12 +486,12 @@ export default function PersonalInfo() {
                       </div>
                     </div>
 
-                    <div className="info-section">
+                    <div className="profileinfos-info-section">
                       <h3>
                         <FileText size={18} />
                         <span>About</span>
                       </h3>
-                      <div className="info-item full-width">
+                      <div className="profileinfos-info-item profileinfos-full-width">
                         <label>Bio</label>
                         {isEditing ? (
                           <textarea
@@ -497,11 +499,11 @@ export default function PersonalInfo() {
                             value={editedUser.userBio || ""}
                             onChange={handleInputChange}
                             rows="4"
-                            className="textarea-field"
+                            className="profileinfos-textarea-field"
                             placeholder="Tell us about yourself..."
                           ></textarea>
                         ) : (
-                          <p className="user-bio">{user.userBio || "No bio provided yet."}</p>
+                          <p className="profileinfos-user-bio">{user.userBio || "No bio provided yet."}</p>
                         )}
                       </div>
                     </div>
@@ -513,12 +515,13 @@ export default function PersonalInfo() {
         </div>
       </div>
 
-      <div className="footer-wrapper">
+      <div className="profileinfos-footer-wrapper">
         <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
       </div>
     </div>
   )
 }
+
 
 
 

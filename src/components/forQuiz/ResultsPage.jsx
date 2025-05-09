@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Trophy, Share2, Home, Repeat, Award } from "lucide-react"
+import { Trophy, Share2, Home, Repeat, CheckCircle, XCircle, Activity } from "lucide-react"
 import "./ResultsPage.css"
 
 const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
@@ -10,8 +10,14 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
   const navigate = useNavigate()
   const totalQuestions = 5
   const percentage = (Number.parseInt(score) / totalQuestions) * 100
+  const scoreBarRef = useRef(null)
 
   useEffect(() => {
+    // Set the score percentage as a CSS variable for the animation
+    if (scoreBarRef.current) {
+      scoreBarRef.current.style.setProperty("--score-percentage", `${percentage}%`)
+    }
+
     // Update quiz stats
     setQuizStats((prevStats) => {
       const newTotalQuizzes = prevStats.totalQuizzes + 1
@@ -50,42 +56,33 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
   }, [level, percentage, score, setQuizStats, updateCardPerformance])
 
   let message = ""
-  let color = ""
   let subMessage = ""
+  let trophyColor = ""
 
-  // Determine color based on score
+  // Determine color and messages based on score
   if (percentage >= 80) {
-    color = "#10b981" // green
-  } else if (percentage >= 60) {
-    color = "#8b5cf6" // purple
-  } else if (percentage >= 40) {
-    color = "#f59e0b" // orange
-  } else {
-    color = "#ef4444" // red
-  }
-
-  // Create personalized message based on score and difficulty level
-  if (percentage === 100) {
+    trophyColor = "var(--color-easy)"
     message = "Perfect Score! Outstanding!"
 
-    if (level === "easy") {
-      subMessage = "You've mastered the basics. Ready to try Medium difficulty?"
-    } else if (level === "medium") {
-      subMessage = "You've conquered intermediate concepts. Challenge yourself with Hard difficulty!"
+    if (percentage === 100) {
+      if (level === "easy") {
+        subMessage = "You've mastered the basics. Ready to try Medium difficulty?"
+      } else if (level === "medium") {
+        subMessage = "You've conquered intermediate concepts. Challenge yourself with Hard difficulty!"
+      } else {
+        subMessage = "You've mastered even the most complex ICT concepts. Impressive!"
+      }
     } else {
-      subMessage = "You've mastered even the most complex ICT concepts. Impressive!"
-    }
-  } else if (percentage >= 80) {
-    message = "Excellent Performance!"
-
-    if (level === "easy") {
-      subMessage = "You have a strong grasp of ICT fundamentals."
-    } else if (level === "medium") {
-      subMessage = "You have impressive knowledge of practical ICT applications."
-    } else {
-      subMessage = "You demonstrate advanced understanding of complex ICT systems."
+      if (level === "easy") {
+        subMessage = "You have a strong grasp of ICT fundamentals."
+      } else if (level === "medium") {
+        subMessage = "You have impressive knowledge of practical ICT applications."
+      } else {
+        subMessage = "You demonstrate advanced understanding of complex ICT systems."
+      }
     }
   } else if (percentage >= 60) {
+    trophyColor = "var(--color-primary)"
     message = "Good Effort!"
 
     if (level === "easy") {
@@ -96,6 +93,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       subMessage = "You're making progress with advanced ICT concepts."
     }
   } else if (percentage >= 40) {
+    trophyColor = "var(--color-medium)"
     message = "Nice Try!"
 
     if (level === "easy") {
@@ -106,6 +104,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       subMessage = "Advanced topics can be challenging. Keep studying!"
     }
   } else {
+    trophyColor = "var(--color-hard)"
     message = "Keep Learning!"
 
     if (level === "easy") {
@@ -168,30 +167,30 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
         </div>
 
         <div className="trophy-container">
-          <div className="trophy-icon" style={{ backgroundColor: color }}>
-            <Trophy size={32} />
+          <div className="trophy-icon" style={{ backgroundColor: trophyColor }}>
+            <Trophy size={36} />
           </div>
         </div>
 
         <h2 className="score-title">
           Your Score:{" "}
-          <span style={{ color }}>
+          <span style={{ color: trophyColor }}>
             {score}/{totalQuestions}
           </span>
         </h2>
 
         <div className="score-bar-container">
           <div
+            ref={scoreBarRef}
             className="score-bar-fill"
             style={{
-              width: `${percentage}%`,
-              backgroundColor: color,
+              backgroundColor: trophyColor,
             }}
           ></div>
         </div>
 
         <div className="score-message-container">
-          <p className="score-message" style={{ color }}>
+          <p className="score-message" style={{ color: trophyColor }}>
             {message}
           </p>
           <p className="score-submessage">{subMessage}</p>
@@ -200,7 +199,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
         <div className="score-details">
           <div className="score-detail-item">
             <div className="detail-icon correct">
-              <Award size={20} />
+              <CheckCircle size={24} />
             </div>
             <h3>Correct Answers</h3>
             <p className="correct-count">{score}</p>
@@ -208,20 +207,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
 
           <div className="score-detail-item">
             <div className="detail-icon incorrect">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <XCircle size={24} />
             </div>
             <h3>Incorrect Answers</h3>
             <p className="incorrect-count">{totalQuestions - Number.parseInt(score)}</p>
@@ -229,39 +215,27 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
 
           <div className="score-detail-item">
             <div className="detail-icon accuracy">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-              </svg>
+              <Activity size={24} />
             </div>
             <h3>Accuracy</h3>
             <p className="accuracy">{percentage}%</p>
           </div>
         </div>
 
-        <div className="results-actions">
-          <button className="action-button back-button" onClick={handleGoHome}>
+        <div className="resultQuiz-actions">
+          <button className="resultQuiz-button resultQuiz-back-button" onClick={handleGoHome}>
             <Home size={18} />
-            Back to Quiz
+            <span>Back to Quiz</span>
           </button>
 
-          <button className="action-button retry-button" onClick={handleRetryQuiz}>
+          <button className="resultQuiz-button resultQuiz-retry-button" onClick={handleRetryQuiz}>
             <Repeat size={18} />
-            Try Again
+            <span>Try Again</span>
           </button>
 
-          <button className="action-button share-button" onClick={handleShareResults}>
+          <button className="resultQuiz-button resultQuiz-share-button" onClick={handleShareResults}>
             <Share2 size={18} />
-            Share Results
+            <span>Share Results</span>
           </button>
         </div>
       </div>
@@ -274,6 +248,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
           <li>ICT tutorials on YouTube</li>
           <li>Practice with different difficulty levels</li>
           <li>Join ICT forums and communities</li>
+          <li>Read technology blogs and news to stay updated</li>
         </ul>
       </div>
     </div>
@@ -281,6 +256,3 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
 }
 
 export default ResultsPage
-
-
-

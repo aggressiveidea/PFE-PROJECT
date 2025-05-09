@@ -1,4 +1,178 @@
 import axios from "axios"
+
+// API service for graph data
+
+// Fetch the complete graph data with pagination
+export const fetchGraphData = async (limit = 100) => {
+  try {
+    let allNodes = [];
+    let allRelationships = [];
+    let offset = 0;
+    let hasMore = true;
+    
+    console.log("Starting to fetch all graph data with pagination...");
+    
+    // Continue fetching until we have all data
+    while (hasMore) {
+      console.log(`Fetching data batch with offset ${offset}, limit ${limit}...`);
+      
+      const response = await fetch(`http://localhost:3001/api/graph?limit=${limit}&offset=${offset}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch graph data: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data || !data.nodes) {
+        console.error("Invalid data format received:", data);
+        break;
+      }
+      
+      console.log(`Received ${data.nodes.length} nodes and ${data.relationships?.length || 0} relationships`);
+      
+      // Add this batch to our collections
+      allNodes = [...allNodes, ...data.nodes];
+      allRelationships = [...allRelationships, ...(data.relationships || [])];
+      
+      // Check if there's more data to fetch
+      hasMore = data.metadata?.hasMore || false;
+      
+      // Update offset for next batch
+      offset += limit;
+      
+      // Safety check to prevent infinite loops
+      if (allNodes.length >= (data.metadata?.totalCount || 0)) {
+        hasMore = false;
+      }
+      
+      // Optional: Add a small delay to prevent overwhelming the server
+      if (hasMore) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    }
+    
+    console.log(`Completed fetching all data: ${allNodes.length} nodes, ${allRelationships.length} relationships`);
+    
+    return {
+      nodes: allNodes,
+      relationships: allRelationships,
+      totalCount: allNodes.length
+    };
+  } catch (error) {
+    console.error("Error fetching graph data:", error);
+    throw error;
+  }
+};
+
+// Search for nodes by term
+export const searchGraphByTerm = async (termName, depth = 2) => {
+  try {
+    if (!termName) {
+      console.error("Missing term name parameter");
+      return { nodes: [], edges: [] };
+    }
+
+    const url = new URL("http://localhost:3001/api/search/graph");
+    url.searchParams.append("term", termName);
+    url.searchParams.append("depth", depth.toString());
+
+    console.log("Fetching from:", url.toString());
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Graph search API error:", response.status, response.statusText);
+      throw new Error("Failed to perform graph search");
+    }
+
+    const data = await response.json();
+
+    // Check if the response has the expected format
+    if (!data) {
+      console.error("Invalid graph search response format:", data);
+      return { nodes: [], edges: [] };
+    }
+
+    return {
+      nodes: data.nodes || [],
+      edges: data.links || data.relationships || [],
+    };
+  } catch (error) {
+    console.error("Error in graph search:", error);
+    // Return empty graph data instead of throwing to prevent UI crashes
+    return { nodes: [], edges: [] };
+  }
+};
+
+// Expand a node to show its connections
+export const expandNode = async (nodeId, depth = 1) => {
+  try {
+    if (!nodeId) {
+      console.error("Missing node ID parameter");
+      return { nodes: [], edges: [] };
+    }
+
+    const response = await fetch(`http://localhost:3001/api/graph/expand/${nodeId}?depth=${depth}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Node expansion API error:", response.status, response.statusText);
+      throw new Error("Failed to expand node");
+    }
+
+    const data = await response.json();
+
+    return {
+      nodes: data.nodes || [],
+      edges: data.relationships || data.links || [],
+    };
+  } catch (error) {
+    console.error("Error expanding node:", error);
+    return { nodes: [], edges: [] };
+  }
+};
+
+// Get node details
+export const getNodeDetails = async (nodeId) => {
+  try {
+    if (!nodeId) {
+      console.error("Missing node ID parameter");
+      return null;
+    }
+
+    const response = await fetch(`http://localhost:3001/api/graph/node/${nodeId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Node details API error:", response.status, response.statusText);
+      throw new Error("Failed to get node details");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching node details:", error);
+    return null;
+  }
+};
 export const registerUser = async (userData) => {
   try {
     const response = await fetch("http://localhost:5000/auth/register", {
@@ -83,13 +257,13 @@ export const getAllUsers = async () => {
 export const getUserById = async (userId) => {
   try {
     // Get auth token from localStorage
-    console.log("userId to fetch:", userId);
+    console.log("userId to fetch:", userId)
 
     const authData = JSON.parse(localStorage.getItem("authData") || "{}")
     const token = authData.token
 
-       console.log("userrrrrr", authData);
-       console.log("user", token);
+    console.log("userrrrrr", authData)
+    console.log("user", token)
     const headers = {
       "Content-Type": "application/json",
     }
@@ -257,8 +431,7 @@ export const resendVerificationEmail = async (email) => {
 }
 
 export const getallarticles = async (index) => {
-  try
-  {
+  try {
     console.log("index", index)
     const response = await fetch(`http://localhost:5000/articles/index?index=${index}`, {
       method: "GET",
@@ -366,7 +539,7 @@ export const getarticlbBylang = async (language) => {
 export const addArticle = async (data) => {
   try {
     const token = localStorage.getItem("token")
-    console.log('verified',data) // Debugging
+    console.log("verified", data) // Debugging
 
     const response = await fetch("http://localhost:5000/articles/", {
       method: "POST",
@@ -377,15 +550,14 @@ export const addArticle = async (data) => {
       body: JSON.stringify(data), // Sending FormData
     })
 
-    console.log("idj whayyy",response)
+    console.log("idj whayyy", response)
     if (!response.ok) {
       throw new Error("Failed to add article")
     }
 
-    const res = await response.json();
-    console.log("the fetching answer",res)
-    return res.data;
-
+    const res = await response.json()
+    console.log("the fetching answer", res)
+    return res.data
   } catch (error) {
     console.error("❌ Error adding article:", error)
     throw error
@@ -609,10 +781,8 @@ export const submitExpertApplication = async (applicationData) => {
   }
 }
 
-
 export const classicSearch = async (query, page = 1, limit = 8) => {
   try {
-
     const url = new URL("http://localhost:3001/api/search/classic")
 
     if (query) url.searchParams.append("query", query)
@@ -1076,7 +1246,7 @@ export const getFallbackQuestions = (level) => {
 }
 //hadi for books les loulous
 
-const API_BASE_URL = "http://localhost:5000" 
+const API_BASE_URL = "http://localhost:5000"
 
 // Get all books
 export const getBooks = async () => {
@@ -1219,8 +1389,6 @@ export const resetPassword = async (userId, password) => {
     console.error("Error resetting password:", error)
     throw error
   }
-
-  
 }
 
 export const toparticles = async () => {
@@ -1230,19 +1398,19 @@ export const toparticles = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to bring article");
+      throw new Error("Failed to bring article")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error in article :", error);
-    throw error;
+    console.error("Error in article :", error)
+    throw error
   }
-};
+}
 export const topauthors = async () => {
   try {
     const response = await fetch(`http://localhost:5000/user/author`, {
@@ -1250,82 +1418,81 @@ export const topauthors = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to bring users");
+      throw new Error("Failed to bring users")
     }
 
-    const res = await response.json();
-    return res.data;
+    const res = await response.json()
+    return res.data
   } catch (error) {
-    console.error("Error in article :", error);
-    throw error;
+    console.error("Error in article :", error)
+    throw error
   }
-};
+}
 
 export const GetAllMessages = async (id) => {
   try {
-    console.log("id ", id);
+    console.log("id ", id)
     const response = await fetch(`http://localhost:5000/chat/article/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to fetch all messages");
+      throw new Error("Failed to fetch all messages")
     }
 
     // Parse the JSON body
-    const result = await response.json();
-    console.log("Parsed response:", result);
+    const result = await response.json()
+    console.log("Parsed response:", result)
 
     // Check if the response has the expected structure
     if (result.success && Array.isArray(result.data)) {
-      console.log("Messages array:", result.data);
-      return result.data;
+      console.log("Messages array:", result.data)
+      return result.data
     } else {
-      console.error("Unexpected response format:", result);
-      return [];
+      console.error("Unexpected response format:", result)
+      return []
     }
   } catch (error) {
-    console.error("Error fetching messages:", error);
-    throw error;
+    console.error("Error fetching messages:", error)
+    throw error
   }
-};
+}
 
-// First, let's fix the sendMessage function:
 export const sendMessage = async (id, data) => {
   try {
-    console.log("Sending message for article:", id);
+    console.log("Sending message for article:", id)
     const response = await fetch(`http://localhost:5000/chat/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`Failed to send message: ${response.status}`);
+      throw new Error(`Failed to send message: ${response.status}`)
     }
 
-    // Parse the JSON body
-    const result = await response.json();
-    console.log("Message sent successfully:", result);
+    const result = await response.json()
+    console.log("Message sent successfully:", result)
 
     if (result && result.success && result.data) {
-      return result;
+      return result
     } else {
-      console.error("Unexpected response format:", result);
-      throw new Error("Invalid response format");
+      console.error("Unexpected response format:", result)
+      throw new Error("Invalid response format")
     }
   } catch (error) {
-    console.error("Error sending message:", error);
-    throw error;
+    console.error("Error sending message:", error)
+    throw error
   }
+<<<<<<< Updated upstream
 };
 
 export const getUnverifiedMessages = async () => {
@@ -1354,10 +1521,17 @@ export const getUnverifiedMessages = async () => {
 export const GetMessageById = async (id) => {
   try {
     const response = await fetch(`http://localhost:5000/chat/message/${id}`, {
+=======
+}
+export const DisplayGraph = async () => {
+  try {
+    const response = await fetch("http://localhost:3001/api/terms/all", {
+>>>>>>> Stashed changes
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+<<<<<<< Updated upstream
     });
 
     if (!response.ok) throw new Error("Failed to fetch message");
@@ -1609,3 +1783,17 @@ export const getownerswritng = async ( id ) =>
 {
 
 }
+=======
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch all terms")
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error fetching terms:", error)
+    throw error
+  }
+}
+>>>>>>> Stashed changes

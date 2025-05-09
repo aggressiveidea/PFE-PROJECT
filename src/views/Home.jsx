@@ -8,23 +8,96 @@ import KnowledgeGraph from "../components/forHome/KnowledgeGraph"
 import PopularTerms from "../components/forHome/PopularTerms"
 import BecomeExpert from "../components/forHome/become-expert"
 import Footer from "../components/forHome/Footer"
-import "./global.css"
+import { useTheme } from "../context/theme-context"
+import "../components/darkMode.css"
+import "./Home.css"
 
 export default function Home() {
-  const [darkMode, setDarkMode] = useState(false)
+  const { darkMode } = useTheme()
   const [language, setLanguage] = useState("en")
+  const [activeSection, setActiveSection] = useState("home")
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark")
-    } else {
-      document.body.classList.remove("dark")
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight / 3
+      const totalHeight = document.body.scrollHeight - window.innerHeight
+      const progress = (window.scrollY / totalHeight) * 100
+      setScrollProgress(progress)
+
+      // Get all sections
+      const sections = [
+        document.getElementById("home"),
+        document.getElementById("features"),
+        document.getElementById("knowledge-graph"),
+        document.getElementById("popular-terms"),
+        document.getElementById("become-expert"),
+      ]
+
+      // Find the current active section
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i]
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(section.id)
+          break
+        }
+      }
     }
-  }, [darkMode])
+
+    window.addEventListener("scroll", handleScroll)
+    handleScroll() // Call once on mount to set initial state
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Function to handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Define all navigable sections in order
+      const sections = ["home", "features", "knowledge-graph", "popular-terms", "become-expert"]
+
+      const currentIndex = sections.indexOf(activeSection)
+
+      if (e.key === "ArrowDown" && currentIndex < sections.length - 1) {
+        // Navigate to next section
+        const nextSection = document.getElementById(sections[currentIndex + 1])
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: "smooth" })
+          e.preventDefault()
+        }
+      } else if (e.key === "ArrowUp" && currentIndex > 0) {
+        // Navigate to previous section
+        const prevSection = document.getElementById(sections[currentIndex - 1])
+        if (prevSection) {
+          prevSection.scrollIntoView({ behavior: "smooth" })
+          e.preventDefault()
+        }
+      } else if (e.key === "Home") {
+        // Navigate to first section
+        const firstSection = document.getElementById(sections[0])
+        if (firstSection) {
+          firstSection.scrollIntoView({ behavior: "smooth" })
+          e.preventDefault()
+        }
+      } else if (e.key === "End") {
+        // Navigate to last section
+        const lastSection = document.getElementById(sections[sections.length - 1])
+        if (lastSection) {
+          lastSection.scrollIntoView({ behavior: "smooth" })
+          e.preventDefault()
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [activeSection])
 
   return (
-    <div className={`app-container ${darkMode ? "dark" : "light"}`}>
-      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
+    <div className={`home-page-app-container ${darkMode ? "home-page-dark" : "home-page-light"}`}>
+      {/* Progress indicator */}
+      <div className="home-progress-indicator" style={{ width: `${scrollProgress}%` }}></div>
+
+      <Header language={language} setLanguage={setLanguage} activeSection={activeSection} />
       <main>
         <Hero language={language} />
         <Features language={language} />
@@ -32,7 +105,7 @@ export default function Home() {
         <PopularTerms language={language} />
         <BecomeExpert language={language} />
       </main>
-      <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+      <Footer language={language} />
     </div>
   )
 }

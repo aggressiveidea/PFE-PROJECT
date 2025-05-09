@@ -1,93 +1,93 @@
 /* Base styles */
 :root {
-  --settings-primary-color: #614ad3;
-  --settings-primary-light: #9b87f5;
-  --settings-primary-dark: #4a3ba3;
-  --settings-bg-color: #f8f9fc;
-  --settings-bg-pattern-color: rgba(229, 222, 255, 0.5);
-  --settings-text-color: #1f2937;
-  --settings-text-muted: #6b7280;
-  --settings-border-color: #e5e7eb;
-  --settings-shadow-color: rgba(97, 74, 211, 0.15);
-  --settings-shadow-sm: 0 2px 8px rgba(97, 74, 211, 0.1);
-  --settings-header-height: 60px;
-  --settings-sidebar-width: 250px;
-  --settings-sidebar-collapsed-width: 80px;
-  --settings-transition-speed: 0.3s ease;
-  --settings-danger-color: #ef4444;
-  --settings-danger-hover: #dc2626;
-  --settings-success-color: #10b981;
-  --settings-success-hover: #059669;
-  --settings-warning-color: #f59e0b;
-  --settings-warning-hover: #d97706;
+  --settingsPage-primary-color: #614ad3;
+  --settingsPage-primary-light: #9b87f5;
+  --settingsPage-primary-dark: #4a3ba3;
+  --settingsPage-bg-color: #f8f9fc;
+  --settingsPage-bg-pattern-color: rgba(229, 222, 255, 0.5);
+  --settingsPage-text-color: #1f2937;
+  --settingsPage-text-muted: #6b7280;
+  --settingsPage-border-color: #e5e7eb;
+  --settingsPage-shadow-color: rgba(97, 74, 211, 0.15);
+  --settingsPage-shadow-sm: 0 2px 8px rgba(97, 74, 211, 0.1);
+  --settingsPage-header-height: 60px;
+  --settingsPage-sidebar-width: 250px;
+  --settingsPage-sidebar-collapsed-width: 80px;
+  --settingsPage-transition-speed: 0.3s ease;
+  --settingsPage-danger-color: #ef4444;
+  --settingsPage-danger-hover: #dc2626;
+  --settingsPage-success-color: #10b981;
+  --settingsPage-success-hover: #059669;
+  --settingsPage-warning-color: #f59e0b;
+  --settingsPage-warning-hover: #d97706;
 }
 
 /* Dark mode variables */
-.dark-mode {
-  --settings-primary-color: #8b5cf6;
-  --settings-primary-light: #a78bfa;
-  --settings-primary-dark: #7c3aed;
-  --settings-bg-color: #13111f;
-  --settings-bg-pattern-color: rgba(155, 135, 245, 0.1);
-  --settings-text-color: #f9fafb;
-  --settings-text-muted: rgba(255, 255, 255, 0.7);
-  --settings-border-color: #313244;
-  --settings-shadow-color: rgba(0, 0, 0, 0.3);
-  --settings-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --settings-danger-color: #f87171;
-  --settings-danger-hover: #ef4444;
-  --settings-success-color: #34d399;
-  --settings-success-hover: #10b981;
-  --settings-warning-color: #fbbf24;
-  --settings-warning-hover: #f59e0b;
+.settingsPage-dark-mode {
+  --settingsPage-primary-color: #8b5cf6;
+  --settingsPage-primary-light: #a78bfa;
+  --settingsPage-primary-dark: #7c3aed;
+  --settingsPage-bg-color: #13111f;
+  --settingsPage-bg-pattern-color: rgba(155, 135, 245, 0.1);
+  --settingsPage-text-color: #f9fafb;
+  --settingsPage-text-muted: rgba(255, 255, 255, 0.7);
+  --settingsPage-border-color: #313244;
+  --settingsPage-shadow-color: rgba(0, 0, 0, 0.3);
+  --settingsPage-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --settingsPage-danger-color: #f87171;
+  --settingsPage-danger-hover: #ef4444;
+  --settingsPage-success-color: #34d399;
+  --settingsPage-success-hover: #10b981;
+  --settingsPage-warning-color: #fbbf24;
+  --settingsPage-warning-hover: #f59e0b;
 }
 
 /* Page layout */
-.settings-page {
+.settingsPage-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--settings-bg-color);
-  background-image: radial-gradient(var(--settings-bg-pattern-color) 0.5px, transparent 0.5px),
-    radial-gradient(var(--settings-bg-pattern-color) 0.5px, var(--settings-bg-color) 0.5px);
+  background-color: var(--settingsPage-bg-color);
+  background-image: radial-gradient(var(--settingsPage-bg-pattern-color) 0.5px, transparent 0.5px),
+    radial-gradient(var(--settingsPage-bg-pattern-color) 0.5px, var(--settingsPage-bg-color) 0.5px);
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px;
-  transition: background-color var(--settings-transition-speed);
+  transition: background-color var(--settingsPage-transition-speed);
 }
 
-.settings-content {
+.settingsPage-content {
   display: flex;
   flex: 1;
   width: 100%;
-  padding-top: var(--settings-header-height); /* Match the header height to prevent overlap */
+  padding-top: var(--settingsPage-header-height); /* Match the header height to prevent overlap */
 }
 
-.settings-main {
+.settingsPage-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
-  transition: all var(--settings-transition-speed);
-  margin-left: var(--settings-sidebar-width); /* Match the sidebar width */
+  transition: all var(--settingsPage-transition-speed);
+  margin-left: var(--settingsPage-sidebar-width); /* Match the sidebar width */
 }
 
-.settings-main.sidebar-collapsed {
-  margin-left: var(--settings-sidebar-collapsed-width); /* Match the collapsed sidebar width */
+.settingsPage-main.settingsPage-sidebar-collapsed {
+  margin-left: var(--settingsPage-sidebar-collapsed-width); /* Match the collapsed sidebar width */
 }
 
-.settings-title {
+.settingsPage-title {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: var(--settings-primary-color);
+  color: var(--settingsPage-primary-color);
   text-align: center;
-  text-shadow: 0 2px 10px var(--settings-shadow-color);
+  text-shadow: 0 2px 10px var(--settingsPage-shadow-color);
   position: relative;
-  transition: font-size var(--settings-transition-speed), color var(--settings-transition-speed);
+  transition: font-size var(--settingsPage-transition-speed), color var(--settingsPage-transition-speed);
 }
 
-.settings-title::after {
+.settingsPage-title::after {
   content: "";
   position: absolute;
   bottom: -10px;
@@ -95,36 +95,36 @@
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, var(--settings-primary-light) 0%, var(--settings-primary-color) 100%);
+  background: linear-gradient(90deg, var(--settingsPage-primary-light) 0%, var(--settingsPage-primary-color) 100%);
   border-radius: 2px;
-  transition: background var(--settings-transition-speed);
+  transition: background var(--settingsPage-transition-speed);
 }
 
-.mobile-menu-button {
+.settingsPage-mobile-menu-button {
   display: none;
   position: fixed;
-  top: calc(var(--settings-header-height) + 20px);
+  top: calc(var(--settingsPage-header-height) + 20px);
   left: 20px;
   z-index: 100;
   background: none;
   border: none;
-  color: var(--settings-primary-color);
+  color: var(--settingsPage-primary-color);
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
-  transition: background-color var(--settings-transition-speed), color var(--settings-transition-speed);
+  transition: background-color var(--settingsPage-transition-speed), color var(--settingsPage-transition-speed);
 }
 
-.mobile-menu-button:hover {
+.settingsPage-mobile-menu-button:hover {
   background-color: rgba(97, 74, 211, 0.1);
 }
 
-.dark-mode .mobile-menu-button:hover {
+.settingsPage-dark-mode .settingsPage-mobile-menu-button:hover {
   background-color: rgba(155, 135, 245, 0.1);
 }
 
 /* Settings container */
-.settings-container {
+.settingsPage-container {
   width: 100%;
   max-width: 800px;
   display: flex;
@@ -133,7 +133,7 @@
 }
 
 /* Loading state */
-.settings-loading {
+.settingsPage-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,32 +142,32 @@
   gap: 1rem;
 }
 
-.spinner {
+.settingsPage-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(97, 74, 211, 0.1);
-  border-left-color: var(--settings-primary-color);
+  border-left-color: var(--settingsPage-primary-color);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: settingsPage-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes settingsPage-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
 /* Not logged in state */
-.settings-not-logged-in {
+.settingsPage-not-logged-in {
   text-align: center;
   padding: 3rem;
 }
 
-.settings-login-button {
+.settingsPage-login-button {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
-  background: var(--settings-primary-color);
+  background: var(--settingsPage-primary-color);
   color: white;
   border-radius: 0.5rem;
   text-decoration: none;
@@ -175,32 +175,32 @@
   transition: background-color 0.2s;
 }
 
-.settings-login-button:hover {
-  background: var(--settings-primary-dark);
+.settingsPage-login-button:hover {
+  background: var(--settingsPage-primary-dark);
 }
 
 /* Settings sections */
-.settings-section {
+.settingsPage-section {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--settings-shadow-color);
+  box-shadow: 0 4px 12px var(--settingsPage-shadow-color);
   overflow: hidden;
-  transition: background-color var(--settings-transition-speed), box-shadow var(--settings-transition-speed);
+  transition: background-color var(--settingsPage-transition-speed), box-shadow var(--settingsPage-transition-speed);
   margin-bottom: 2rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.settings-section:hover {
+.settingsPage-section:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 24px var(--settings-shadow-color);
+  box-shadow: 0 8px 24px var(--settingsPage-shadow-color);
 }
 
-.dark-mode .settings-section {
+.settingsPage-dark-mode .settingsPage-section {
   background: #1e1e2d;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.section-title {
+.settingsPage-section-title {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -208,26 +208,26 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--settings-text-color);
-  border-bottom: 1px solid var(--settings-border-color);
-  transition: color var(--settings-transition-speed), border-color var(--settings-transition-speed);
+  color: var(--settingsPage-text-color);
+  border-bottom: 1px solid var(--settingsPage-border-color);
+  transition: color var(--settingsPage-transition-speed), border-color var(--settingsPage-transition-speed);
   background: linear-gradient(to right, rgba(97, 74, 211, 0.05), transparent);
 }
 
-.dark-mode .section-title {
+.settingsPage-dark-mode .settingsPage-section-title {
   background: linear-gradient(to right, rgba(155, 135, 245, 0.05), transparent);
 }
 
-.section-title svg {
-  color: var(--settings-primary-color);
+.settingsPage-section-title svg {
+  color: var(--settingsPage-primary-color);
 }
 
-.section-title.danger svg {
-  color: var(--settings-danger-color);
+.settingsPage-section-title.settingsPage-danger svg {
+  color: var(--settingsPage-danger-color);
 }
 
 /* Profile section */
-.profile-info {
+.settingsPage-profile-info {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -235,53 +235,53 @@
 }
 
 @media (min-width: 640px) {
-  .profile-info {
+  .settingsPage-profile-info {
     flex-direction: row;
     align-items: flex-start;
   }
 }
 
-.profile-picture-container {
+.settingsPage-profile-picture-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
 
-.profile-picture {
+.settingsPage-profile-picture {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: var(--settings-primary-light);
+  background-color: var(--settingsPage-primary-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px var(--settings-shadow-color);
+  box-shadow: 0 4px 12px var(--settingsPage-shadow-color);
 }
 
-.profile-picture img {
+.settingsPage-profile-picture img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.profile-initials {
+.settingsPage-profile-initials {
   font-size: 2.5rem;
   font-weight: 700;
   color: white;
   text-transform: uppercase;
 }
 
-.profile-picture-actions {
+.settingsPage-profile-picture-actions {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
 }
 
-.upload-picture-button,
-.save-picture-button {
+.settingsPage-upload-picture-button,
+.settingsPage-save-picture-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,58 +294,58 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.upload-picture-button {
+.settingsPage-upload-picture-button {
   background-color: transparent;
-  border: 1px solid var(--settings-border-color);
-  color: var(--settings-text-color);
+  border: 1px solid var(--settingsPage-border-color);
+  color: var(--settingsPage-text-color);
 }
 
-.upload-picture-button:hover {
+.settingsPage-upload-picture-button:hover {
   background-color: rgba(97, 74, 211, 0.05);
-  border-color: var(--settings-primary-color);
+  border-color: var(--settingsPage-primary-color);
 }
 
-.save-picture-button {
-  background-color: var(--settings-primary-color);
+.settingsPage-save-picture-button {
+  background-color: var(--settingsPage-primary-color);
   border: none;
   color: white;
 }
 
-.save-picture-button:hover {
-  background-color: var(--settings-primary-dark);
+.settingsPage-save-picture-button:hover {
+  background-color: var(--settingsPage-primary-dark);
 }
 
-.hidden-file-input {
+.settingsPage-hidden-file-input {
   display: none;
 }
 
-.profile-details {
+.settingsPage-profile-details {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.profile-field {
+.settingsPage-profile-field {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.profile-field label {
+.settingsPage-profile-field label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
 }
 
-.profile-field p {
+.settingsPage-profile-field p {
   font-size: 1rem;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
   margin: 0;
 }
 
 /* Password change section */
-.password-form {
+.settingsPage-password-form {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -353,50 +353,50 @@
   position: relative;
 }
 
-.form-group {
+.settingsPage-form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.settingsPage-form-group label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
 }
 
-.password-input-container {
+.settingsPage-password-input-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.password-input-container input {
+.settingsPage-password-input-container input {
   width: 100%;
   padding: 0.75rem 1rem;
   padding-right: 2.5rem;
-  border: 1px solid var(--settings-border-color);
+  border: 1px solid var(--settingsPage-border-color);
   border-radius: 0.5rem;
   font-size: 1rem;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
   background-color: transparent;
   transition: border-color 0.2s, box-shadow 0.2s;
   transition: all 0.3s ease;
 }
 
-.password-input-container input:focus {
+.settingsPage-password-input-container input:focus {
   outline: none;
-  border-color: var(--settings-primary-color);
+  border-color: var(--settingsPage-primary-color);
   box-shadow: 0 0 0 3px rgba(97, 74, 211, 0.1);
   transform: translateY(-2px);
 }
 
-.toggle-password {
+.settingsPage-toggle-password {
   position: absolute;
   right: 0.75rem;
   background: none;
   border: none;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
   cursor: pointer;
   padding: 0.25rem;
   display: flex;
@@ -408,43 +408,43 @@
   height: 30px;
 }
 
-.toggle-password:hover {
-  color: var(--settings-primary-color);
+.settingsPage-toggle-password:hover {
+  color: var(--settingsPage-primary-color);
   background-color: rgba(97, 74, 211, 0.1);
   transform: rotate(15deg);
 }
 
-.password-error {
+.settingsPage-password-error {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
   background-color: rgba(239, 68, 68, 0.1);
   border-radius: 0.5rem;
-  color: var(--settings-danger-color);
+  color: var(--settingsPage-danger-color);
   font-size: 0.875rem;
-  animation: fadeIn 0.3s ease;
+  animation: settingsPage-fadeIn 0.3s ease;
   border-left: 4px solid;
   padding-left: 1rem;
-  border-left-color: var(--settings-danger-color);
+  border-left-color: var(--settingsPage-danger-color);
 }
 
-.password-success {
+.settingsPage-password-success {
   padding: 0.75rem 1rem;
   background-color: rgba(16, 185, 129, 0.1);
   border-radius: 0.5rem;
-  color: var(--settings-success-color);
+  color: var(--settingsPage-success-color);
   font-size: 0.875rem;
-  animation: fadeIn 0.3s ease;
+  animation: settingsPage-fadeIn 0.3s ease;
   border-left: 4px solid;
   padding-left: 1rem;
-  border-left-color: var(--settings-success-color);
+  border-left-color: var(--settingsPage-success-color);
 }
 
-.change-password-button {
+.settingsPage-change-password-button {
   align-self: flex-start;
   padding: 0.75rem 1.5rem;
-  background-color: var(--settings-primary-color);
+  background-color: var(--settingsPage-primary-color);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -452,23 +452,23 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-  background: linear-gradient(to right, var(--settings-primary-color), var(--settings-primary-dark));
+  background: linear-gradient(to right, var(--settingsPage-primary-color), var(--settingsPage-primary-dark));
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.change-password-button:hover {
-  background-color: var(--settings-primary-dark);
+.settingsPage-change-password-button:hover {
+  background-color: var(--settingsPage-primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(97, 74, 211, 0.3);
 }
 
-.change-password-button:active {
+.settingsPage-change-password-button:active {
   transform: translateY(0);
 }
 
-.change-password-button::after {
+.settingsPage-change-password-button::after {
   content: "";
   position: absolute;
   top: 0;
@@ -484,43 +484,43 @@
   transition: all 0.6s;
 }
 
-.change-password-button:hover::after {
+.settingsPage-change-password-button:hover::after {
   left: 100%;
 }
 
 /* Notification preferences section */
-.notification-preferences {
+.settingsPage-notification-preferences {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.notification-option {
+.settingsPage-notification-option {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
 }
 
-.notification-details {
+.settingsPage-notification-details {
   flex: 1;
 }
 
-.notification-details h3 {
+.settingsPage-notification-details h3 {
   margin: 0 0 0.25rem 0;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
 }
 
-.notification-details p {
+.settingsPage-notification-details p {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
 }
 
 /* Toggle switch */
-.toggle-switch {
+.settingsPage-toggle-switch {
   position: relative;
   display: inline-block;
   width: 48px;
@@ -528,13 +528,13 @@
   flex-shrink: 0;
 }
 
-.toggle-switch input {
+.settingsPage-toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.toggle-slider {
+.settingsPage-toggle-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -546,7 +546,7 @@
   border-radius: 24px;
 }
 
-.toggle-slider:before {
+.settingsPage-toggle-slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -558,22 +558,22 @@
   border-radius: 50%;
 }
 
-input:checked + .toggle-slider {
-  background-color: var(--settings-primary-color);
+input:checked + .settingsPage-toggle-slider {
+  background-color: var(--settingsPage-primary-color);
 }
 
-input:focus + .toggle-slider {
-  box-shadow: 0 0 1px var(--settings-primary-color);
+input:focus + .settingsPage-toggle-slider {
+  box-shadow: 0 0 1px var(--settingsPage-primary-color);
 }
 
-input:checked + .toggle-slider:before {
+input:checked + .settingsPage-toggle-slider:before {
   transform: translateX(24px);
 }
 
-.save-notifications-button {
+.settingsPage-save-notifications-button {
   align-self: flex-start;
   padding: 0.75rem 1.5rem;
-  background-color: var(--settings-primary-color);
+  background-color: var(--settingsPage-primary-color);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -584,17 +584,17 @@ input:checked + .toggle-slider:before {
   margin-top: 0.5rem;
 }
 
-.save-notifications-button:hover {
-  background-color: var(--settings-primary-dark);
+.settingsPage-save-notifications-button:hover {
+  background-color: var(--settingsPage-primary-dark);
 }
 
 /* Account actions section */
-.danger-zone .section-title {
-  color: var(--settings-danger-color);
+.settingsPage-danger-zone .settingsPage-section-title {
+  color: var(--settingsPage-danger-color);
   border-bottom-color: rgba(239, 68, 68, 0.2);
 }
 
-.account-actions {
+.settingsPage-account-actions {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -602,29 +602,29 @@ input:checked + .toggle-slider:before {
 }
 
 @media (min-width: 640px) {
-  .account-actions {
+  .settingsPage-account-actions {
     flex-direction: row;
   }
 }
 
-.action-card {
+.settingsPage-action-card {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  border: 1px solid var(--settings-border-color);
+  border: 1px solid var(--settingsPage-border-color);
   border-radius: 0.75rem;
   transition: border-color 0.2s, transform 0.2s;
 }
 
-.action-card:hover {
-  border-color: var(--settings-primary-color);
+.settingsPage-action-card:hover {
+  border-color: var(--settingsPage-primary-color);
   transform: translateY(-2px);
 }
 
-.action-icon {
+.settingsPage-action-icon {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -633,17 +633,17 @@ input:checked + .toggle-slider:before {
   justify-content: center;
 }
 
-.action-icon.logout {
+.settingsPage-action-icon.settingsPage-logout {
   background-color: rgba(245, 158, 11, 0.1);
-  color: var(--settings-warning-color);
+  color: var(--settingsPage-warning-color);
 }
 
-.action-icon.delete {
+.settingsPage-action-icon.settingsPage-delete {
   background-color: rgba(239, 68, 68, 0.1);
-  color: var(--settings-danger-color);
+  color: var(--settingsPage-danger-color);
 }
 
-.action-details {
+.settingsPage-action-details {
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -651,21 +651,21 @@ input:checked + .toggle-slider:before {
   gap: 0.5rem;
 }
 
-.action-details h3 {
+.settingsPage-action-details h3 {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
 }
 
-.action-details p {
+.settingsPage-action-details p {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
 }
 
-.logout-button,
-.delete-account-button {
+.settingsPage-logout-button,
+.settingsPage-delete-account-button {
   margin-top: 0.5rem;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -675,28 +675,28 @@ input:checked + .toggle-slider:before {
   transition: background-color 0.2s;
 }
 
-.logout-button {
-  background-color: var(--settings-warning-color);
+.settingsPage-logout-button {
+  background-color: var(--settingsPage-warning-color);
   color: white;
   border: none;
 }
 
-.logout-button:hover {
-  background-color: var(--settings-warning-hover);
+.settingsPage-logout-button:hover {
+  background-color: var(--settingsPage-warning-hover);
 }
 
-.delete-account-button {
+.settingsPage-delete-account-button {
   background-color: transparent;
-  color: var(--settings-danger-color);
-  border: 1px solid var(--settings-danger-color);
+  color: var(--settingsPage-danger-color);
+  border: 1px solid var(--settingsPage-danger-color);
 }
 
-.delete-account-button:hover {
+.settingsPage-delete-account-button:hover {
   background-color: rgba(239, 68, 68, 0.1);
 }
 
 /* Delete account modal */
-.modal-overlay {
+.settingsPage-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -710,21 +710,21 @@ input:checked + .toggle-slider:before {
   backdrop-filter: blur(4px);
 }
 
-.delete-modal {
+.settingsPage-delete-modal {
   width: 90%;
   max-width: 500px;
   background-color: white;
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: modalFadeIn 0.3s ease;
+  animation: settingsPage-modalFadeIn 0.3s ease;
 }
 
-.dark-mode .delete-modal {
+.settingsPage-dark-mode .settingsPage-delete-modal {
   background-color: #1e1e2d;
 }
 
-@keyframes modalFadeIn {
+@keyframes settingsPage-modalFadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -735,51 +735,51 @@ input:checked + .toggle-slider:before {
   }
 }
 
-.delete-modal h2 {
+.settingsPage-delete-modal h2 {
   margin-top: 0;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--settings-danger-color);
+  color: var(--settingsPage-danger-color);
 }
 
-.delete-warning {
+.settingsPage-delete-warning {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
   background-color: rgba(239, 68, 68, 0.1);
   border-radius: 0.5rem;
-  color: var(--settings-danger-color);
+  color: var(--settingsPage-danger-color);
   margin-bottom: 1.5rem;
 }
 
-.delete-confirm-input {
+.settingsPage-delete-confirm-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--settings-border-color);
+  border: 1px solid var(--settingsPage-border-color);
   border-radius: 0.5rem;
   font-size: 1rem;
   margin: 1rem 0;
   background-color: transparent;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
 }
 
-.delete-confirm-input:focus {
+.settingsPage-delete-confirm-input:focus {
   outline: none;
-  border-color: var(--settings-danger-color);
+  border-color: var(--settingsPage-danger-color);
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-.modal-actions {
+.settingsPage-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.cancel-button,
-.confirm-delete-button {
+.settingsPage-cancel-button,
+.settingsPage-confirm-delete-button {
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -788,89 +788,89 @@ input:checked + .toggle-slider:before {
   transition: background-color 0.2s;
 }
 
-.cancel-button {
+.settingsPage-cancel-button {
   background-color: transparent;
-  color: var(--settings-text-color);
-  border: 1px solid var(--settings-border-color);
+  color: var(--settingsPage-text-color);
+  border: 1px solid var(--settingsPage-border-color);
 }
 
-.cancel-button:hover {
+.settingsPage-cancel-button:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.dark-mode .cancel-button:hover {
+.settingsPage-dark-mode .settingsPage-cancel-button:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.confirm-delete-button {
-  background-color: var(--settings-danger-color);
+.settingsPage-confirm-delete-button {
+  background-color: var(--settingsPage-danger-color);
   color: white;
   border: none;
 }
 
-.confirm-delete-button:hover:not(:disabled) {
-  background-color: var(--settings-danger-hover);
+.settingsPage-confirm-delete-button:hover:not(:disabled) {
+  background-color: var(--settingsPage-danger-hover);
 }
 
-.confirm-delete-button:disabled {
+.settingsPage-confirm-delete-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* Forgot Password section */
-.forgot-password-container {
+.settingsPage-forgot-password-container {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.forgot-password-description {
+.settingsPage-forgot-password-description {
   font-size: 0.95rem;
-  color: var(--settings-text-muted);
+  color: var(--settingsPage-text-muted);
   line-height: 1.6;
   margin: 0 0 1rem 0;
   padding: 0.75rem 1rem;
   background-color: rgba(97, 74, 211, 0.08);
-  border-left: 4px solid var(--settings-primary-color);
+  border-left: 4px solid var(--settingsPage-primary-color);
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
-.dark-mode .forgot-password-description {
+.settingsPage-dark-mode .settingsPage-forgot-password-description {
   background-color: rgba(155, 135, 245, 0.08);
 }
 
-.forgot-password-form {
+.settingsPage-forgot-password-form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.reset-email-input {
+.settingsPage-reset-email-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--settings-border-color);
+  border: 1px solid var(--settingsPage-border-color);
   border-radius: 0.5rem;
   font-size: 1rem;
-  color: var(--settings-text-color);
+  color: var(--settingsPage-text-color);
   background-color: transparent;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.reset-email-input:focus {
+.settingsPage-reset-email-input:focus {
   outline: none;
-  border-color: var(--settings-primary-color);
+  border-color: var(--settingsPage-primary-color);
   box-shadow: 0 0 0 3px rgba(97, 74, 211, 0.1);
 }
 
-.reset-actions {
+.settingsPage-reset-actions {
   display: flex;
   justify-content: flex-start;
 }
 
-.reset-password-button {
+.settingsPage-reset-password-button {
   padding: 0.75rem 1.5rem;
-  background-color: var(--settings-primary-color);
+  background-color: var(--settingsPage-primary-color);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -882,30 +882,30 @@ input:checked + .toggle-slider:before {
   overflow: hidden;
 }
 
-.reset-password-button:hover {
-  background-color: var(--settings-primary-dark);
+.settingsPage-reset-password-button:hover {
+  background-color: var(--settingsPage-primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(97, 74, 211, 0.2);
 }
 
-.reset-password-button:active {
+.settingsPage-reset-password-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(97, 74, 211, 0.2);
 }
 
 /* Enhanced form inputs */
-.password-input-container input,
-.form-group input {
+.settingsPage-password-input-container input,
+.settingsPage-form-group input {
   transition: all 0.3s ease;
 }
 
-.password-input-container input:focus,
-.form-group input:focus {
+.settingsPage-password-input-container input:focus,
+.settingsPage-form-group input:focus {
   transform: translateY(-2px);
 }
 
 /* Enhanced error and success messages */
-@keyframes fadeIn {
+@keyframes settingsPage-fadeIn {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -918,64 +918,64 @@ input:checked + .toggle-slider:before {
 
 /* Responsive styles */
 @media (max-width: 1024px) {
-  .settings-main {
+  .settingsPage-main {
     padding: 1.5rem 0.75rem;
   }
 
-  .settings-title {
+  .settingsPage-title {
     font-size: 1.75rem;
     margin-bottom: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
-  .settings-main {
+  .settingsPage-main {
     margin-left: 0;
     padding: 1rem 0.5rem;
   }
 
-  .settings-main.sidebar-collapsed {
+  .settingsPage-main.settingsPage-sidebar-collapsed {
     margin-left: 0;
   }
 
-  .mobile-menu-button {
+  .settingsPage-mobile-menu-button {
     display: block;
   }
 
-  .settings-title {
+  .settingsPage-title {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
 
-  .settings-title::after {
+  .settingsPage-title::after {
     width: 50px;
     height: 3px;
   }
 
-  .account-actions {
+  .settingsPage-account-actions {
     flex-direction: column;
   }
 }
 
 @media (max-width: 480px) {
-  .settings-main {
+  .settingsPage-main {
     padding: 0.75rem 0.25rem;
   }
 
-  .settings-title {
+  .settingsPage-title {
     font-size: 1.35rem;
   }
 
-  .profile-info {
+  .settingsPage-profile-info {
     flex-direction: column;
   }
 
-  .modal-actions {
+  .settingsPage-modal-actions {
     flex-direction: column;
   }
 
-  .cancel-button,
-  .confirm-delete-button {
+  .settingsPage-cancel-button,
+  .settingsPage-confirm-delete-button {
     width: 100%;
   }
 }

@@ -16,17 +16,13 @@ import {
   Bot,
   Book,
 } from "lucide-react"
+import { useTheme } from "../../context/theme-context"
 import "./Sidebar.css"
 
-export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu, darkMode, toggleDarkMode }) {
+export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMobileMenu }) {
   const [activeItem, setActiveItem] = useState("content")
   const [userRole, setUserRole] = useState("User")
-  const [localDarkMode, setLocalDarkMode] = useState(darkMode)
-
-  useEffect(() => {
-    // Update local state when prop changes
-    setLocalDarkMode(darkMode)
-  }, [darkMode])
+  const { darkMode, toggleDarkMode } = useTheme()
 
   useEffect(() => {
     const getUserRole = () => {
@@ -45,16 +41,8 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     const handleUserUpdate = () => getUserRole()
     window.addEventListener("userUpdated", handleUserUpdate)
 
-    // Listen for dark mode changes from other components
-    const handleDarkModeChange = () => {
-      const isDarkMode = localStorage.getItem("darkMode") === "true"
-      setLocalDarkMode(isDarkMode)
-    }
-    window.addEventListener("darkModeChanged", handleDarkModeChange)
-
     return () => {
       window.removeEventListener("userUpdated", handleUserUpdate)
-      window.removeEventListener("darkModeChanged", handleDarkModeChange)
     }
   }, [])
 
@@ -76,27 +64,6 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       setActiveItem("quiz")
     }
   }, [])
-
-  const handleToggleDarkMode = () => {
-    if (toggleDarkMode) {
-      const newDarkMode = !localDarkMode
-      toggleDarkMode(newDarkMode)
-      setLocalDarkMode(newDarkMode)
-
-      // Update body class for global dark mode
-      if (newDarkMode) {
-        document.body.classList.add("dark")
-      } else {
-        document.body.classList.remove("dark")
-      }
-
-      // Store preference in localStorage
-      localStorage.setItem("darkMode", newDarkMode.toString())
-
-      // Dispatch an event to notify other components
-      window.dispatchEvent(new Event("darkModeChanged"))
-    }
-  }
 
   const allNavLinks = [
     {
@@ -155,13 +122,13 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
       href: "/quiz",
       roles: ["Admin", "Content-admin", "Ict-expert", "User"],
     },
-    {
-      id: "ICT Assistant",
-      label: "ICT Assistant",
-      icon: Bot,
-      href: "/ia",
-      roles: ["Admin", "Content-admin", "Ict-expert", "User"],
-    },
+    // {
+    //   id: "ICT Assistant",
+    //   label: "ICT Assistant",
+    //   icon: Bot,
+    //   href: "/ia",
+    //   roles: ["Admin", "Content-admin", "Ict-expert", "User"],
+    // },
   ]
 
   const navLinks = allNavLinks.filter((link) => link.roles.includes(userRole))
@@ -170,7 +137,7 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={closeMobileMenu}></div>}
       <aside
-        className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""} ${localDarkMode ? "dark-mode" : ""}`}
+        className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""} ${darkMode ? "dark-mode" : ""}`}
       >
         <div className="sidebar-header">
           <div className="logo-container">
@@ -211,9 +178,9 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         </div>
 
         <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={handleToggleDarkMode}>
-            {localDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            <span>{localDarkMode ? "Light Mode" : "Dark Mode"}</span>
+          <button className="theme-toggle" onClick={toggleDarkMode}>
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
           </button>
 
           <a href="/" className="logout-link">

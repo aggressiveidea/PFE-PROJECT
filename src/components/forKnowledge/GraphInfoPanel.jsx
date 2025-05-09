@@ -1,7 +1,7 @@
-"use client"
-import "./GraphInfoPanel.css"
+import React from 'react';
+import './GraphInfoPanel.css';
 
-const GraphInfoPanel = ({ stats, selectedNode, onClose, language = "english" }) => {
+const GraphInfoPanel = ({ stats, selectedNode, onClose, language }) => {
   const translations = {
     english: {
       overview: "Graph Overview",
@@ -15,6 +15,7 @@ const GraphInfoPanel = ({ stats, selectedNode, onClose, language = "english" }) 
       label: "Label",
       category: "Category",
       viewDetails: "View Full Details",
+      properties: "Properties"
     },
     french: {
       overview: "Aperçu du Graphe",
@@ -28,6 +29,7 @@ const GraphInfoPanel = ({ stats, selectedNode, onClose, language = "english" }) 
       label: "Étiquette",
       category: "Catégorie",
       viewDetails: "Voir les Détails Complets",
+      properties: "Propriétés"
     },
     arabic: {
       overview: "نظرة عامة على الرسم البياني",
@@ -41,10 +43,11 @@ const GraphInfoPanel = ({ stats, selectedNode, onClose, language = "english" }) 
       label: "تسمية",
       category: "فئة",
       viewDetails: "عرض التفاصيل الكاملة",
-    },
-  }
+      properties: "خصائص"
+    }
+  };
 
-  const t = translations[language] || translations.english
+  const t = translations[language] || translations.english;
 
   return (
     <div className="graph-info-panel">
@@ -95,14 +98,27 @@ const GraphInfoPanel = ({ stats, selectedNode, onClose, language = "english" }) 
               <p>
                 <strong>{t.category}:</strong> {selectedNode.category}
               </p>
+              
+              {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 && (
+                <div className="node-properties">
+                  <h5>{t.properties}</h5>
+                  {Object.entries(selectedNode.properties)
+                    .filter(([key]) => key !== 'id' && key !== 'label' && key !== 'category')
+                    .map(([key, value]) => (
+                      <p key={key}>
+                        <strong>{key}:</strong> {String(value)}
+                      </p>
+                    ))}
+                </div>
+              )}
+              
               <button className="view-details-button">{t.viewDetails}</button>
             </div>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GraphInfoPanel
-
+export default GraphInfoPanel;

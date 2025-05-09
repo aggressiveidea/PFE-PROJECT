@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, Check, X, Clock, AlertTriangle } from "lucide-react"
+import { ArrowLeft, Check, X, Clock, AlertTriangle, Volume2, VolumeX } from "lucide-react"
 import { fetchQuizQuestions } from "../../services/Api"
 import "./QuestionPage.css"
 
@@ -19,9 +19,14 @@ const QuestionPage = ({ darkMode }) => {
   const [error, setError] = useState(null)
   const [timeSpent, setTimeSpent] = useState(0)
   const [soundEnabled, setSoundEnabled] = useState(true)
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(null)
+  const [animateProgress, setAnimateProgress] = useState(false)
 
   const tickAudioRef = useRef(null)
+  const correctAudioRef = useRef(null)
+  const incorrectAudioRef = useRef(null)
   const lastTickTimeRef = useRef(0)
+  const questionContainerRef = useRef(null)
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -41,6 +46,13 @@ const QuestionPage = ({ darkMode }) => {
 
     loadQuestions()
   }, [level])
+
+  // Animate progress bar when current question changes
+  useEffect(() => {
+    setAnimateProgress(true)
+    const timer = setTimeout(() => setAnimateProgress(false), 600)
+    return () => clearTimeout(timer)
+  }, [currentQuestion])
 
   // Timer effect with ticking sound
   useEffect(() => {
@@ -66,6 +78,19 @@ const QuestionPage = ({ darkMode }) => {
     return () => clearInterval(timer)
   }, [soundEnabled])
 
+  // Add slide-in animation when question changes
+  useEffect(() => {
+    if (questionContainerRef.current) {
+      questionContainerRef.current.classList.add('question-enter')
+      const timer = setTimeout(() => {
+        if (questionContainerRef.current) {
+          questionContainerRef.current.classList.remove('question-enter')
+        }
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [currentQuestion])
+
   const toggleSound = () => {
     setSoundEnabled(!soundEnabled)
   }
@@ -79,8 +104,18 @@ const QuestionPage = ({ darkMode }) => {
     if (!selectedOption) return
 
     const isCorrect = selectedOption === questions[currentQuestion].correctAnswer
+    setIsAnswerCorrect(isCorrect)
+    
     if (isCorrect) {
       setScore(score + 1)
+      if (soundEnabled && correctAudioRef.current) {
+        correctAudioRef.current.currentTime = 0
+        correctAudioRef.current.play().catch(e => console.log("Audio play prevented:", e))
+    } else {
+      if (soundEnabled && incorrectAudioRef.current) {
+        incorrectAudioRef.current.currentTime = 0
+        incorrectAudioRef.current.play().catch(e => console.log("Audio play prevented:", e))
+      }
     }
     setShowAnswer(true)
   }
@@ -90,6 +125,7 @@ const QuestionPage = ({ darkMode }) => {
       setCurrentQuestion(currentQuestion + 1)
       setSelectedOption(null)
       setShowAnswer(false)
+      setIsAnswerCorrect(null)
     } else {
       // Quiz completed, navigate to results page
       navigate(`/quiz/results/${level}/${score}`)
@@ -150,18 +186,22 @@ const QuestionPage = ({ darkMode }) => {
   const question = questions[currentQuestion]
   const progressPercentage = ((currentQuestion + 1) / questions.length) * 100
 
-  // Determine level color
-  const levelColor =
-    level === "easy"
-      ? { light: "#10b981", dark: "#34d399" }
-      : level === "medium"
-        ? { light: "#f59e0b", dark: "#fbbf24" }
-        : { light: "#ef4444", dark: "#f87171" }
-
   return (
     <div className="question-page">
-      {/* Audio element for tick sound */}
+      {/* Audio elements */}
       <audio ref={tickAudioRef} preload="auto">
+        <source
+          src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMD4+Pj4+Pj4+Pj4+Pj4+Pj4//////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAYFAAAAAAAAAbD5VK2IAAAAAAAAAAAAAAAAAAAAAP/jYMQAEvgiwl9DAAAAO1ALSi19XgYG7wIAAAJOD5R0HygIAmD5+sEHLB94gBwMXwTB8oCAkMRLjuCgOee/5/ggGBgYG/n5+QckCwf/4IAAA5of+fwQcZeWb5YPnggIcZe+CAZeWD5//iAZeWD//+WYQDDDD//jYMQQEgABGQAAAABMQU1FMy45OC4yVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="
+          type="audio/mp3"
+        />
+      </audio>
+      <audio ref={correctAudioRef} preload="auto">
+        <source
+          src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMD4+Pj4+Pj4+Pj4+Pj4+Pj4//////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAYFAAAAAAAAAbD5VK2IAAAAAAAAAAAAAAAAAAAAAP/jYMQAEvgiwl9DAAAAO1ALSi19XgYG7wIAAAJOD5R0HygIAmD5+sEHLB94gBwMXwTB8oCAkMRLjuCgOee/5/ggGBgYG/n5+QckCwf/4IAAA5of+fwQcZeWb5YPnggIcZe+CAZeWD5//iAZeWD//+WYQDDDD//jYMQQEgABGQAAAABMQU1FMy45OC4yVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="
+          type="audio/mp3"
+        />
+      </audio>
+      <audio ref={incorrectAudioRef} preload="auto">
         <source
           src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMD4+Pj4+Pj4+Pj4+Pj4+Pj4//////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAYFAAAAAAAAAbD5VK2IAAAAAAAAAAAAAAAAAAAAAP/jYMQAEvgiwl9DAAAAO1ALSi19XgYG7wIAAAJOD5R0HygIAmD5+sEHLB94gBwMXwTB8oCAkMRLjuCgOee/5/ggGBgYG/n5+QckCwf/4IAAA5of+fwQcZeWb5YPnggIcZe+CAZeWD5//iAZeWD//+WYQDDDD//jYMQQEgABGQAAAABMQU1FMy45OC4yVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="
           type="audio/mp3"
@@ -183,39 +223,7 @@ const QuestionPage = ({ darkMode }) => {
 
         <div className="timer-container">
           <button className="sound-toggle" onClick={toggleSound} title={soundEnabled ? "Mute timer" : "Unmute timer"}>
-            {soundEnabled ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <line x1="23" y1="9" x2="17" y2="15"></line>
-                <line x1="17" y1="9" x2="23" y2="15"></line>
-              </svg>
-            )}
+            {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
           <div className="timer">
             <Clock size={18} />
@@ -226,15 +234,15 @@ const QuestionPage = ({ darkMode }) => {
 
       <div className="progress-container">
         <div
-          className="progress-bar"
+          className={`progress-bar ${animateProgress ? 'animate-progress' : ''}`}
           style={{
             width: `${progressPercentage}%`,
-            backgroundColor: darkMode ? levelColor.dark : levelColor.light,
           }}
+          data-level={level}
         ></div>
       </div>
 
-      <div className="question-container">
+      <div className="question-container" ref={questionContainerRef}>
         <h2 className="question-text" dangerouslySetInnerHTML={{ __html: question.question }}></h2>
 
         <div className="options-container">
@@ -251,6 +259,7 @@ const QuestionPage = ({ darkMode }) => {
                   isIncorrect ? "incorrect" : ""
                 }`}
                 onClick={() => handleOptionSelect(option)}
+                data-index={index}
               >
                 <div className="option-letter">{optionLetters[index]}</div>
                 <div className="option-text" dangerouslySetInnerHTML={{ __html: option }}></div>
@@ -276,10 +285,7 @@ const QuestionPage = ({ darkMode }) => {
             className={`submit-button ${!selectedOption ? "disabled" : ""}`}
             onClick={handleSubmit}
             disabled={!selectedOption}
-            style={{
-              backgroundColor: darkMode ? levelColor.dark : levelColor.light,
-              opacity: !selectedOption ? 0.7 : 1,
-            }}
+            data-level={level}
           >
             Submit Answer
           </button>
@@ -287,16 +293,14 @@ const QuestionPage = ({ darkMode }) => {
           <button
             className="next-button"
             onClick={handleNext}
-            style={{
-              backgroundColor: darkMode ? levelColor.dark : levelColor.light,
-            }}
+            data-level={level}
           >
             {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
           </button>
         )}
       </div>
     </div>
-  )
+  );
 }
-
-export default QuestionPage
+}
+export default QuestionPage;

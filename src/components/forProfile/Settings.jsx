@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import Header from "../forHome/Header"
 import Sidebar from "../forDashboard/Sidebar"
 import Footer from "../forHome/Footer"
-import { User, Lock, LogOut, Trash2, Bell, ImageIcon, Eye, EyeOff, AlertTriangle } from "lucide-react"
+import { User, Lock, LogOut, Trash2, ImageIcon, AlertTriangle } from "lucide-react"
 import "./Settings.css"
-import { requestPasswordReset } from "../../services/Api"
+import { requestPasswordReset, deleteUser } from "../../services/Api"
 
 const Settings = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -42,14 +42,17 @@ const Settings = () => {
   const [resetEmail, setResetEmail] = useState("")
   const [resetEmailStatus, setResetEmailStatus] = useState({ loading: false, success: false, error: "" })
 
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState("")
+
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true"
     setDarkMode(savedDarkMode)
 
     if (savedDarkMode) {
-      document.body.classList.add("dark-mode")
+      document.body.classList.add("settingsPage-dark-mode")
     } else {
-      document.body.classList.remove("dark-mode")
+      document.body.classList.remove("settingsPage-dark-mode")
     }
 
     const loadUserData = async () => {
@@ -86,9 +89,9 @@ const Settings = () => {
     localStorage.setItem("darkMode", darkMode)
 
     if (darkMode) {
-      document.body.classList.add("dark-mode")
+      document.body.classList.add("settingsPage-dark-mode")
     } else {
-      document.body.classList.remove("dark-mode")
+      document.body.classList.remove("settingsPage-dark-mode")
     }
   }, [darkMode])
 
@@ -157,15 +160,37 @@ const Settings = () => {
     }, 1000)
   }
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (deleteConfirmText !== "DELETE") {
       return
     }
 
-    localStorage.removeItem("authData")
-    localStorage.removeItem("user")
+    setDeleteLoading(true)
+    setDeleteError("")
 
-    window.location.href = "/"
+    try {
+      // Get the user ID
+      const userId = user._id || user.id
+
+      if (!userId) {
+        throw new Error("User ID not found")
+      }
+
+      // Call the API to delete the user
+      await deleteUser(userId)
+
+      // On success, clear local storage and redirect
+      localStorage.removeItem("authData")
+      localStorage.removeItem("user")
+
+      // Show success message before redirecting
+      alert("Your account has been successfully deleted.")
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Error deleting account:", error)
+      setDeleteError(error.message || "Failed to delete account. Please try again later.")
+      setDeleteLoading(false)
+    }
   }
 
   const handleProfilePictureChange = (e) => {
@@ -273,9 +298,9 @@ const Settings = () => {
   }
 
   return (
-    <div className={`settings-page ${darkMode ? "dark-mode" : ""}`}>
+    <div className={`settingsPage-page ${darkMode ? "settingsPage-dark-mode" : ""}`}>
       <Header darkMode={darkMode} language={language} setLanguage={setLanguage} />
-      <div className="settings-content">
+      <div className="settingsPage-content">
         <Sidebar
           collapsed={sidebarCollapsed}
           toggleSidebar={toggleSidebar}
@@ -284,8 +309,8 @@ const Settings = () => {
           darkMode={darkMode}
           toggleDarkMode={toggleDarkMode}
         />
-        <main className={`settings-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-          <button className="mobile-menu-button" onClick={openMobileMenu} aria-label="Open menu">
+        <main className={`settingsPage-main ${sidebarCollapsed ? "settingsPage-sidebar-collapsed" : ""}`}>
+          <button className="settingsPage-mobile-menu-button" onClick={openMobileMenu} aria-label="Open menu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -303,41 +328,44 @@ const Settings = () => {
             </svg>
           </button>
 
-          <h1 className="settings-title">Account Settings</h1>
+          <h1 className="settingsPage-title">Account Settings</h1>
 
           {loading ? (
-            <div className="settings-loading">
-              <div className="spinner"></div>
+            <div className="settingsPage-loading">
+              <div className="settingsPage-spinner"></div>
               <p>Loading your account settings...</p>
             </div>
           ) : !user ? (
-            <div className="settings-not-logged-in">
+            <div className="settingsPage-not-logged-in">
               <p>You need to be logged in to access account settings.</p>
-              <a href="/login" className="settings-login-button">
+              <a href="/login" className="settingsPage-login-button">
                 Log In
               </a>
             </div>
           ) : (
-            <div className="settings-container">
-              <section className="settings-section">
-                <h2 className="section-title">
+            <div className="settingsPage-container">
+              <section className="settingsPage-section">
+                <h2 className="settingsPage-section-title">
                   <User size={20} />
                   Profile Information
                 </h2>
-                <div className="profile-info">
-                  <div className="profile-picture-container">
-                    <div className="profile-picture">
+                <div className="settingsPage-profile-info">
+                  <div className="settingsPage-profile-picture-container">
+                    <div className="settingsPage-profile-picture">
                       {previewUrl ? (
                         <img src={previewUrl || "/placeholder.svg"} alt="Profile" />
                       ) : (
-                        <div className="profile-initials">
+                        <div className="settingsPage-profile-initials">
                           {user.firstName ? user.firstName[0] : ""}
                           {user.lastName ? user.lastName[0] : ""}
                         </div>
                       )}
                     </div>
-                    <div className="profile-picture-actions">
-                      <button className="upload-picture-button" onClick={() => fileInputRef.current.click()}>
+                    <div className="settingsPage-profile-picture-actions">
+                      <button
+                        className="settingsPage-upload-picture-button"
+                        onClick={() => fileInputRef.current.click()}
+                      >
                         <ImageIcon size={16} />
                         Change Picture
                       </button>
@@ -346,34 +374,30 @@ const Settings = () => {
                         ref={fileInputRef}
                         onChange={handleProfilePictureChange}
                         accept="image/*"
-                        className="hidden-file-input"
+                        className="settingsPage-hidden-file-input"
                       />
                       {profilePicture && (
-                        <button className="save-picture-button" onClick={handleProfilePictureUpload}>
+                        <button className="settingsPage-save-picture-button" onClick={handleProfilePictureUpload}>
                           Save Picture
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="profile-details">
-                    <div className="profile-field">
-                      <label>Username</label>
-                      <p>{user.username || "Not set"}</p>
-                    </div>
-                    <div className="profile-field">
+                  <div className="settingsPage-profile-details">
+                    <div className="settingsPage-profile-field">
                       <label>Email</label>
                       <p>{user.email || "Not set"}</p>
                     </div>
-                    <div className="profile-field">
+                    <div className="settingsPage-profile-field">
                       <label>First Name</label>
                       <p>{user.firstName || "Not set"}</p>
                     </div>
-                    <div className="profile-field">
+                    <div className="settingsPage-profile-field">
                       <label>Last Name</label>
                       <p>{user.lastName || "Not set"}</p>
                     </div>
-                    <div className="profile-field">
+                    <div className="settingsPage-profile-field">
                       <label>Role</label>
                       <p>{user.role || "User"}</p>
                     </div>
@@ -381,96 +405,18 @@ const Settings = () => {
                 </div>
               </section>
 
-              <section className="settings-section">
-                <h2 className="section-title">
-                  <Lock size={20} />
-                  Change Password
-                </h2>
-                <form className="password-form" onSubmit={handlePasswordChange}>
-                  <div className="form-group">
-                    <label htmlFor="currentPassword">Current Password</label>
-                    <div className="password-input-container">
-                      <input
-                        type={showCurrentPassword ? "text" : "password"}
-                        id="currentPassword"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="toggle-password"
-                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      >
-                        {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="newPassword">New Password</label>
-                    <div className="password-input-container">
-                      <input
-                        type={showNewPassword ? "text" : "password"}
-                        id="newPassword"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="toggle-password"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                      >
-                        {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="confirmPassword">Confirm New Password</label>
-                    <div className="password-input-container">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="toggle-password"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {passwordError && (
-                    <div className="password-error">
-                      <AlertTriangle size={16} />
-                      {passwordError}
-                    </div>
-                  )}
-
-                  {passwordSuccess && <div className="password-success">{passwordSuccess}</div>}
-
-                  <button type="submit" className="change-password-button">
-                    Change Password
-                  </button>
-                </form>
-              </section>
-
-              <section className="settings-section">
-                <h2 className="section-title">
+              <section className="settingsPage-section">
+                <h2 className="settingsPage-section-title">
                   <Lock size={20} />
                   Forgot Password
                 </h2>
-                <div className="forgot-password-container">
-                  <p className="forgot-password-description">
+                <div className="settingsPage-forgot-password-container">
+                  <p className="settingsPage-forgot-password-description">
                     Forgot your password? No problem. Enter your email address below and we'll send you instructions to
                     reset your password.
                   </p>
-                  <form className="forgot-password-form" onSubmit={handleResetPasswordRequest}>
-                    <div className="form-group">
+                  <form className="settingsPage-forgot-password-form" onSubmit={handleResetPasswordRequest}>
+                    <div className="settingsPage-form-group">
                       <label htmlFor="resetEmail">Email Address</label>
                       <input
                         type="email"
@@ -478,30 +424,34 @@ const Settings = () => {
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
                         placeholder="Enter your email address"
-                        className="reset-email-input"
+                        className="settingsPage-reset-email-input"
                         required
                       />
                     </div>
 
                     {resetEmailStatus.error && (
-                      <div className="password-error">
+                      <div className="settingsPage-password-error">
                         <AlertTriangle size={16} />
                         {resetEmailStatus.error}
                       </div>
                     )}
 
                     {resetEmailStatus.success && (
-                      <div className="password-success">
+                      <div className="settingsPage-password-success">
                         If your email exists in our system, you will receive password reset instructions shortly. Please
                         check your inbox and spam folder.
                       </div>
                     )}
 
-                    <div className="reset-actions">
-                      <button type="submit" className="reset-password-button" disabled={resetEmailStatus.loading}>
+                    <div className="settingsPage-reset-actions">
+                      <button
+                        type="submit"
+                        className="settingsPage-reset-password-button"
+                        disabled={resetEmailStatus.loading}
+                      >
                         {resetEmailStatus.loading ? (
-                          <span className="loading-spinner">
-                            <span className="spinner"></span>
+                          <span className="settingsPage-loading-spinner">
+                            <span className="settingsPage-spinner"></span>
                             Sending...
                           </span>
                         ) : (
@@ -513,87 +463,30 @@ const Settings = () => {
                 </div>
               </section>
 
-              <section className="settings-section">
-                <h2 className="section-title">
-                  <Bell size={20} />
-                  Notification Preferences
-                </h2>
-                <div className="notification-preferences">
-                  <div className="notification-option">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={emailNotifications}
-                        onChange={() => setEmailNotifications(!emailNotifications)}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                    <div className="notification-details">
-                      <h3>Email Notifications</h3>
-                      <p>Receive notifications about account activity via email</p>
-                    </div>
-                  </div>
-
-                  <div className="notification-option">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={pushNotifications}
-                        onChange={() => setPushNotifications(!pushNotifications)}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                    <div className="notification-details">
-                      <h3>Push Notifications</h3>
-                      <p>Receive push notifications in your browser</p>
-                    </div>
-                  </div>
-
-                  <div className="notification-option">
-                    <label className="toggle-switch">
-                      <input
-                        type="checkbox"
-                        checked={newsletterSubscription}
-                        onChange={() => setNewsletterSubscription(!newsletterSubscription)}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                    <div className="notification-details">
-                      <h3>Newsletter Subscription</h3>
-                      <p>Receive our monthly newsletter with updates and tips</p>
-                    </div>
-                  </div>
-
-                  <button className="save-notifications-button" onClick={saveNotificationPreferences}>
-                    Save Preferences
-                  </button>
-                </div>
-              </section>
-
-              <section className="settings-section danger-zone">
-                <h2 className="section-title danger">Account Actions</h2>
-                <div className="account-actions">
-                  <div className="action-card">
-                    <div className="action-icon logout">
+              <section className="settingsPage-section settingsPage-danger-zone">
+                <h2 className="settingsPage-section-title settingsPage-danger">Account Actions</h2>
+                <div className="settingsPage-account-actions">
+                  <div className="settingsPage-action-card">
+                    <div className="settingsPage-action-icon settingsPage-logout">
                       <LogOut size={24} />
                     </div>
-                    <div className="action-details">
+                    <div className="settingsPage-action-details">
                       <h3>Logout</h3>
                       <p>Sign out of your account on this device</p>
-                      <button className="logout-button" onClick={handleLogout}>
+                      <button className="settingsPage-logout-button" onClick={handleLogout}>
                         Logout
                       </button>
                     </div>
                   </div>
 
-                  <div className="action-card">
-                    <div className="action-icon delete">
+                  <div className="settingsPage-action-card">
+                    <div className="settingsPage-action-icon settingsPage-delete">
                       <Trash2 size={24} />
                     </div>
-                    <div className="action-details">
+                    <div className="settingsPage-action-details">
                       <h3>Delete Account</h3>
                       <p>Permanently delete your account and all associated data</p>
-                      <button className="delete-account-button" onClick={() => setShowDeleteModal(true)}>
+                      <button className="settingsPage-delete-account-button" onClick={() => setShowDeleteModal(true)}>
                         Delete Account
                       </button>
                     </div>
@@ -607,10 +500,10 @@ const Settings = () => {
       <Footer darkMode={darkMode} setDarkMode={setDarkMode} />
 
       {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="delete-modal" ref={modalRef}>
+        <div className="settingsPage-modal-overlay">
+          <div className="settingsPage-delete-modal" ref={modalRef}>
             <h2>Delete Account</h2>
-            <p className="delete-warning">
+            <p className="settingsPage-delete-warning">
               <AlertTriangle size={24} />
               This action cannot be undone. All your data will be permanently deleted.
             </p>
@@ -620,18 +513,40 @@ const Settings = () => {
               value={deleteConfirmText}
               onChange={(e) => setDeleteConfirmText(e.target.value)}
               placeholder="Type DELETE to confirm"
-              className="delete-confirm-input"
+              className="settingsPage-delete-confirm-input"
             />
-            <div className="modal-actions">
-              <button className="cancel-button" onClick={() => setShowDeleteModal(false)}>
+
+            {deleteError && (
+              <div className="settingsPage-password-error">
+                <AlertTriangle size={16} />
+                {deleteError}
+              </div>
+            )}
+
+            <div className="settingsPage-modal-actions">
+              <button
+                className="settingsPage-cancel-button"
+                onClick={() => {
+                  setShowDeleteModal(false)
+                  setDeleteError("")
+                }}
+                disabled={deleteLoading}
+              >
                 Cancel
               </button>
               <button
-                className="confirm-delete-button"
+                className="settingsPage-confirm-delete-button"
                 onClick={handleDeleteAccount}
-                disabled={deleteConfirmText !== "DELETE"}
+                disabled={deleteConfirmText !== "DELETE" || deleteLoading}
               >
-                Delete Account
+                {deleteLoading ? (
+                  <span className="settingsPage-loading-spinner">
+                    <span className="settingsPage-spinner"></span>
+                    Deleting...
+                  </span>
+                ) : (
+                  "Delete Account"
+                )}
               </button>
             </div>
           </div>
@@ -642,3 +557,5 @@ const Settings = () => {
 }
 
 export default Settings
+
+

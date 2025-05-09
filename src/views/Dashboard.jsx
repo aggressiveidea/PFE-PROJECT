@@ -8,7 +8,9 @@ import ChartsSection from "../components/forDashboard/ChartsSection"
 import Header from "../components/forHome/Header"
 import Footer from "../components/forHome/Footer"
 import { Menu } from "lucide-react"
+import { useTheme } from "../context/theme-context"
 import "./Dashboard.css"
+import "../components/darkMode.css"
 import { getTotalUsers, getActiveUsers, getUsersByCountry, getUserActivityPerMonth } from "../services/Api"
 
 export default function Dashboard() {
@@ -18,17 +20,8 @@ export default function Dashboard() {
   const [countryData, setCountryData] = useState([])
   const [activityData, setActivityData] = useState([])
   const [loading, setLoading] = useState(true)
-
-  const [darkMode, setDarkMode] = useState(false)
+  const { darkMode } = useTheme()
   const [language, setLanguage] = useState("en")
-
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark")
-    } else {
-      document.body.classList.remove("dark")
-    }
-  }, [darkMode])
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed)
@@ -113,7 +106,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${darkMode ? "dark" : ""}`}>
       <button className="mobile-menu-button" onClick={toggleMobileMenu}>
         <Menu size={24} />
       </button>
@@ -125,7 +118,7 @@ export default function Dashboard() {
         closeMobileMenu={() => setMobileMenuOpen(false)}
       />
 
-      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
+      <Header language={language} setLanguage={setLanguage} />
 
       <main className={`dashboard-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         <div className="dashboard-header">
@@ -138,11 +131,8 @@ export default function Dashboard() {
           <StatisticsSection data={statsData} loading={loading} />
           <ChartsSection countryData={countryData} activityData={activityData} loading={loading} />
         </div>
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+        <Footer language={language} />
       </main>
     </div>
   )
 }
-
-
-

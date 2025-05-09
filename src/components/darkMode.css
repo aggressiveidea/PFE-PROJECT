@@ -1,0 +1,114 @@
+:root {
+    --background-light: #ffffff;
+    --text-primary-light: #1e293b;
+    --text-secondary-light: #64748b;
+    --primary-color: #7c3aed;
+    --primary-hover: #6d28d9;
+    --border-light: #e2e8f0;
+    --card-bg-light: #ffffff;
+    --hover-bg-light: #f1f5f9;
+  
+    /* Dark mode variables */
+    --background-dark: #0f172a;
+    --text-primary-dark: #f1f5f9;
+    --text-secondary-dark: #94a3b8;
+    --primary-dark: #8b5cf6;
+    --primary-dark-hover: #7c3aed;
+    --border-dark: #1e293b;
+    --card-bg-dark: #1e293b;
+    --hover-bg-dark: #334155;
+  }
+  
+  /* Base styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-primary-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Dark mode styles */
+  body.dark {
+    background-color: var(--background-dark);
+    color: var(--text-primary-dark);
+  }
+  
+  /* App container */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Main content */
+  .main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width, 250px);
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    margin-top: 60px; /* Match header height */
+  }
+  
+  .main-content.sidebar-collapsed {
+    margin-left: var(--sidebar-collapsed-width, 80px);
+  }
+  
+  /* Links */
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  body.dark a {
+    color: var(--primary-dark);
+  }
+  
+  a:hover {
+    color: var(--primary-hover);
+  }
+  
+  body.dark a:hover {
+    color: var(--primary-dark-hover);
+  }
+  
+  /* Cards */
+  .card {
+    background-color: var(--card-bg-light);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+  }
+  
+  body.dark .card {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-dark);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Buttons */
+  button {
+    cursor: pointer;
+    font-family: inherit;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+    }
+  
+    .main-content.sidebar-collapsed {
+      margin-left: 0;
+    }
+  }
+  
