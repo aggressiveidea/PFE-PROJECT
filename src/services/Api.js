@@ -822,21 +822,21 @@ export const classicSearch = async (query, page = 1, limit = 8) => {
     }
   } catch (error) {
     console.error("Error in classic search:", error)
-    // Return empty array instead of throwing to prevent UI crashes
+
     return []
   }
 }
 
-// Indexed search with pagination
-export const indexedSearch = async (letter, page = 1, limit = 8) => {
+export const indexedSearch = async (letter, page = 1, limit = 8,language = "en") => {
   try {
     if (!letter || letter.length !== 1) {
       console.error("Invalid letter parameter:", letter)
       return []
     }
 
-    // Build URL with query parameters
-    const url = new URL(`http://localhost:3001/api/search/indexed/${letter}`)
+    const url = new URL(
+      `http://localhost:3001/api/search/indexed/${letter}/language=${language}`
+    );
     url.searchParams.append("page", page.toString())
     url.searchParams.append("limit", limit.toString())
 
@@ -946,25 +946,29 @@ export const runGraphAlgorithm = async (algorithm, params = {}) => {
     throw error
   }
 }
-export const getAllterms = async () => {
+export const getAllterms = async (language) => {
   try {
-    const response = await fetch("http://localhost:3001/api/search/all", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    const response = await fetch(
+      `http://localhost:3001/api/search/all?language=${language}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error("failed to fetch all terms")
+      throw new Error("failed to fetch all terms");
     }
 
-    return await response.json()
+    
+    return await response.json();
   } catch (error) {
-    console.error("error fetching terms:", error)
-    throw error
+    console.error("error fetching terms:", error);
+    throw error;
   }
-}
+};
 // Existing API functions...
 
 export const fetchQuizQuestions = async (level) => {
