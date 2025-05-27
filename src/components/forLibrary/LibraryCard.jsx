@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import "./library.css"
 
@@ -7,7 +5,6 @@ const LibraryCard = ({ item, index, animateItems, currentLanguage, type }) => {
   const [isFavorite, setIsFavorite] = useState(item.isFavorite)
   const [isExpanded, setIsExpanded] = useState(false)
 
-  // Get category metadata
   const getCategoryMetadata = (category) => {
     const metadata = {
       "e-commerce": {
@@ -44,24 +41,20 @@ const LibraryCard = ({ item, index, animateItems, currentLanguage, type }) => {
     )
   }
 
-  // Toggle favorite status
   const toggleFavorite = (e) => {
     e.stopPropagation()
     setIsFavorite(!isFavorite)
   }
 
-  // Toggle expanded view
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
 
-  // Get category label based on current language
   const getCategoryLabel = (category) => {
     const metadata = getCategoryMetadata(category)
     return metadata.label[currentLanguage] || metadata.label.en
   }
 
-  // Get date label based on item type
   const getDateLabel = () => {
     const translations = {
       en: { addedOn: "Added on", publishedOn: "Published on" },
@@ -78,7 +71,6 @@ const LibraryCard = ({ item, index, animateItems, currentLanguage, type }) => {
     }
   }
 
-  // Get UI text based on current language
   const getText = (key) => {
     const translations = {
       en: { view: "View", share: "Share", by: "By", languages: "Languages" },
@@ -89,7 +81,6 @@ const LibraryCard = ({ item, index, animateItems, currentLanguage, type }) => {
     return translations[currentLanguage]?.[key] || translations.en[key]
   }
 
-  // Get available languages
   const getLanguageLabel = (code) => {
     const languages = {
       en: "English",
@@ -272,7 +263,6 @@ const LibraryCard = ({ item, index, animateItems, currentLanguage, type }) => {
       </div>
     )
   } else {
-    // Book type is handled in BooksList.jsx
     return null
   }
 }

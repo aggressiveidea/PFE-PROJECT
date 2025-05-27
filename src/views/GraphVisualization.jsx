@@ -4,32 +4,28 @@ import { Graph } from "graphology";
 import axios from "axios";
 
 const GraphVisualization = () => {
-  const sigmaInstance = useRef(null); // ✅ Remove TypeScript syntax
-  const containerRef = useRef(null); // ✅ No TypeScript-specific ref
+  const sigmaInstance = useRef(null); 
+  const containerRef = useRef(null); 
 
   useEffect(() => {
     axios
       .get("http://localhost:3001/api/graph")
       .then((response) => {
         const data = response.data;
-
-        // Create a graph instance
         const graph = new Graph();
 
-        // Add nodes with formatted properties
+
         data.nodes.forEach((node) => {
           graph.addNode(node.id, {
-            label: `${node.name} (${node.age})`, // Show name and age
+            label: `${node.name} (${node.age})`, 
             size: 15,
             color: "blue",
-            city: node.city, // Extra data
-            x: Math.random() * 100, // ✅ Add random X coordinate
-            y: Math.random() * 100, // ✅ Add random Y coordinate
+            city: node.city, 
+            x: Math.random() * 100, 
+            y: Math.random() * 100, 
           });
         });
         
-
-        // Add edges (avoid duplicates)
         data.links.forEach((link) => {
           if (!graph.hasEdge(link.source, link.target)) {
             graph.addEdge(link.source, link.target, {
@@ -39,7 +35,7 @@ const GraphVisualization = () => {
           }
         });
 
-        // Initialize Sigma
+ 
         if (containerRef.current) {
           sigmaInstance.current = new Sigma(graph, containerRef.current, {
             renderEdgeLabels: true,
@@ -52,7 +48,7 @@ const GraphVisualization = () => {
 
     return () => {
       if (sigmaInstance.current) {
-        sigmaInstance.current.kill(); // Cleanup on unmount
+        sigmaInstance.current.kill(); 
       }
     };
   }, []);
@@ -60,7 +56,7 @@ const GraphVisualization = () => {
   return (
     <div>
       <h2>Graph Visualization</h2>
-      <div ref={containerRef} style={{ width: "100%", height: "500px" }} /> {/* ✅ Fixed */}
+      <div ref={containerRef} style={{ width: "100%", height: "500px" }} /> 
     </div>
   );
 };

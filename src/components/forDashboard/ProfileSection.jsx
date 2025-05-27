@@ -1,5 +1,3 @@
-"use client"
-
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react"
 import { User, Bell, Settings, LogOut, ChevronDown } from "lucide-react"
@@ -13,7 +11,6 @@ export default function ProfileSection() {
     setDropdownOpen(!dropdownOpen)
   }
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import "./FaqPage.css"
 import Header from "../forHome/Header"
@@ -9,7 +7,6 @@ const FaqPage = () => {
   const [activeQuestion, setActiveQuestion] = useState(null)
   const [language, setLanguage] = useState("en")
 
-  // Sample FAQ data
   const faqs = [
     {
       id: 1,

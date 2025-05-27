@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import Header from "../components/forHome/Header"
 import Hero from "../components/forHome/Hero"

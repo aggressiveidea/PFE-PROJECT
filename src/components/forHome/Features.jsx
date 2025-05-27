@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Globe, Network, RefreshCw, Zap, Users } from "lucide-react"
@@ -101,7 +99,6 @@ const Features = ({ language = "en" }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
         >
-          {/* Enhanced Animated Path SVG */}
           <div className="features-journey-path">
             <svg className="features-path-svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid meet">
               <defs>
@@ -124,14 +121,11 @@ const Features = ({ language = "en" }) => {
                 strokeLinecap="round"
                 filter="url(#featuresGlow)"
               />
-              {/* Path markers */}
               <circle cx="100" cy="300" r="4" fill="#8b5cf6" className="features-path-marker" />
               <circle cx="600" cy="200" r="4" fill="#ec4899" className="features-path-marker" />
               <circle cx="1100" cy="300" r="4" fill="#a78bfa" className="features-path-marker" />
             </svg>
           </div>
-
-          {/* Feature Stops */}
           {features.map((feature, index) => {
             const IconComponent = feature.icon
             const isHovered = activeFeature === index
@@ -151,7 +145,6 @@ const Features = ({ language = "en" }) => {
                   stiffness: 400,
                 }}
               >
-                {/* Icon */}
                 <motion.div
                   className="features-feature-icon"
                   style={{
@@ -165,7 +158,6 @@ const Features = ({ language = "en" }) => {
                   <IconComponent size={24} />
                 </motion.div>
 
-                {/* Compact Card (Always Visible) */}
                 <motion.div
                   className={`features-compact-card ${isHovered ? "features-hovered" : ""}`}
                   style={{ borderColor: `${feature.color}30` }}
@@ -187,8 +179,6 @@ const Features = ({ language = "en" }) => {
                     </div>
                   </div>
                 </motion.div>
-
-                {/* Detailed Card (Hover Only) */}
                 <AnimatePresence>
                   {isHovered && (
                     <motion.div

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { getUserById } from "../services/Api"
@@ -12,7 +10,6 @@ function VerificationSuccess() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Get query parameters
     const params = new URLSearchParams(location.search)
     const token = params.get("token")
     const userId = params.get("userId")
@@ -23,38 +20,31 @@ function VerificationSuccess() {
     if (verified === "true" && token && userId) {
       const updateUserData = async () => {
         try {
-          // Update localStorage with verified status
           const storedUser = localStorage.getItem("user")
           if (storedUser) {
             const userData = JSON.parse(storedUser)
             userData.isVerified = true
-
-            // Store the updated user data
             localStorage.setItem("user", JSON.stringify(userData))
 
-            // Update the auth token
             localStorage.setItem("authData", JSON.stringify({ token }))
 
-            // Try to fetch the latest user data from the server
             try {
               const response = await getUserById(userId)
               if (response && response.success && response.data) {
-                // Merge the server data with our local data
+
                 const updatedUserData = {
                   ...userData,
                   ...response.data,
-                  isVerified: true, // Ensure verified status is maintained
+                  isVerified: true, 
                 }
 
-                // Update localStorage with the complete data
                 localStorage.setItem("user", JSON.stringify(updatedUserData))
               }
             } catch (error) {
               console.error("Error fetching updated user data:", error)
-              // Continue with the basic verification update even if fetch fails
             }
 
-            // Dispatch an event to notify other components (like Header) that user data has changed
+  
             window.dispatchEvent(new Event("userUpdated"))
 
             console.log("User data updated with verified status")
@@ -70,7 +60,6 @@ function VerificationSuccess() {
 
       updateUserData()
 
-      // Redirect to home page after 3 seconds
       setTimeout(() => {
         navigate("/")
       }, 3000)

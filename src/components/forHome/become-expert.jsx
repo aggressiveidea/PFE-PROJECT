@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Mail, Send, CheckCircle, Users, Globe, BookOpen, Lock, UserPlus } from "lucide-react"
@@ -21,18 +19,15 @@ const BecomeExpert = () => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Check user authentication status
   useEffect(() => {
     const checkUserStatus = () => {
       try {
-        // Get user data from localStorage
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
         const authData = JSON.parse(localStorage.getItem("authData") || "{}")
 
         console.log("BecomeExpert: Stored user:", storedUser)
         console.log("BecomeExpert: Auth data:", authData)
 
-        // Check if user exists and has required properties
         if (storedUser && storedUser.email) {
           setUser({
             ...storedUser,
@@ -60,8 +55,6 @@ const BecomeExpert = () => {
     }
 
     checkUserStatus()
-
-    // Listen for user updates
     const handleUserUpdate = () => {
       console.log("BecomeExpert: User updated event received")
       checkUserStatus()
@@ -83,8 +76,6 @@ const BecomeExpert = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    // Check if user is signed in and verified
     if (!user || !user.isSignedIn || !user.isVerified) {
       setShowSignUpRequired(true)
       return
@@ -110,12 +101,10 @@ const BecomeExpert = () => {
   }
 
   const handleSignUp = () => {
-    // Redirect to sign up page
     window.location.href = "/signup"
   }
 
   const handleSignIn = () => {
-    // Redirect to sign in page
     window.location.href = "/login"
   }
 
@@ -152,7 +141,6 @@ const BecomeExpert = () => {
     },
   }
 
-  // Show loading state while checking user status
   if (loading) {
     return (
       <section id="become-expert" className="expert-become-expert">
@@ -492,8 +480,6 @@ const BecomeExpert = () => {
             </AnimatePresence>
           </motion.div>
         </div>
-
-        {/* User Status Display - For debugging (remove in production) */}
         {process.env.NODE_ENV === "development" && user && (
           <motion.div
             className="expert-debug-info"

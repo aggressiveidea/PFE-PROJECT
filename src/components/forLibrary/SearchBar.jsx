@@ -1,8 +1,6 @@
-"use client"
 import "./library.css"
 
 const SearchBar = ({ searchQuery, setSearchQuery, currentLanguage }) => {
-  // Get UI text based on current language
   const getPlaceholderText = () => {
     const placeholders = {
       en: "Search terms, articles, or books...",

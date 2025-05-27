@@ -1,5 +1,3 @@
-"use client"
-
 const InputField = ({ type = "text", placeholder, name, value, onChange, className = "" }) => {
   return (
     <div className={`input-field ${className}`}>

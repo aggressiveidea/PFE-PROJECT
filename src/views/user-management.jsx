@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Search, Filter, UserPlus, MoreHorizontal, Check, Trash2, UserCog, X, RefreshCw } from "lucide-react"
 import { getAllUsers, deleteUser, createUser, updateUser } from "../services/Api"
@@ -41,11 +39,9 @@ export default function UserManagement() {
     status: "Active",
   })
 
-  // Available roles and statuses for filtering
   const availableRoles = ["User", "Ict-expert", "Content-admin", "Admin"]
   const availableStatuses = ["Active", "Inactive", "Pending"]
 
-  // Initialize dark mode from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true"
     setDarkMode(savedDarkMode)
@@ -56,7 +52,6 @@ export default function UserManagement() {
       document.body.classList.remove("dark")
     }
 
-    // Listen for dark mode changes from other components
     const handleDarkModeChange = () => {
       const isDarkMode = localStorage.getItem("darkMode") === "true"
       setDarkMode(isDarkMode)
@@ -107,12 +102,10 @@ export default function UserManagement() {
     fetchUsers()
   }, [])
 
-  // Apply filters when search term, role filter, or status filter changes
   useEffect(() => {
     if (users.length > 0) {
       let filtered = [...users]
 
-      // Apply search filter
       if (searchTerm) {
         filtered = filtered.filter(
           (user) =>
@@ -124,12 +117,10 @@ export default function UserManagement() {
         )
       }
 
-      // Apply role filter
       if (roleFilter !== "all") {
         filtered = filtered.filter((user) => user.role === roleFilter)
       }
 
-      // Apply status filter
       if (statusFilter !== "all") {
         filtered = filtered.filter((user) => (user.status || "Active") === statusFilter)
       }
@@ -146,7 +137,6 @@ export default function UserManagement() {
     }
   }, [selectAll, filteredUsers])
 
-  // Clear role update success message after 3 seconds
   useEffect(() => {
     if (roleUpdateSuccess) {
       const timer = setTimeout(() => {
@@ -204,17 +194,15 @@ export default function UserManagement() {
       try {
         setIsLoading(true)
 
-        // Create a payload with the role update
         const roleUpdateData = {
           ...selectedUser,
           role: newRole,
         }
 
-        // Use the standard updateUser function with the role included
         const response = await updateUser(selectedUser._id, roleUpdateData)
 
         if (response && response.success) {
-          // Update the updatedUsers collection in localStorage for real-time role updates
+
           const updatedUsersCollection = JSON.parse(localStorage.getItem("updatedUsers") || "[]")
           const userIndex = updatedUsersCollection.findIndex((u) => u._id === selectedUser._id)
 

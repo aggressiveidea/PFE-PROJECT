@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   User,
@@ -17,7 +15,6 @@ const MessagePreview = ({ message }) => {
   const [articleInfo, setArticleInfo] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch article information when message is selected
   useEffect(() => {
     const fetchArticleInfo = async () => {
       if (message?.articleId) {
@@ -41,7 +38,6 @@ const MessagePreview = ({ message }) => {
     fetchArticleInfo();
   }, [message?.articleId]);
 
-  // Format date if available
   const formatDate = (dateString) => {
     if (!dateString) return "Date not available";
 
@@ -107,7 +103,6 @@ const MessagePreview = ({ message }) => {
         </div>
       </div>
 
-      {/* Article reference section */}
       {message.articleId && (
         <div className="dashboard-message-article-ref">
           <div className="dashboard-message-article-header">

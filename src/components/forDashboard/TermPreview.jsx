@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Calendar, BookOpen, Tag, ChevronDown, ChevronUp } from "lucide-react";
 import "./TermPreview.css";
@@ -7,7 +5,6 @@ import "./TermPreview.css";
 const TermPreview = ({ term }) => {
   const [expanded, setExpanded] = useState(false);
 
-  // Format date if available
   const formatDate = (dateString) => {
     if (!dateString) return "Date not available";
 

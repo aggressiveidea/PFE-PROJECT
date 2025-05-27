@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, Check, X, Clock, AlertTriangle, Volume2, VolumeX } from "lucide-react"
@@ -30,7 +28,6 @@ const QuestionPage = ({ darkMode }) => {
   const questionContainerRef = useRef(null)
 
   useEffect(() => {
-    // Get category details
     const details = getCategoryDetails(category)
     setCategoryInfo(details)
 
@@ -51,25 +48,18 @@ const QuestionPage = ({ darkMode }) => {
 
     loadQuestions()
   }, [category])
-
-  // Animate progress bar when current question changes
   useEffect(() => {
     setAnimateProgress(true)
     const timer = setTimeout(() => setAnimateProgress(false), 600)
     return () => clearTimeout(timer)
   }, [currentQuestion])
 
-  // Timer effect with ticking sound
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeSpent((prev) => {
-        // Store time spent in session storage for results page
         sessionStorage.setItem("quizTimeSpent", (prev + 1).toString())
-
-        // Play tick sound every second if enabled
         if (soundEnabled && tickAudioRef.current) {
           const now = Date.now()
-          // Ensure we don't play sounds too rapidly (debounce)
           if (now - lastTickTimeRef.current > 900) {
             tickAudioRef.current.currentTime = 0
             tickAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
@@ -83,7 +73,6 @@ const QuestionPage = ({ darkMode }) => {
     return () => clearInterval(timer)
   }, [soundEnabled])
 
-  // Add slide-in animation when question changes
   useEffect(() => {
     if (questionContainerRef.current) {
       questionContainerRef.current.classList.add("question-enter")
@@ -101,7 +90,7 @@ const QuestionPage = ({ darkMode }) => {
   }
 
   const handleOptionSelect = (option) => {
-    if (showAnswer) return // Prevent changing answer after submission
+    if (showAnswer) return
     setSelectedOption(option)
   }
 
@@ -133,7 +122,7 @@ const QuestionPage = ({ darkMode }) => {
       setShowAnswer(false)
       setIsAnswerCorrect(null)
     } else {
-      // Quiz completed, navigate to results page
+
       navigate(`/quiz/results/${category}/${score}`)
     }
   }

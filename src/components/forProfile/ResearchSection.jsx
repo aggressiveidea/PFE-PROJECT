@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 import "./ResearchSection.css"
 
@@ -102,7 +101,6 @@ export default function ResearchSection() {
         return (
           <div className="advanced-research">
             <div className="filters">
-              {/* Advanced research filters will go here */}
               <p className="placeholder-text">Advanced research filters and visualization coming soon...</p>
             </div>
           </div>
@@ -111,7 +109,6 @@ export default function ResearchSection() {
         return (
           <div className="graph-research">
             <div className="graph-placeholder">
-              {/* Graph visualization will go here */}
               <p className="placeholder-text">Graph visualization coming soon...</p>
             </div>
           </div>

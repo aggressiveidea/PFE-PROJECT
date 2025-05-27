@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles, TrendingUp, Eye, ArrowRight, Globe, Monitor, Package, Shield, Brain, Cpu } from 'lucide-react'

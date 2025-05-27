@@ -1,5 +1,3 @@
-"use client"
-
 import { Moon, Sun } from "lucide-react"
 import { translations } from "../../utils/translations"
 import { useTheme } from "../../context/theme-context"

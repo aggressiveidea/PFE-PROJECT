@@ -1,13 +1,9 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 
 const SectionNavigation = () => {
   const [activeSection, setActiveSection] = useState("home")
   const [showBackToTop, setShowBackToTop] = useState(false)
-
-  // Define all navigable sections in order
   const sections = [
     { id: "home", label: "Home" },
     { id: "knowledge-graph", label: "Knowledge Graph" },
@@ -17,17 +13,13 @@ const SectionNavigation = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show/hide back to top button
       if (window.scrollY > 500) {
         setShowBackToTop(true)
       } else {
         setShowBackToTop(false)
       }
-
-      // Determine active section
       const scrollPosition = window.scrollY + 100
 
-      // Find the current active section
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = document.getElementById(sections[i].id)
         if (section && section.offsetTop <= scrollPosition) {
@@ -44,16 +36,13 @@ const SectionNavigation = () => {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId)
     if (section) {
-      // Add a class to the section for animation
       section.classList.add("home-section-entering")
 
-      // Smooth scroll to section
       window.scrollTo({
         top: section.offsetTop,
         behavior: "smooth",
       })
 
-      // Remove the animation class after transition completes
       setTimeout(() => {
         section.classList.remove("home-section-entering")
       }, 1000)

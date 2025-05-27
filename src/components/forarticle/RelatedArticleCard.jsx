@@ -1,5 +1,3 @@
-"use client";
-
 import { useNavigate } from "react-router-dom";
 import "./related-article-card.css";
 import Image from "../../assets/cde57eb697132f9d4316f8076379469d.jpg";

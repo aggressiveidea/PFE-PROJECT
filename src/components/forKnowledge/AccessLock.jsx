@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Lock, User, ArrowRight, Key, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -10,10 +8,9 @@ const AccessLock = ({ onClose }) => {
   const [showSignup, setShowSignup] = useState(false)
 
   useEffect(() => {
-    // Start animation after component mounts
+    //after mount
     setIsAnimating(true)
 
-    // Show signup form after lock animation completes
     const timer = setTimeout(() => {
       setShowSignup(true)
     }, 1000)

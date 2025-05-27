@@ -1,11 +1,5 @@
-"use client";
-
 import { useRef, useEffect } from "react";
 
-/**
- * Custom hook to safely check if a component is mounted
- * This helps prevent memory leaks and errors from updating unmounted components
- */
 export default function useIsMounted() {
   const isMountedRef = useRef(false);
 

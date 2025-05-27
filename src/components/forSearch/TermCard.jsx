@@ -1,12 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import "./TermCard.css"
 
 const TermCard = ({ term }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  // Function to determine the card's background color based on category
   const getCategoryColor = (category) => {
     const colors = {
       "Données personnelles": "#E5DEFF",
@@ -25,8 +22,6 @@ const TermCard = ({ term }) => {
     }
     return colors[category] || "#F1F0FB"
   }
-
-  // Function to get border color (darker shade of background)
   const getBorderColor = (category) => {
     const colors = {
       "Données personnelles": "#9b87f5",
@@ -46,13 +41,10 @@ const TermCard = ({ term }) => {
     return colors[category] || "#9b87f5"
   }
 
-  // If term has multiple categories with definitions
   const hasMultipleDefinitions = term.categories && term.categories.length > 0
 
-  // Get the primary category for card styling
   const primaryCategory = term.category || (term.categories && term.categories[0]?.type) || "Divers"
 
-  // Toggle expanded state
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
@@ -77,7 +69,6 @@ const TermCard = ({ term }) => {
       </div>
 
       {!isExpanded ? (
-        // Collapsed view - show only primary definition
         <div className="term-body">
           <p className="definition">
             {term.definition ||
@@ -96,22 +87,18 @@ const TermCard = ({ term }) => {
             )}
         </div>
       ) : (
-        // Expanded view - show all definitions across categories
         <div className="term-expanded-content">
           {term.categories ? (
-            // For terms with multiple categories
             term.categories.map((category, catIndex) => (
               <div
                 key={catIndex}
                 className="category-section"
                 style={{
                   borderLeft: `3px solid ${getBorderColor(category.type)}`,
-                  backgroundColor: `${getCategoryColor(category.type)}50`, // 50 = 30% opacity
+                  backgroundColor: `${getCategoryColor(category.type)}50`, 
                 }}
               >
                 <h4 className="category-title">{category.type}</h4>
-
-                {/* Primary definitions */}
                 {category.principale &&
                   category.principale.map((primary, primIndex) => (
                     <div key={`prim-${catIndex}-${primIndex}`} className="definition-block primary">
@@ -133,7 +120,6 @@ const TermCard = ({ term }) => {
                     </div>
                   ))}
 
-                {/* Secondary definitions */}
                 {category.secondaire && category.secondaire.length > 0 && (
                   <>
                     {category.secondaire.map((secondary, secIndex) => (
@@ -160,14 +146,12 @@ const TermCard = ({ term }) => {
               </div>
             ))
           ) : (
-            // For simple terms with single definition
             <div className="definition-block">
               <p className="definition">{term.definition}</p>
               {term.reference && <p className="reference">Source: {term.reference}</p>}
             </div>
           )}
 
-          {/* Term metadata if available */}
           {term.ID && (
             <div className="term-metadata">
               <p>Term ID: {term.ID}</p>

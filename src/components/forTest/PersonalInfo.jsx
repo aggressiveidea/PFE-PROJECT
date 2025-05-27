@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Shield, Edit2, Save, X, Camera, User, Mail, FileText, Calendar, Clock, Code, Terminal } from "lucide-react"
 import Sidebar from "../forDashboard/Sidebar"
@@ -16,7 +14,7 @@ export default function PersonalInfo() {
   const [error, setError] = useState(null)
   const [updateLoading, setUpdateLoading] = useState(false)
 
-  // User state with default empty values
+
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",

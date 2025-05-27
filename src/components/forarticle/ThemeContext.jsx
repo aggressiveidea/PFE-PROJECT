@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useState, useEffect, useContext } from "react";
 
 const ThemeContext = createContext({
@@ -12,12 +10,11 @@ export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    // Check if user has previously set a preference
+  
     const savedDarkMode = localStorage.getItem("darkMode");
     if (savedDarkMode) {
       setDarkMode(JSON.parse(savedDarkMode));
     } else {
-      // Check if user prefers dark mode based on system settings
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
@@ -26,7 +23,7 @@ export const ThemeProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Apply dark mode class to document
+
     if (darkMode) {
       document.documentElement.classList.add("dark");
       document.body.classList.add("dark-mode");
@@ -35,7 +32,6 @@ export const ThemeProvider = ({ children }) => {
       document.body.classList.remove("dark-mode");
     }
 
-    // Save preference to localStorage
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 

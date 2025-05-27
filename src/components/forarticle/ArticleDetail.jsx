@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import {
@@ -301,23 +299,16 @@ const ArticleDetail = () => {
   return (
     <div className="artd-container">
       <div className="artd-content">
-        {/* Navigation */}
         <div className="artd-navigation">
           <button className="artd-back-btn" onClick={handleGoBack}>
             <ArrowLeft size={18} />
             Back to Articles
           </button>
         </div>
-
-        {/* Category */}
         <div className="artd-category">
           <span>{article.category}</span>
         </div>
-
-        {/* Title */}
         <h1 className="artd-title">{article.title}</h1>
-
-        {/* Author */}
         <div className="artd-author" onClick={() => handleAuthorClick(owner?._id)}>
           <div className="artd-author-avatar">
             {owner?.profileImgUrl && !ownerImageError ? (
@@ -339,8 +330,6 @@ const ArticleDetail = () => {
             <span className="artd-author-role">{owner?.role}</span>
           </div>
         </div>
-
-        {/* Metadata */}
         <div className="artd-meta">
           <div className="artd-meta-item">
             <Calendar size={16} />
@@ -364,7 +353,6 @@ const ArticleDetail = () => {
           </div>
         </div>
 
-        {/* Image Section */}
         <div className="artd-image-container" onClick={openImageModal}>
           <img
             ref={imageRef}
@@ -377,7 +365,6 @@ const ArticleDetail = () => {
           </div>
         </div>
 
-        {/* Image Modal */}
         {imageModalOpen && (
           <div className="artd-modal" onClick={closeImageModal}>
             <div className="artd-modal-content">
@@ -400,7 +387,6 @@ const ArticleDetail = () => {
           </div>
         )}
 
-        {/* Body */}
         <div className="artd-body">
           <p className="artd-summary">{article.description || article.content?.substring(0, 200)}</p>
 
@@ -412,7 +398,6 @@ const ArticleDetail = () => {
           />
         </div>
 
-        {/* Actions */}
         <div className="artd-actions">
           <button
             className={`artd-action-btn artd-favorite-btn ${isFavorite ? "artd-active" : ""}`}
@@ -437,7 +422,6 @@ const ArticleDetail = () => {
           </button>
         </div>
 
-        {/* Comments and Chat */}
         <div className="artd-comments">
           <h2 className="artd-comments-title">
             <MessageCircle size={22} />
@@ -498,7 +482,6 @@ const ArticleDetail = () => {
           </div>
         </div>
 
-        {/* Add Comment */}
         <div className="artd-comment-form">
           <div className="artd-form-avatar">
             <User size={20} />
@@ -517,7 +500,6 @@ const ArticleDetail = () => {
           </div>
         </div>
 
-        {/* Related Articles */}
         {relatedArticles.length > 0 && (
           <div className="artd-related">
             <h2 className="artd-related-title">You May Also Like</h2>
@@ -531,8 +513,6 @@ const ArticleDetail = () => {
                 />
               ))}
             </div>
-
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="artd-pagination">
                 <button className="artd-pagination-btn" onClick={handlePrevPage} disabled={currentPage === 1}>
@@ -559,8 +539,6 @@ const ArticleDetail = () => {
           </div>
         )}
       </div>
-
-      {/* Footer */}
       <Footer />
     </div>
   )

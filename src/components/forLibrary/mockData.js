@@ -1,6 +1,6 @@
 
 export const mockTermsData = [
-    // E-Commerce Terms
+  
     {
       id: "ec-1",
       title: "Electronic Contract",

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import "./library.css"
 import image1 from "../../assets/book 1.jpg"
@@ -7,7 +5,6 @@ import image2 from "../../assets/book 2.jpg"
 import image3 from "../../assets/book 3.jpg"
 import image4 from "../../assets/book 4.jpg"
 
-// Updated mock data with proper descriptions and categories
 const updatedBooksData = [
   {
     id: 1,
@@ -88,11 +85,9 @@ const BooksList = ({
   const [animateItems, setAnimateItems] = useState(false)
   const itemsPerPage = 8
 
-  // Filter and sort items
+
   useEffect(() => {
-    // Use the updated books data instead of mockBooksData
     const filtered = updatedBooksData.filter((item) => {
-      // Search query filter
       const searchInCurrentLanguage = (text) => {
         if (!text) return true
         return text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -102,19 +97,15 @@ const BooksList = ({
       const contentMatch = searchInCurrentLanguage(item.description[currentLanguage])
       const matchesSearch = searchQuery === "" || titleMatch || contentMatch
 
-      // Category filter
       const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
 
-      // Language filter
       const matchesLanguage = languageFilter === "all" || (item.languages && item.languages.includes(languageFilter))
 
-      // Favorites filter
       const matchesFavorites = !showFavoritesOnly || item.isFavorite
 
       return matchesSearch && matchesCategory && matchesLanguage && matchesFavorites
     })
 
-    // Then sort
     filtered.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":
@@ -130,18 +121,15 @@ const BooksList = ({
 
     setFilteredItems(filtered)
 
-    // Trigger animation after items are loaded
     setAnimateItems(false)
     setTimeout(() => {
       setAnimateItems(true)
     }, 100)
   }, [searchQuery, categoryFilter, languageFilter, sortOption, showFavoritesOnly, currentLanguage])
 
-  // Pagination
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage)
 
-  // Empty state
   if (paginatedItems.length === 0) {
     return (
       <div className="library-empty-state">
@@ -152,7 +140,6 @@ const BooksList = ({
     )
   }
 
-  // Get category color
   const getCategoryColor = (category) => {
     const metadata = {
       "e-commerce": "#29ABE2",
@@ -167,7 +154,7 @@ const BooksList = ({
     return metadata[category] || "#95A5A6"
   }
 
-  // Translation helper
+
   const getText = (key) => {
     const translations = {
       en: { pages: "pages", publishedOn: "Published on", by: "By", read: "Read Now" },
@@ -177,7 +164,6 @@ const BooksList = ({
     return translations[currentLanguage]?.[key] || translations.en[key]
   }
 
-  // Function to get the correct book image based on ID
   const getBookImage = (bookId) => {
     switch (bookId) {
       case 1:

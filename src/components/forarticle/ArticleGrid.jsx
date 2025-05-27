@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useCallback } from "react";
 import ArticleCard from "./ArticleCard";
 import "./article-grid.css";
@@ -24,7 +22,7 @@ export default function ArticlesSection({
   const [alertMessage, setAlertMessage] = useState("");
   const articlesPerPage = 6;
 
-  // Fetch articles
+
   const fetchArticles = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -45,7 +43,7 @@ export default function ArticlesSection({
     }
   }, []);
 
-  // Initial fetch
+ 
   useEffect(() => {
     fetchArticles();
 
@@ -66,7 +64,6 @@ export default function ArticlesSection({
     };
   }, [fetchArticles]);
 
-  // Apply filters
   useEffect(() => {
     if (articles.length > 0) {
       let filtered = [...articles];
@@ -105,7 +102,6 @@ export default function ArticlesSection({
     articlesPerPage,
   ]);
 
-  // Load favorites
   useEffect(() => {
     try {
       const storedFavorites = JSON.parse(
@@ -117,7 +113,6 @@ export default function ArticlesSection({
     }
   }, []);
 
-  // Load more articles
   const loadMore = useCallback(() => {
     const nextPage = page + 1;
     const endIndex = nextPage * articlesPerPage;
@@ -127,7 +122,6 @@ export default function ArticlesSection({
     setHasMore(endIndex < filteredArticles.length);
   }, [page, filteredArticles, articlesPerPage]);
 
-  // Toggle favorite
   const handleToggleFavorite = useCallback((articleId) => {
     setFavorites((prevFavorites) => {
       const isFavorite = prevFavorites.includes(articleId);
@@ -139,8 +133,6 @@ export default function ArticlesSection({
       return updatedFavorites;
     });
   }, []);
-
-  // Edit article
   const handleEditArticle = useCallback(
     (articleId) => {
       const article = articles.find((a) => a._id === articleId);

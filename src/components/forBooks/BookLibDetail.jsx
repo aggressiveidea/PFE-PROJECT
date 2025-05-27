@@ -11,16 +11,10 @@ const BookLibDetail = ({ book, onClose, onAddToLibrary, onReadNow }) => {
     setIsLoading(true)
 
     try {
-      // Format the book data for consistent storage
       const formattedBook = formatBookForLibrary(book)
-
-      // Save the book to localStorage
       const saved = saveItem(formattedBook, "BOOK")
-
-      // Show success message
       setSaveMessage(saved ? "Added to your library!" : "Already in your library")
 
-      // Call the parent component's callback
       if (onAddToLibrary) {
         onAddToLibrary(book)
       }
@@ -30,7 +24,6 @@ const BookLibDetail = ({ book, onClose, onAddToLibrary, onReadNow }) => {
     } finally {
       setIsLoading(false)
 
-      // Clear message after 3 seconds
       setTimeout(() => {
         setSaveMessage("")
       }, 3000)

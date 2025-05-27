@@ -1,5 +1,3 @@
-// components/forKnowledge/GraphAlgorithmsSection.jsx
-"use client"
 import { useState } from "react"
 import AlgorithmModal from "./AlgorithmModal"
 import "./GraphAlgorithms.css"

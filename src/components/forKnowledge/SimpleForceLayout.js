@@ -1,8 +1,3 @@
-/**
- * A simple force-directed layout algorithm for graph visualization
- * This can be used as a fallback when Sigma.js fails to render properly
- */
-
 class SimpleForceLayout {
   constructor(nodes, edges, options = {}) {
     this.nodes = nodes.map((node) => ({
@@ -15,7 +10,6 @@ class SimpleForceLayout {
 
     this.edges = edges;
 
-    // Default options
     this.options = {
       width: 500,
       height: 400,
@@ -33,7 +27,6 @@ class SimpleForceLayout {
     this.alpha = this.options.alpha;
   }
 
-  // Initialize node positions if not already set
   initializePositions() {
     this.nodes.forEach((node) => {
       if (node.x === undefined || node.y === undefined) {
@@ -43,16 +36,13 @@ class SimpleForceLayout {
     });
   }
 
-  // Run a single step of the simulation
   tick() {
     if (this.alpha < this.options.alphaMin) return false;
 
-    // Apply forces
     this.applyLinkForces();
     this.applyManyBodyForces();
     this.applyCenterForce();
 
-    // Update positions
     this.nodes.forEach((node) => {
       if (node.fx !== null) {
         node.x = node.fx;
@@ -71,14 +61,12 @@ class SimpleForceLayout {
       }
     });
 
-    // Decay alpha
     this.alpha +=
       (this.options.alphaMin - this.alpha) * this.options.alphaDecay;
 
     return true;
   }
 
-  // Apply forces from links/edges
   applyLinkForces() {
     this.edges.forEach((edge) => {
       const source = this.nodes.find((n) => n.id === edge.source);
@@ -90,12 +78,10 @@ class SimpleForceLayout {
       const dy = target.y - source.y;
       const distance = Math.sqrt(dx * dx + dy * dy) || 1;
 
-      // Calculate the force
       const force =
         (this.options.linkStrength * (distance - this.options.linkDistance)) /
         distance;
 
-      // Apply force to both nodes
       if (source.fx === null) {
         source.vx += dx * force;
         source.vy += dy * force;
@@ -108,7 +94,6 @@ class SimpleForceLayout {
     });
   }
 
-  // Apply repulsive forces between nodes
   applyManyBodyForces() {
     for (let i = 0; i < this.nodes.length; i++) {
       const node1 = this.nodes[i];
@@ -121,10 +106,9 @@ class SimpleForceLayout {
         const distanceSquared = dx * dx + dy * dy || 1;
         const distance = Math.sqrt(distanceSquared);
 
-        // Calculate repulsive force
         const force = this.options.charge / distanceSquared;
 
-        // Apply force to both nodes
+
         if (node1.fx === null) {
           node1.vx -= dx * force;
           node1.vy -= dy * force;

@@ -1,4 +1,3 @@
-"use client"
 import "./library.css"
 
 const FilterControls = ({
@@ -13,7 +12,7 @@ const FilterControls = ({
   resetFilters,
   currentLanguage,
 }) => {
-  // UI translations
+
   const uiTranslations = {
     en: {
       allCategories: "All Categories",
@@ -45,7 +44,6 @@ const FilterControls = ({
     return uiTranslations[currentLanguage]?.[key] || uiTranslations.en[key]
   }
 
-  // Categories data
   const categories = [
     { value: "e-commerce", label: "E-Commerce" },
     { value: "it-compliance", label: "IT Compliance" },
@@ -54,8 +52,6 @@ const FilterControls = ({
     { value: "marketing", label: "Marketing" },
     { value: "programming", label: "Programming" },
   ]
-
-  // Languages data
   const languages = [
     { code: "en", label: "English" },
     { code: "fr", label: "Français" },

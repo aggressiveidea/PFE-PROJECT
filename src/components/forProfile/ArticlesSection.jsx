@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 import AddArticleButton from "./AddArticleButton"
 import ProfileIcon from "./ProfileIcon"
@@ -43,7 +42,7 @@ export default function ArticlesSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle article submission here
+
     setShowAddModal(false)
     setNewArticle({ title: "", category: "", summary: "", image: null })
   }

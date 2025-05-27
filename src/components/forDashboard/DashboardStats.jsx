@@ -1,5 +1,3 @@
-"use client";
-
 import { FileText, MessageSquare, BookOpen, AlertCircle } from "lucide-react";
 import "./DashboardStats.css";
 

@@ -19,12 +19,11 @@ import VerificationSuccess from "./components/VerificationSuccess"
 import UserProfile from "./components/forUserProfile/user-profile"
 import ContentAdminDashboard from "./views/DashboardContentAdmin"
 import QuizPage from "./views/QuizPage"
-import ChatBot from "./views/ChatBot"
 import BookLib from "./views/BooksLib"
 import PasswordReset from "./components/password-reset"
 
 function App() {
-  // For debugging route issues
+
   console.log("App rendering, current path:", window.location.pathname)
 
   return (
@@ -48,13 +47,8 @@ function App() {
         <Route path="/articles/:id" element={<ArticleDetail />} />
         <Route path="/terms" element={<SearchPage />} />
         <Route path="/quiz/*" element={<QuizPage />} />
-        <Route path="/ia" element={<ChatBot />} />
         <Route path="/book" element={<BookLib />} />
-
-        {/* Password reset route */}
         <Route path="/reset-password" element={<PasswordReset />} />
-
-        {/* Add a fallback redirect for any unmatched routes */}
         <Route
           path="*"
           element={

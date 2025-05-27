@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -20,7 +18,6 @@ import "./article-card.css"
 import { getUserById, favorCounter, shareCounter } from "../../services/Api"
 
 export default function ArticleCard({ article, isFavorite, onToggleFavorite, onEdit, onDelete }) {
-  // Get user from localStorage only once during component initialization
   const user = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "{}")
@@ -45,8 +42,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
   const articleId = useMemo(() => article?._id, [article?._id])
   const ownerId = useMemo(() => article?.ownerId, [article?.ownerId])
   const userId = useMemo(() => user?._id, [user?._id])
-
-  // Fetch owner information
   useEffect(() => {
     const fetchOwnerInfo = async () => {
       try {
@@ -68,9 +63,8 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     }
   }, [ownerId])
 
-  // Format date if available
   const formattedDate = useMemo(() => {
-    if (!article?.createdAt) return "2023-04-15" // Default date for demo
+    if (!article?.createdAt) return "2023-04-15"
     try {
       return article.createdAt.slice(0, 10)
     } catch (e) {
@@ -78,12 +72,10 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     }
   }, [article?.createdAt])
 
-  // Start animation when component mounts
   useEffect(() => {
     setAnimateCard(true)
   }, [])
 
-  // Check if article is bookmarked
   useEffect(() => {
     try {
       const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]")
@@ -93,7 +85,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     }
   }, [articleId])
 
-  // Set initial metadata content
   useEffect(() => {
     if (article) {
       setMetadataContent({
@@ -124,8 +115,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     (e) => {
       e.stopPropagation()
       setShowOwnerTooltip(true)
-
-      // Hide tooltip after 3 seconds
       setTimeout(() => {
         setShowOwnerTooltip(false)
       }, 3000)
@@ -161,13 +150,11 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     (e) => {
       e.stopPropagation()
 
-      // Update metadata content for share
       setMetadataContent({
         title: `Share: ${article?.title || "Article"}`,
         description: `Share this article with your friends and colleagues!`,
       })
 
-      // Share functionality
       if (navigator.share && article) {
         navigator
           .share({
@@ -176,7 +163,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
             url: `/articles/${articleId}`,
           })
           .then(async () => {
-            // Update share counter in database
             try {
               await shareCounter(articleId)
             } catch (err) {
@@ -189,11 +175,8 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
             }
           })
       } else {
-        // Fallback for browsers without Web Share API
         navigator.clipboard.writeText(window.location.href)
         alert("Link copied to clipboard!")
-
-        // Still update the counter
         try {
           shareCounter(articleId)
         } catch (err) {
@@ -207,8 +190,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
   const handleToggleFav = useCallback(
     (e) => {
       e.stopPropagation()
-
-      // Update metadata content for favorites
       setMetadataContent({
         title: isFavorite ? "Removed from favorites" : "Added to favorites",
         description: isFavorite
@@ -219,7 +200,7 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
       if (articleId && onToggleFavorite) {
         onToggleFavorite(articleId)
 
-        // Update favorite counter in database
+      
         try {
           favorCounter(articleId)
         } catch (err) {
@@ -234,7 +215,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     (e) => {
       e.stopPropagation()
 
-      // Update metadata content for bookmark
       setMetadataContent({
         title: isBookmarked ? "Bookmark removed" : "Bookmark added",
         description: isBookmarked
@@ -269,15 +249,12 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     setOwnerImageError(true)
   }, [])
 
-  // Memoize permission checks
   const role = user?.role
   const canEdit = useMemo(
     () => role === "Content-admin" || (role === "Ict-expert" && userId === ownerId),
     [role, userId, ownerId],
   )
   const canDelete = canEdit
-
-  // Generate random category color if none exists
   const getCategoryColor = useCallback(() => {
     const colors = [
       "var(--color-primary)",
@@ -289,24 +266,18 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
     return colors[Math.floor(Math.random() * colors.length)]
   }, [])
 
-  // Function to truncate text at word boundaries
   const truncateText = useCallback((text, maxLength) => {
     if (!text || text.length <= maxLength) return text
 
-    // Find the last space before maxLength
     const lastSpace = text.lastIndexOf(" ", maxLength)
-
-    // If no space found, just cut at maxLength
     if (lastSpace === -1) return text.substring(0, maxLength) + "..."
 
-    // Cut at the last space
     return text.substring(0, lastSpace) + "..."
   }, [])
 
   return (
     <div className={`quiz-card-container ${animateCard ? "quiz-card-animate-in" : ""}`} onClick={handleCardClick}>
       <div className="quiz-card-inner">
-        {/* Image section */}
         <div className="quiz-card-image-wrapper">
           <img
             src={article?.imageUrl || "/placeholder.svg?height=220&width=400"}
@@ -314,8 +285,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
             className="quiz-card-image"
             onError={handleImageError}
           />
-
-          {/* Top action buttons */}
           <div className="quiz-card-top-actions">
             <button
               onClick={handleToggleFav}
@@ -339,8 +308,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
               <span className="quiz-card-action-count">{article?.shares || 0}</span>
             </button>
           </div>
-
-          {/* Category badge */}
           {article?.category && (
             <div className="quiz-card-category" style={{ backgroundColor: getCategoryColor() }}>
               <Sparkles size={14} className="quiz-card-category-icon" />
@@ -348,7 +315,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
             </div>
           )}
 
-          {/* Trending indicator */}
           {article?.click > 25 && (
             <div className="quiz-card-trending">
               <TrendingUp size={14} className="quiz-card-trending-icon" />
@@ -357,11 +323,9 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
           )}
         </div>
 
-        {/* Content section */}
         <div className="quiz-card-content">
           <h3 className="quiz-card-title">{metadataContent.title || article?.title || "Untitled Article"}</h3>
 
-          {/* Author info */}
           <div className="quiz-card-author-row">
             <div className="quiz-card-owner-link" onClick={handleOwnerClick}>
               <div className="quiz-card-avatar">
@@ -387,12 +351,10 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
             </div>
           </div>
 
-          {/* Description with improved truncation */}
           <p className="quiz-card-description">
             {truncateText(metadataContent.description || article?.content || "No description available", 120)}
           </p>
 
-          {/* Stats and admin actions row */}
           <div className="quiz-card-footer">
             <div className="quiz-card-stats">
               <div className="quiz-card-stat">
@@ -404,8 +366,6 @@ export default function ArticleCard({ article, isFavorite, onToggleFavorite, onE
                 <span>{article?.comments || 0}</span>
               </div>
             </div>
-
-            {/* Admin actions */}
             {(canEdit || canDelete) && (
               <div className="quiz-card-admin-actions">
                 {canEdit && (

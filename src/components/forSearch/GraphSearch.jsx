@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { ZoomIn, ZoomOut, Download, Maximize, RotateCw } from "lucide-react"
 import "./GraphSearch.css"

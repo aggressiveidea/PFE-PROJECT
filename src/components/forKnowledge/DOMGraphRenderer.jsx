@@ -1,12 +1,6 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import SimpleForceLayout from "./SimpleForceLayout";
 
-/**
- * A simple DOM-based graph renderer that uses HTML elements instead of canvas
- * This can be used as a fallback when WebGL or Canvas is not available
- */
 const DOMGraphRenderer = ({
   nodes,
   edges,
@@ -24,28 +18,26 @@ const DOMGraphRenderer = ({
   const [dragNode, setDragNode] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // Initialize the layout
   useEffect(() => {
     if (!nodes || !edges || nodes.length === 0) return;
 
-    // Create a layout instance
+    
     const layout = new SimpleForceLayout(
       nodes.map((node) => ({
         ...node,
-        fixed: node.nodeType === "category", // Fix category nodes in place
+        fixed: node.nodeType === "category", 
       })),
       edges,
       { width, height }
     );
 
-    // Run the layout algorithm
     layout.run(50);
 
-    // Get the positions
+  
     setPositions(layout.getPositions());
   }, [nodes, edges, width, height]);
 
-  // Handle node dragging
+  
   const handleMouseDown = (e, nodeId) => {
     e.preventDefault();
 
@@ -78,7 +70,7 @@ const DOMGraphRenderer = ({
     setDragNode(null);
   };
 
-  // Find node and edge data
+ 
   const getNodeData = (nodeId) => {
     return nodes.find((n) => n.id === nodeId) || {};
   };
@@ -93,7 +85,7 @@ const DOMGraphRenderer = ({
     );
   };
 
-  // Calculate edge path
+ 
   const getEdgePath = (sourceId, targetId) => {
     const source = positions.find((n) => n.id === sourceId);
     const target = positions.find((n) => n.id === targetId);
@@ -103,7 +95,6 @@ const DOMGraphRenderer = ({
     return `M${source.x},${source.y} L${target.x},${target.y}`;
   };
 
-  // Attach event listeners
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -155,7 +146,7 @@ const DOMGraphRenderer = ({
         overflow: "hidden",
       }}
     >
-      {/* Render edges */}
+    
       <svg
         width={width}
         height={height}
@@ -175,7 +166,7 @@ const DOMGraphRenderer = ({
         })}
       </svg>
 
-      {/* Render nodes */}
+  
       {positions.map((node) => {
         const nodeData = getNodeData(node.id);
         const isSelected = node.id === selectedNodeId;

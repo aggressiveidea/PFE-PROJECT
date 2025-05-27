@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import Sidebar from "../components/forDashboard/Sidebar"
 import StatisticsSection from "../components/forDashboard/StatisticsSection"

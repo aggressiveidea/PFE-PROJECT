@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Search } from "lucide-react"
 import "./SearchBar.css"
@@ -9,7 +7,6 @@ export default function SearchBar() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    // Implement your search functionality here
     console.log("Searching for:", searchQuery)
   }
 

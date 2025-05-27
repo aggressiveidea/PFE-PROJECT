@@ -1,5 +1,3 @@
-"use client"
-
 import { useNavigate } from "react-router-dom"
 import {
   Terminal,
@@ -36,7 +34,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
     navigate("/quiz/category")
   }
 
-  // Function to get appropriate icon based on category
   const getCategoryIcon = (categoryId) => {
     const icons = {
       "personal-data": <Database size={24} />,
@@ -52,13 +49,11 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
     return icons[categoryId] || <FileQuestion size={24} />
   }
 
-  // Function to format date
   const formatDate = (dateString) => {
     if (!dateString) return ""
     return new Date(dateString).toLocaleDateString()
   }
 
-  // All categories
   const quizCategories = [
     {
       id: "personal-data",
@@ -125,8 +120,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
           Start Quiz
         </button>
       </div>
-
-      {/* Quiz Statistics Dashboard */}
       <div className="quiz-stats-dashboard">
         <h2 className="quiz-stats-title">Your Quiz Statistics</h2>
         <div className="quiz-stats-cards-container">
@@ -161,8 +154,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
           </div>
         </div>
       </div>
-
-      {/* Top Performance Categories Section */}
       <div className="quiz-top-cards-section">
         <h2 className="quiz-top-cards-title">
           <Trophy size={20} className="quiz-top-cards-icon" />
@@ -202,8 +193,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
           </div>
         )}
       </div>
-
-      {/* All Categories Section */}
       <div className="quiz-categories-section">
         <h2 className="quiz-categories-title">All Quiz Categories</h2>
         <div className="quiz-categories-grid">

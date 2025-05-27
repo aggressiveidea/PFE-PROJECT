@@ -1,5 +1,3 @@
-"use client"
-
 import "./ArticlePreview.css"
 import { User, Clock, Tag, CheckCircle, XCircle } from "lucide-react"
 

@@ -1,13 +1,10 @@
-// Library Service to manage saved items
 
-// Use localStorage to persist saved items
 const STORAGE_KEYS = {
     SAVED_BOOKS: "saved_books",
     SAVED_ARTICLES: "saved_articles",
     SAVED_TERMS: "saved_terms",
   }
-  
-  // Initialize storage with empty arrays if not exists
+
   const initializeStorage = () => {
     if (!localStorage.getItem(STORAGE_KEYS.SAVED_BOOKS)) {
       localStorage.setItem(STORAGE_KEYS.SAVED_BOOKS, JSON.stringify([]))
@@ -19,8 +16,7 @@ const STORAGE_KEYS = {
       localStorage.setItem(STORAGE_KEYS.SAVED_TERMS, JSON.stringify([]))
     }
   }
-  
-  // Get saved items by type
+
   export const getSavedItems = (type) => {
     initializeStorage()
     const key = STORAGE_KEYS[`SAVED_${type.toUpperCase()}S`]
@@ -31,19 +27,17 @@ const STORAGE_KEYS = {
       return []
     }
   }
-  
-  // Save an item
+
   export const saveItem = (item, type) => {
     initializeStorage()
     const key = STORAGE_KEYS[`SAVED_${type.toUpperCase()}S`]
     try {
       const savedItems = getSavedItems(type)
-  
-      // Check if item already exists
+
       const exists = savedItems.some((savedItem) => savedItem.id === item.id)
   
       if (!exists) {
-        // Add timestamp when saved
+
         const itemToSave = {
           ...item,
           savedAt: new Date().toISOString(),
@@ -60,8 +54,7 @@ const STORAGE_KEYS = {
       return false
     }
   }
-  
-  // Remove a saved item
+
   export const removeSavedItem = (itemId, type) => {
     initializeStorage()
     const key = STORAGE_KEYS[`SAVED_${type.toUpperCase()}S`]
@@ -75,14 +68,12 @@ const STORAGE_KEYS = {
       return false
     }
   }
-  
-  // Check if an item is saved
+
   export const isItemSaved = (itemId, type) => {
     const savedItems = getSavedItems(type)
     return savedItems.some((item) => item.id === itemId)
   }
-  
-  // Format a book object to be compatible with the library system
+
   export const formatBookForLibrary = (book) => {
     return {
       id: book._id || book.id || `book-${Date.now()}`,
@@ -94,7 +85,7 @@ const STORAGE_KEYS = {
         ar: book.description || "",
       },
       category: book.tags?.toLowerCase() || "programming",
-      languages: ["en", "fr", "ar"], // Default languages
+      languages: ["en", "fr", "ar"],
       datePublished: book.publishedYear ? `${book.publishedYear}-01-01` : new Date().toISOString().split("T")[0],
       isFavorite: true,
       coverImage: book.coverImgUrl,

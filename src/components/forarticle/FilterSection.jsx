@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { PlusCircle, X, Search } from "lucide-react";
 import AddArticleForm from "./AddArticleForm";
@@ -28,8 +26,6 @@ export default function FilterSection({
   ];
 
   const languages = ["All Languages", "English", "French", "Arabic"];
-
-  // Check user role on component mount
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -43,22 +39,20 @@ export default function FilterSection({
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    onSearch(value); // Trigger search on every keystroke
+    onSearch(value);
   };
 
   const handleOpenModal = () => {
     setShowAddModal(true);
-    // Prevent body scrolling when modal is open
+
     document.body.style.overflow = "hidden";
   };
 
   const handleCloseModal = () => {
     setShowAddModal(false);
-    // Re-enable body scrolling
     document.body.style.overflow = "auto";
   };
 
-  // Check if user can add articles
   const canAddArticles =
     userRole === "Ict-expert" || userRole === "Content-admin";
 
@@ -111,8 +105,6 @@ export default function FilterSection({
           </button>
         </div>
       </div>
-
-      {/* Add Article Modal */}
       <div className={`add-article-modal ${showAddModal ? "open" : ""}`}>
         <div className="modal-content">
           <button className="modal-close" onClick={handleCloseModal}>

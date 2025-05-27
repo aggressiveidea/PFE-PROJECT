@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useMemo } from "react";
 import {
   Search,
@@ -33,7 +31,6 @@ const ClassicSearch = ({
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 
-  // Function to get color for a category - purple-themed colors
   const getCategoryColor = (category) => {
     const colorMap = {
       "Computer Science": "#8b5cf6", // Violet
@@ -50,10 +47,10 @@ const ClassicSearch = ({
       "Propriété intellectuelle": "#c084fc", // Purple
       Organisations: "#8b5cf6", // Violet
     };
-    return colorMap[category] || "#8b5cf6"; // Default violet
+    return colorMap[category] || "#8b5cf6"; 
   };
 
-  // Category translations
+
   const categoryTranslations = {
     en: {
       "Computer Science": "Computer Science Law",
@@ -102,18 +99,15 @@ const ClassicSearch = ({
     },
   };
 
-  // Get the first 7 categories based on language
   const getLanguageSpecificCategories = () => {
     try {
       const allCategories = Object.keys(categoryTranslations[language] || {});
-      return allCategories.slice(0, 7); // Only return the first 7 categories
+      return allCategories.slice(0, 7); 
     } catch (err) {
       console.error("Error getting language categories:", err);
       return [];
     }
   };
-
-  // Filter terms based on search input, active categories, and language
   useEffect(() => {
     try {
       let results = [...terms];
@@ -123,23 +117,18 @@ const ClassicSearch = ({
         results = results.filter((term) =>
           term.name.toLowerCase().includes(searchInput.toLowerCase())
         );
-
-        // Pass search query to parent component for suggested terms
         if (onSearchChange) {
           onSearchChange(searchInput);
         }
       }
 
-      // Filter by active categories
       if (activeCategories.length > 0) {
         results = results.filter((term) => {
-          // For terms with allDefinitions, check all categories across all definitions
           if (term.allDefinitions && term.allDefinitions.length > 0) {
             return term.allDefinitions.some((def) =>
               def.categories.some((cat) => activeCategories.includes(cat))
             );
           }
-          // For terms with a single category
           return activeCategories.includes(term.category);
         });
       }
@@ -173,17 +162,13 @@ const ClassicSearch = ({
     }
   };
 
-  // Get language-specific categories
   const languageCategories = useMemo(() => {
     return getLanguageSpecificCategories();
   }, [language]);
 
-  // Get category name based on selected language
   const getCategoryName = (category) => {
     return categoryTranslations[language][category] || category;
   };
-
-  // Get category icon
   const getCategoryIcon = (category) => {
     const icons = {
       "Computer Science": <Cpu size={16} />,

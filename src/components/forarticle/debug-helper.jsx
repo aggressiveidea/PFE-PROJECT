@@ -1,12 +1,8 @@
-"use client";
-
 import { useEffect } from "react";
 
 export function ArticleDebugger({ article }) {
   useEffect(() => {
     console.log("Article structure:", article);
-
-    // Check if article is being passed correctly
     if (typeof article !== "object") {
       console.error("Article is not an object:", article);
     } else {
@@ -20,5 +16,5 @@ export function ArticleDebugger({ article }) {
     }
   }, [article]);
 
-  return null; // This component doesn't render anything
+  return null;
 }

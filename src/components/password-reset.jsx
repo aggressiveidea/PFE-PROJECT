@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useNavigate, useSearchParams, Link } from "react-router-dom"
 import { verifyResetLink, resetPassword } from "../services/Api"
@@ -14,21 +12,17 @@ const PasswordReset = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [serverError, setServerError] = useState("")
-  const [tokenStatus, setTokenStatus] = useState("checking") // "checking", "valid", or "invalid"
+  const [tokenStatus, setTokenStatus] = useState("checking")
   const [userId, setUserId] = useState(null)
 
-  // Get query parameters from URL
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  // Extract userId from URL query parameters
   const userIdFromUrl = searchParams.get("id")
 
-  // Add detailed debugging
   console.log("PasswordReset component mounted")
   console.log("URL parameters:", { userId: userIdFromUrl })
 
-  // Verify the reset link when component mounts
   useEffect(() => {
     const verifyLink = async () => {
       console.log("Verifying reset link...")
@@ -63,7 +57,6 @@ const PasswordReset = () => {
     verifyLink()
   }, [userIdFromUrl])
 
-  // Redirect to home page after successful password reset
   useEffect(() => {
     if (isSuccess) {
       console.log("Password reset successful, redirecting to home page in 3 seconds...")
@@ -105,8 +98,6 @@ const PasswordReset = () => {
       ...formData,
       [name]: value,
     })
-
-    // Clear errors when user types
     setErrors({
       ...errors,
       [name]: "",
@@ -115,30 +106,21 @@ const PasswordReset = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    // Reset errors
     setErrors({})
     setServerError("")
 
-    // Validate password
     const passwordErrors = validatePassword(formData.password)
 
-    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       passwordErrors.confirmPassword = "Passwords do not match"
     }
-
-    // If there are errors, show them and stop submission
     if (Object.keys(passwordErrors).length > 0) {
       setErrors(passwordErrors)
       return
     }
-
-    // Start loading state
     setIsLoading(true)
 
     try {
-      // Make the API call to reset password
       console.log("Submitting password reset for user:", userId)
       const result = await resetPassword(userId, formData.password)
 
@@ -148,7 +130,6 @@ const PasswordReset = () => {
       setIsSuccess(true)
       console.log("Set isSuccess to true")
 
-      // The redirect will happen in the useEffect
     } catch (error) {
       console.error("Password reset error:", error)
       setServerError(error.message || "An error occurred while resetting your password. Please try again.")

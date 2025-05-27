@@ -1,4 +1,3 @@
-"use client"
 import "./alertBox.css"
 
 const AlertBox = ({ message, type = "error", onClose }) => {

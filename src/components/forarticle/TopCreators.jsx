@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { ChevronLeft, ChevronRight, User } from "lucide-react"
 import "./TopCreators.css"
-import { topauthors } from "../../services/Api" // Using your existing API service
+import { topauthors } from "../../services/Api" 
 
 const AuthorsLeaderboard = () => {
   const [creators, setCreators] = useState([])
@@ -53,7 +53,6 @@ const AuthorsLeaderboard = () => {
     return creators.slice(startIndex, endIndex)
   }
 
-  // Get medal for top 3 ranks
   const getMedalIcon = (position) => {
     const rank = position + currentPage * creatorsPerPage
 
@@ -64,7 +63,6 @@ const AuthorsLeaderboard = () => {
     return <div className="rank">{rank + 1}</div>
   }
 
-  // Get row class based on position
   const getRowClass = (position) => {
     const rank = position + currentPage * creatorsPerPage
 

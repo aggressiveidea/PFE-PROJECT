@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { User, FileText } from "lucide-react";
 import "./creator-styles.css";
@@ -11,15 +9,10 @@ const CreatorCard = ({ creator, onClick, style }) => {
     setImageError(true);
   };
 
-  // Get article count (either from creator object or generate a random number)
   const articleCount = creator.author|| 0;
-
-  // Update the getCardColor function to make colors more distinct
   const getCardColor = () => {
-    // Use the creator's ID or index to generate a consistent color
-    const colorIndex = creator._id?.charCodeAt(0) || 0;
 
-    // Define more distinct card colors with CSS variables
+    const colorIndex = creator._id?.charCodeAt(0) || 0;
     const colors = [
       "var(--card-color-1)",
       "var(--card-color-2)",
@@ -28,7 +21,6 @@ const CreatorCard = ({ creator, onClick, style }) => {
       "var(--card-color-5)",
     ];
 
-    // Add a border gradient based on the card color
     const borderGradients = [
       "var(--card-border-1)",
       "var(--card-border-2)",
@@ -54,7 +46,6 @@ const CreatorCard = ({ creator, onClick, style }) => {
     };
   };
 
-  // Update the card style to include the border gradient
   const cardColor = getCardColor();
 
   return (
@@ -69,7 +60,6 @@ const CreatorCard = ({ creator, onClick, style }) => {
         borderImageSlice: "1",
       }}
     >
-      {/* Article count badge */}
       <div className="creator_article_count">
         <FileText className="creator_article_count_icon" />
         <span>{articleCount}</span>

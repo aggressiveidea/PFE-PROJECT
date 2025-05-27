@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -38,7 +36,7 @@ const ArticleDetail = () => {
   const cardsPerPage = 3;
   const [owner, setOwner] = useState(null); 
 
-  // Sample comments - in a real app, these would come from an API
+
   const sampleComments = [
     {
       id: 1,
@@ -62,7 +60,6 @@ const ArticleDetail = () => {
     try {
       const response = await getarticlebycat(category, limit);
 
-      // Filter out the current article
       const filtered = response.filter((article) => article._id !== id);
       setRelatedArticles(filtered);
     } catch (error) {
@@ -71,7 +68,6 @@ const ArticleDetail = () => {
   };
 
   useEffect(() => {
-    // Fetch article data
     const fetchArticle = async () => {
       setIsLoading(true);
       try {
@@ -83,7 +79,6 @@ const ArticleDetail = () => {
 
         setArticle(data);
 
-        // Fetch owner info
         if (data.ownerId) {
           const ownerData = await getUserById( data.ownerId );
           
@@ -92,7 +87,6 @@ const ArticleDetail = () => {
           }
         }
 
-        // Check if article is in favorites
         const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
         setIsFavorite(favorites.includes(data._id));
       } catch (error) {
@@ -110,7 +104,7 @@ const ArticleDetail = () => {
 
   useEffect(() => {
     if (article && article.category) {
-      fetchRelatedArticles(article.category, 10); // Fetch more to support pagination
+      fetchRelatedArticles(article.category, 10); 
     }
   }, [article]);
 
@@ -140,7 +134,7 @@ const ArticleDetail = () => {
         })
         .catch((err) => console.log("Error sharing", err));
     } else {
-      // Fallback for browsers that don't support the Web Share API
+
       alert("Share link copied to clipboard!");
       navigator.clipboard.writeText(window.location.href);
     }
@@ -149,7 +143,6 @@ const ArticleDetail = () => {
   const handleAddComment = () => {
     if (!newComment.trim()) return;
 
-    // Get user from localStorage (if available)
     let userName = "Guest";
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -185,10 +178,7 @@ const ArticleDetail = () => {
       return;
     }
 
-    // Start save animation
     setSaveAnimation(true);
-
-    // After animation completes, add to library
     setTimeout(() => {
       library.push(article);
       localStorage.setItem("articleLibrary", JSON.stringify(library));
@@ -209,18 +199,15 @@ const ArticleDetail = () => {
     setImageModalOpen(false);
   };
 
-  // Get user's first initial for avatar
   const getInitial = (name) => {
     return name.charAt(0).toUpperCase();
   };
 
-  // Format date
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Pagination handlers
   const totalPages = Math.ceil(relatedArticles.length / cardsPerPage);
 
   const handlePrevPage = () => {
@@ -235,7 +222,6 @@ const ArticleDetail = () => {
     }
   };
 
-  // Get current page's articles
   const indexOfLastArticle = currentPage * cardsPerPage;
   const indexOfFirstArticle = indexOfLastArticle - cardsPerPage;
   const currentArticles = relatedArticles.slice(
@@ -243,14 +229,12 @@ const ArticleDetail = () => {
     indexOfLastArticle
   );
 
-  // Update the author section to be clickable
   const handleAuthorClick = () => {
     if (article && article.ownerId) {
       window.location.href = `/userProfile?id=${article.ownerId}`;
     }
   };
 
-  // Render ICT graph SVGs
   const renderTitleGraphSVG = () => {
     return (
       <svg width="200" height="200" viewBox="0 0 200 200">
@@ -896,7 +880,6 @@ const ArticleDetail = () => {
 
   return (
     <div className="artd-container">
-      {/* ICT Terms Graph Background */}
       <div className="artd-graph-title">{renderTitleGraphSVG()}</div>
       <div className="artd-graph-top">{renderGraphSVG("top")}</div>
       <div className="artd-graph-middle-1">{renderGraphSVG("middle1")}</div>
@@ -919,7 +902,6 @@ const ArticleDetail = () => {
 
         <h1 className="artd-title">{article.title}</h1>
 
-        {/* Author information */}
         <div className="artd-author" onClick={handleAuthorClick}>
           <div className="artd-author-avatar">
             <User size={24} />
@@ -973,7 +955,6 @@ const ArticleDetail = () => {
           </div>
         </div>
 
-        {/* Image Modal */}
         {imageModalOpen && (
           <div className="artd-modal" onClick={closeImageModal}>
             <div className="artd-modal-content">
@@ -1031,7 +1012,6 @@ const ArticleDetail = () => {
           </button>
         </div>
 
-        {/* Comment Section */}
         <div className="artd-comments">
           <h2 className="artd-comments-title">
             <MessageCircle size={22} />

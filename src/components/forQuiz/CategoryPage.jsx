@@ -1,5 +1,3 @@
-"use client"
-
 import { useNavigate } from "react-router-dom"
 import { Database, ShoppingCart, Network, Shield, FileQuestion, FileText, Copyright, Building } from "lucide-react"
 import "./CategoryPage.css"
@@ -8,10 +6,10 @@ const CategoryPage = ({ darkMode }) => {
   const navigate = useNavigate()
 
   const handleCategorySelect = (category) => {
-    // Store the selected category in localStorage for progression
+   
     localStorage.setItem("currentCategory", category.toLowerCase())
 
-    // Navigate to the question page with the category parameter
+   
     navigate(`/quiz/question/${category.toLowerCase()}`)
   }
 

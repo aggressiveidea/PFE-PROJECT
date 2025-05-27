@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 import "./Hero.css"
 
@@ -60,7 +59,6 @@ export default function Hero() {
 
       <div className="hero-image">
         <div className="graph-preview">
-          {/* This would be replaced with your actual graph visualization */}
           <div className="graph-placeholder"></div>
         </div>
       </div>

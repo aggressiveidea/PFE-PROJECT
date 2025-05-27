@@ -1,4 +1,3 @@
-"use client"
 import { useState, useRef, useEffect } from "react"
 import "./AlgorithmModal.css"
 
@@ -14,7 +13,6 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
   })
   const canvasRef = useRef(null)
 
-  // Sample graph data for visualization
   const graphData = {
     nodes: [
       { id: "A", label: "A" },
@@ -37,7 +35,6 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
     ],
   }
 
-  // Translations for different languages
   const translations = {
     english: {
       close: "Close",
@@ -120,14 +117,11 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
   const drawGraph = (ctx, width, height) => {
     const nodeRadius = 20
     const nodePositions = calculateNodePositions(width, height)
-
-    // Draw edges
     graphData.edges.forEach((edge) => {
       const startPos = nodePositions[edge.from]
       const endPos = nodePositions[edge.to]
 
       if (startPos && endPos) {
-        // Check if this edge is highlighted in the current step
         const isHighlighted = executionSteps[currentStep]?.highlightedEdges?.includes(`${edge.from}-${edge.to}`)
 
         ctx.beginPath()
@@ -151,7 +145,7 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
       const pos = nodePositions[node.id]
 
       if (pos) {
-        // Check if this node is highlighted in the current step
+
         const isHighlighted = executionSteps[currentStep]?.highlightedNodes?.includes(node.id)
         const isVisited = executionSteps[currentStep]?.visitedNodes?.includes(node.id)
 
@@ -168,14 +162,13 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
 
         ctx.fill()
 
-        // Draw node label
+
         ctx.fillStyle = "white"
         ctx.font = "bold 14px Arial"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
         ctx.fillText(node.label, pos.x, pos.y)
 
-        // Draw distance if available in the current step
         if (executionSteps[currentStep]?.distances?.[node.id] !== undefined) {
           const distance = executionSteps[currentStep].distances[node.id]
           ctx.fillStyle = "#333"
@@ -209,7 +202,6 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
     setExecutionSteps([])
     setCurrentStep(0)
 
-    // Execute the selected algorithm
     let steps = []
 
     switch (algorithm.id) {
@@ -282,20 +274,16 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
         }
       })
 
-      // If we can't find a node or we've reached the end node
       if (minNode === null || minNode === endNode || minDistance === Number.POSITIVE_INFINITY) {
         break
       }
 
-      // Mark as visited
       unvisited.delete(minNode)
       visited.add(minNode)
 
-      // Get all edges from this node
       const edges = graphData.edges.filter((e) => e.from === minNode)
       const highlightedEdges = []
 
-      // Update distances to neighbors
       edges.forEach((edge) => {
         const neighbor = edge.to
 
@@ -325,7 +313,6 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
       })
     }
 
-    // Reconstruct path
     if (distances[endNode] !== Number.POSITIVE_INFINITY) {
       const path = []
       let current = endNode
@@ -401,8 +388,6 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
 
     while (queue.length > 0) {
       const current = queue.shift()
-
-      // Get all neighbors
       const neighbors = graphData.edges.filter((e) => e.from === current).map((e) => e.to)
 
       const highlightedEdges = []

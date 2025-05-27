@@ -1,5 +1,3 @@
-"use client"
-
 export default function AddArticleButton({ onClick }) {
   return (
     <button className="add-article-button" onClick={onClick}>

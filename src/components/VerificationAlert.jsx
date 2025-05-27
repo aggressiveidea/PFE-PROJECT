@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 import { resendVerificationEmail } from "../services/Api"
 import './VerificationAlert.css'
@@ -26,10 +25,10 @@ const VerificationAlert = ({ email, onClose }) => {
   }
 
   const openEmailClient = () => {
-    // Extract domain from email
+
     const domain = email.split("@")[1]
 
-    // Common email providers and their webmail URLs
+
     const emailProviders = {
       "gmail.com": "https://mail.google.com",
       "yahoo.com": "https://mail.yahoo.com",
@@ -38,8 +37,6 @@ const VerificationAlert = ({ email, onClose }) => {
       "aol.com": "https://mail.aol.com",
       "protonmail.com": "https://mail.proton.me",
     }
-
-    // Open the appropriate webmail or a generic mailto link
     if (emailProviders[domain]) {
       window.open(emailProviders[domain], "_blank")
     } else {

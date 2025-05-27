@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import Header from "../forHome/Header"
 import Sidebar from "../forDashboard/Sidebar"
@@ -38,7 +36,6 @@ const Settings = () => {
   const [pushNotifications, setPushNotifications] = useState(true)
   const [newsletterSubscription, setNewsletterSubscription] = useState(false)
 
-  // New state for reset password email
   const [resetEmail, setResetEmail] = useState("")
   const [resetEmailStatus, setResetEmailStatus] = useState({ loading: false, success: false, error: "" })
 
@@ -69,8 +66,6 @@ const Settings = () => {
           setEmailNotifications(userData.emailNotifications !== false)
           setPushNotifications(userData.pushNotifications !== false)
           setNewsletterSubscription(userData.newsletterSubscription === true)
-
-          // Pre-fill reset email with user's email
           if (userData.email) {
             setResetEmail(userData.email)
           }
@@ -169,21 +164,16 @@ const Settings = () => {
     setDeleteError("")
 
     try {
-      // Get the user ID
+  
       const userId = user._id || user.id
 
       if (!userId) {
         throw new Error("User ID not found")
       }
-
-      // Call the API to delete the user
       await deleteUser(userId)
-
-      // On success, clear local storage and redirect
       localStorage.removeItem("authData")
       localStorage.removeItem("user")
 
-      // Show success message before redirecting
       alert("Your account has been successfully deleted.")
       window.location.href = "/"
     } catch (error) {
@@ -239,7 +229,6 @@ const Settings = () => {
     window.location.href = "/"
   }
 
-  // New function to handle password reset request
   const handleResetPasswordRequest = async (e) => {
     e.preventDefault()
 
@@ -251,8 +240,6 @@ const Settings = () => {
       })
       return
     }
-
-    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(resetEmail)) {
       setResetEmailStatus({
@@ -270,17 +257,13 @@ const Settings = () => {
     })
 
     try {
-      // Use the updated requestPasswordReset function
       const result = await requestPasswordReset(resetEmail)
-
-      // Always show success message even if email doesn't exist (security best practice)
       setResetEmailStatus({
         loading: false,
         success: true,
         error: "",
       })
 
-      // Clear success message after 5 seconds
       setTimeout(() => {
         setResetEmailStatus((prev) => ({
           ...prev,
@@ -309,7 +292,6 @@ const Settings = () => {
 
       <main className={`settingsPage-main-content ${sidebarCollapsed ? "settingsPage-sidebar-collapsed" : ""}`}>
         <div className="settingsPage-wrapper">
-          {/* Enhanced Welcome Section */}
           <div className="settingsPage-welcome-section">
             <div className="settingsPage-welcome-content">
               <div className="settingsPage-welcome-badge">
@@ -321,7 +303,6 @@ const Settings = () => {
               </h1>
               <p className="settingsPage-welcome-subtitle">Manage your account preferences and security settings</p>
 
-              {/* Code snippet */}
               <div className="settingsPage-code-snippet">
                 <div className="settingsPage-code-header">
                   <div className="settingsPage-code-dots">
@@ -384,7 +365,6 @@ const Settings = () => {
               </div>
             </div>
 
-            {/* IT-themed background elements */}
             <div className="settingsPage-tech-bg">
               <div className="settingsPage-circuit-pattern"></div>
               <div className="settingsPage-floating-icons">

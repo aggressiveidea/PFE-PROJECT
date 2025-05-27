@@ -1,8 +1,5 @@
 import axios from "axios"
 
-// API service for graph data
-
-// Fetch the complete graph data with pagination
 export const fetchGraphData = async (limit = 100) => {
   try {
     let allNodes = [];
@@ -11,8 +8,7 @@ export const fetchGraphData = async (limit = 100) => {
     let hasMore = true;
     
     console.log("Starting to fetch all graph data with pagination...");
-    
-    // Continue fetching until we have all data
+
     while (hasMore) {
       console.log(`Fetching data batch with offset ${offset}, limit ${limit}...`);
       
@@ -35,23 +31,18 @@ export const fetchGraphData = async (limit = 100) => {
       }
       
       console.log(`Received ${data.nodes.length} nodes and ${data.relationships?.length || 0} relationships`);
-      
-      // Add this batch to our collections
+
       allNodes = [...allNodes, ...data.nodes];
       allRelationships = [...allRelationships, ...(data.relationships || [])];
-      
-      // Check if there's more data to fetch
+ 
       hasMore = data.metadata?.hasMore || false;
-      
-      // Update offset for next batch
+
       offset += limit;
-      
-      // Safety check to prevent infinite loops
+
       if (allNodes.length >= (data.metadata?.totalCount || 0)) {
         hasMore = false;
       }
-      
-      // Optional: Add a small delay to prevent overwhelming the server
+
       if (hasMore) {
         await new Promise(resolve => setTimeout(resolve, 300));
       }
@@ -70,7 +61,6 @@ export const fetchGraphData = async (limit = 100) => {
   }
 };
 
-// Search for nodes by term
 export const searchGraphByTerm = async (termName, depth = 2) => {
   try {
     if (!termName) {
@@ -97,8 +87,6 @@ export const searchGraphByTerm = async (termName, depth = 2) => {
     }
 
     const data = await response.json();
-
-    // Check if the response has the expected format
     if (!data) {
       console.error("Invalid graph search response format:", data);
       return { nodes: [], edges: [] };
@@ -110,12 +98,11 @@ export const searchGraphByTerm = async (termName, depth = 2) => {
     };
   } catch (error) {
     console.error("Error in graph search:", error);
-    // Return empty graph data instead of throwing to prevent UI crashes
+
     return { nodes: [], edges: [] };
   }
 };
 
-// Expand a node to show its connections
 export const expandNode = async (nodeId, depth = 1) => {
   try {
     if (!nodeId) {
@@ -256,7 +243,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (userId) => {
   try {
-    // Get auth token from localStorage
+ 
     console.log("userId to fetch:", userId)
 
     const authData = JSON.parse(localStorage.getItem("authData") || "{}")
@@ -268,7 +255,6 @@ export const getUserById = async (userId) => {
       "Content-Type": "application/json",
     }
 
-    // Add authorization header if token exists
     if (token) {
       headers["Authorization"] = `Bearer ${token}`
     }
@@ -547,7 +533,7 @@ export const addArticle = async (data) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data), // Sending FormData
+      body: JSON.stringify(data), 
     })
 
     console.log("idj whayyy", response)
@@ -805,13 +791,12 @@ export const classicSearch = async (query, page = 1, limit = 8) => {
 
     const data = await response.json()
 
-    // Check if the response has the expected format
+  
     if (!data) {
       console.error("Invalid search response format:", data)
       return []
     }
 
-    // Handle both array and object with results property
     if (Array.isArray(data)) {
       return data
     } else if (data.results && Array.isArray(data.results)) {
@@ -855,8 +840,6 @@ export const indexedSearch = async (letter, page = 1, limit = 8,language = "en")
     }
 
     const data = await response.json()
-
-    // Handle both array and object with results property
     if (Array.isArray(data)) {
       return data
     } else if (data.results && Array.isArray(data.results)) {
@@ -867,7 +850,7 @@ export const indexedSearch = async (letter, page = 1, limit = 8,language = "en")
     }
   } catch (error) {
     console.error("Error in indexed search:", error)
-    // Return empty array instead of throwing to prevent UI crashes
+
     return []
   }
 }
@@ -899,7 +882,6 @@ export const graphSearch = async (termName, depth = 2) => {
 
     const data = await response.json()
 
-    // Check if the response has the expected format
     if (!data) {
       console.error("Invalid graph search response format:", data)
       return { nodes: [], edges: [] }
@@ -911,7 +893,7 @@ export const graphSearch = async (termName, depth = 2) => {
     }
   } catch (error) {
     console.error("Error in graph search:", error)
-    // Return empty graph data instead of throwing to prevent UI crashes
+
     return { nodes: [], edges: [] }
   }
 }
@@ -969,14 +951,11 @@ export const getAllterms = async (language) => {
     throw error;
   }
 };
-// Existing API functions...
-
 export const fetchQuizQuestions = async (level) => {
   try {
-    // Map our level to Open Trivia DB difficulty
+ 
     const difficulty = level.toLowerCase()
 
-    // Fetch questions from API
     const response = await fetch(
       `https://opentdb.com/api.php?amount=5&category=18&difficulty=${difficulty}&type=multiple`,
     )
@@ -992,9 +971,8 @@ export const fetchQuizQuestions = async (level) => {
       return getFallbackQuestions(level)
     }
 
-    // Format questions
     return data.results.map((q) => {
-      // Combine correct and incorrect answers and shuffle
+  
       const options = [...q.incorrect_answers, q.correct_answer].sort(() => Math.random() - 0.5)
 
       return {
@@ -1009,7 +987,7 @@ export const fetchQuizQuestions = async (level) => {
   }
 }
 
-// Enhanced fallback questions with more options for each difficulty level
+
 export const getFallbackQuestions = (level) => {
   const questions = {
     easy: [
@@ -1252,7 +1230,6 @@ export const getFallbackQuestions = (level) => {
 
 const API_BASE_URL = "http://localhost:5000"
 
-// Get all books
 export const getBooks = async () => {
   try {
     console.log("API: Fetching books...")
@@ -1284,11 +1261,6 @@ export const createNewBook = async (bookData) => {
     throw error
   }
 }
-/**
- * Request a password reset email
- * @param {string} email - User's email address
- * @returns {Promise<{success: boolean, message: string}>}
- */
 export const requestPasswordReset = async (email) => {
   try {
     console.log("Requesting password reset for:", email)
@@ -1315,16 +1287,10 @@ export const requestPasswordReset = async (email) => {
   }
 }
 
-/**
- * Verify if a password reset link is valid
- * @param {string} userId - The user ID
- * @returns {Promise<{isValid: boolean, userId: string, message: string}>}
- */
 export const verifyResetLink = async (userId) => {
   try {
     console.log("Verifying reset link for user:", userId)
 
-    // Check if parameter exists
     if (!userId) {
       console.error("Missing userId")
       return { isValid: false, message: "Reset link is incomplete" }
@@ -1357,13 +1323,6 @@ export const verifyResetLink = async (userId) => {
     return { isValid: false, message: error.message || "Error verifying reset link" }
   }
 }
-
-/**
- * Reset password with user ID
- * @param {string} userId - The user ID
- * @param {string} password - The new password
- * @returns {Promise<{success: boolean, data: any}>}
- */
 export const resetPassword = async (userId, password) => {
   try {
     console.log("Resetting password for user:", userId)
@@ -1383,8 +1342,6 @@ export const resetPassword = async (userId, password) => {
       console.error("Password reset failed:", data)
       throw new Error(data.message || "Failed to reset password")
     }
-
-    // Clear any stored auth data to ensure user is logged out
     localStorage.removeItem("authData")
     localStorage.removeItem("user")
 
@@ -1450,11 +1407,9 @@ export const GetAllMessages = async (id) => {
       throw new Error("Failed to fetch all messages")
     }
 
-    // Parse the JSON body
     const result = await response.json()
     console.log("Parsed response:", result)
 
-    // Check if the response has the expected structure
     if (result.success && Array.isArray(result.data)) {
       console.log("Messages array:", result.data)
       return result.data
@@ -1664,7 +1619,6 @@ export const shareCounter = async (id) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      // No body content needed in the request
     });
 
     if (!response.sucees) throw new Error("Failed to update share counter");
@@ -1779,7 +1733,6 @@ export const addToFavorites = async (id, userid) => {
   }
 };
 
-// Mock data for quiz questions by category
 const quizQuestions = {
   "personal-data": [
     {

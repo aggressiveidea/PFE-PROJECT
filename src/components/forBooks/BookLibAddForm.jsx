@@ -1,4 +1,3 @@
-"use client"
 import { useState, useRef } from "react"
 import "./BookLibAddForm.css"
 import { createNewBook } from "../../services/Api"
@@ -7,7 +6,7 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    coverImgUrl: "", // This will be updated with the actual URL after upload
+    coverImgUrl: "", 
     description: "",
     tags: "",
     pages: "",
@@ -16,14 +15,11 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
     pdfLink: "",
   })
 
-  // State for the image file and preview
   const [coverImageFile, setCoverImageFile] = useState(null)
   const [coverImagePreview, setCoverImagePreview] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTag, setSelectedTag] = useState("")
   const [errors, setErrors] = useState({})
-
-  // Reference to the file input
   const fileInputRef = useRef(null)
 
   const handleChange = (e) => {
@@ -34,12 +30,10 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
     })
   }
 
-  // Handle image file selection
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
 
-    // Validate file type
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]
     if (!validTypes.includes(file.type)) {
       setErrors({
@@ -49,16 +43,14 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
       return
     }
 
-    // Clear any previous errors
     if (errors.coverImgUrl) {
       const { coverImgUrl, ...restErrors } = errors
       setErrors(restErrors)
     }
 
-    // Store the file for later upload
     setCoverImageFile(file)
 
-    // Create a preview URL for the UI
+
     const previewUrl = URL.createObjectURL(file)
     setCoverImagePreview(previewUrl)
   }
@@ -97,18 +89,14 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
       try {
         console.log("Preparing to submit book data...")
 
-        // Create FormData object for file upload
         const bookFormData = new FormData()
 
-        // Add all text fields to FormData
         Object.keys(formData).forEach((key) => {
           if (key !== "coverImgUrl") {
-            // Skip coverImgUrl as we'll handle the file separately
             bookFormData.append(key, formData[key])
           }
         })
 
-        // Add the image file if available
         if (coverImageFile) {
           bookFormData.append("coverImage", coverImageFile)
           console.log("Added cover image to form data:", coverImageFile.name)
@@ -116,20 +104,17 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
 
         console.log("Submitting book data to API...")
 
-        // Call the API function to create a new book with FormData
         const response = await createNewBook(bookFormData)
         console.log("API response for book creation:", response)
 
         if (response && response.data) {
-          // Call the onAddBook callback with the new book data
+
           const bookWithPreview = {
             ...response.data,
-            // Use the actual URL from the response, or fall back to preview for UI
             coverImgUrl: response.data.coverImgUrl || coverImagePreview,
           }
           onAddBook(bookWithPreview)
 
-          // Reset form
           setFormData({
             title: "",
             author: "",
@@ -144,7 +129,6 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
           setCoverImageFile(null)
           setCoverImagePreview(null)
 
-          // Reset file input
           if (fileInputRef.current) {
             fileInputRef.current.value = ""
           }
@@ -159,8 +143,6 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
       }
     }
   }
-
-  // Trigger file input click
   const handleSelectImage = () => {
     fileInputRef.current.click()
   }

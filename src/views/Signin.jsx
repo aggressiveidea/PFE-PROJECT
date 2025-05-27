@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import Button from "../components/forSignup/Button"
 import InputField from "../components/forSignup/InputField"
@@ -24,21 +22,21 @@ function Signin() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check if dark mode is enabled in localStorage or system preference
+   
     const darkModeEnabled =
       localStorage.getItem("darkMode") === "true" ||
       (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
     setIsDarkMode(darkModeEnabled)
 
-    // Apply dark mode class to body if needed
+   
     if (darkModeEnabled) {
       document.body.classList.add("dark-mode")
     } else {
       document.body.classList.remove("dark-mode")
     }
 
-    // Set typing animation to complete after delay
+   
     const timer = setTimeout(() => {
       setTypingComplete(true)
     }, 2500)
@@ -54,7 +52,6 @@ function Signin() {
     }
   }
 
-  // Enhanced handleSubmit function to ensure user data is properly stored and fetched
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -70,9 +67,8 @@ function Signin() {
 
       console.log("Login response:", response)
 
-      // Check for successful login
       if (response.success && response.data && response.data.token) {
-        // Store auth token
+
         localStorage.setItem(
           "authData",
           JSON.stringify({
@@ -98,7 +94,6 @@ function Signin() {
           localStorage.setItem("user", JSON.stringify(userToStore))
           console.log("Storing user data in localStorage:", userToStore)
 
-          // After login, fetch complete user data to ensure we have everything
           try {
             const userId = userToStore._id || userToStore.id
             if (userId) {
@@ -106,11 +101,10 @@ function Signin() {
               console.log("Complete user data fetched:", completeUserData)
 
               if (completeUserData) {
-                // Merge the complete data with what we already have
                 const enhancedUserData = {
                   ...userToStore,
                   ...completeUserData,
-                  _id: userId, // Ensure ID is preserved
+                  _id: userId, 
                 }
 
                 localStorage.setItem("user", JSON.stringify(enhancedUserData))
@@ -119,10 +113,9 @@ function Signin() {
             }
           } catch (fetchError) {
             console.error("Error fetching complete user data:", fetchError)
-            // Continue with login even if this fails
+    
           }
 
-          // Notify other components about the user update
           window.dispatchEvent(new Event("userUpdated"))
 
           showAlert("Login successful! Redirecting...", "success")
@@ -144,7 +137,6 @@ function Signin() {
     }
   }
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -166,7 +158,6 @@ function Signin() {
     },
   }
 
-  // Typewriter animation for the heading
   const headingText = "ICT exploration"
   const subText = "Welcome to the website"
 
@@ -183,7 +174,7 @@ function Signin() {
           } else {
             clearInterval(interval)
           }
-        }, 100) // Speed of typing
+        }, 100) 
 
         return () => clearInterval(interval)
       }, delay)

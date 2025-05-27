@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import "./GraphAlgorithms.css"
 
@@ -53,7 +51,6 @@ const GraphAlgorithms = () => {
   const handleRunAlgorithm = () => {
     if (!selectedAlgorithm) return
 
-    // Just a placeholder alert for demonstration purposes
     alert(`Running ${selectedAlgorithm.name} on ${runOption === "selected" ? "selected term" : "entire graph"}`)
   }
 

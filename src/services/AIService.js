@@ -1,13 +1,6 @@
-/**
- * Frontend AI Service
- * 
- * This service handles AI text generation, summarization, and question answering
- * using browser-compatible models and libraries.
- */
 
-// Model configuration
 const MODELS = {
-    // Text generation models
+    
     textGeneration: {
       default: "gpt2-small",
       options: [
@@ -18,7 +11,7 @@ const MODELS = {
       ]
     },
     
-    // Summarization models
+
     summarization: {
       default: "bart-large-cnn",
       options: [
@@ -27,8 +20,7 @@ const MODELS = {
         { id: "huggingface-inference", name: "Hugging Face Inference API", type: "api" },
       ]
     },
-    
-    // Question answering models
+
     questionAnswering: {
       default: "distilbert-squad",
       options: [
@@ -39,16 +31,13 @@ const MODELS = {
     }
   };
   
-  // Cache for loaded models
+
   const modelCache = {};
   
-  /**
-   * Initialize the AI service and preload the default models
-   */
+
   export async function initAIService(options = {}) {
     console.log("Initializing AI Service...");
     
-    // Determine which models to preload
     const modelsToPreload = options.preloadModels || [];
     
     if (modelsToPreload.length > 0) {
@@ -66,11 +55,9 @@ const MODELS = {
     };
   }
   
-  /**
-   * Load a model by ID
-   */
+  
   async function loadModel(modelId) {
-    // If model is already loaded, return from cache
+    
     if (modelCache[modelId]) {
       return modelCache[modelId];
     }
@@ -78,25 +65,17 @@ const MODELS = {
     console.log(`Loading model: ${modelId}`);
     
     try {
-      // In a real implementation, this would use transformers.js or another library
-      // to load the actual model. For this demo, we'll simulate loading.
-      
-      // Simulate model loading time based on model size
       const loadingTime = getModelLoadingTime(modelId);
       await new Promise(resolve => setTimeout(resolve, loadingTime));
-      
-      // Create a simulated model object
       const model = {
         id: modelId,
         loaded: true,
         loadedAt: new Date(),
-        // Add simulated methods that would be available on the real model
         generate: async (text) => simulateModelResponse(modelId, "generate", text),
         summarize: async (text) => simulateModelResponse(modelId, "summarize", text),
         answerQuestion: async (question, context) => simulateModelResponse(modelId, "answerQuestion", question, context)
       };
-      
-      // Cache the model
+
       modelCache[modelId] = model;
       return model;
     } catch (error) {
@@ -105,12 +84,7 @@ const MODELS = {
     }
   }
   
-  /**
-   * Get a simulated loading time for a model based on its ID
-   */
   function getModelLoadingTime(modelId) {
-    // In a real implementation, this would depend on the actual model size
-    // For this demo, we'll use simulated loading times
     const modelSizes = {
       "gpt2-small": 3000,
       "distilgpt2": 2000,
@@ -119,22 +93,15 @@ const MODELS = {
       "t5-small": 2000,
       "distilbert-squad": 1500,
       "roberta-base-squad2": 3000,
-      "huggingface-inference": 500 // API calls are faster to "load"
+      "huggingface-inference": 500 
     };
     
     return modelSizes[modelId] || 2000;
   }
   
-  /**
-   * Simulate a model response based on the model ID and task
-   */
   function simulateModelResponse(modelId, task, ...args) {
-    // In a real implementation, this would call the actual model methods
-    // For this demo, we'll return simulated responses
-    
     console.log(`Model ${modelId} performing ${task} with args:`, args);
-    
-    // Simulate processing time
+
     const processingTime = Math.random() * 1000 + 500;
     
     return new Promise(resolve => {
@@ -156,9 +123,6 @@ const MODELS = {
     });
   }
   
-  /**
-   * Simulate text generation based on input text
-   */
   function simulateTextGeneration(inputText, modelId) {
     const prompt = inputText.toLowerCase();
     
@@ -175,11 +139,8 @@ const MODELS = {
     }
   }
   
-  /**
-   * Simulate text summarization based on input text
-   */
   function simulateTextSummarization(inputText, modelId) {
-    // For demo purposes, we'll return a fixed summary based on text length
+
     if (inputText.length < 100) {
       return "The text is too short to summarize effectively.";
     } else if (inputText.length < 500) {
@@ -188,14 +149,9 @@ const MODELS = {
       return "This comprehensive text explores various Information and Communication Technology (ICT) concepts, including networking principles, database management, cloud computing infrastructure, and artificial intelligence applications. It highlights the importance of these technologies in modern digital ecosystems and their impact on business operations and everyday life.";
     }
   }
-  
-  /**
-   * Simulate question answering based on question and context
-   */
+
   function simulateQuestionAnswering(question, context, modelId) {
     const q = question.toLowerCase();
-    
-    // If context is provided, use it to generate a more specific answer
     if (context && context.length > 0) {
       if (q.includes("what is") || q.includes("define") || q.includes("explain")) {
         if (q.includes("network")) {
@@ -213,8 +169,7 @@ const MODELS = {
         return "Based on the provided context, the answer relates to modern ICT systems that integrate various technologies to solve complex information processing challenges.";
       }
     }
-    
-    // Without context, provide general answers
+  
     if (q.includes("what is ict")) {
       return "ICT stands for Information and Communication Technology. It encompasses all technologies used for handling telecommunications, broadcast media, intelligent building management systems, audiovisual processing and transmission systems, and network-based control and monitoring functions.";
     } else if (q.includes("network")) {
@@ -230,18 +185,14 @@ const MODELS = {
     }
   }
   
-  /**
-   * Generate text using the specified model
-   */
   export async function generateText(prompt, options = {}) {
     const modelId = options.modelId || MODELS.textGeneration.default;
     const maxLength = options.maxLength || 100;
     
     try {
-      // Load the model if not already loaded
+
       const model = await loadModel(modelId);
-      
-      // Generate text
+
       const generatedText = await model.generate(prompt);
       
       return {
@@ -251,14 +202,12 @@ const MODELS = {
       };
     } catch (error) {
       console.error("Text generation error:", error);
-      
-      // Try fallback model if specified
       if (options.fallbackModelId && options.fallbackModelId !== modelId) {
         console.log(`Falling back to model: ${options.fallbackModelId}`);
         return generateText(prompt, { 
           ...options, 
           modelId: options.fallbackModelId,
-          fallbackModelId: null // Prevent infinite fallback loops
+          fallbackModelId: null 
         });
       }
       
@@ -271,18 +220,13 @@ const MODELS = {
     }
   }
   
-  /**
-   * Summarize text using the specified model
-   */
   export async function summarizeText(text, options = {}) {
     const modelId = options.modelId || MODELS.summarization.default;
     const maxLength = options.maxLength || 100;
     
     try {
-      // Load the model if not already loaded
+
       const model = await loadModel(modelId);
-      
-      // Summarize text
       const summary = await model.summarize(text);
       
       return {
@@ -293,13 +237,12 @@ const MODELS = {
     } catch (error) {
       console.error("Text summarization error:", error);
       
-      // Try fallback model if specified
       if (options.fallbackModelId && options.fallbackModelId !== modelId) {
         console.log(`Falling back to model: ${options.fallbackModelId}`);
         return summarizeText(text, { 
           ...options, 
           modelId: options.fallbackModelId,
-          fallbackModelId: null // Prevent infinite fallback loops
+          fallbackModelId: null
         });
       }
       
@@ -312,17 +255,14 @@ const MODELS = {
     }
   }
   
-  /**
-   * Answer a question using the specified model
-   */
+
   export async function answerQuestion(question, context = "", options = {}) {
     const modelId = options.modelId || MODELS.questionAnswering.default;
     
     try {
-      // Load the model if not already loaded
+  
       const model = await loadModel(modelId);
-      
-      // Answer question
+  
       const answer = await model.answerQuestion(question, context);
       
       return {
@@ -332,14 +272,12 @@ const MODELS = {
       };
     } catch (error) {
       console.error("Question answering error:", error);
-      
-      // Try fallback model if specified
       if (options.fallbackModelId && options.fallbackModelId !== modelId) {
         console.log(`Falling back to model: ${options.fallbackModelId}`);
         return answerQuestion(question, context, { 
           ...options, 
           modelId: options.fallbackModelId,
-          fallbackModelId: null // Prevent infinite fallback loops
+          fallbackModelId: null 
         });
       }
       
@@ -352,16 +290,12 @@ const MODELS = {
     }
   }
   
-  /**
-   * Get information about available models
-   */
+  
   export function getAvailableModels() {
     return MODELS;
   }
   
-  /**
-   * Get information about currently loaded models
-   */
+ 
   export function getLoadedModels() {
     return Object.keys(modelCache).map(modelId => ({
       id: modelId,
@@ -369,9 +303,7 @@ const MODELS = {
     }));
   }
   
-  /**
-   * Unload a model to free up memory
-   */
+
   export function unloadModel(modelId) {
     if (modelCache[modelId]) {
       console.log(`Unloading model: ${modelId}`);

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Users, UserCheck, Activity } from "lucide-react"
 import "./StatisticsSection.css"
@@ -35,7 +33,6 @@ function AnimatedCounter({ end, duration = 2000 }) {
 }
 
 export default function StatisticsSection({ data, loading }) {
-  // Get values from the data prop
   const getTotalUsers = () => data?.totalUsers || 0
   const getTotalExperts = () => data?.totalExperts || 0
   const getActiveUsers = () => data?.activeUsers || 0

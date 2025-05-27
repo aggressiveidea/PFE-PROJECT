@@ -1,5 +1,3 @@
-"use client"
-
 import {
   BarChart,
   Bar,
@@ -18,7 +16,6 @@ import {
 import "./ChartsSection.css"
 
 export default function ChartsSection({ countryData = [], activityData = [], loading }) {
-  // Default data for when API data is not available
   const defaultBarData = [
     { name: "Jan", value: 400 },
     { name: "Feb", value: 300 },
@@ -49,14 +46,12 @@ export default function ChartsSection({ countryData = [], activityData = [], loa
     { name: "Dec", value: 1200 },
   ]
 
-  // Use real data if available, otherwise use default data
   const barChartData = activityData.length > 0 ? activityData.slice(0, 4) : defaultBarData
   const pieChartData = countryData.length > 0 ? countryData.slice(0, 5) : defaultPieData
   const lineChartData = activityData.length > 0 ? activityData : defaultLineData
 
   const barColors = ["#4f46e5", "#7c3aed", "#a855f7", "#d946ef"]
 
-  // Custom tooltip for the pie chart
   const CustomPieTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
@@ -69,7 +64,6 @@ export default function ChartsSection({ countryData = [], activityData = [], loa
     return null
   }
 
-  // Helper function to get total users for percentage calculation
   const getTotalUsers = () => {
     return pieChartData.reduce((sum, item) => sum + item.value, 0)
   }

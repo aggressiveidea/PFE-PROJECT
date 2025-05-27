@@ -8,10 +8,10 @@ const LevelPage = ({ darkMode }) => {
   const navigate = useNavigate()
 
   const handleLevelSelect = (level) => {
-    // Store the selected level in localStorage for progression
+ 
     localStorage.setItem("currentLevel", level.toLowerCase())
 
-    // Navigate to the appropriate question page with the level parameter
+  
     navigate(`/quiz/question/${level.toLowerCase()}`)
   }
 

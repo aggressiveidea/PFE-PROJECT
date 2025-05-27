@@ -1,4 +1,3 @@
-"use client"
 import { useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { isItemSaved, saveItem, formatBookForLibrary } from "../../services/libraryService"
@@ -9,8 +8,6 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
   const shelfRef = useRef(null)
   const [hoveredBook, setHoveredBook] = useState(null)
   const [savedBooks, setSavedBooks] = useState({})
-
-  // Check which books are already saved
   useEffect(() => {
     const savedStatus = {}
     books.forEach((book) => {
@@ -22,7 +19,7 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
 
   const handleScroll = (direction) => {
     const shelf = shelfRef.current
-    const scrollAmount = 300 // Adjust as needed
+    const scrollAmount = 300 
 
     if (direction === "left") {
       shelf.scrollBy({ left: -scrollAmount, behavior: "smooth" })
@@ -31,7 +28,6 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
     }
   }
 
-  // Update scroll position for showing/hiding scroll buttons
   const updateScrollPosition = () => {
     if (shelfRef.current) {
       setScrollPosition(shelfRef.current.scrollLeft)
@@ -52,22 +48,17 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
     : false
 
   const handleAddToLibrary = (e, book) => {
-    e.stopPropagation() // Prevent triggering the book click
+    e.stopPropagation() 
 
-    // Format the book for the library system
     const formattedBook = formatBookForLibrary(book)
 
-    // Save the book to the library
     const saved = saveItem(formattedBook, "book")
 
-    // Update the saved status in the UI
     const bookId = book._id || book.id
     setSavedBooks((prev) => ({
       ...prev,
       [bookId]: true,
     }))
-
-    // Show feedback to the user
     alert(`"${book.title}" ${saved ? "has been added to" : "is already in"} your library!`)
   }
 
@@ -114,9 +105,8 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
                       src={book.coverImgUrl || "/placeholder.svg"}
                       alt={`${book.title} cover`}
                       onError={(e) => {
-                        // If image fails to load, replace with placeholder
                         e.target.src = `https://via.placeholder.com/150x200?text=${encodeURIComponent(book.title)}`
-                        e.target.onerror = null // Prevent infinite loop
+                        e.target.onerror = null 
                       }}
                     />
                   ) : (
@@ -124,8 +114,6 @@ const BookLibShelf = ({ title, books, onBookClick, viewAllLink }) => {
                       <span>{book.title}</span>
                     </div>
                   )}
-
-                  {/* Overlay with book info and add to library button */}
                   <div className={`BookLibShelf-book-overlay ${hoveredBook === bookId ? "active" : ""}`}>
                     <div className="BookLibShelf-book-overlay-content">
                       <h3>{book.title}</h3>

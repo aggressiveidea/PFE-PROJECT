@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./CategoriesExplorer.css";
 
-// ICT Categories with timeline data
 const categories = [
   {
     id: 1,

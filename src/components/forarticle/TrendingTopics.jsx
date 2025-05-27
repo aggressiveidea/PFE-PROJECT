@@ -6,8 +6,6 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation, Pagination, Autoplay, EffectCoverflow } from "swiper/modules"
 import { toparticles, getUserById } from "../../services/Api"
 import "./TrendingTopics.css"
-
-// Import Swiper styles
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
@@ -32,8 +30,6 @@ const TrendingTopics = () => {
         }))
 
         setArticles(articlesWithMetrics)
-
-        // Fetch owner info for each article
         const ownerPromises = articlesWithMetrics.map(async (article) => {
           if (article.ownerId) {
             try {
@@ -61,7 +57,6 @@ const TrendingTopics = () => {
       }
     } catch (err) {
       console.error("Failed to fetch top articles:", err)
-      // Fallback data
       const fallbackArticles = [
         {
           _id: "article-1",

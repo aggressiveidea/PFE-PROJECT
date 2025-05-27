@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef, Suspense, lazy } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -35,7 +33,6 @@ import "./KnowledgeGraph.css"
 // Lazy loaded components
 const GraphPanel = lazy(() => import("./GraphPanel"))
 
-// Enhanced Loading component with elegant animation
 const LoadingSpinner = () => (
   <motion.div
     className="home-page-loading-container"
@@ -137,7 +134,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [connections, setConnections] = useState([])
 
-  // Enhanced data for mathematical graph positioning
   const terms = [
     {
       id: 1,
@@ -385,7 +381,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     { id: "methodology", name: "Methodologies", color: "var(--color-methodology)" },
   ]
 
-  // Generate all connections for better performance
   useEffect(() => {
     const allConnections = []
 
@@ -394,7 +389,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
         term.related.forEach((relatedId) => {
           const relatedTerm = terms.find((t) => t.id === relatedId)
           if (relatedTerm) {
-            // Ensure we don't add duplicate connections
             const connectionExists = allConnections.some(
               (conn) =>
                 (conn.source === term.id && conn.target === relatedId) ||
@@ -418,11 +412,8 @@ const KnowledgeGraph = ({ language = "en" }) => {
     setConnections(allConnections)
   }, [terms])
 
-  // Filter terms based on search and category filters
   useEffect(() => {
     let filtered = terms
-
-    // Apply search filter
     if (searchTerm) {
       const search = searchTerm.toLowerCase()
       filtered = filtered.filter(
@@ -433,8 +424,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
           term.definition.toLowerCase().includes(search),
       )
     }
-
-    // Apply category filters
     if (activeFilters.length > 0) {
       filtered = filtered.filter((term) => activeFilters.includes(term.category))
     }
@@ -442,7 +431,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     setFilteredTerms(filtered)
   }, [searchTerm, activeFilters, terms])
 
-  // Initialize filtered terms
   useEffect(() => {
     setFilteredTerms(terms)
 
@@ -454,7 +442,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     return () => clearTimeout(timer)
   }, [])
 
-  // Handle window resize and update graph size
   useEffect(() => {
     if (graphRef.current) {
       const updateSize = () => {
@@ -471,7 +458,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     }
   }, [])
 
-  // Handle fullscreen mode
   const toggleFullscreen = () => {
     if (!isFullscreen) {
       if (graphRef.current.requestFullscreen) {
@@ -494,7 +480,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     }
   }
 
-  // Handle fullscreen change event
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(
@@ -518,7 +503,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     }
   }, [])
 
-  // Handle zoom
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(prev + 0.2, 3))
   }
@@ -532,10 +516,8 @@ const KnowledgeGraph = ({ language = "en" }) => {
     setPan({ x: 0, y: 0 })
   }
 
-  // Handle pan with mouse drag
   const handleMouseDown = (e) => {
     if (e.button === 0) {
-      // Left mouse button
       setIsDragging(true)
       setDragStart({ x: e.clientX, y: e.clientY })
     }
@@ -557,32 +539,26 @@ const KnowledgeGraph = ({ language = "en" }) => {
   const handleMouseLeave = () => {
     setIsDragging(false)
   }
-
-  // Handle wheel zoom
   const handleWheel = (e) => {
     e.preventDefault()
     const delta = e.deltaY * -0.01
     setZoom((prev) => Math.min(Math.max(prev + delta, 0.5), 3))
   }
 
-  // Handle term click
   const handleTermClick = (term) => {
     setSelectedTerm(term)
   }
 
-  // Close panel
   const closePanel = () => {
     setSelectedTerm(null)
   }
 
-  // Get term name based on language
   const getTermName = (term) => {
     if (language === "fr") return term.nameFr
     if (language === "ar") return term.nameAr
     return term.name
   }
 
-  // Get category color
   const getCategoryColor = (category) => {
     switch (category) {
       case "core":
@@ -600,7 +576,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
     }
   }
 
-  // Get related terms
   const getRelatedTerms = (termId) => {
     return terms.filter(
       (term) =>
@@ -608,8 +583,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
         terms.find((t) => t.id === termId)?.related?.includes(term.id),
     )
   }
-
-  // Toggle category filter
   const toggleCategoryFilter = (categoryId) => {
     setActiveFilters((prev) => {
       if (prev.includes(categoryId)) {
@@ -619,14 +592,10 @@ const KnowledgeGraph = ({ language = "en" }) => {
       }
     })
   }
-
-  // Reset all filters
   const resetFilters = () => {
     setActiveFilters([])
     setSearchTerm("")
   }
-
-  // Download graph as image
   const downloadImage = () => {
     if (svgRef.current) {
       const svgData = new XMLSerializer().serializeToString(svgRef.current)
@@ -652,8 +621,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
       img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)))
     }
   }
-
-  // Show tooltip with term info
   const showTermTooltip = (term, x, y) => {
     setTooltipContent({
       content: term.definition.substring(0, 120) + (term.definition.length > 120 ? "..." : ""),
@@ -662,15 +629,11 @@ const KnowledgeGraph = ({ language = "en" }) => {
     })
     setShowTooltip(true)
   }
-
-  // Hide tooltip
   const hideTooltip = () => {
     setShowTooltip(false)
   }
 
-  // Calculate connection path between two nodes (Neo4j Bloom style)
   const calculateConnectionPath = (sourceTerm, targetTerm) => {
-    // Convert percentage positions to pixels
     const startX = (sourceTerm.x / 100) * graphSize.width
     const startY = (sourceTerm.y / 100) * graphSize.height
     const endX = (targetTerm.x / 100) * graphSize.width
@@ -877,7 +840,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                   }}
                 >
                   <svg className="home-page-connections-svg" ref={svgRef}>
-                    {/* Enhanced gradients for Neo4j Bloom style connections */}
                     <defs>
                       {categories.map((category) => (
                         <linearGradient
@@ -893,8 +855,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                           <stop offset="100%" stopColor={`var(--color-${category.id})`} stopOpacity="0.4" />
                         </linearGradient>
                       ))}
-
-                      {/* Neo4j Bloom style glow filter */}
                       <filter id="bloomGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                         <feMerge>
@@ -902,8 +862,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                           <feMergeNode in="SourceGraphic" />
                         </feMerge>
                       </filter>
-
-                      {/* Enhanced node glow */}
                       <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="4" result="coloredBlur" />
                         <feMerge>
@@ -912,13 +870,9 @@ const KnowledgeGraph = ({ language = "en" }) => {
                         </feMerge>
                       </filter>
                     </defs>
-
-                    {/* Render all connections with Neo4j Bloom styling */}
                     {connections.map((connection, index) => {
                       const sourceTerm = terms.find((t) => t.id === connection.source)
                       const targetTerm = terms.find((t) => t.id === connection.target)
-
-                      // Skip if either term is not in filtered terms
                       if (
                         !filteredTerms.some((t) => t.id === connection.source) ||
                         !filteredTerms.some((t) => t.id === connection.target)
@@ -946,7 +900,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                             ease: "easeOut",
                           }}
                         >
-                          {/* Main connection path */}
                           <path
                             d={connectionPath.path}
                             className={`home-page-connection-line ${isHighlighted ? "highlighted" : ""}`}
@@ -957,8 +910,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                             strokeLinecap="round"
                             filter={isHighlighted ? "url(#bloomGlow)" : "none"}
                           />
-
-                          {/* Animated particles for highlighted connections */}
                           {isHighlighted && (
                             <motion.circle
                               r={3}
@@ -982,8 +933,6 @@ const KnowledgeGraph = ({ language = "en" }) => {
                       (selectedTerm && selectedTerm.related && selectedTerm.related.includes(term.id)) ||
                       (selectedTerm && terms.find((t) => t.id === term.id)?.related?.includes(selectedTerm.id)) ||
                       hoveredTerm?.id === term.id
-
-                    // Convert percentage positions to pixels
                     const posX = (term.x / 100) * graphSize.width
                     const posY = (term.y / 100) * graphSize.height
 

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import Footer from "../components/forHome/Footer"
 import BookLibShelf from "../components/forBooks/BookLibShelf"

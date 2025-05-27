@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Trophy, Share2, Home, Repeat, CheckCircle, XCircle, Activity } from "lucide-react"
@@ -15,29 +13,22 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   const categoryInfo = getCategoryDetails(category)
 
   useEffect(() => {
-    // Set the score percentage as a CSS variable for the animation
     if (scoreBarRef.current) {
       scoreBarRef.current.style.setProperty("--score-percentage", `${percentage}%`)
     }
 
-    // Update quiz stats
     setQuizStats((prevStats) => {
       const newTotalQuizzes = prevStats.totalQuizzes + 1
       const newAverageScore = Math.round(
         (prevStats.averageScore * prevStats.totalQuizzes + percentage) / newTotalQuizzes,
       )
-
-      // Determine if this category should be the new top category
       let newTopCategory = prevStats.topCategory
-
-      // Always update top category if score is good enough
       if (percentage >= 60) {
         if (prevStats.topCategory === "None" || percentage > prevStats.averageScore) {
           newTopCategory = categoryInfo.name
         }
       }
 
-      // Store the updated stats in localStorage immediately
       const updatedStats = {
         totalQuizzes: newTotalQuizzes,
         averageScore: newAverageScore,
@@ -49,7 +40,6 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
       return updatedStats
     })
 
-    // Update category performance data
     updateCategoryPerformance(category, percentage)
   }, [category, percentage, score, setQuizStats, updateCategoryPerformance, categoryInfo.name])
 
@@ -57,7 +47,6 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   let subMessage = ""
   const trophyColor = categoryInfo.color || "#6366f1"
 
-  // Determine messages based on score
   if (percentage >= 80) {
     message = "Excellent Knowledge!"
 
@@ -86,10 +75,9 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   }
 
   const handleShareResults = () => {
-    // Create share text
+
     const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`
 
-    // Check if Web Share API is available
     if (navigator.share) {
       navigator
         .share({
@@ -99,11 +87,9 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
         })
         .catch((err) => {
           console.error("Error sharing:", err)
-          // Fallback - copy to clipboard
           copyToClipboard(shareText)
         })
     } else {
-      // Fallback - copy to clipboard
       copyToClipboard(shareText)
     }
   }

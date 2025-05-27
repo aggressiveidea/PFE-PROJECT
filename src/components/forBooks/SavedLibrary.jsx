@@ -1,4 +1,3 @@
-"use client"
 import { useState, useEffect } from "react"
 import { getSavedItems, removeSavedItem } from "../services/libraryService"
 import "./library.css"
@@ -9,12 +8,9 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
   const [savedArticles, setSavedArticles] = useState([])
   const [savedTerms, setSavedTerms] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
-  // Load saved items when component mounts or tab changes
   useEffect(() => {
     setIsLoading(true)
 
-    // Load all saved items
     const books = getSavedItems("book")
     const articles = getSavedItems("article")
     const terms = getSavedItems("term")
@@ -26,12 +22,10 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     setIsLoading(false)
   }, [])
 
-  // Handle removing an item from saved items
   const handleRemoveItem = (itemId, type) => {
     const removed = removeSavedItem(itemId, type)
 
     if (removed) {
-      // Update the state based on the type
       if (type === "book") {
         setSavedBooks((prev) => prev.filter((item) => item.id !== itemId))
       } else if (type === "article") {
@@ -42,7 +36,6 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     }
   }
 
-  // Get UI text based on current language
   const getText = (key) => {
     const translations = {
       en: {
@@ -86,7 +79,6 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     return translations[currentLanguage]?.[key] || translations.en[key]
   }
 
-  // Format date for display
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString)
@@ -99,7 +91,6 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     }
   }
 
-  // Render saved books
   const renderSavedBooks = () => {
     if (savedBooks.length === 0) {
       return (
@@ -215,7 +206,6 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     )
   }
 
-  // Render saved articles
   const renderSavedArticles = () => {
     if (savedArticles.length === 0) {
       return (
@@ -306,7 +296,6 @@ const SavedLibrary = ({ currentLanguage = "en" }) => {
     )
   }
 
-  // Render saved terms
   const renderSavedTerms = () => {
     if (savedTerms.length === 0) {
       return (

@@ -1,4 +1,3 @@
-"use client"
 import "./checkBox.css"
 
 function CheckBox({ name, checked, onChange, label = "Remember me" }) {

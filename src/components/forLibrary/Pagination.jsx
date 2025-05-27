@@ -1,10 +1,8 @@
-"use client"
 import "./library.css"
 
 const Pagination = ({ currentPage, totalPages, handlePageChange, currentLanguage }) => {
   if (totalPages <= 1) return null
 
-  // Get UI text based on current language
   const getText = (key) => {
     const translations = {
       en: { previous: "Previous", next: "Next" },

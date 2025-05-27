@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import "../components/forLibrary/library.css"
 import Sidebar from "../components/forDashboard/Sidebar"
@@ -13,7 +11,6 @@ import BooksList from "../components/forLibrary/BooksList"
 import Pagination from "../components/forLibrary/Pagination"
 
 const Library = () => {
-  // State management
   const [activeTab, setActiveTab] = useState("terms")
   const [currentLanguage, setCurrentLanguage] = useState("en")
   const [searchQuery, setSearchQuery] = useState("")

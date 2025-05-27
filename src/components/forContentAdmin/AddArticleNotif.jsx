@@ -1,5 +1,3 @@
-"use client"
-
 import { CheckCircle, XCircle } from "lucide-react"
 import "./ArticleNotification.css"
 

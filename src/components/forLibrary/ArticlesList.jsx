@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import LibraryCard from "./LibraryCard"
 import { mockArticlesData } from "./mockData"
@@ -18,11 +16,9 @@ const ArticlesList = ({
   const [animateItems, setAnimateItems] = useState(false)
   const itemsPerPage = 6
 
-  // Filter and sort items
   useEffect(() => {
-    // First apply filters
     const filtered = mockArticlesData.filter((item) => {
-      // Search query filter
+ 
       const searchInCurrentLanguage = (text) => {
         if (!text) return true
         return text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -32,19 +28,15 @@ const ArticlesList = ({
       const contentMatch = searchInCurrentLanguage(item.abstract[currentLanguage])
       const matchesSearch = searchQuery === "" || titleMatch || contentMatch
 
-      // Category filter
       const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
 
-      // Language filter
       const matchesLanguage = languageFilter === "all" || (item.languages && item.languages.includes(languageFilter))
 
-      // Favorites filter
       const matchesFavorites = !showFavoritesOnly || item.isFavorite
 
       return matchesSearch && matchesCategory && matchesLanguage && matchesFavorites
     })
 
-    // Then sort
     filtered.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":
@@ -60,7 +52,6 @@ const ArticlesList = ({
 
     setFilteredItems(filtered)
 
-    // Trigger animation after items are loaded
     setAnimateItems(false)
     setTimeout(() => {
       setAnimateItems(true)
@@ -71,7 +62,7 @@ const ArticlesList = ({
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage)
 
-  // Empty state
+
   if (paginatedItems.length === 0) {
     return (
       <div className="library-empty-state">

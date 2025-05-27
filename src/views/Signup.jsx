@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import Button from "../components/forSignup/Button"
 import InputField from "../components/forSignup/InputField"
@@ -219,7 +217,7 @@ function Signup() {
   })
 
   const [alertMessage, setAlertMessage] = useState("")
-  const [alertType, setAlertType] = useState("error") // "error" or "success"
+  const [alertType, setAlertType] = useState("error") 
   const [isLoading, setIsLoading] = useState(false)
   const [showVerification, setShowVerification] = useState(false)
   const [registeredEmail, setRegisteredEmail] = useState("")
@@ -227,21 +225,18 @@ function Signup() {
   const [typingComplete, setTypingComplete] = useState(false)
 
   useEffect(() => {
-    // Check if dark mode is enabled in localStorage or system preference
     const darkModeEnabled =
       localStorage.getItem("darkMode") === "true" ||
       (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
     setIsDarkMode(darkModeEnabled)
 
-    // Apply dark mode class to body if needed
     if (darkModeEnabled) {
       document.body.classList.add("dark-mode")
     } else {
       document.body.classList.remove("dark-mode")
     }
 
-    // Set typing animation to complete after delay
     const timer = setTimeout(() => {
       setTypingComplete(true)
     }, 2500)
@@ -279,14 +274,12 @@ function Signup() {
       return
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       showAlert("Please enter a valid email address")
       return
     }
 
-    // Password validation
     if (formData.password.length < 8) {
       showAlert("Password must be at least 8 characters long")
       return
@@ -354,13 +347,12 @@ function Signup() {
         country: formData.country,
         role: "User",
         _id: userId,
-        isVerified: false, // Make sure to explicitly set isVerified to false
+        isVerified: false,
       }
 
       console.log("Storing user data with ID:", userDataToStore)
       localStorage.setItem("user", JSON.stringify(userDataToStore))
 
-      // Also store auth data if available
       if (response.data && response.data.data && response.data.data.token) {
         localStorage.setItem(
           "authData",
@@ -400,7 +392,7 @@ function Signup() {
     }
   }
 
-  // Animation variants
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -422,7 +414,6 @@ function Signup() {
     },
   }
 
-  // Typewriter animation for the heading
   const headingText = "Join the Network"
   const subText = "Explore the future of technology"
 
@@ -439,7 +430,7 @@ function Signup() {
           } else {
             clearInterval(interval)
           }
-        }, 100) // Speed of typing
+        }, 100) 
 
         return () => clearInterval(interval)
       }, delay)
