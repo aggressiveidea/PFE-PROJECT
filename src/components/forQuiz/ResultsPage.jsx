@@ -3,14 +3,16 @@
 import { useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Trophy, Share2, Home, Repeat, CheckCircle, XCircle, Activity } from "lucide-react"
+import { getCategoryDetails } from "../../services/Api"
 import "./ResultsPage.css"
 
-const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
-  const { level, score } = useParams()
+const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
+  const { category, score } = useParams()
   const navigate = useNavigate()
   const totalQuestions = 5
   const percentage = (Number.parseInt(score) / totalQuestions) * 100
   const scoreBarRef = useRef(null)
+  const categoryInfo = getCategoryDetails(category)
 
   useEffect(() => {
     // Set the score percentage as a CSS variable for the animation
@@ -25,17 +27,13 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
         (prevStats.averageScore * prevStats.totalQuizzes + percentage) / newTotalQuizzes,
       )
 
-      // Determine if this level should be the new top difficulty
-      let newTopDifficulty = prevStats.topDifficulty
+      // Determine if this category should be the new top category
+      let newTopCategory = prevStats.topCategory
 
-      // Always update top difficulty if score is good enough
+      // Always update top category if score is good enough
       if (percentage >= 60) {
-        if (
-          level === "hard" ||
-          (level === "medium" && prevStats.topDifficulty !== "Hard") ||
-          (level === "easy" && prevStats.topDifficulty === "Easy")
-        ) {
-          newTopDifficulty = level.charAt(0).toUpperCase() + level.slice(1)
+        if (prevStats.topCategory === "None" || percentage > prevStats.averageScore) {
+          newTopCategory = categoryInfo.name
         }
       }
 
@@ -43,7 +41,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       const updatedStats = {
         totalQuizzes: newTotalQuizzes,
         averageScore: newAverageScore,
-        topDifficulty: newTopDifficulty,
+        topCategory: newTopCategory,
       }
 
       localStorage.setItem("quizStats", JSON.stringify(updatedStats))
@@ -51,73 +49,36 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       return updatedStats
     })
 
-    // Update card performance data
-    updateCardPerformance(level, percentage)
-  }, [level, percentage, score, setQuizStats, updateCardPerformance])
+    // Update category performance data
+    updateCategoryPerformance(category, percentage)
+  }, [category, percentage, score, setQuizStats, updateCategoryPerformance, categoryInfo.name])
 
   let message = ""
   let subMessage = ""
-  let trophyColor = ""
+  const trophyColor = categoryInfo.color || "#6366f1"
 
-  // Determine color and messages based on score
+  // Determine messages based on score
   if (percentage >= 80) {
-    trophyColor = "var(--color-easy)"
-    message = "Perfect Score! Outstanding!"
+    message = "Excellent Knowledge!"
 
     if (percentage === 100) {
-      if (level === "easy") {
-        subMessage = "You've mastered the basics. Ready to try Medium difficulty?"
-      } else if (level === "medium") {
-        subMessage = "You've conquered intermediate concepts. Challenge yourself with Hard difficulty!"
-      } else {
-        subMessage = "You've mastered even the most complex ICT concepts. Impressive!"
-      }
+      subMessage = `You've mastered the ${categoryInfo.name} category. Try another category to expand your knowledge!`
     } else {
-      if (level === "easy") {
-        subMessage = "You have a strong grasp of ICT fundamentals."
-      } else if (level === "medium") {
-        subMessage = "You have impressive knowledge of practical ICT applications."
-      } else {
-        subMessage = "You demonstrate advanced understanding of complex ICT systems."
-      }
+      subMessage = `You have a strong understanding of ${categoryInfo.name} concepts.`
     }
   } else if (percentage >= 60) {
-    trophyColor = "var(--color-primary)"
     message = "Good Effort!"
-
-    if (level === "easy") {
-      subMessage = "You're building a solid foundation in ICT basics."
-    } else if (level === "medium") {
-      subMessage = "You're developing good practical ICT skills."
-    } else {
-      subMessage = "You're making progress with advanced ICT concepts."
-    }
+    subMessage = `You're building solid knowledge in ${categoryInfo.name}. Keep learning to improve your score.`
   } else if (percentage >= 40) {
-    trophyColor = "var(--color-medium)"
     message = "Nice Try!"
-
-    if (level === "easy") {
-      subMessage = "Review the fundamentals and try again to improve your score."
-    } else if (level === "medium") {
-      subMessage = "Some practical concepts need more practice."
-    } else {
-      subMessage = "Advanced topics can be challenging. Keep studying!"
-    }
+    subMessage = `Some ${categoryInfo.name} concepts need more practice. Review and try again.`
   } else {
-    trophyColor = "var(--color-hard)"
     message = "Keep Learning!"
-
-    if (level === "easy") {
-      subMessage = "Start with the basics and build your ICT knowledge step by step."
-    } else if (level === "medium") {
-      subMessage = "Try the Easy level first to build your confidence."
-    } else {
-      subMessage = "Advanced topics require strong foundations. Try an easier level first."
-    }
+    subMessage = `${categoryInfo.name} can be challenging. Start with the basics and build your knowledge step by step.`
   }
 
   const handleRetryQuiz = () => {
-    navigate(`/quiz/question/${level}`)
+    navigate(`/quiz/question/${category}`)
   }
 
   const handleGoHome = () => {
@@ -126,7 +87,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
 
   const handleShareResults = () => {
     // Create share text
-    const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${level} level ICT quiz! Can you beat my score?`
+    const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`
 
     // Check if Web Share API is available
     if (navigator.share) {
@@ -163,7 +124,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       <div className="results-container">
         <div className="results-header">
           <h1>Quiz Results</h1>
-          <p>{level.charAt(0).toUpperCase() + level.slice(1)} level ICT quiz completed</p>
+          <p>{categoryInfo.name} quiz completed</p>
         </div>
 
         <div className="trophy-container">
@@ -241,12 +202,12 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCardPerformance }) => {
       </div>
 
       <div className="improvement-tips">
-        <h3>Want to improve your score?</h3>
-        <p>Try these resources to boost your ICT knowledge:</p>
+        <h3>Want to improve your {categoryInfo.name} knowledge?</h3>
+        <p>Try these resources to boost your understanding:</p>
         <ul>
           <li>Online courses on platforms like Coursera or edX</li>
-          <li>ICT tutorials on YouTube</li>
-          <li>Practice with different difficulty levels</li>
+          <li>Specialized tutorials on YouTube</li>
+          <li>Practice with different quiz categories</li>
           <li>Join ICT forums and communities</li>
           <li>Read technology blogs and news to stay updated</li>
         </ul>

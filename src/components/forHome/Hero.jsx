@@ -38,7 +38,7 @@ const Hero = ({ language }) => {
               <span className="stat-label">{t.languages}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">150+</span>
+              <span className="stat-number">800+</span>
               <span className="stat-label">{t.ictTerms}</span>
             </div>
             <div className="stat-item">

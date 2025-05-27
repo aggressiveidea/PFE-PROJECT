@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import Header from "../forHome/Header"
 import Sidebar from "../forDashboard/Sidebar"
 import Footer from "../forHome/Footer"
-import { User, Lock, LogOut, Trash2, ImageIcon, AlertTriangle } from "lucide-react"
+import { User, Lock, LogOut, Trash2, ImageIcon, AlertTriangle, Calendar, Clock, Code, Terminal } from "lucide-react"
 import "./Settings.css"
 import { requestPasswordReset, deleteUser } from "../../services/Api"
 
@@ -298,41 +298,106 @@ const Settings = () => {
   }
 
   return (
-    <div className={`settingsPage-page ${darkMode ? "settingsPage-dark-mode" : ""}`}>
-      <Header darkMode={darkMode} language={language} setLanguage={setLanguage} />
-      <div className="settingsPage-content">
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar}
-          mobileOpen={mobileOpen}
-          closeMobileMenu={closeMobileMenu}
-          darkMode={darkMode}
-          toggleDarkMode={toggleDarkMode}
-        />
-        <main className={`settingsPage-main ${sidebarCollapsed ? "settingsPage-sidebar-collapsed" : ""}`}>
-          <button className="settingsPage-mobile-menu-button" onClick={openMobileMenu} aria-label="Open menu">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
+    <div className="settingsPage-app-container">
+      <Header language={language} setLanguage={setLanguage} darkMode={false} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+        mobileOpen={mobileOpen}
+        closeMobileMenu={closeMobileMenu}
+      />
 
-          <h1 className="settingsPage-title">Account Settings</h1>
+      <main className={`settingsPage-main-content ${sidebarCollapsed ? "settingsPage-sidebar-collapsed" : ""}`}>
+        <div className="settingsPage-wrapper">
+          {/* Enhanced Welcome Section */}
+          <div className="settingsPage-welcome-section">
+            <div className="settingsPage-welcome-content">
+              <div className="settingsPage-welcome-badge">
+                <User size={16} />
+                <span>Settings Panel</span>
+              </div>
+              <h1 className="settingsPage-welcome-title">
+                Account Settings<span className="settingsPage-code-accent">{"<settings/>"}</span>
+              </h1>
+              <p className="settingsPage-welcome-subtitle">Manage your account preferences and security settings</p>
+
+              {/* Code snippet */}
+              <div className="settingsPage-code-snippet">
+                <div className="settingsPage-code-header">
+                  <div className="settingsPage-code-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <span className="settingsPage-code-title">settings.js</span>
+                </div>
+                <div className="settingsPage-code-content">
+                  <span className="settingsPage-code-line">
+                    <span className="settingsPage-code-comment">// Account configuration</span>
+                  </span>
+                  <span className="settingsPage-code-line">
+                    <span className="settingsPage-code-keyword">const</span>{" "}
+                    <span className="settingsPage-code-variable">user</span>{" "}
+                    <span className="settingsPage-code-punctuation">=</span>{" "}
+                    <span className="settingsPage-code-punctuation">{"{"}</span>
+                  </span>
+                  <span className="settingsPage-code-line">
+                    &nbsp;&nbsp;<span className="settingsPage-code-property">status</span>
+                    <span className="settingsPage-code-punctuation">:</span>{" "}
+                    <span className="settingsPage-code-string">"active"</span>
+                    <span className="settingsPage-code-punctuation">,</span>
+                  </span>
+                  <span className="settingsPage-code-line">
+                    &nbsp;&nbsp;<span className="settingsPage-code-property">preferences</span>
+                    <span className="settingsPage-code-punctuation">:</span>{" "}
+                    <span className="settingsPage-code-string">"updated"</span>
+                  </span>
+                  <span className="settingsPage-code-line">
+                    <span className="settingsPage-code-punctuation">{"}"}</span>
+                    <span className="settingsPage-code-punctuation">;</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="settingsPage-welcome-stats">
+              <div className="settingsPage-date-info">
+                <div className="settingsPage-date-item">
+                  <Calendar size={16} />
+                  <span>
+                    {new Date().toLocaleDateString(undefined, {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="settingsPage-date-item">
+                  <Clock size={16} />
+                  <span>
+                    {new Date().toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* IT-themed background elements */}
+            <div className="settingsPage-tech-bg">
+              <div className="settingsPage-circuit-pattern"></div>
+              <div className="settingsPage-floating-icons">
+                <Code size={24} className="settingsPage-floating-icon" />
+                <Terminal size={20} className="settingsPage-floating-icon" />
+                <User size={22} className="settingsPage-floating-icon" />
+              </div>
+            </div>
+          </div>
 
           {loading ? (
-            <div className="settingsPage-loading">
-              <div className="settingsPage-spinner"></div>
+            <div className="settingsPage-loading-container">
+              <div className="settingsPage-loading-spinner"></div>
               <p>Loading your account settings...</p>
             </div>
           ) : !user ? (
@@ -343,8 +408,8 @@ const Settings = () => {
               </a>
             </div>
           ) : (
-            <div className="settingsPage-container">
-              <section className="settingsPage-section">
+            <div className="settingsPage-content">
+              <div className="settingsPage-profile-card">
                 <h2 className="settingsPage-section-title">
                   <User size={20} />
                   Profile Information
@@ -403,12 +468,12 @@ const Settings = () => {
                     </div>
                   </div>
                 </div>
-              </section>
+              </div>
 
-              <section className="settingsPage-section">
+              <div className="settingsPage-profile-card">
                 <h2 className="settingsPage-section-title">
                   <Lock size={20} />
-                  Forgot Password
+                  Password Reset
                 </h2>
                 <div className="settingsPage-forgot-password-container">
                   <p className="settingsPage-forgot-password-description">
@@ -461,9 +526,9 @@ const Settings = () => {
                     </div>
                   </form>
                 </div>
-              </section>
+              </div>
 
-              <section className="settingsPage-section settingsPage-danger-zone">
+              <div className="settingsPage-profile-card settingsPage-danger-zone">
                 <h2 className="settingsPage-section-title settingsPage-danger">Account Actions</h2>
                 <div className="settingsPage-account-actions">
                   <div className="settingsPage-action-card">
@@ -492,11 +557,12 @@ const Settings = () => {
                     </div>
                   </div>
                 </div>
-              </section>
+              </div>
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </main>
+
       <Footer darkMode={darkMode} setDarkMode={setDarkMode} />
 
       {showDeleteModal && (
@@ -557,5 +623,3 @@ const Settings = () => {
 }
 
 export default Settings
-
-

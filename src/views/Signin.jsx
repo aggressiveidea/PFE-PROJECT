@@ -7,7 +7,7 @@ import AlertBox from "../components/alertBox"
 import NetworkGraph from "../components/NetworkGraph"
 import { motion } from "framer-motion"
 import { handleChange } from "../utils/handleChange"
-import { loginUser, getUserById } from "../services/Api"
+import { loginUserOrg, getUserById } from "../services/Api"
 import "./Signin.css"
 import { useNavigate } from "react-router-dom"
 
@@ -66,7 +66,7 @@ function Signin() {
     }
 
     try {
-      const response = await loginUser(existData.email, existData.password)
+      const response = await loginUserOrg(existData.email, existData.password)
 
       console.log("Login response:", response)
 

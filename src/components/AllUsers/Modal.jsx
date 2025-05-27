@@ -1,4 +1,3 @@
-"use client"
 import DeleteModal from "./DeleteModal"
 import ChangeRoleModal from "./ChangeRoleModal"
 

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { CheckCircle, XCircle } from "lucide-react";
-import "./ArticleNotification.css";
+import { CheckCircle, XCircle } from "lucide-react"
+import "./ArticleNotification.css"
 
 function AddArticleNotif({
   profileImgUrl,
@@ -13,52 +13,34 @@ function AddArticleNotif({
   status,
   title,
   category,
-
-  
-} )
-{
-  console.log( "profileImgUrl here ",profileImgUrl );
+}) {
   return (
     <div className={`article-notif ${status ? `article-notif-${status}` : ""}`}>
       <div className="article-notif-avatar">
-        <img
-          src={profileImgUrl || "/placeholder.svg?height=40&width=40"}
-          alt={`${userName}'s avatar`}
-        />
+        <img src={profileImgUrl || "/placeholder.svg?height=40&width=40"} alt={`${userName}'s avatar`} />
       </div>
       <div className="article-notif-content">
         <div className="article-notif-header">
           <h4 className="article-notif-username">{userName}</h4>
           <span className="article-notif-time">{time || "2 hours ago"}</span>
         </div>
-        <p className="article-notif-message">
-          Added a new article to the platform
-        </p>
+        <p className="article-notif-message">Added a new article to the platform</p>
 
-        {/* Added article title and category */}
         {title && (
           <div className="article-notif-details">
             <span className="article-notif-title">{title}</span>
-            {category && (
-              <span className="article-notif-category">{category}</span>
-            )}
+            {category && <span className="article-notif-category">{category}</span>}
           </div>
         )}
       </div>
       <div className="article-notif-actions">
         {!status && (
           <>
-            <button
-              className="article-notif-btn article-notif-btn-validate"
-              onClick={onValidate}
-            >
+            <button className="article-notif-btn article-notif-btn-validate" onClick={onValidate}>
               <CheckCircle size={16} />
               <span>Validate</span>
             </button>
-            <button
-              className="article-notif-btn article-notif-btn-reject"
-              onClick={onReject}
-            >
+            <button className="article-notif-btn article-notif-btn-reject" onClick={onReject}>
               <XCircle size={16} />
               <span>Reject</span>
             </button>
@@ -78,7 +60,7 @@ function AddArticleNotif({
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default AddArticleNotif;
+export default AddArticleNotif

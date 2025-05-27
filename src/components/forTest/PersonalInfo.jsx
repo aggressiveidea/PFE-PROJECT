@@ -1,10 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Shield, Edit2, Save, X, Camera, User, Mail, FileText } from "lucide-react"
+import { Shield, Edit2, Save, X, Camera, User, Mail, FileText, Calendar, Clock, Code, Terminal } from "lucide-react"
 import Sidebar from "../forDashboard/Sidebar"
 import Header from "../forHome/Header"
-import Footer from "../forHome/Footer"
 import "./PersonalInfo.css"
 import { updateUser, getProfile, getUserById } from "../../services/Api"
 
@@ -306,228 +305,252 @@ export default function PersonalInfo() {
   }
 
   return (
-    <div
-      className={`profileinfos-app-container ${darkMode ? "dark" : ""} ${sidebarCollapsed ? "profileinfos-sidebar-collapsed" : ""}`}
-    >
-      <div className="profileinfos-header-wrapper">
-        <Header language={language} setLanguage={setLanguage} />
-      </div>
+    <div className="profileinfos-app-container">
+      <Header language={language} setLanguage={setLanguage} darkMode={false} />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+        mobileOpen={mobileOpen}
+        closeMobileMenu={closeMobileMenu}
+      />
 
-      <div className="profileinfos-content-wrapper">
-        <div className={`profileinfos-sidebar-wrapper ${mobileOpen ? "profileinfos-mobile-open" : ""}`}>
-          <Sidebar
-            collapsed={sidebarCollapsed}
-            toggleSidebar={toggleSidebar}
-            mobileOpen={mobileOpen}
-            closeMobileMenu={closeMobileMenu}
-            darkMode={darkMode}
-          />
-        </div>
+      <main className={`profileinfos-main-content ${sidebarCollapsed ? "profileinfos-sidebar-collapsed" : ""}`}>
+        <div className="profileinfos-wrapper">
+          {/* Enhanced Welcome Section */}
+          <div className="profileinfos-welcome-section">
+            <div className="profileinfos-welcome-content">
+              <div className="profileinfos-welcome-badge">
+                <User size={16} />
+                <span>Personal Profile Management</span>
+              </div>
+              <h1 className="profileinfos-welcome-title">
+                Personal Information<span className="profileinfos-code-accent">{"<profile/>"}</span>
+              </h1>
+              <p className="profileinfos-welcome-subtitle">
+                Manage your profile information and keep your account details up to date.
+              </p>
 
-        <div className="profileinfos-main-content">
-          <button className="profileinfos-mobile-menu-button" onClick={openMobileMenu}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-
-          <div className="profileinfos-personal-info-container">
-            <div className="profileinfos-feature-badge">Personal Profile</div>
-            <div className="profileinfos-personal-info-header">
-              <h1>Personal Information</h1>
-              <p>View and manage your profile information</p>
+              {/* Code snippet */}
+              <div className="profileinfos-code-snippet">
+                <div className="profileinfos-code-header">
+                  <div className="profileinfos-code-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <span className="profileinfos-code-title">user-profile.js</span>
+                </div>
+                <div className="profileinfos-code-content">
+                  <span className="profileinfos-code-line">
+                    <span className="profileinfos-code-function">user</span>
+                    <span className="profileinfos-code-punctuation">.</span>
+                    <span className="profileinfos-code-function">updateProfile</span>
+                    <span className="profileinfos-code-punctuation">(</span>
+                    <span className="profileinfos-code-string">"{user.firstName || "userData"}"</span>
+                    <span className="profileinfos-code-punctuation">);</span>
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {loading ? (
-              <div className="profileinfos-loading-container">
-                <div className="profileinfos-loading-spinner"></div>
-                <p>Loading profile data...</p>
+            <div className="profileinfos-welcome-stats">
+              <div className="profileinfos-date-info">
+                <div className="profileinfos-date-item">
+                  <Calendar size={16} />
+                  <span>
+                    {new Date().toLocaleDateString(undefined, {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="profileinfos-date-item">
+                  <Clock size={16} />
+                  <span>
+                    {new Date().toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
               </div>
-            ) : error ? (
-              <div className="profileinfos-error-container">
-                <p>{error}</p>
-                <button onClick={() => window.location.reload()}>Try Again</button>
+            </div>
+
+            {/* IT-themed background elements */}
+            <div className="profileinfos-tech-bg">
+              <div className="profileinfos-circuit-pattern"></div>
+              <div className="profileinfos-floating-icons">
+                <Code size={24} className="profileinfos-floating-icon" />
+                <Terminal size={20} className="profileinfos-floating-icon" />
+                <User size={22} className="profileinfos-floating-icon" />
               </div>
-            ) : (
-              <div className="profileinfos-personal-info-content">
-                <div className="profileinfos-profile-card">
-                  <div className="profileinfos-profile-banner">
-                    <div className="profileinfos-banner-overlay"></div>
-                  </div>
+            </div>
+          </div>
 
-                  <div className="profileinfos-profile-main">
-                    <div className="profileinfos-profile-image-container">
-                      <div className="profileinfos-profile-image">
-                        <img
-                          src={isEditing ? previewImage || editedUser.profileImgUrl : user.profileImgUrl}
-                          alt="Profile"
-                          className="profileinfos-profile-img"
-                          onError={(e) => {
-                            e.target.onerror = null
-                            e.target.src = "/placeholder.svg?height=200&width=200"
-                          }}
-                        />
-                        {isEditing && (
-                          <>
-                            <label htmlFor="profile-upload" className="profileinfos-profile-upload-label">
-                              <Camera size={20} />
-                              <span>Change</span>
-                            </label>
-                            <input
-                              type="file"
-                              id="profile-upload"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              className="profileinfos-profile-upload-input"
-                            />
-                          </>
-                        )}
-                      </div>
-                    </div>
+          {loading ? (
+            <div className="profileinfos-loading-container">
+              <div className="profileinfos-loading-spinner"></div>
+              <p>Loading profile data...</p>
+            </div>
+          ) : error ? (
+            <div className="profileinfos-error-container">
+              <p>{error}</p>
+              <button onClick={() => window.location.reload()}>Try Again</button>
+            </div>
+          ) : (
+            <div className="profileinfos-content">
+              <div className="profileinfos-profile-card">
+                <div className="profileinfos-profile-banner">
+                  <div className="profileinfos-banner-overlay"></div>
+                </div>
 
-                    <div className="profileinfos-profile-info">
-                      <div className="profileinfos-profile-title">
-                        <h2>
-                          {user.firstName} {user.lastName}
-                        </h2>
-                        <div className={`profileinfos-role-badge ${getRoleBadgeClass(user.role)}`}>
-                          <Shield size={14} />
-                          <span>{user.role}</span>
-                        </div>
-                      </div>
-
-                      <div className="profileinfos-profile-actions">
-                        {!isEditing ? (
-                          <button className="profileinfos-edit-button" onClick={() => setIsEditing(true)}>
-                            <Edit2 size={18} />
-                            <span>Edit Profile</span>
-                          </button>
-                        ) : (
-                          <div className="profileinfos-edit-actions">
-                            <button className="profileinfos-save-button" onClick={handleSave} disabled={updateLoading}>
-                              <Save size={18} />
-                              <span>{updateLoading ? "Saving..." : "Save Changes"}</span>
-                            </button>
-                            <button className="profileinfos-cancel-button" onClick={handleCancel}>
-                              <X size={18} />
-                              <span>Cancel</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="profileinfos-profile-body">
-                    <div className="profileinfos-info-section">
-                      <h3>
-                        <User size={18} />
-                        <span>Basic Information</span>
-                      </h3>
-                      <div className="profileinfos-info-grid">
-                        <div className="profileinfos-info-item">
-                          <label>First Name</label>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              name="firstName"
-                              value={editedUser.firstName}
-                              onChange={handleInputChange}
-                              className="profileinfos-input-field"
-                            />
-                          ) : (
-                            <p>{user.firstName}</p>
-                          )}
-                        </div>
-                        <div className="profileinfos-info-item">
-                          <label>Last Name</label>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              name="lastName"
-                              value={editedUser.lastName}
-                              onChange={handleInputChange}
-                              className="profileinfos-input-field"
-                            />
-                          ) : (
-                            <p>{user.lastName}</p>
-                          )}
-                        </div>
-                        <div className="profileinfos-info-item profileinfos-full-width">
-                          <label>
-                            <Mail size={16} className="icon" />
-                            <span>Email Address</span>
+                <div className="profileinfos-profile-main">
+                  <div className="profileinfos-profile-image-container">
+                    <div className="profileinfos-profile-image">
+                      <img
+                        src={isEditing ? previewImage || editedUser.profileImgUrl : user.profileImgUrl}
+                        alt="Profile"
+                        className="profileinfos-profile-img"
+                        onError={(e) => {
+                          e.target.onerror = null
+                          e.target.src = "/placeholder.svg?height=200&width=200"
+                        }}
+                      />
+                      {isEditing && (
+                        <>
+                          <label htmlFor="profile-upload" className="profileinfos-profile-upload-label">
+                            <Camera size={20} />
+                            <span>Change</span>
                           </label>
-                          {isEditing ? (
-                            <input
-                              type="email"
-                              name="email"
-                              value={editedUser.email}
-                              onChange={handleInputChange}
-                              className="profileinfos-input-field"
-                              disabled // Email should typically not be editable
-                            />
-                          ) : (
-                            <p>{user.email}</p>
-                          )}
-                        </div>
+                          <input
+                            type="file"
+                            id="profile-upload"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="profileinfos-profile-upload-input"
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="profileinfos-profile-info">
+                    <div className="profileinfos-profile-title">
+                      <h2>
+                        {user.firstName} {user.lastName}
+                      </h2>
+                      <div className={`profileinfos-role-badge ${getRoleBadgeClass(user.role)}`}>
+                        <Shield size={14} />
+                        <span>{user.role}</span>
                       </div>
                     </div>
 
-                    <div className="profileinfos-info-section">
-                      <h3>
-                        <FileText size={18} />
-                        <span>About</span>
-                      </h3>
-                      <div className="profileinfos-info-item profileinfos-full-width">
-                        <label>Bio</label>
+                    <div className="profileinfos-profile-actions">
+                      {!isEditing ? (
+                        <button className="profileinfos-edit-button" onClick={() => setIsEditing(true)}>
+                          <Edit2 size={18} />
+                          <span>Edit Profile</span>
+                        </button>
+                      ) : (
+                        <div className="profileinfos-edit-actions">
+                          <button className="profileinfos-save-button" onClick={handleSave} disabled={updateLoading}>
+                            <Save size={18} />
+                            <span>{updateLoading ? "Saving..." : "Save Changes"}</span>
+                          </button>
+                          <button className="profileinfos-cancel-button" onClick={handleCancel}>
+                            <X size={18} />
+                            <span>Cancel</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="profileinfos-profile-body">
+                  <div className="profileinfos-info-section">
+                    <h3>
+                      <User size={18} />
+                      <span>Basic Information</span>
+                    </h3>
+                    <div className="profileinfos-info-grid">
+                      <div className="profileinfos-info-item">
+                        <label>First Name</label>
                         {isEditing ? (
-                          <textarea
-                            name="userBio"
-                            value={editedUser.userBio || ""}
+                          <input
+                            type="text"
+                            name="firstName"
+                            value={editedUser.firstName}
                             onChange={handleInputChange}
-                            rows="4"
-                            className="profileinfos-textarea-field"
-                            placeholder="Tell us about yourself..."
-                          ></textarea>
+                            className="profileinfos-input-field"
+                          />
                         ) : (
-                          <p className="profileinfos-user-bio">{user.userBio || "No bio provided yet."}</p>
+                          <p>{user.firstName}</p>
                         )}
                       </div>
+                      <div className="profileinfos-info-item">
+                        <label>Last Name</label>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            name="lastName"
+                            value={editedUser.lastName}
+                            onChange={handleInputChange}
+                            className="profileinfos-input-field"
+                          />
+                        ) : (
+                          <p>{user.lastName}</p>
+                        )}
+                      </div>
+                      <div className="profileinfos-info-item profileinfos-full-width">
+                        <label>
+                          <Mail size={16} className="icon" />
+                          <span>Email Address</span>
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="email"
+                            name="email"
+                            value={editedUser.email}
+                            onChange={handleInputChange}
+                            className="profileinfos-input-field"
+                            disabled // Email should typically not be editable
+                          />
+                        ) : (
+                          <p>{user.email}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="profileinfos-info-section">
+                    <h3>
+                      <FileText size={18} />
+                      <span>About</span>
+                    </h3>
+                    <div className="profileinfos-info-item profileinfos-full-width">
+                      <label>Bio</label>
+                      {isEditing ? (
+                        <textarea
+                          name="userBio"
+                          value={editedUser.userBio || ""}
+                          onChange={handleInputChange}
+                          rows="4"
+                          className="profileinfos-textarea-field"
+                          placeholder="Tell us about yourself..."
+                        ></textarea>
+                      ) : (
+                        <p className="profileinfos-user-bio">{user.userBio || "No bio provided yet."}</p>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="profileinfos-footer-wrapper">
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
-      </div>
+      </main>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-

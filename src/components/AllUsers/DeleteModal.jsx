@@ -1,5 +1,3 @@
-"use client"
-
 const DeleteModal = ({ user, closeModal, handleDeleteUser }) => {
   return (
     <div className="usermanagement-modal-content">

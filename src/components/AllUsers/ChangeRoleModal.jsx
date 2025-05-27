@@ -1,4 +1,3 @@
-"use client"
 
 const ChangeRoleModal = ({ user, newRole, setNewRole, closeModal, handleChangeRole }) => {
   const availableRoles = ["User", "Ict-expert", "Content-admin", "Admin"]

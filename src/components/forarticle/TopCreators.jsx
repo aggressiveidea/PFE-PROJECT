@@ -1,261 +1,143 @@
-"use client";
+"use client"
 
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import CreatorCard from "./creator-card";
-import "./TopCreators.css";
-import { topauthors } from "../../services/Api";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState, useCallback } from "react"
+import { ChevronLeft, ChevronRight, User } from "lucide-react"
+import "./TopCreators.css"
+import { topauthors } from "../../services/Api" // Using your existing API service
 
-
-const TopCreators = () => {
-  const [creators, setCreators] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [leftButtonClicked, setLeftButtonClicked] = useState(false);
-  const [rightButtonClicked, setRightButtonClicked] = useState(false);
-  const creatorsPerPage = 3; // Show 3 creators per page
+const AuthorsLeaderboard = () => {
+  const [creators, setCreators] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const creatorsPerPage = 5
 
   const fetchTopAuthors = useCallback(async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      // Using your original fetch code
-      const response = await topauthors();
+      const response = await topauthors()
       if (response && Array.isArray(response)) {
-        // Add some sample data if the API returns less than 9 creators
-        let creatorsList = [...response];
-        if (creatorsList.length < 9) {
-          const sampleCreators = [
-            {
-              _id: "sample1",
-              firstName: "Alex",
-              lastName: "Johnson",
-              role: "Content Creator",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 28,
-            },
-            {
-              _id: "sample2",
-              firstName: "Maria",
-              lastName: "Garcia",
-              role: "Senior Editor",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 42,
-            },
-            {
-              _id: "sample3",
-              firstName: "David",
-              lastName: "Chen",
-              role: "Tech Writer",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 19,
-            },
-            {
-              _id: "sample4",
-              firstName: "Sarah",
-              lastName: "Smith",
-              role: "Journalist",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 35,
-            },
-            {
-              _id: "sample5",
-              firstName: "Michael",
-              lastName: "Brown",
-              role: "Photographer",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 15,
-            },
-            {
-              _id: "sample6",
-              firstName: "Emma",
-              lastName: "Wilson",
-              role: "Video Producer",
-              profileImgUrl: "/placeholder.svg?height=60&width=60",
-              articleCount: 23,
-            },
-          ];
-
-          // Add sample creators until we have at least 9
-          while (creatorsList.length < 9) {
-            creatorsList = [
-              ...creatorsList,
-              ...sampleCreators.slice(0, Math.min(6, 9 - creatorsList.length)),
-            ];
-          }
-        }
-
-        setCreators(creatorsList);
-        setTotalPages(Math.ceil(creatorsList.length / creatorsPerPage));
+        setCreators(response)
+        setTotalPages(Math.ceil(response.length / creatorsPerPage))
       }
     } catch (err) {
-      console.error("Failed to fetch top authors:", err);
-      // Add fallback data in case of API failure
-      const fallbackCreators = [
-        {
-          _id: "fallback1",
-          firstName: "Alex",
-          lastName: "Johnson",
-          role: "Content Creator",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 28,
-        },
-        {
-          _id: "fallback2",
-          firstName: "Maria",
-          lastName: "Garcia",
-          role: "Senior Editor",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 42,
-        },
-        {
-          _id: "fallback3",
-          firstName: "David",
-          lastName: "Chen",
-          role: "Tech Writer",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 19,
-        },
-        {
-          _id: "fallback4",
-          firstName: "Sarah",
-          lastName: "Smith",
-          role: "Journalist",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 35,
-        },
-        {
-          _id: "fallback5",
-          firstName: "Michael",
-          lastName: "Brown",
-          role: "Photographer",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 15,
-        },
-        {
-          _id: "fallback6",
-          firstName: "Emma",
-          lastName: "Wilson",
-          role: "Video Producer",
-          profileImgUrl: "/placeholder.svg?height=60&width=60",
-          articleCount: 23,
-        },
-      ];
-      setCreators(fallbackCreators);
-      setTotalPages(Math.ceil(fallbackCreators.length / creatorsPerPage));
+      console.error("Failed to fetch top authors:", err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    fetchTopAuthors();
-  }, [fetchTopAuthors]);
+    fetchTopAuthors()
+  }, [fetchTopAuthors])
 
   const handleCreatorClick = useCallback((creatorId) => {
-    window.location.href = `/userProfile?id=${creatorId}`;
-  }, []);
+    window.location.href = `/userProfile?id=${creatorId}`
+  }, [])
 
-  const handlePrevPage = useCallback(() => {
+  const handlePrevPage = () => {
     if (currentPage > 0) {
-      setLeftButtonClicked(true);
-      setCurrentPage((prev) => prev - 1);
-
-      setTimeout(() => {
-        setLeftButtonClicked(false);
-      }, 200);
+      setCurrentPage((prev) => prev - 1)
     }
-  }, [currentPage]);
+  }
 
-  const handleNextPage = useCallback(() => {
+  const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
-      setRightButtonClicked(true);
-      setCurrentPage((prev) => prev + 1);
-
-      setTimeout(() => {
-        setRightButtonClicked(false);
-      }, 200);
+      setCurrentPage((prev) => prev + 1)
     }
-  }, [currentPage, totalPages]);
+  }
 
-  // Get current page creators
-  const getCurrentPageCreators = useCallback(() => {
-    const startIndex = currentPage * creatorsPerPage;
-    const endIndex = startIndex + creatorsPerPage;
-    return creators.slice(startIndex, endIndex);
-  }, [creators, currentPage, creatorsPerPage]);
+  const getCurrentPageCreators = () => {
+    const startIndex = currentPage * creatorsPerPage
+    const endIndex = startIndex + creatorsPerPage
+    return creators.slice(startIndex, endIndex)
+  }
+
+  // Get medal for top 3 ranks
+  const getMedalIcon = (position) => {
+    const rank = position + currentPage * creatorsPerPage
+
+    if (rank === 0) return <div className="medal gold">1</div>
+    if (rank === 1) return <div className="medal silver">2</div>
+    if (rank === 2) return <div className="medal bronze">3</div>
+
+    return <div className="rank">{rank + 1}</div>
+  }
+
+  // Get row class based on position
+  const getRowClass = (position) => {
+    const rank = position + currentPage * creatorsPerPage
+
+    if (rank === 0) return "leaderboard-row gold-row"
+    if (rank === 1) return "leaderboard-row silver-row"
+    if (rank === 2) return "leaderboard-row bronze-row"
+
+    return "leaderboard-row"
+  }
 
   if (isLoading) {
-    return <h2 className="creators_title">Loading creators...</h2>;
+    return <div className="loading">Loading authors...</div>
   }
 
   return (
-    <div className="creators_container">
-      {/* Static star decorations */}
-      <div className="creators_star creators_star-1"></div>
-      <div className="creators_star creators_star-2"></div>
-      <div className="creators_star creators_star-3"></div>
-      <div className="creators_star creators_star-4"></div>
-      <div className="creators_star creators_star-5"></div>
-      <div className="creators_star creators_star-6"></div>
-
-      {/* Add colorful background circles */}
-      <div className="creators_circle creators_circle-1"></div>
-      <div className="creators_circle creators_circle-2"></div>
-      <div className="creators_circle creators_circle-3"></div>
-
-      {/* Added title and description */}
-      <div className="creators_header">
-        <h2 className="creators_title">Active Authors</h2>
-        <p className="creators_subtitle">
-          Discover our most prolific contributors who shape the discourse on ICT
-          law with their expertise and insights.
+    <div className="leaderboard-container">
+      <div className="leaderboard-header">
+        <h2 className="leaderboard-title">Active Authors</h2>
+        <p className="leaderboard-subtitle">
+          Discover our most prolific contributors who shape the discourse on ICT law
         </p>
       </div>
 
-      <div className="creators_list">
+      <div className="leaderboard">
         {getCurrentPageCreators().map((creator, index) => (
-          <CreatorCard
-            key={creator._id || index}
-            creator={creator}
-            onClick={handleCreatorClick}
-            style={{ "--index": index }}
-          />
+          <div key={creator._id} className={getRowClass(index)} onClick={() => handleCreatorClick(creator._id)}>
+            <div className="rank-container">{getMedalIcon(index)}</div>
+            <div className="author-avatar">
+              {creator.profileImgUrl ? (
+                <img
+                  src={creator.profileImgUrl || "/placeholder.svg"}
+                  alt={`${creator.firstName} ${creator.lastName}`}
+                />
+              ) : (
+                <User size={24} />
+              )}
+            </div>
+            <div className="author-info">
+              <div className="author-name">{`${creator.firstName} ${creator.lastName}`}</div>
+              <div className="author-role">{creator.role}</div>
+            </div>
+            <div className="author-score">{creator.articleCount}</div>
+          </div>
         ))}
       </div>
 
       {totalPages > 1 && (
-        <div className="creators_pagination">
+        <div className="pagination">
           <button
-            className={`creators_nav_button ${
-              leftButtonClicked ? "clicked" : ""
-            }`}
+            className="pagination-btn"
             onClick={handlePrevPage}
             disabled={currentPage === 0}
             aria-label="Previous page"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
           </button>
 
-          <div className="creators_page_indicator">
+          <div className="page-indicator">
             {currentPage + 1} / {totalPages}
           </div>
 
           <button
-            className={`creators_nav_button ${
-              rightButtonClicked ? "clicked" : ""
-            }`}
+            className="pagination-btn"
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
             aria-label="Next page"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={20} />
           </button>
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default TopCreators;
+export default AuthorsLeaderboard

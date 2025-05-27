@@ -178,10 +178,10 @@ export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, closeMob
         </div>
 
         <div className="sidebar-footer">
-          <button className="theme-toggle" onClick={toggleDarkMode}>
+          {/* <button className="theme-toggle" onClick={toggleDarkMode}>
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button>
+          </button> */}
 
           <a href="/" className="logout-link">
             <LogOut size={20} />

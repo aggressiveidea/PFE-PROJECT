@@ -1,110 +1,99 @@
-// Function to get quiz data from localStorage
 export const getQuizData = () => {
   try {
     const quizData = localStorage.getItem("quizStats")
-    return quizData ? JSON.parse(quizData) : { totalQuizzes: 0, averageScore: 0, topDifficulty: "Easy" }
+    return quizData
+      ? JSON.parse(quizData)
+      : {
+          totalQuizzes: 0,
+          averageScore: 0,
+          topCategory: "None",
+        }
   } catch (error) {
     console.error("Error retrieving quiz data:", error)
-    return { totalQuizzes: 0, averageScore: 0, topDifficulty: "Easy" }
-  }
-}
-
-// Function to get card performance data from localStorage
-export const getCardPerformance = () => {
-  try {
-    const cardData = localStorage.getItem("cardPerformance")
-    if (!cardData) {
-      // Initialize default card performance data if none exists
-      const defaultCardData = {
-        basic: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
-        practical: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
-        advanced: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
-      }
-      localStorage.setItem("cardPerformance", JSON.stringify(defaultCardData))
-      return defaultCardData
-    }
-    return JSON.parse(cardData)
-  } catch (error) {
-    console.error("Error retrieving card performance data:", error)
     return {
-      basic: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
-      practical: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
-      advanced: { attempts: 0, bestScore: 0, lastScore: 0, lastAttempt: null },
+      totalQuizzes: 0,
+      averageScore: 0,
+      topCategory: "None",
     }
   }
 }
 
-// Function to update card performance in localStorage
-export const updateCardPerformance = (cardType, score) => {
+export const updateQuizData = (newData) => {
   try {
-    const cardData = getCardPerformance()
-    const percentage = score
-
-    // Map level names to card types
-    const cardTypeMap = {
-      easy: "basic",
-      medium: "practical",
-      hard: "advanced",
-    }
-
-    const cardKey = cardTypeMap[cardType] || cardType
-
-    if (cardData[cardKey]) {
-      // Update card data
-      cardData[cardKey].attempts += 1
-      cardData[cardKey].lastScore = percentage
-      cardData[cardKey].lastAttempt = new Date().toISOString()
-
-      // Update best score if current score is higher
-      if (percentage > cardData[cardKey].bestScore) {
-        cardData[cardKey].bestScore = percentage
-      }
-
-      // Save updated data
-      localStorage.setItem("cardPerformance", JSON.stringify(cardData))
-      return cardData
-    }
-
-    return cardData
+    const currentData = getQuizData()
+    const updatedData = { ...currentData, ...newData }
+    localStorage.setItem("quizStats", JSON.stringify(updatedData))
+    return updatedData
   } catch (error) {
-    console.error("Error updating card performance:", error)
+    console.error("Error updating quiz data:", error)
     return null
   }
 }
 
-// Function to get top performance cards
-export const getTopPerformanceCards = () => {
+export const getCategoryPerformance = () => {
   try {
-    const cardData = getCardPerformance()
-
-    // Convert to array for sorting
-    const cardsArray = Object.entries(cardData).map(([type, data]) => ({
-      type,
-      ...data,
-      // Map card types to display names
-      displayName: type === "basic" ? "Easy" : type === "practical" ? "Medium" : "Hard",
-    }))
-
-    // Sort by best score (descending)
-    return cardsArray
-      .filter((card) => card.attempts > 0) // Only include cards that have been attempted
-      .sort((a, b) => b.bestScore - a.bestScore)
+    const performanceData = localStorage.getItem("categoryPerformance")
+    return performanceData ? JSON.parse(performanceData) : {}
   } catch (error) {
-    console.error("Error getting top performance cards:", error)
-    return []
+    console.error("Error retrieving category performance:", error)
+    return {}
   }
 }
 
-// Legacy functions for backward compatibility
-export const getTopDifficultyCards = () => {
-  return getTopPerformanceCards().map((card) => ({
-    level: card.displayName,
-    score: card.bestScore,
-    date: card.lastAttempt,
-  }))
+export const updateCategoryPerformance = (category, score) => {
+  try {
+    const performanceData = getCategoryPerformance()
+    const categoryData = performanceData[category] || {
+      attempts: 0,
+      bestScore: 0,
+      lastScore: 0,
+      lastAttempt: null,
+    }
+    categoryData.attempts += 1
+    categoryData.lastScore = score
+    categoryData.lastAttempt = new Date().toISOString()
+
+    if (score > categoryData.bestScore) {
+      categoryData.bestScore = score
+    }
+
+    performanceData[category] = categoryData
+    localStorage.setItem("categoryPerformance", JSON.stringify(performanceData))
+
+    return categoryData
+  } catch (error) {
+    console.error("Error updating category performance:", error)
+    return null
+  }
 }
 
-export const updateTopDifficultyCards = (newCard) => {
-  const cardType = newCard.level.toLowerCase()
-  return updateCardPerformance(cardType, newCard.score)
+export const getTopPerformanceCategories = () => {
+  try {
+    const performanceData = getCategoryPerformance()
+
+    const categoriesArray = Object.entries(performanceData).map(([id, data]) => ({
+      id,
+      ...data,
+      displayName: getCategoryDisplayName(id),
+    }))
+
+    return categoriesArray.sort((a, b) => b.bestScore - a.bestScore).slice(0, 3)
+  } catch (error) {
+    console.error("Error getting top performance categories:", error)
+    return []
+  }
+}
+const getCategoryDisplayName = (categoryId) => {
+  const displayNames = {
+    "personal-data": "Personal Data",
+    "e-commerce": "E-commerce",
+    networks: "Networks",
+    cybercrime: "Cybercrime",
+    miscellaneous: "Miscellaneous",
+    "it-contract": "IT Contract",
+    "intellectual-property": "Intellectual Property",
+    organizations: "Organizations",
+  }
+
+  return displayNames[categoryId] || categoryId
 }

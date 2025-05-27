@@ -1,10 +1,6 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import "./add-article-form.css";
-import { addArticle } from "../../services/Api";
-import { getArticleById } from "../../services/Api";
-
+import { useState, useEffect } from "react"
+import "./add-article-form.css"
+import { addArticle } from "../../services/Api"
 
 export default function AddArticleForm({ setArticles }) {
   const [formData, setFormData] = useState({
@@ -13,13 +9,13 @@ export default function AddArticleForm({ setArticles }) {
     language: "English",
     content: "",
     imageUrl: null,
-  });
+  })
 
-  const [previewImage, setPreviewImage] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [error, setError] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [error, setError] = useState("")
+  const [userId, setUserId] = useState(null)
 
   const categories = [
     "All Categories",
@@ -30,54 +26,53 @@ export default function AddArticleForm({ setArticles }) {
     "Propriété intellectuelle",
     "Réseaux",
     "Commerce électronique",
-  ];
+  ]
 
-  const languages = ["All Languages", "English", "French", "Arabic"];
+  const languages = ["All Languages", "English", "French", "Arabic"]
 
   useEffect(() => {
     try {
-      const storedUser = JSON.parse( localStorage.getItem( "user" ) );
-      console.log( "omg", storedUser );
+      const storedUser = JSON.parse(localStorage.getItem("user"))
       if (storedUser && storedUser._id) {
-        setUserId(storedUser._id);
+        setUserId(storedUser._id)
       } else {
-        setError("Vous devez être connecté pour ajouter un article.");
+        setError("you gotta be connected to add an article")
       }
     } catch (e) {
-      console.error("Invalid user in localStorage", e);
-      setError("Erreur de récupération de l'utilisateur.");
+      console.error("Error parsing user from localStorage:", e)
+      setError("Error getting the user")
     }
-  }, []);
+  }, [])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((f) => ({ ...f, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((f) => ({ ...f, [name]: value }))
+  }
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]
+    if (!file) return
 
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onloadend = () => {
       setFormData((f) => ({
         ...f,
         imageUrl: reader.result,
-      }));
-      setPreviewImage(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
+      }))
+      setPreviewImage(reader.result)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError("")
 
     if (!userId) {
-      setError("Vous devez être connecté pour soumettre un article.");
-      setIsSubmitting(false);
-      return;
+      setError("you have to be connected to add the article ")
+      setIsSubmitting(false)
+      return
     }
 
     const articleData = {
@@ -86,63 +81,57 @@ export default function AddArticleForm({ setArticles }) {
       language: formData.language,
       content: formData.content,
       ownerId: userId,
-      verified: false
-    };
+      verified: false,
+    }
 
     if (formData.imageUrl) {
-      articleData.imageUrl = formData.imageUrl;
+      articleData.imageUrl = formData.imageUrl
     }
 
     try {
-      console.log("articledata ",articleData);
-      const createdArticle = await addArticle(articleData);
-      console.log( "Article créé :", createdArticle  );
-    
+      const createdArticle = await addArticle(articleData)
 
-      // 1. Mise à jour du state React
-      setArticles((prev) => [...prev, createdArticle ]);
+      // 1. Update React state
+      setArticles((prev) => [...prev, createdArticle])
 
-      // 2. Mise à jour du localStorage
-      const storedArticles = JSON.parse(localStorage.getItem("articles")) || [];
-      storedArticles.push( createdArticle  );
-      console.log("the stored ", storedArticles)
-      localStorage.setItem("articles", JSON.stringify(storedArticles));
+      // 2. Update localStorage
+      const storedArticles = JSON.parse(localStorage.getItem("articles")) || []
+      storedArticles.push(createdArticle)
+      localStorage.setItem("articles", JSON.stringify(storedArticles))
 
       // 3. Reset & feedback
-      setShowSuccess(true);
+      setShowSuccess(true)
       setFormData({
         title: "",
         category: "",
         language: "English",
         content: "",
         imageUrl: "",
-      });
-      setPreviewImage(null);
-      setTimeout(() => setShowSuccess(false), 3000);
+      })
+      setPreviewImage(null)
+      setTimeout(() => setShowSuccess(false), 3000)
     } catch (err) {
-      console.error(err);
-      setError("Erreur lors de l'ajout de l'article.");
+      console.error(err)
+      setError("Error adding the article")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
-    <div className="add-article-form-container">
+    <div className="quiz-add-article-container">
       {showSuccess ? (
-        <div className="success-message">
-          <div className="success-icon">✓</div>
-          <h3>Article ajouté avec succès !</h3>
-          <p>
-            Merci pour votre contribution. Il sera examiné par notre équipe.
-          </p>
+        <div className="quiz-success-message">
+          <div className="quiz-success-icon">✓</div>
+          <h3>Article has been added successfully!</h3>
+          <p>Merci for your contribution this will be analysed by our administrators</p>
         </div>
       ) : (
-        <form className="add-article-form" onSubmit={handleSubmit}>
-          {error && <p className="error-message">{error}</p>}
+        <form className="quiz-add-article-form" onSubmit={handleSubmit}>
+          {error && <p className="quiz-error-message">{error}</p>}
 
-          <div className="form-group">
-            <label htmlFor="title">Titre de l'article</label>
+          <div className="quiz-form-group">
+            <label htmlFor="title">Article's title</label>
             <input
               type="text"
               id="title"
@@ -151,20 +140,20 @@ export default function AddArticleForm({ setArticles }) {
               onChange={handleChange}
               placeholder="Entrez un titre descriptif"
               required
-              className="form-input"
+              className="quiz-form-input"
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="category">Catégorie</label>
+          <div className="quiz-form-row">
+            <div className="quiz-form-group">
+              <label htmlFor="category">Category</label>
               <select
                 id="category"
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
                 required
-                className="form-select"
+                className="quiz-form-select"
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>
@@ -174,14 +163,14 @@ export default function AddArticleForm({ setArticles }) {
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="language">Langue principale</label>
+            <div className="quiz-form-group">
+              <label htmlFor="language">priciple language</label>
               <select
                 id="language"
                 name="language"
                 value={formData.language}
                 onChange={handleChange}
-                className="form-select"
+                className="quiz-form-select"
               >
                 {languages.map((language) => (
                   <option key={language} value={language}>
@@ -192,7 +181,7 @@ export default function AddArticleForm({ setArticles }) {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="quiz-form-group">
             <label htmlFor="content">Description</label>
             <textarea
               id="content"
@@ -201,31 +190,31 @@ export default function AddArticleForm({ setArticles }) {
               onChange={handleChange}
               placeholder="Fournissez un résumé de votre article"
               required
-              className="form-textarea"
+              className="quiz-form-textarea"
               rows={4}
             ></textarea>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="image">Image (optionnelle)</label>
-            <div className="image-upload-container">
-              <div className="image-upload-area">
+          <div className="quiz-form-group">
+            <label htmlFor="image">Image (optionel)</label>
+            <div className="quiz-image-upload-container">
+              <div className="quiz-image-upload-area">
                 {previewImage ? (
-                  <div className="image-preview">
-                    <img src={previewImage} alt="Aperçu" />
+                  <div className="quiz-image-preview">
+                    <img src={previewImage || "/placeholder.svg"} alt="Aperçu" />
                     <button
                       type="button"
-                      className="remove-image-btn"
+                      className="quiz-remove-image-btn"
                       onClick={() => {
-                        setPreviewImage(null);
-                        setFormData((f) => ({ ...f}));
+                        setPreviewImage(null)
+                        setFormData((f) => ({ ...f }))
                       }}
                     >
                       ×
                     </button>
                   </div>
                 ) : (
-                  <p>Glissez une image ou cliquez pour parcourir</p>
+                  <p>Drag an image or click to browse</p>
                 )}
                 <input
                   type="file"
@@ -233,7 +222,7 @@ export default function AddArticleForm({ setArticles }) {
                   name="image"
                   onChange={handleImageChange}
                   accept="image/*"
-                  className="file-input"
+                  className="quiz-file-input"
                 />
               </div>
             </div>
@@ -241,17 +230,13 @@ export default function AddArticleForm({ setArticles }) {
 
           <button
             type="submit"
-            className={`submit-button ${isSubmitting ? "submitting" : ""}`}
+            className={`quiz-submit-button ${isSubmitting ? "quiz-submitting" : ""}`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? (
-              <span className="loading-spinner"></span>
-            ) : (
-              <span>Soumettre l'article</span>
-            )}
+            {isSubmitting ? <span className="quiz-loading-spinner"></span> : <span>Submit Article</span>}
           </button>
         </form>
       )}
     </div>
-  );
+  )
 }

@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, Check, X, Clock, AlertTriangle, Volume2, VolumeX } from "lucide-react"
-import { fetchQuizQuestions } from "../../services/Api"
+import { fetchQuizQuestions2, getCategoryDetails } from "../../services/Api"
 import "./QuestionPage.css"
 
 const QuestionPage = ({ darkMode }) => {
-  const { level } = useParams()
+  const { category } = useParams()
   const navigate = useNavigate()
 
   const [questions, setQuestions] = useState([])
@@ -21,6 +21,7 @@ const QuestionPage = ({ darkMode }) => {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(null)
   const [animateProgress, setAnimateProgress] = useState(false)
+  const [categoryInfo, setCategoryInfo] = useState({ name: "", color: "" })
 
   const tickAudioRef = useRef(null)
   const correctAudioRef = useRef(null)
@@ -29,12 +30,16 @@ const QuestionPage = ({ darkMode }) => {
   const questionContainerRef = useRef(null)
 
   useEffect(() => {
+    // Get category details
+    const details = getCategoryDetails(category)
+    setCategoryInfo(details)
+
     const loadQuestions = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        const fetchedQuestions = await fetchQuizQuestions(level)
+        const fetchedQuestions = await fetchQuizQuestions2(category)
         setQuestions(fetchedQuestions)
       } catch (err) {
         console.error("Error loading questions:", err)
@@ -45,7 +50,7 @@ const QuestionPage = ({ darkMode }) => {
     }
 
     loadQuestions()
-  }, [level])
+  }, [category])
 
   // Animate progress bar when current question changes
   useEffect(() => {
@@ -81,10 +86,10 @@ const QuestionPage = ({ darkMode }) => {
   // Add slide-in animation when question changes
   useEffect(() => {
     if (questionContainerRef.current) {
-      questionContainerRef.current.classList.add('question-enter')
+      questionContainerRef.current.classList.add("question-enter")
       const timer = setTimeout(() => {
         if (questionContainerRef.current) {
-          questionContainerRef.current.classList.remove('question-enter')
+          questionContainerRef.current.classList.remove("question-enter")
         }
       }, 500)
       return () => clearTimeout(timer)
@@ -105,16 +110,17 @@ const QuestionPage = ({ darkMode }) => {
 
     const isCorrect = selectedOption === questions[currentQuestion].correctAnswer
     setIsAnswerCorrect(isCorrect)
-    
+
     if (isCorrect) {
       setScore(score + 1)
       if (soundEnabled && correctAudioRef.current) {
         correctAudioRef.current.currentTime = 0
-        correctAudioRef.current.play().catch(e => console.log("Audio play prevented:", e))
+        correctAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
+      }
     } else {
       if (soundEnabled && incorrectAudioRef.current) {
         incorrectAudioRef.current.currentTime = 0
-        incorrectAudioRef.current.play().catch(e => console.log("Audio play prevented:", e))
+        incorrectAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
       }
     }
     setShowAnswer(true)
@@ -128,12 +134,12 @@ const QuestionPage = ({ darkMode }) => {
       setIsAnswerCorrect(null)
     } else {
       // Quiz completed, navigate to results page
-      navigate(`/quiz/results/${level}/${score}`)
+      navigate(`/quiz/results/${category}/${score}`)
     }
   }
 
   const handleBack = () => {
-    navigate("/quiz/level")
+    navigate("/quiz/category")
   }
 
   const formatTime = (seconds) => {
@@ -161,7 +167,7 @@ const QuestionPage = ({ darkMode }) => {
         <p>{error}</p>
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft size={18} />
-          <span>Back to Levels</span>
+          <span>Back to Categories</span>
         </button>
       </div>
     )
@@ -174,10 +180,10 @@ const QuestionPage = ({ darkMode }) => {
           <AlertTriangle size={32} />
         </div>
         <h2>No Questions Available</h2>
-        <p>We couldn't find any questions for this difficulty level.</p>
+        <p>We couldn't find any questions for this category.</p>
         <button className="back-button" onClick={handleBack}>
           <ArrowLeft size={18} />
-          <span>Back to Levels</span>
+          <span>Back to Categories</span>
         </button>
       </div>
     )
@@ -215,7 +221,7 @@ const QuestionPage = ({ darkMode }) => {
         </button>
 
         <h1>
-          ICT {level.charAt(0).toUpperCase() + level.slice(1)} Quiz
+          {categoryInfo.name} Quiz
           <span className="question-counter">
             Question {currentQuestion + 1}/{questions.length}
           </span>
@@ -234,11 +240,11 @@ const QuestionPage = ({ darkMode }) => {
 
       <div className="progress-container">
         <div
-          className={`progress-bar ${animateProgress ? 'animate-progress' : ''}`}
+          className={`progress-bar ${animateProgress ? "animate-progress" : ""}`}
           style={{
             width: `${progressPercentage}%`,
+            background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
           }}
-          data-level={level}
         ></div>
       </div>
 
@@ -285,7 +291,9 @@ const QuestionPage = ({ darkMode }) => {
             className={`submit-button ${!selectedOption ? "disabled" : ""}`}
             onClick={handleSubmit}
             disabled={!selectedOption}
-            data-level={level}
+            style={{
+              background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
+            }}
           >
             Submit Answer
           </button>
@@ -293,14 +301,16 @@ const QuestionPage = ({ darkMode }) => {
           <button
             className="next-button"
             onClick={handleNext}
-            data-level={level}
+            style={{
+              background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
+            }}
           >
             {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
           </button>
         )}
       </div>
     </div>
-  );
+  )
 }
-}
-export default QuestionPage;
+
+export default QuestionPage

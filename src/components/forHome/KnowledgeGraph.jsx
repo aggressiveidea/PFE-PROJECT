@@ -28,19 +28,31 @@ import {
   Code,
   Workflow,
   Zap,
-  Loader2,
+  Sparkles,
 } from "lucide-react"
 import "./KnowledgeGraph.css"
 
 // Lazy loaded components
 const GraphPanel = lazy(() => import("./GraphPanel"))
 
-// Loading component
+// Enhanced Loading component with elegant animation
 const LoadingSpinner = () => (
-  <div className="loading-container">
-    <Loader2 className="animate-spin" size={32} />
-    <p>Loading knowledge graph...</p>
-  </div>
+  <motion.div
+    className="home-page-loading-container"
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5, ease: "easeOut" }}
+  >
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+    >
+      <Sparkles size={40} />
+    </motion.div>
+    <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}>
+      Loading knowledge graph...
+    </motion.p>
+  </motion.div>
 )
 
 const KnowledgeGraph = ({ language = "en" }) => {
@@ -125,243 +137,243 @@ const KnowledgeGraph = ({ language = "en" }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [connections, setConnections] = useState([])
 
-  // Enhanced data for the knowledge graph with more detailed relationships and categories
+  // Enhanced data for mathematical graph positioning
   const terms = [
     {
       id: 1,
       name: "Cloud Computing",
       nameFr: "Informatique en nuage",
       nameAr: "الحوسبة السحابية",
-      x: 50,
+      x: 50, // Center like origin (0,0)
       y: 50,
       category: "core",
-      size: 32,
+      size: 45,
       definition:
         "A model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources.",
-      icon: <Cloud size={18} />,
+      icon: <Cloud size={22} />,
     },
     {
       id: 2,
       name: "SaaS",
       nameFr: "SaaS",
       nameAr: "البرمجيات كخدمة",
-      x: 30,
-      y: 30,
+      x: 20, // Grid position (-3, 3)
+      y: 20,
       category: "service",
-      size: 26,
+      size: 38,
       related: [1],
       definition:
         "Software as a service is a software licensing and delivery model in which software is licensed on a subscription basis and is centrally hosted.",
-      icon: <MonitorSmartphone size={16} />,
+      icon: <MonitorSmartphone size={20} />,
     },
     {
       id: 3,
       name: "PaaS",
       nameFr: "PaaS",
       nameAr: "المنصة كخدمة",
-      x: 70,
-      y: 30,
+      x: 80, // Grid position (3, 3)
+      y: 20,
       category: "service",
-      size: 26,
+      size: 38,
       related: [1],
       definition:
         "Platform as a service is a category of cloud computing services that provides a platform allowing customers to develop, run, and manage applications.",
-      icon: <Code size={16} />,
+      icon: <Code size={20} />,
     },
     {
       id: 4,
       name: "IaaS",
       nameFr: "IaaS",
       nameAr: "البنية التحتية كخدمة",
-      x: 30,
-      y: 70,
+      x: 20, // Grid position (-3, -3)
+      y: 80,
       category: "service",
-      size: 26,
+      size: 38,
       related: [1],
       definition:
         "Infrastructure as a service is a form of cloud computing that provides virtualized computing resources over the internet.",
-      icon: <Server size={16} />,
+      icon: <Server size={20} />,
     },
     {
       id: 5,
       name: "Virtualization",
       nameFr: "Virtualisation",
       nameAr: "المحاكاة الافتراضية",
-      x: 70,
-      y: 70,
+      x: 80, // Grid position (3, -3)
+      y: 80,
       category: "technology",
-      size: 24,
+      size: 35,
       related: [1, 4],
       definition:
         "The act of creating a virtual version of something, including virtual computer hardware platforms, storage devices, and computer network resources.",
-      icon: <Layers size={16} />,
+      icon: <Layers size={20} />,
     },
     {
       id: 6,
       name: "Cybersecurity",
       nameFr: "Cybersécurité",
       nameAr: "الأمن السيبراني",
-      x: 20,
+      x: 10, // Grid position (-4, 0)
       y: 50,
       category: "security",
-      size: 28,
+      size: 42,
       related: [1, 7],
       definition:
         "The practice of protecting systems, networks, and programs from digital attacks that aim to access, change, or destroy sensitive information.",
-      icon: <Lock size={16} />,
+      icon: <Lock size={20} />,
     },
     {
       id: 7,
       name: "Encryption",
       nameFr: "Chiffrement",
       nameAr: "التشفير",
-      x: 10,
+      x: 10, // Grid position (-4, 2)
       y: 30,
       category: "security",
-      size: 24,
+      size: 35,
       related: [6],
       definition: "The process of converting information or data into a code to prevent unauthorized access.",
-      icon: <Key size={16} />,
+      icon: <Key size={20} />,
     },
     {
       id: 8,
       name: "Containers",
       nameFr: "Conteneurs",
       nameAr: "الحاويات",
-      x: 85,
-      y: 55,
+      x: 90, // Grid position (4, 0)
+      y: 50,
       category: "technology",
-      size: 24,
+      size: 35,
       related: [1, 3, 5],
       definition:
         "A standard unit of software that packages code and its dependencies so the application runs quickly and reliably from one computing environment to another.",
-      icon: <Package size={16} />,
+      icon: <Package size={20} />,
     },
     {
       id: 9,
       name: "DevOps",
       nameFr: "DevOps",
       nameAr: "ديف أوبس",
-      x: 60,
-      y: 85,
+      x: 70, // Grid position (2, -4)
+      y: 90,
       category: "methodology",
-      size: 26,
+      size: 38,
       related: [1, 3, 8],
       definition:
         "A set of practices that combines software development and IT operations aiming to shorten the systems development life cycle.",
-      icon: <GitMerge size={16} />,
+      icon: <GitMerge size={20} />,
     },
     {
       id: 10,
       name: "Microservices",
       nameFr: "Microservices",
       nameAr: "الخدمات المصغرة",
-      x: 40,
-      y: 85,
+      x: 30, // Grid position (-2, -4)
+      y: 90,
       category: "methodology",
-      size: 24,
+      size: 35,
       related: [9, 3, 8],
       definition:
         "An architectural style that structures an application as a collection of small autonomous services, modeled around a business domain.",
-      icon: <Boxes size={16} />,
+      icon: <Boxes size={20} />,
     },
     {
       id: 11,
       name: "Blockchain",
       nameFr: "Blockchain",
       nameAr: "سلسلة الكتل",
-      x: 15,
-      y: 80,
+      x: 10, // Grid position (-4, -2)
+      y: 70,
       category: "technology",
-      size: 26,
+      size: 38,
       related: [6, 7],
       definition:
         "A distributed ledger technology that enables secure, transparent and tamper-proof record-keeping of transactions across a network.",
-      icon: <Database size={16} />,
+      icon: <Database size={20} />,
     },
     {
       id: 12,
       name: "AI",
       nameFr: "IA",
       nameAr: "الذكاء الاصطناعي",
-      x: 85,
-      y: 20,
+      x: 90, // Grid position (4, 4)
+      y: 10,
       category: "technology",
-      size: 28,
+      size: 42,
       related: [13, 14],
       definition:
         "The simulation of human intelligence processes by machines, especially computer systems, including learning, reasoning, and self-correction.",
-      icon: <Brain size={16} />,
+      icon: <Brain size={20} />,
     },
     {
       id: 13,
       name: "Machine Learning",
       nameFr: "Apprentissage automatique",
       nameAr: "تعلم الآلة",
-      x: 90,
-      y: 40,
+      x: 90, // Grid position (4, 2)
+      y: 30,
       category: "technology",
-      size: 24,
+      size: 35,
       related: [12],
       definition:
         "A subset of artificial intelligence that provides systems the ability to automatically learn and improve from experience without being explicitly programmed.",
-      icon: <Network size={16} />,
+      icon: <Network size={20} />,
     },
     {
       id: 14,
       name: "Big Data",
       nameFr: "Mégadonnées",
       nameAr: "البيانات الضخمة",
-      x: 75,
+      x: 70, // Grid position (2, 4)
       y: 10,
       category: "technology",
-      size: 26,
+      size: 38,
       related: [12, 13, 1],
       definition:
         "Extremely large data sets that may be analyzed computationally to reveal patterns, trends, and associations, especially relating to human behavior and interactions.",
-      icon: <BarChart3 size={16} />,
+      icon: <BarChart3 size={20} />,
     },
     {
       id: 15,
       name: "Edge Computing",
       nameFr: "Informatique en périphérie",
       nameAr: "الحوسبة الطرفية",
-      x: 65,
-      y: 15,
+      x: 50, // Grid position (0, 4)
+      y: 10,
       category: "technology",
-      size: 24,
+      size: 35,
       related: [1, 4],
       definition:
         "A distributed computing paradigm that brings computation and data storage closer to the location where it is needed, to improve response times and save bandwidth.",
-      icon: <Cpu size={16} />,
+      icon: <Cpu size={20} />,
     },
     {
       id: 16,
       name: "Serverless",
       nameFr: "Sans serveur",
       nameAr: "بدون خادم",
-      x: 45,
-      y: 15,
+      x: 30, // Grid position (-2, 4)
+      y: 10,
       category: "service",
-      size: 24,
+      size: 35,
       related: [1, 3],
       definition:
         "A cloud computing execution model where the cloud provider dynamically manages the allocation of machine resources, allowing developers to build and run applications without managing servers.",
-      icon: <Zap size={16} />,
+      icon: <Zap size={20} />,
     },
     {
       id: 17,
       name: "CI/CD",
       nameFr: "CI/CD",
       nameAr: "التكامل المستمر/التسليم المستمر",
-      x: 25,
+      x: 50, // Grid position (0, -4)
       y: 90,
       category: "methodology",
-      size: 24,
+      size: 35,
       related: [9, 10],
       definition:
         "Continuous Integration and Continuous Delivery, a method to frequently deliver apps to customers by introducing automation into the stages of app development.",
-      icon: <Workflow size={16} />,
+      icon: <Workflow size={20} />,
     },
   ]
 
@@ -437,7 +449,7 @@ const KnowledgeGraph = ({ language = "en" }) => {
     // Simulate loading delay for demonstration
     const timer = setTimeout(() => {
       setIsLoaded(true)
-    }, 800)
+    }, 1200)
 
     return () => clearTimeout(timer)
   }, [])
@@ -644,7 +656,7 @@ const KnowledgeGraph = ({ language = "en" }) => {
   // Show tooltip with term info
   const showTermTooltip = (term, x, y) => {
     setTooltipContent({
-      content: term.definition.substring(0, 100) + (term.definition.length > 100 ? "..." : ""),
+      content: term.definition.substring(0, 120) + (term.definition.length > 120 ? "..." : ""),
       x,
       y,
     })
@@ -656,7 +668,7 @@ const KnowledgeGraph = ({ language = "en" }) => {
     setShowTooltip(false)
   }
 
-  // Calculate connection path between two nodes
+  // Calculate connection path between two nodes (Neo4j Bloom style)
   const calculateConnectionPath = (sourceTerm, targetTerm) => {
     // Convert percentage positions to pixels
     const startX = (sourceTerm.x / 100) * graphSize.width
@@ -664,115 +676,188 @@ const KnowledgeGraph = ({ language = "en" }) => {
     const endX = (targetTerm.x / 100) * graphSize.width
     const endY = (targetTerm.y / 100) * graphSize.height
 
-    // Calculate control points for curved lines
-    const midX = (startX + endX) / 2
-    const midY = (startY + endY) / 2
-    const dx = endX - startX
-    const dy = endY - startY
-    const dist = Math.sqrt(dx * dx + dy * dy)
-    const normX = dx / dist
-    const normY = dy / dist
-    const perpX = -normY
-    const perpY = normX
-    const curveFactor = dist * 0.2
-    const ctrlX = midX + perpX * curveFactor
-    const ctrlY = midY + perpY * curveFactor
-
+    // Mathematical straight line for precision
     return {
-      path: `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`,
+      path: `M ${startX} ${startY} L ${endX} ${endY}`,
       startX,
       startY,
       endX,
       endY,
-      ctrlX,
-      ctrlY,
     }
   }
 
   return (
-    <section id="knowledge-graph" className={`knowledge-graph ${isRtl ? "rtl" : ""}`}>
-      <div className="container">
-        <div className="section-header">
-          <div className="badge">{t.interactive || "Interactive"}</div>
-          <h2>{t.knowledgeGraphTitle || "Explore the Knowledge Graph"}</h2>
-          <p>
+    <section id="knowledge-graph" className={`home-page-knowledge-graph ${isRtl ? "home-page-rtl" : ""}`}>
+      <div className="home-page-container">
+        <motion.div
+          className="home-page-section-header"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <motion.div
+            className="home-page-badge"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <Sparkles size={16} style={{ marginRight: "8px" }} />
+            {t.interactive || "Interactive"}
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            {t.knowledgeGraphTitle || "Explore the Knowledge Graph"}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
             {t.knowledgeGraphDescription ||
               "Discover relationships between ICT terms with our interactive visualization. Click on nodes to see details and connections."}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="graph-container">
-          <div className="graph-controls">
-            <div className="search-container">
-              <Search className="search-icon" size={16} />
+        <motion.div
+          className="home-page-graph-container"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="home-page-graph-controls">
+            <div className="home-page-search-container">
+              <Search className="home-page-search-icon" size={18} />
               <input
                 type="text"
                 placeholder={t.search || "Search terms..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
+                className="home-page-search-input"
               />
               {searchTerm && (
-                <button className="clear-search" onClick={() => setSearchTerm("")}>
-                  <X size={14} />
-                </button>
+                <motion.button
+                  className="home-page-clear-search"
+                  onClick={() => setSearchTerm("")}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={16} />
+                </motion.button>
               )}
             </div>
 
-            <div className="controls-buttons">
-              <button
-                className="control-button"
+            <div className="home-page-controls-buttons">
+              <motion.button
+                className="home-page-control-button"
                 onClick={() => setShowFilters(!showFilters)}
                 title={t.filter || "Filter"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Filter size={16} />
-              </button>
-              <button className="control-button" onClick={handleZoomIn} title={t.zoomIn || "Zoom in"}>
-                <ZoomIn size={16} />
-              </button>
-              <button className="control-button" onClick={handleZoomOut} title={t.zoomOut || "Zoom out"}>
-                <ZoomOut size={16} />
-              </button>
-              <button className="control-button" onClick={handleZoomReset} title={t.reset || "Reset view"}>
-                <RefreshCw size={16} />
-              </button>
-              <button className="control-button" onClick={toggleFullscreen} title={t.fullscreen || "Fullscreen"}>
-                <Maximize2 size={16} />
-              </button>
-              <button className="control-button" onClick={downloadImage} title={t.download || "Download as image"}>
-                <Download size={16} />
-              </button>
+                <Filter size={18} />
+              </motion.button>
+              <motion.button
+                className="home-page-control-button"
+                onClick={handleZoomIn}
+                title={t.zoomIn || "Zoom in"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ZoomIn size={18} />
+              </motion.button>
+              <motion.button
+                className="home-page-control-button"
+                onClick={handleZoomOut}
+                title={t.zoomOut || "Zoom out"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ZoomOut size={18} />
+              </motion.button>
+              <motion.button
+                className="home-page-control-button"
+                onClick={handleZoomReset}
+                title={t.reset || "Reset view"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <RefreshCw size={18} />
+              </motion.button>
+              <motion.button
+                className="home-page-control-button"
+                onClick={toggleFullscreen}
+                title={t.fullscreen || "Fullscreen"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Maximize2 size={18} />
+              </motion.button>
+              <motion.button
+                className="home-page-control-button"
+                onClick={downloadImage}
+                title={t.download || "Download as image"}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Download size={18} />
+              </motion.button>
             </div>
           </div>
 
-          {showFilters && (
-            <div className="filter-panel">
-              <div className="filter-header">
-                <h4>{t.filter || "Filter"}</h4>
-                <button className="close-filter" onClick={() => setShowFilters(false)}>
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="category-filters">
-                {categories.map((category) => (
-                  <div
-                    key={category.id}
-                    className={`category-filter ${activeFilters.includes(category.id) ? "active" : ""}`}
-                    onClick={() => toggleCategoryFilter(category.id)}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                className="home-page-filter-panel"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="home-page-filter-header">
+                  <h4>{t.filter || "Filter"}</h4>
+                  <motion.button
+                    className="home-page-close-filter"
+                    onClick={() => setShowFilters(false)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
-                    <span className="category-color" style={{ backgroundColor: category.color }}></span>
-                    <span className="category-name">{category.name}</span>
-                  </div>
-                ))}
-              </div>
-              <button className="reset-filters" onClick={resetFilters}>
-                {t.allCategories || "All Categories"}
-              </button>
-            </div>
-          )}
+                    <X size={18} />
+                  </motion.button>
+                </div>
+                <div className="home-page-category-filters">
+                  {categories.map((category, index) => (
+                    <motion.div
+                      key={category.id}
+                      className={`home-page-category-filter ${activeFilters.includes(category.id) ? "active" : ""}`}
+                      onClick={() => toggleCategoryFilter(category.id)}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.3 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="home-page-category-color" style={{ backgroundColor: category.color }}></span>
+                      <span className="home-page-category-name">{category.name}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                <motion.button
+                  className="home-page-reset-filters"
+                  onClick={resetFilters}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {t.allCategories || "All Categories"}
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div
-            className="graph-visualization"
+            className="home-page-graph-visualization"
             ref={graphRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -785,14 +870,14 @@ const KnowledgeGraph = ({ language = "en" }) => {
             ) : (
               <Suspense fallback={<LoadingSpinner />}>
                 <div
-                  className="graph-content"
+                  className="home-page-graph-content"
                   style={{
                     transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
                     cursor: isDragging ? "grabbing" : "grab",
                   }}
                 >
-                  <svg className="connections-svg" ref={svgRef}>
-                    {/* Render connection gradients */}
+                  <svg className="home-page-connections-svg" ref={svgRef}>
+                    {/* Enhanced gradients for Neo4j Bloom style connections */}
                     <defs>
                       {categories.map((category) => (
                         <linearGradient
@@ -804,13 +889,32 @@ const KnowledgeGraph = ({ language = "en" }) => {
                           y2="0%"
                         >
                           <stop offset="0%" stopColor={`var(--color-${category.id})`} stopOpacity="0.8" />
+                          <stop offset="50%" stopColor={`var(--color-${category.id})`} stopOpacity="0.6" />
                           <stop offset="100%" stopColor={`var(--color-${category.id})`} stopOpacity="0.4" />
                         </linearGradient>
                       ))}
+
+                      {/* Neo4j Bloom style glow filter */}
+                      <filter id="bloomGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                        <feMerge>
+                          <feMergeNode in="coloredBlur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+
+                      {/* Enhanced node glow */}
+                      <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                        <feMerge>
+                          <feMergeNode in="coloredBlur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
                     </defs>
 
-                    {/* Render all connections */}
-                    {connections.map((connection) => {
+                    {/* Render all connections with Neo4j Bloom styling */}
+                    {connections.map((connection, index) => {
                       const sourceTerm = terms.find((t) => t.id === connection.source)
                       const targetTerm = terms.find((t) => t.id === connection.target)
 
@@ -831,30 +935,48 @@ const KnowledgeGraph = ({ language = "en" }) => {
                       const connectionPath = calculateConnectionPath(sourceTerm, targetTerm)
 
                       return (
-                        <g key={`connection-${connection.id}`} className="connection-group">
-                          {/* Connection path with gradient */}
+                        <motion.g
+                          key={`connection-${connection.id}`}
+                          className="home-page-connection-group"
+                          initial={{ opacity: 0, pathLength: 0 }}
+                          animate={{ opacity: 1, pathLength: 1 }}
+                          transition={{
+                            delay: index * 0.03,
+                            duration: 0.6,
+                            ease: "easeOut",
+                          }}
+                        >
+                          {/* Main connection path */}
                           <path
                             d={connectionPath.path}
-                            className={`connection-line ${isHighlighted ? "highlighted" : ""}`}
+                            className={`home-page-connection-line ${isHighlighted ? "highlighted" : ""}`}
                             stroke={getCategoryColor(connection.sourceCategory)}
-                            strokeWidth={isHighlighted ? 3 : 2}
-                            opacity={isHighlighted ? 0.9 : 0.5}
+                            strokeWidth={isHighlighted ? 5 : 3}
+                            opacity={isHighlighted ? 0.9 : 0.6}
                             fill="none"
                             strokeLinecap="round"
+                            filter={isHighlighted ? "url(#bloomGlow)" : "none"}
                           />
 
-                          {/* Animated particles along the path */}
+                          {/* Animated particles for highlighted connections */}
                           {isHighlighted && (
-                            <circle r={3} fill={getCategoryColor(connection.sourceCategory)} opacity={0.8}>
+                            <motion.circle
+                              r={3}
+                              fill={getCategoryColor(connection.sourceCategory)}
+                              opacity={0.8}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: [0, 1.2, 1] }}
+                              transition={{ duration: 0.4 }}
+                            >
                               <animateMotion path={connectionPath.path} dur="1.5s" repeatCount="indefinite" />
-                            </circle>
+                            </motion.circle>
                           )}
-                        </g>
+                        </motion.g>
                       )
                     })}
                   </svg>
 
-                  {filteredTerms.map((term) => {
+                  {filteredTerms.map((term, index) => {
                     const isHighlighted =
                       selectedTerm?.id === term.id ||
                       (selectedTerm && selectedTerm.related && selectedTerm.related.includes(term.id)) ||
@@ -868,13 +990,13 @@ const KnowledgeGraph = ({ language = "en" }) => {
                     return (
                       <motion.div
                         key={term.id}
-                        className={`term-node ${isHighlighted ? "highlighted" : ""} ${
+                        className={`home-page-term-node ${isHighlighted ? "highlighted" : ""} ${
                           selectedTerm?.id === term.id ? "selected" : ""
                         }`}
+                        data-category={term.category}
                         style={{
                           left: `${posX}px`,
                           top: `${posY}px`,
-                          backgroundColor: getCategoryColor(term.category),
                           width: `${term.size}px`,
                           height: `${term.size}px`,
                           transform: "translate(-50%, -50%)",
@@ -890,61 +1012,83 @@ const KnowledgeGraph = ({ language = "en" }) => {
                         }}
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{
-                          scale: isHighlighted ? 1.2 : 1,
-                          opacity: selectedTerm && !isHighlighted ? 0.6 : 1,
-                          transition: {
-                            type: "spring",
-                            stiffness: 260,
-                            damping: 20,
-                            delay: term.id * 0.03, // Staggered animation
-                          },
+                          scale: isHighlighted ? 1.3 : 1,
+                          opacity: selectedTerm && !isHighlighted ? 0.5 : 1,
                         }}
-                        whileHover={{ scale: 1.3 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 25,
+                          delay: index * 0.05,
+                        }}
+                        whileHover={{
+                          scale: 1.35,
+                          transition: { duration: 0.2 },
+                        }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <span className="term-icon">{term.icon}</span>
-                        <motion.span
-                          className="term-label"
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{
-                            opacity: isHighlighted || hoveredTerm?.id === term.id ? 1 : 0,
-                            y: isHighlighted || hoveredTerm?.id === term.id ? 0 : -5,
-                          }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {getTermName(term)}
-                        </motion.span>
+                        <span className="home-page-term-icon">{term.icon}</span>
+                        <AnimatePresence>
+                          {(isHighlighted || hoveredTerm?.id === term.id) && (
+                            <motion.span
+                              className="home-page-term-label"
+                              initial={{ opacity: 0, y: -15, scale: 0.8 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -15, scale: 0.8 }}
+                              transition={{ duration: 0.3, type: "spring", stiffness: 400 }}
+                            >
+                              {getTermName(term)}
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
                       </motion.div>
                     )
                   })}
 
-                  {showTooltip && (
-                    <div
-                      className="term-tooltip"
-                      style={{
-                        left: tooltipContent.x,
-                        top: tooltipContent.y,
-                      }}
-                    >
-                      {tooltipContent.content}
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {showTooltip && (
+                      <motion.div
+                        className="home-page-term-tooltip"
+                        style={{
+                          left: tooltipContent.x,
+                          top: tooltipContent.y,
+                        }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {tooltipContent.content}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </Suspense>
             )}
 
             {filteredTerms.length === 0 && isLoaded && (
-              <div className="no-results">
+              <motion.div
+                className="home-page-no-results"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
                 <p>{t.noResults || "No results found"}</p>
-                <button className="reset-search" onClick={resetFilters}>
+                <motion.button
+                  className="home-page-reset-search"
+                  onClick={resetFilters}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   {t.allCategories || "All Categories"}
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             )}
           </div>
 
           <AnimatePresence>
             {selectedTerm && (
-              <Suspense fallback={<div className="loading-panel">Loading details...</div>}>
+              <Suspense fallback={<div className="home-page-loading-panel">Loading details...</div>}>
                 <GraphPanel
                   selectedTerm={selectedTerm}
                   closePanel={closePanel}
@@ -959,7 +1103,7 @@ const KnowledgeGraph = ({ language = "en" }) => {
               </Suspense>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,40 +1,55 @@
 "use client"
 
 import { useNavigate } from "react-router-dom"
-import { Terminal, BarChart3, Award, Target, Trophy, Cpu, Zap, Brain } from "lucide-react"
-import { getQuizData, getTopPerformanceCards, getCardPerformance } from "../../services/QuizStorage"
+import {
+  Terminal,
+  BarChart3,
+  Award,
+  Target,
+  Trophy,
+  Database,
+  ShoppingCart,
+  Network,
+  Shield,
+  FileQuestion,
+  FileText,
+  Copyright,
+  Building,
+} from "lucide-react"
+import { getQuizData, getTopPerformanceCategories, getCategoryPerformance } from "../../services/QuizStorage"
+import { getCategoryDetails } from "../../services/Api"
 import "./QuizWelcome.css"
 
 const QuizWelcome = ({ darkMode, quizStats }) => {
   const navigate = useNavigate()
   const persistentQuizData = getQuizData()
-  const topPerformanceCards = getTopPerformanceCards()
-  // Get card performance directly from storage to ensure it's always defined
-  const cardPerformance = getCardPerformance()
+  const topPerformanceCategories = getTopPerformanceCategories()
+  const categoryPerformance = getCategoryPerformance()
 
-  // Use the persistent quiz data if available, otherwise use the props
   const displayStats = {
     totalQuizzes: persistentQuizData.totalQuizzes || quizStats.totalQuizzes,
     averageScore: persistentQuizData.averageScore || quizStats.averageScore,
-    topDifficulty: persistentQuizData.topDifficulty || quizStats.topDifficulty,
+    topCategory: persistentQuizData.topCategory || quizStats.topCategory,
   }
 
   const handleStartQuiz = () => {
-    navigate("/quiz/level")
+    navigate("/quiz/category")
   }
 
-  // Function to get appropriate color class based on difficulty level
-  const getDifficultyColorClass = (type) => {
-    switch (type) {
-      case "basic":
-        return "easy-card"
-      case "practical":
-        return "medium-card"
-      case "advanced":
-        return "hard-card"
-      default:
-        return "easy-card"
+  // Function to get appropriate icon based on category
+  const getCategoryIcon = (categoryId) => {
+    const icons = {
+      "personal-data": <Database size={24} />,
+      "e-commerce": <ShoppingCart size={24} />,
+      networks: <Network size={24} />,
+      cybercrime: <Shield size={24} />,
+      miscellaneous: <FileQuestion size={24} />,
+      "it-contract": <FileText size={24} />,
+      "intellectual-property": <Copyright size={24} />,
+      organizations: <Building size={24} />,
     }
+
+    return icons[categoryId] || <FileQuestion size={24} />
   }
 
   // Function to format date
@@ -43,182 +58,174 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
     return new Date(dateString).toLocaleDateString()
   }
 
+  // All categories
+  const quizCategories = [
+    {
+      id: "personal-data",
+      name: "Personal Data",
+      icon: <Database size={24} />,
+      description: "Test your knowledge of data protection and privacy laws.",
+    },
+    {
+      id: "e-commerce",
+      name: "E-commerce",
+      icon: <ShoppingCart size={24} />,
+      description: "Test your knowledge of online business, digital transactions, and e-commerce regulations.",
+    },
+    {
+      id: "networks",
+      name: "Networks",
+      icon: <Network size={24} />,
+      description: "Questions about network infrastructure, protocols, and communication systems.",
+    },
+    {
+      id: "cybercrime",
+      name: "Cybercrime",
+      icon: <Shield size={24} />,
+      description: "Challenge yourself with questions about digital security and computer crimes.",
+    },
+    {
+      id: "miscellaneous",
+      name: "Miscellaneous",
+      icon: <FileQuestion size={24} />,
+      description: "Various IT topics including emerging technologies and digital transformation.",
+    },
+    {
+      id: "it-contract",
+      name: "IT Contract",
+      icon: <FileText size={24} />,
+      description: "Questions about technology agreements, service contracts, and licensing.",
+    },
+    {
+      id: "intellectual-property",
+      name: "Intellectual Property",
+      icon: <Copyright size={24} />,
+      description: "Explore the world of patents, copyrights, and digital IP protection.",
+    },
+    {
+      id: "organizations",
+      name: "Organizations",
+      icon: <Building size={24} />,
+      description: "Test your knowledge of IT governance, standards bodies, and regulatory organizations.",
+    },
+  ]
+
   return (
     <div className="quiz-welcome">
-      <div className="welcome-hero">
-        <div className="welcome-icon">
+      <div className="quiz-welcome-hero">
+        <div className="quiz-welcome-icon">
           <Terminal size={32} />
         </div>
         <h1>Welcome to ICT Quiz</h1>
-        <p className="welcome-subtitle">
-          Test your Information and Communication Technology knowledge with our interactive quiz. Choose your difficulty
-          level and challenge yourself!
+        <p className="quiz-welcome-subtitle">
+          Test your knowledge across eight specialized categories of Information and Communication Technology. Choose a
+          category and challenge yourself!
         </p>
-        <button className="start-quiz-button" onClick={handleStartQuiz}>
+        <button className="quiz-start-button" onClick={handleStartQuiz}>
           Start Quiz
         </button>
       </div>
 
       {/* Quiz Statistics Dashboard */}
-      <div className="stats-dashboard">
-        <h2 className="stats-dashboard-title">Your Quiz Statistics</h2>
-        <div className="stats-cards-container">
-          <div className="stats-card">
-            <div className="stats-card-icon">
+      <div className="quiz-stats-dashboard">
+        <h2 className="quiz-stats-title">Your Quiz Statistics</h2>
+        <div className="quiz-stats-cards-container">
+          <div className="quiz-stats-card">
+            <div className="quiz-stats-card-icon">
               <BarChart3 size={24} />
             </div>
-            <div className="stats-card-content">
+            <div className="quiz-stats-card-content">
               <h3>Total Quizzes</h3>
-              <p className="stats-card-value">{displayStats.totalQuizzes}</p>
+              <p className="quiz-stats-card-value">{displayStats.totalQuizzes}</p>
             </div>
           </div>
 
-          <div className="stats-card">
-            <div className="stats-card-icon">
+          <div className="quiz-stats-card">
+            <div className="quiz-stats-card-icon">
               <Award size={24} />
             </div>
-            <div className="stats-card-content">
+            <div className="quiz-stats-card-content">
               <h3>Average Score</h3>
-              <p className="stats-card-value">{displayStats.averageScore}%</p>
+              <p className="quiz-stats-card-value">{displayStats.averageScore}%</p>
             </div>
           </div>
 
-          <div className="stats-card">
-            <div className="stats-card-icon">
+          <div className="quiz-stats-card">
+            <div className="quiz-stats-card-icon">
               <Target size={24} />
             </div>
-            <div className="stats-card-content">
-              <h3>Top Difficulty</h3>
-              <p className="stats-card-value">{displayStats.topDifficulty}</p>
+            <div className="quiz-stats-card-content">
+              <h3>Top Category</h3>
+              <p className="quiz-stats-card-value">{displayStats.topCategory}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Top Performance Cards Section */}
-      <div className="top-cards-section">
-        <h2 className="top-cards-title">
-          <Trophy size={20} className="top-cards-icon" />
-          Your Top Performance Cards
+      {/* Top Performance Categories Section */}
+      <div className="quiz-top-cards-section">
+        <h2 className="quiz-top-cards-title">
+          <Trophy size={20} className="quiz-top-cards-icon" />
+          Your Top Performance Categories
         </h2>
 
-        {topPerformanceCards && topPerformanceCards.length > 0 ? (
-          <div className="top-cards-container">
-            {topPerformanceCards.map((card, index) => (
-              <div key={index} className={`top-card ${getDifficultyColorClass(card.type)}`}>
-                <div className="top-card-header">
-                  <span className="top-card-rank">#{index + 1}</span>
+        {topPerformanceCategories && topPerformanceCategories.length > 0 ? (
+          <div className="quiz-top-cards-container">
+            {topPerformanceCategories.map((category, index) => (
+              <div
+                key={index}
+                className={`quiz-top-card`}
+                style={{
+                  "--card-accent": getCategoryDetails(category.id).color,
+                  "--card-accent-light": `${getCategoryDetails(category.id).color}CC`,
+                }}
+              >
+                <div className="quiz-top-card-header">
+                  <span className="quiz-top-card-rank">#{index + 1}</span>
                 </div>
-                <h3 className="top-card-level">{card.displayName}</h3>
-                <div className="top-card-score">
-                  <span className="score-value">{card.bestScore}%</span>
-                  <span className="score-label">Best Score</span>
+                <h3 className="quiz-top-card-level">{category.displayName}</h3>
+                <div className="quiz-top-card-score">
+                  <span className="quiz-score-value">{category.bestScore}%</span>
+                  <span className="quiz-score-label">Best Score</span>
                 </div>
-                <div className="top-card-attempts">
-                  <span className="attempts-value">{card.attempts}</span>
-                  <span className="attempts-label">Attempts</span>
+                <div className="quiz-top-card-attempts">
+                  <span className="quiz-attempts-value">{category.attempts}</span>
+                  <span className="quiz-attempts-label">Attempts</span>
                 </div>
-                <div className="top-card-date">Last: {formatDate(card.lastAttempt)}</div>
+                <div className="quiz-top-card-date">Last: {formatDate(category.lastAttempt)}</div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="no-top-cards">
-            <p>Complete quizzes to see your top performance cards here!</p>
+          <div className="quiz-no-top-cards">
+            <p>Complete quizzes to see your top performance categories here!</p>
           </div>
         )}
       </div>
 
-      {/* Difficulty Level Cards */}
-      <div className="difficulty-section">
-        {/* Basic Concepts Card */}
-        <div className="difficulty-card" onClick={() => navigate("/quiz/question/easy")} data-level="easy">
-          <div className="difficulty-card-inner">
-            <div className="difficulty-icon">
-              <Cpu size={24} />
-            </div>
-            <h2>Basic Concepts</h2>
-            <p>Test your knowledge of fundamental ICT concepts and terminology.</p>
-
-            {cardPerformance && cardPerformance.basic && cardPerformance.basic.attempts > 0 && (
-              <div className="card-performance-stats">
-                <div className="performance-stat-row">
-                  <span className="stat-label">Best Score:</span>
-                  <span className="stat-value">{cardPerformance.basic.bestScore}%</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Attempts:</span>
-                  <span className="stat-value">{cardPerformance.basic.attempts}</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Last Score:</span>
-                  <span className="stat-value">{cardPerformance.basic.lastScore}%</span>
-                </div>
+      {/* All Categories Section */}
+      <div className="quiz-categories-section">
+        <h2 className="quiz-categories-title">All Quiz Categories</h2>
+        <div className="quiz-categories-grid">
+          {quizCategories.map((category) => (
+            <div
+              key={category.id}
+              className="quiz-category-card"
+              onClick={() => navigate(`/quiz/question/${category.id}`)}
+            >
+              <div className="quiz-category-icon" style={{ backgroundColor: getCategoryDetails(category.id).color }}>
+                {category.icon}
               </div>
-            )}
-
-            <button className="difficulty-button">Start Easy Quiz</button>
-          </div>
-        </div>
-
-        {/* Practical Skills Card */}
-        <div className="difficulty-card" onClick={() => navigate("/quiz/question/medium")} data-level="medium">
-          <div className="difficulty-card-inner">
-            <div className="difficulty-icon">
-              <Zap size={24} />
+              <h3 className="quiz-category-title">{category.name}</h3>
+              <p className="quiz-category-description">{category.description}</p>
+              <button
+                className="quiz-category-button"
+                style={{ backgroundColor: getCategoryDetails(category.id).color }}
+              >
+                Start Quiz
+              </button>
             </div>
-            <h2>Practical Skills</h2>
-            <p>Challenge yourself with questions about software applications and digital tools.</p>
-
-            {cardPerformance && cardPerformance.practical && cardPerformance.practical.attempts > 0 && (
-              <div className="card-performance-stats">
-                <div className="performance-stat-row">
-                  <span className="stat-label">Best Score:</span>
-                  <span className="stat-value">{cardPerformance.practical.bestScore}%</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Attempts:</span>
-                  <span className="stat-value">{cardPerformance.practical.attempts}</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Last Score:</span>
-                  <span className="stat-value">{cardPerformance.practical.lastScore}%</span>
-                </div>
-              </div>
-            )}
-
-            <button className="difficulty-button">Start Medium Quiz</button>
-          </div>
-        </div>
-
-        {/* Advanced Topics Card */}
-        <div className="difficulty-card" onClick={() => navigate("/quiz/question/hard")} data-level="hard">
-          <div className="difficulty-card-inner">
-            <div className="difficulty-icon">
-              <Brain size={24} />
-            </div>
-            <h2>Advanced Topics</h2>
-            <p>Dive deep into networking, security, and complex ICT systems.</p>
-
-            {cardPerformance && cardPerformance.advanced && cardPerformance.advanced.attempts > 0 && (
-              <div className="card-performance-stats">
-                <div className="performance-stat-row">
-                  <span className="stat-label">Best Score:</span>
-                  <span className="stat-value">{cardPerformance.advanced.bestScore}%</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Attempts:</span>
-                  <span className="stat-value">{cardPerformance.advanced.attempts}</span>
-                </div>
-                <div className="performance-stat-row">
-                  <span className="stat-label">Last Score:</span>
-                  <span className="stat-value">{cardPerformance.advanced.lastScore}%</span>
-                </div>
-              </div>
-            )}
-
-            <button className="difficulty-button">Start Hard Quiz</button>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -226,3 +233,4 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
 }
 
 export default QuizWelcome
+

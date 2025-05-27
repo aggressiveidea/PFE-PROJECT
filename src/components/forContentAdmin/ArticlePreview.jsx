@@ -8,7 +8,7 @@ function ArticlePreview({ article, onValidate, onReject }) {
     return (
       <div className="article-preview-empty">
         <div className="article-preview-placeholder">
-          <div className="placeholder-icon">
+          <div className="article-placeholder-icon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="64"
@@ -27,7 +27,7 @@ function ArticlePreview({ article, onValidate, onReject }) {
               <line x1="10" y1="9" x2="8" y2="9" />
             </svg>
           </div>
-          <p className="placeholder-text">Select an article to preview</p>
+          <p className="article-placeholder-text">Select an article to preview</p>
         </div>
       </div>
     )
@@ -66,11 +66,11 @@ function ArticlePreview({ article, onValidate, onReject }) {
         </div>
 
         <div className="article-actions">
-          <button className="btn-approve" onClick={() => onValidate(article)}>
+          <button className="article-btn-approve" onClick={() => onValidate(article)}>
             <CheckCircle size={16} />
             <span>Approve</span>
           </button>
-          <button className="btn-reject" onClick={() => onReject(article)}>
+          <button className="article-btn-reject" onClick={() => onReject(article)}>
             <XCircle size={16} />
             <span>Reject</span>
           </button>

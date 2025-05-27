@@ -191,7 +191,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
             {user && user.isVerified ? (
               <ul>
                 <li>
-                  <a href="/profile">Profile</a>
+                  <a href="/profile">Pannel</a>
                 </li>
                 <li>
                   <a href="/terms">Explore</a>
@@ -215,13 +215,13 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                   <a href="#about">{t.about}</a>
                 </li>
                 <li>
-                  <a href="#FAQ">FAQ</a>
+                  <a href="/terms">Explore</a>
                 </li>
                 <li>
-                  <a href="#explore">{t.explore}</a>
+                  <a href="/dictionary">Knowledge graph</a>
                 </li>
                 <li>
-                  <a href="#footer">{t.contact}</a>
+                  <a href="/faq">FAQ</a>
                 </li>
               </ul>
             )}
@@ -229,13 +229,13 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
         </div>
 
         <div className="user-section">
-          <div className="language-select-container">
+          {/* <div className="language-select-container">
             <select value={language} onChange={(e) => setLanguage(e.target.value)} className="language-select">
               <option value="en">English</option>
               <option value="fr">Français</option>
               <option value="ar">العربية</option>
             </select>
-          </div>
+          </div> */}
 
           {loading ? (
             <div className="loading-indicator">Loading...</div>

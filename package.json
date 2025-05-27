@@ -36,7 +36,7 @@
     "react-scripts": "5.0.1",
     "recharts": "^2.15.1",
     "sigma": "^3.0.1",
-    "swiper": "^11.2.5",
+    "swiper": "^11.2.7",
     "vis-network": "^9.1.9",
     "web-vitals": "^2.1.4"
   },

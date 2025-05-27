@@ -1,25 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import "./FaqPage.css"
 import Header from "../forHome/Header"
 import Footer from "../forHome/Footer"
 
 const FaqPage = () => {
   const [activeQuestion, setActiveQuestion] = useState(null)
-  const [darkMode, setDarkMode] = useState(true) 
   const [language, setLanguage] = useState("en")
-
-  useEffect(() => {
-    // Apply dark mode to body
-    if (darkMode) {
-      document.body.classList.add("dark")
-      document.body.style.backgroundColor = "#1a1528"
-    } else {
-      document.body.classList.remove("dark")
-      document.body.style.backgroundColor = ""
-    }
-  }, [darkMode])
 
   // Sample FAQ data
   const faqs = [
@@ -61,7 +49,7 @@ const FaqPage = () => {
 
   return (
     <div className="app-wrapper">
-      <Header language={language} setLanguage={setLanguage} darkMode={darkMode} />
+      <Header language={language} setLanguage={setLanguage} />
 
       <div className="page-container" id="FAQ">
         <div className="page-header">
@@ -86,23 +74,48 @@ const FaqPage = () => {
         </div>
 
         <div className="contact-section">
+          <div className="contact-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points="22,6 12,13 2,6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
           <h2>Still have questions?</h2>
           <p>If you couldn't find the answer to your question, feel free to contact us directly.</p>
           <button
             onClick={() => (window.location.href = "mailto:support@yourcompany.com?subject=Contact%20Support")}
             className="contact-button"
           >
-            Contact Us
+            <span>Contact Us</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M12 5L19 12L12 19"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
       </div>
 
-      <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
+      <Footer language={language} />
     </div>
   )
 }
 
 export default FaqPage
-
-
-
