@@ -1,26 +1,41 @@
+<<<<<<< Updated upstream
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import { getUserById } from "../../services/Api"
 import "./Header.css"
+=======
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { getUserById } from "../../services/Api";
+import "./Header.css";
+>>>>>>> Stashed changes
 
 const Header = ({ language = "en", setLanguage, darkMode }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
-  const dropdownRef = useRef(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const loadUserData = async () => {
     try {
-      setLoading(true)
-      const storedUser = localStorage.getItem("user")
-      const authData = JSON.parse(localStorage.getItem("authData") || "{}")
+      setLoading(true);
+      const storedUser = localStorage.getItem("user");
+      const authData = JSON.parse(localStorage.getItem("authData") || "{}");
 
       if (storedUser) {
+<<<<<<< Updated upstream
         const userData = JSON.parse(storedUser)
+=======
+        const userData = JSON.parse(storedUser);
+
+        // If we have a user ID and token, try to get fresh data from API
+>>>>>>> Stashed changes
         if (userData._id && authData.token) {
           try {
-            const freshUserData = await getUserById(userData._id)
+            const freshUserData = await getUserById(userData._id);
             if (freshUserData) {
               const updatedUser = {
                 ...userData,
@@ -28,106 +43,107 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                 firstName: freshUserData.firstName || userData.firstName || "",
                 lastName: freshUserData.lastName || userData.lastName || "",
                 email: freshUserData.email || userData.email || "",
-                profileImgUrl: freshUserData.profileImgUrl || userData.profileImgUrl || "",
+                profileImgUrl:
+                  freshUserData.profileImgUrl || userData.profileImgUrl || "",
                 role: freshUserData.role || userData.role || "User",
-              }
+              };
 
-              localStorage.setItem("user", JSON.stringify(updatedUser))
-              setUser(updatedUser)
-              console.log("Header: Updated user data from API:", updatedUser)
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+              setUser(updatedUser);
+              console.log("Header: Updated user data from API:", updatedUser);
             } else {
-              setUser(userData)
+              setUser(userData);
             }
           } catch (apiError) {
-            console.error("Header: Error fetching fresh user data:", apiError)
-            setUser(userData)
+            console.error("Header: Error fetching fresh user data:", apiError);
+            setUser(userData);
           }
         } else {
-          setUser(userData)
+          setUser(userData);
         }
       } else {
-        setUser(null)
+        setUser(null);
       }
     } catch (error) {
-      console.error("Header: Error in loadUserData:", error)
-      setUser(null)
+      console.error("Header: Error in loadUserData:", error);
+      setUser(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    loadUserData()
+    loadUserData();
 
     const handleUserUpdate = () => {
-      console.log("Header: User updated event received")
-      loadUserData()
-    }
+      console.log("Header: User updated event received");
+      loadUserData();
+    };
 
-    window.addEventListener("userUpdated", handleUserUpdate)
+    window.addEventListener("userUpdated", handleUserUpdate);
 
     return () => {
-      window.removeEventListener("userUpdated", handleUserUpdate)
-    }
-  }, [])
+      window.removeEventListener("userUpdated", handleUserUpdate);
+    };
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsProfileDropdownOpen(false)
+        setIsProfileDropdownOpen(false);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen)
-  }
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("authData")
-    localStorage.removeItem("user")
-    setUser(null)
-    window.location.href = "/"
-  }
+    localStorage.removeItem("authData");
+    localStorage.removeItem("user");
+    setUser(null);
+    window.location.href = "/";
+  };
 
   const getUserInitials = () => {
-    if (!user) return "?"
+    if (!user) return "?";
 
     if (user.firstName || user.lastName) {
-      const initials = []
-      if (user.firstName) initials.push(user.firstName[0])
-      if (user.lastName) initials.push(user.lastName[0])
-      return initials.join("").toUpperCase()
+      const initials = [];
+      if (user.firstName) initials.push(user.firstName[0]);
+      if (user.lastName) initials.push(user.lastName[0]);
+      return initials.join("").toUpperCase();
     }
 
     if (user.email) {
-      return user.email[0].toUpperCase()
+      return user.email[0].toUpperCase();
     }
 
-    return "?"
-  }
+    return "?";
+  };
 
   const getDisplayName = () => {
-    if (!user) return "Guest"
+    if (!user) return "Guest";
 
-    if (user.name) return user.name
+    if (user.name) return user.name;
 
     if (user.firstName || user.lastName) {
-      return `${user.firstName || ""} ${user.lastName || ""}`.trim()
+      return `${user.firstName || ""} ${user.lastName || ""}`.trim();
     }
 
-    return user.email ? user.email.split("@")[0] : "Guest"
-  }
+    return user.email ? user.email.split("@")[0] : "Guest";
+  };
 
   const translations = window.translations || {
     en: {
@@ -148,8 +164,8 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
       explore: "استكشاف",
       contact: "اتصل بنا",
     },
-  }
-  const t = translations[language] || translations.en
+  };
+  const t = translations[language] || translations.en;
 
   return (
     <header className={`header ${darkMode ? "dark" : ""}`}>
@@ -157,8 +173,19 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
         <div className="logo-section">
           <a href="/" className="logo">
             <div className="logo-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="24" height="24" rx="12" fill="url(#paint0_linear)" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="24"
+                  height="24"
+                  rx="12"
+                  fill="url(#paint0_linear)"
+                />
                 <path
                   d="M7.5 12L10.5 15L16.5 9"
                   stroke="white"
@@ -167,7 +194,14 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                   strokeLinejoin="round"
                 />
                 <defs>
-                  <linearGradient id="paint0_linear" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                  <linearGradient
+                    id="paint0_linear"
+                    x1="0"
+                    y1="0"
+                    x2="24"
+                    y2="24"
+                    gradientUnits="userSpaceOnUse"
+                  >
                     <stop stopColor="#9333EA" />
                     <stop offset="1" stopColor="#C026D3" />
                   </linearGradient>
@@ -207,6 +241,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                   <a href="#about">{t.about}</a>
                 </li>
                 <li>
+<<<<<<< Updated upstream
                   <a href="/terms">Explore</a>
                 </li>
                 <li>
@@ -214,6 +249,15 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                 </li>
                 <li>
                   <a href="/faq">FAQ</a>
+=======
+                  <a href="#FAQ">Explore</a>
+                </li>
+                <li>
+                  <a href="#explore">Knowledge graph</a>
+                </li>
+                <li>
+                  <a href="#footer">FAQ</a>
+>>>>>>> Stashed changes
                 </li>
               </ul>
             )}
@@ -221,8 +265,17 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
         </div>
 
         <div className="user-section">
+<<<<<<< Updated upstream
           {/* <div className="language-select-container">
             <select value={language} onChange={(e) => setLanguage(e.target.value)} className="language-select">
+=======
+          <div className="language-select-container">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="language-select"
+            >
+>>>>>>> Stashed changes
               <option value="en">English</option>
               <option value="fr">Français</option>
               <option value="ar">العربية</option>
@@ -235,30 +288,40 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
             <div className="user-controls" ref={dropdownRef}>
               <div className="user-info" onClick={toggleProfileDropdown}>
                 <div className="user-avatar">
-                  {user && user.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg") ? (
+                  {user &&
+                  user.profileImgUrl &&
+                  !user.profileImgUrl.includes("placeholder.svg") ? (
                     <img
                       src={user.profileImgUrl || "/placeholder.svg"}
                       alt={getDisplayName()}
                       className="user-avatar-img"
                       onError={(e) => {
-                        e.target.onerror = null
-                        e.target.src = "/placeholder.svg?height=40&width=40"
-                        e.target.style.display = "none"
-                        e.target.nextElementSibling.style.display = "flex"
+                        e.target.onerror = null;
+                        e.target.src = "/placeholder.svg?height=40&width=40";
+                        e.target.style.display = "none";
+                        e.target.nextElementSibling.style.display = "flex";
                       }}
                     />
                   ) : null}
                   <span
                     className="user-initials"
                     style={{
-                      display: user?.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg") ? "none" : "flex",
+                      display:
+                        user?.profileImgUrl &&
+                        !user.profileImgUrl.includes("placeholder.svg")
+                          ? "none"
+                          : "flex",
                     }}
                   >
                     {getUserInitials()}
                   </span>
                 </div>
                 <span className="display-name">{getDisplayName()}</span>
-                <span className={`dropdown-arrow ${isProfileDropdownOpen ? "open" : ""}`}>
+                <span
+                  className={`dropdown-arrow ${
+                    isProfileDropdownOpen ? "open" : ""
+                  }`}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -295,7 +358,10 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                     <span>Profile</span>
                   </Link>
                   <div className="dropdown-divider"></div>
-                  <button onClick={handleLogout} className="dropdown-item danger">
+                  <button
+                    onClick={handleLogout}
+                    className="dropdown-item danger"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -439,14 +505,20 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
             <div className="mobile-profile-section">
               <div className="mobile-user-info">
                 <div className="mobile-user-avatar">
-                  {user.profileImgUrl && !user.profileImgUrl.includes("placeholder.svg") ? (
-                    <img src={user.profileImgUrl || "/placeholder.svg"} alt={getDisplayName()} />
+                  {user.profileImgUrl &&
+                  !user.profileImgUrl.includes("placeholder.svg") ? (
+                    <img
+                      src={user.profileImgUrl || "/placeholder.svg"}
+                      alt={getDisplayName()}
+                    />
                   ) : (
                     <span>{getUserInitials()}</span>
                   )}
                 </div>
                 <div className="mobile-user-details">
-                  <span className="mobile-display-name">{getDisplayName()}</span>
+                  <span className="mobile-display-name">
+                    {getDisplayName()}
+                  </span>
                   <span className="mobile-user-email">{user.email}</span>
                 </div>
               </div>
@@ -473,7 +545,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
         </div>
       )}
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

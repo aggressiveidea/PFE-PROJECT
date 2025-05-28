@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, Check, X, Clock, AlertTriangle, Volume2, VolumeX } from "lucide-react"
@@ -20,89 +21,174 @@ const QuestionPage = ({ darkMode }) => {
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(null)
   const [animateProgress, setAnimateProgress] = useState(false)
   const [categoryInfo, setCategoryInfo] = useState({ name: "", color: "" })
+=======
+"use client";
 
-  const tickAudioRef = useRef(null)
-  const correctAudioRef = useRef(null)
-  const incorrectAudioRef = useRef(null)
-  const lastTickTimeRef = useRef(0)
-  const questionContainerRef = useRef(null)
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Check,
+  X,
+  Clock,
+  AlertTriangle,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import { fetchQuizQuestions2, getCategoryDetails } from "../../services/Api";
+import "./QuestionPage.css";
+
+const QuestionPage = ({ darkMode }) => {
+  const { category } = useParams();
+  const navigate = useNavigate();
+
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
+  const [animateProgress, setAnimateProgress] = useState(false);
+  const [categoryInfo, setCategoryInfo] = useState({ name: "", color: "" });
+>>>>>>> Stashed changes
+
+  const tickAudioRef = useRef(null);
+  const correctAudioRef = useRef(null);
+  const incorrectAudioRef = useRef(null);
+  const lastTickTimeRef = useRef(0);
+  const questionContainerRef = useRef(null);
 
   useEffect(() => {
+<<<<<<< Updated upstream
     const details = getCategoryDetails(category)
     setCategoryInfo(details)
+=======
+    // Get category details
+    const details = getCategoryDetails(category);
+    setCategoryInfo(details);
+>>>>>>> Stashed changes
 
     const loadQuestions = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
+<<<<<<< Updated upstream
         const fetchedQuestions = await fetchQuizQuestions2(category)
         setQuestions(fetchedQuestions)
+=======
+        const fetchedQuestions = await fetchQuizQuestions2(category);
+        setQuestions(fetchedQuestions);
+>>>>>>> Stashed changes
       } catch (err) {
-        console.error("Error loading questions:", err)
-        setError("Failed to load questions. Please try again.")
+        console.error("Error loading questions:", err);
+        setError("Failed to load questions. Please try again.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
+<<<<<<< Updated upstream
     loadQuestions()
   }, [category])
+=======
+    loadQuestions();
+  }, [category]);
+
+  // Animate progress bar when current question changes
+>>>>>>> Stashed changes
   useEffect(() => {
-    setAnimateProgress(true)
-    const timer = setTimeout(() => setAnimateProgress(false), 600)
-    return () => clearTimeout(timer)
-  }, [currentQuestion])
+    setAnimateProgress(true);
+    const timer = setTimeout(() => setAnimateProgress(false), 600);
+    return () => clearTimeout(timer);
+  }, [currentQuestion]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeSpent((prev) => {
+<<<<<<< Updated upstream
         sessionStorage.setItem("quizTimeSpent", (prev + 1).toString())
         if (soundEnabled && tickAudioRef.current) {
           const now = Date.now()
+=======
+        // Store time spent in session storage for results page
+        sessionStorage.setItem("quizTimeSpent", (prev + 1).toString());
+
+        // Play tick sound every second if enabled
+        if (soundEnabled && tickAudioRef.current) {
+          const now = Date.now();
+          // Ensure we don't play sounds too rapidly (debounce)
+>>>>>>> Stashed changes
           if (now - lastTickTimeRef.current > 900) {
-            tickAudioRef.current.currentTime = 0
-            tickAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
-            lastTickTimeRef.current = now
+            tickAudioRef.current.currentTime = 0;
+            tickAudioRef.current
+              .play()
+              .catch((e) => console.log("Audio play prevented:", e));
+            lastTickTimeRef.current = now;
           }
         }
-        return prev + 1
-      })
-    }, 1000)
+        return prev + 1;
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [soundEnabled])
+    return () => clearInterval(timer);
+  }, [soundEnabled]);
 
   useEffect(() => {
     if (questionContainerRef.current) {
+<<<<<<< Updated upstream
       questionContainerRef.current.classList.add("question-enter")
       const timer = setTimeout(() => {
         if (questionContainerRef.current) {
           questionContainerRef.current.classList.remove("question-enter")
+=======
+      questionContainerRef.current.classList.add("question-enter");
+      const timer = setTimeout(() => {
+        if (questionContainerRef.current) {
+          questionContainerRef.current.classList.remove("question-enter");
+>>>>>>> Stashed changes
         }
-      }, 500)
-      return () => clearTimeout(timer)
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  }, [currentQuestion])
+  }, [currentQuestion]);
 
   const toggleSound = () => {
-    setSoundEnabled(!soundEnabled)
-  }
+    setSoundEnabled(!soundEnabled);
+  };
 
   const handleOptionSelect = (option) => {
+<<<<<<< Updated upstream
     if (showAnswer) return
     setSelectedOption(option)
   }
+=======
+    if (showAnswer) return; // Prevent changing answer after submission
+    setSelectedOption(option);
+  };
+>>>>>>> Stashed changes
 
   const handleSubmit = () => {
-    if (!selectedOption) return
+    if (!selectedOption) return;
 
+    const isCorrect =
+      selectedOption === questions[currentQuestion].correctAnswer;
+    setIsAnswerCorrect(isCorrect);
+
+<<<<<<< Updated upstream
     const isCorrect = selectedOption === questions[currentQuestion].correctAnswer
     setIsAnswerCorrect(isCorrect)
 
+=======
+>>>>>>> Stashed changes
     if (isCorrect) {
-      setScore(score + 1)
+      setScore(score + 1);
       if (soundEnabled && correctAudioRef.current) {
+<<<<<<< Updated upstream
         correctAudioRef.current.currentTime = 0
         correctAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
       }
@@ -110,32 +196,55 @@ const QuestionPage = ({ darkMode }) => {
       if (soundEnabled && incorrectAudioRef.current) {
         incorrectAudioRef.current.currentTime = 0
         incorrectAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
+=======
+        correctAudioRef.current.currentTime = 0;
+        correctAudioRef.current
+          .play()
+          .catch((e) => console.log("Audio play prevented:", e));
+      }
+    } else {
+      if (soundEnabled && incorrectAudioRef.current) {
+        incorrectAudioRef.current.currentTime = 0;
+        incorrectAudioRef.current
+          .play()
+          .catch((e) => console.log("Audio play prevented:", e));
+>>>>>>> Stashed changes
       }
     }
-    setShowAnswer(true)
-  }
+    setShowAnswer(true);
+  };
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setSelectedOption(null)
-      setShowAnswer(false)
-      setIsAnswerCorrect(null)
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedOption(null);
+      setShowAnswer(false);
+      setIsAnswerCorrect(null);
     } else {
+<<<<<<< Updated upstream
 
       navigate(`/quiz/results/${category}/${score}`)
+=======
+      // Quiz completed, navigate to results page
+      navigate(`/quiz/results/${category}/${score}`);
+>>>>>>> Stashed changes
     }
-  }
+  };
 
   const handleBack = () => {
+<<<<<<< Updated upstream
     navigate("/quiz/category")
   }
+=======
+    navigate("/quiz/category");
+  };
+>>>>>>> Stashed changes
 
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs < 10 ? "0" : ""}${secs}`
-  }
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   if (loading) {
     return (
@@ -143,7 +252,7 @@ const QuestionPage = ({ darkMode }) => {
         <div className="spinner"></div>
         <p>Loading questions...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -159,7 +268,7 @@ const QuestionPage = ({ darkMode }) => {
           <span>Back to Categories</span>
         </button>
       </div>
-    )
+    );
   }
 
   if (!questions.length) {
@@ -175,11 +284,11 @@ const QuestionPage = ({ darkMode }) => {
           <span>Back to Categories</span>
         </button>
       </div>
-    )
+    );
   }
 
-  const question = questions[currentQuestion]
-  const progressPercentage = ((currentQuestion + 1) / questions.length) * 100
+  const question = questions[currentQuestion];
+  const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
     <div className="question-page">
@@ -217,7 +326,11 @@ const QuestionPage = ({ darkMode }) => {
         </h1>
 
         <div className="timer-container">
-          <button className="sound-toggle" onClick={toggleSound} title={soundEnabled ? "Mute timer" : "Unmute timer"}>
+          <button
+            className="sound-toggle"
+            onClick={toggleSound}
+            title={soundEnabled ? "Mute timer" : "Unmute timer"}
+          >
             {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
           </button>
           <div className="timer">
@@ -229,7 +342,13 @@ const QuestionPage = ({ darkMode }) => {
 
       <div className="progress-container">
         <div
+<<<<<<< Updated upstream
           className={`progress-bar ${animateProgress ? "animate-progress" : ""}`}
+=======
+          className={`progress-bar ${
+            animateProgress ? "animate-progress" : ""
+          }`}
+>>>>>>> Stashed changes
           style={{
             width: `${progressPercentage}%`,
             background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
@@ -238,26 +357,32 @@ const QuestionPage = ({ darkMode }) => {
       </div>
 
       <div className="question-container" ref={questionContainerRef}>
-        <h2 className="question-text" dangerouslySetInnerHTML={{ __html: question.question }}></h2>
+        <h2
+          className="question-text"
+          dangerouslySetInnerHTML={{ __html: question.question }}
+        ></h2>
 
         <div className="options-container">
           {question.options.map((option, index) => {
-            const isSelected = selectedOption === option
-            const isCorrect = showAnswer && option === question.correctAnswer
-            const isIncorrect = showAnswer && isSelected && !isCorrect
-            const optionLetters = ["A", "B", "C", "D"]
+            const isSelected = selectedOption === option;
+            const isCorrect = showAnswer && option === question.correctAnswer;
+            const isIncorrect = showAnswer && isSelected && !isCorrect;
+            const optionLetters = ["A", "B", "C", "D"];
 
             return (
               <div
                 key={index}
-                className={`option ${isSelected ? "selected" : ""} ${isCorrect ? "correct" : ""} ${
-                  isIncorrect ? "incorrect" : ""
-                }`}
+                className={`option ${isSelected ? "selected" : ""} ${
+                  isCorrect ? "correct" : ""
+                } ${isIncorrect ? "incorrect" : ""}`}
                 onClick={() => handleOptionSelect(option)}
                 data-index={index}
               >
                 <div className="option-letter">{optionLetters[index]}</div>
-                <div className="option-text" dangerouslySetInnerHTML={{ __html: option }}></div>
+                <div
+                  className="option-text"
+                  dangerouslySetInnerHTML={{ __html: option }}
+                ></div>
                 {isCorrect && (
                   <div className="feedback-icon correct-icon">
                     <Check size={20} />
@@ -269,7 +394,7 @@ const QuestionPage = ({ darkMode }) => {
                   </div>
                 )}
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -294,12 +419,21 @@ const QuestionPage = ({ darkMode }) => {
               background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
             }}
           >
-            {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
+            {currentQuestion < questions.length - 1
+              ? "Next Question"
+              : "See Results"}
           </button>
         )}
       </div>
     </div>
+<<<<<<< Updated upstream
   )
 }
 
 export default QuestionPage
+=======
+  );
+};
+
+export default QuestionPage;
+>>>>>>> Stashed changes

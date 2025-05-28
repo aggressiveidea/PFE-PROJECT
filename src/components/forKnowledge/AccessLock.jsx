@@ -1,63 +1,85 @@
+<<<<<<< Updated upstream
 import { useState, useEffect } from "react"
 import { Lock, User, ArrowRight, Key, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
 import "./AccessLock.css"
+=======
+import React, { useState, useEffect } from "react";
+import { Lock, User, ArrowRight, Key, Shield } from "lucide-react";
+import "./AccessLock.css";
+>>>>>>> Stashed changes
 
 const AccessLock = ({ onClose }) => {
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [showSignup, setShowSignup] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
+<<<<<<< Updated upstream
     //after mount
     setIsAnimating(true)
+=======
+    // Start animation after component mounts
+    setIsAnimating(true);
+>>>>>>> Stashed changes
 
     const timer = setTimeout(() => {
-      setShowSignup(true)
-    }, 1000)
+      setShowSignup(true);
+    }, 1000);
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleSignupClick = () => {
+    // Handle signup navigation - replace with your routing logic
+    window.location.href = "/signup";
+  };
+
+  const handleLoginClick = () => {
+    // Handle login navigation - replace with your routing logic
+    window.location.href = "/login";
+  };
 
   return (
-    <div className="access-lock-overlay">
-      <div className={`access-lock-container ${isAnimating ? "animate" : ""}`}>
-        <div className="access-lock-content">
-          <div className="lock-icon-container">
-            <div className="lock-icon-wrapper">
-              <Lock className="lock-icon" size={48} strokeWidth={1.5} />
-              <div className="lock-pulse"></div>
+    <div className="_access_lock_overlay">
+      <div className={`_access_lock_container ${isAnimating ? "animate" : ""}`}>
+        <div className="_access_lock_content">
+          <div className="_access_lock_icon_container">
+            <div className="_access_lock_icon_wrapper">
+              <Lock className="_access_lock_icon" size={48} strokeWidth={1.5} />
+              <div className="_access_lock_pulse"></div>
             </div>
           </div>
 
-          <h2 className="access-lock-title">Restricted Access</h2>
-          <p className="access-lock-description">
-            This knowledge graph visualization is available exclusively to verified users.
+          <h2 className="_access_lock_title">Restricted Access</h2>
+          <p className="_access_lock_description">
+            This knowledge graph visualization is available exclusively to
+            verified users.
           </p>
 
-          <div className="access-lock-features">
-            <div className="feature-item">
-              <div className="feature-icon">
+          <div className="_access_lock_features">
+            <div className="_access_lock_feature_item">
+              <div className="_access_lock_feature_icon">
                 <Shield size={24} />
               </div>
-              <div className="feature-text">
+              <div className="_access_lock_feature_text">
                 <h3>Premium Content</h3>
                 <p>Access our comprehensive ICT knowledge graph</p>
               </div>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">
+            <div className="_access_lock_feature_item">
+              <div className="_access_lock_feature_icon">
                 <Key size={24} />
               </div>
-              <div className="feature-text">
+              <div className="_access_lock_feature_text">
                 <h3>Interactive Tools</h3>
                 <p>Explore relationships between ICT concepts</p>
               </div>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">
+            <div className="_access_lock_feature_item">
+              <div className="_access_lock_feature_icon">
                 <User size={24} />
               </div>
-              <div className="feature-text">
+              <div className="_access_lock_feature_text">
                 <h3>Personalized Experience</h3>
                 <p>Save your progress and customize your learning</p>
               </div>
@@ -65,34 +87,40 @@ const AccessLock = ({ onClose }) => {
           </div>
 
           {showSignup && (
-            <div className="access-lock-actions">
-              <Link to="/signup" className="signup-button">
+            <div className="_access_lock_actions">
+              <button
+                onClick={handleSignupClick}
+                className="_access_lock_signup_button"
+              >
                 <span>Sign Up Now</span>
                 <ArrowRight size={18} />
-              </Link>
-              <Link to="/login" className="login-link">
+              </button>
+              <button
+                onClick={handleLoginClick}
+                className="_access_lock_login_link"
+              >
                 Already have an account? Log in
-              </Link>
+              </button>
             </div>
           )}
         </div>
 
-        <div className="access-lock-decoration">
-          <div className="decoration-circle circle-1"></div>
-          <div className="decoration-circle circle-2"></div>
-          <div className="decoration-circle circle-3"></div>
-          <div className="decoration-line line-1"></div>
-          <div className="decoration-line line-2"></div>
-          <div className="decoration-line line-3"></div>
-          <div className="decoration-dot dot-1"></div>
-          <div className="decoration-dot dot-2"></div>
-          <div className="decoration-dot dot-3"></div>
-          <div className="decoration-dot dot-4"></div>
-          <div className="decoration-dot dot-5"></div>
+        <div className="_access_lock_decoration">
+          <div className="_access_lock_decoration_circle _access_lock_circle_1"></div>
+          <div className="_access_lock_decoration_circle _access_lock_circle_2"></div>
+          <div className="_access_lock_decoration_circle _access_lock_circle_3"></div>
+          <div className="_access_lock_decoration_line _access_lock_line_1"></div>
+          <div className="_access_lock_decoration_line _access_lock_line_2"></div>
+          <div className="_access_lock_decoration_line _access_lock_line_3"></div>
+          <div className="_access_lock_decoration_dot _access_lock_dot_1"></div>
+          <div className="_access_lock_decoration_dot _access_lock_dot_2"></div>
+          <div className="_access_lock_decoration_dot _access_lock_dot_3"></div>
+          <div className="_access_lock_decoration_dot _access_lock_dot_4"></div>
+          <div className="_access_lock_decoration_dot _access_lock_dot_5"></div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AccessLock
+export default AccessLock;

@@ -1,18 +1,30 @@
+<<<<<<< Updated upstream
 import { useState, useRef, useEffect } from "react"
 import "./AlgorithmModal.css"
+=======
+"use client";
+import "./AlgorithmModal.css";
+import { useState } from "react";
+import {
+  runPageRank,
+  runLouvain,
+  runBetweennessCentrality,
+  runLabelPropagation,
+  createCompleteProjection,
+  createCategoryProjection,
+  addSearchHistory,
+} from "../../services/Api";
+>>>>>>> Stashed changes
 
-const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [executionSteps, setExecutionSteps] = useState([])
-  const [isExecuting, setIsExecuting] = useState(false)
-  const [userParams, setUserParams] = useState({
-    startNode: "A",
-    endNode: "F",
-    iterations: 10,
-    dampingFactor: 0.85,
-  })
-  const canvasRef = useRef(null)
+const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
+  const [selectedScope, setSelectedScope] = useState("");
+  const [selectedClusterType, setSelectedClusterType] = useState("");
+  const [selectedDefinitionLevel, setSelectedDefinitionLevel] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [appliedAlgorithmResult, setAppliedAlgorithmResult] = useState(null);
 
+<<<<<<< Updated upstream
   const graphData = {
     nodes: [
       { id: "A", label: "A" },
@@ -97,23 +109,36 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
       sampleGraph: "رسم بياني للعينة",
     },
   }
+=======
+  const handleScopeChange = (scope) => {
+    setSelectedScope(scope);
+    setSelectedClusterType("");
+    setSelectedDefinitionLevel("");
+    setSelectedCategory("");
+  };
 
-  // Get current language translations
-  const t = translations[language] || translations.english
+  const handleClusterTypeChange = (type) => {
+    setSelectedClusterType(type);
+    setSelectedDefinitionLevel("");
+    setSelectedCategory("");
+  };
+>>>>>>> Stashed changes
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current
-      const ctx = canvas.getContext("2d")
+  const handleDefinitionLevelChange = (level) => {
+    setSelectedDefinitionLevel(level);
+  };
 
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
 
-      // Draw graph
-      drawGraph(ctx, canvas.width, canvas.height)
+  const handleApplyAlgorithm = async () => {
+    if (!selectedScope) {
+      console.error("No scope selected");
+      return;
     }
-  }, [executionSteps, currentStep])
 
+<<<<<<< Updated upstream
   const drawGraph = (ctx, width, height) => {
     const nodeRadius = 20
     const nodePositions = calculateNodePositions(width, height)
@@ -158,10 +183,60 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
           ctx.fillStyle = "#8bc34a"
         } else {
           ctx.fillStyle = "#9b87f5"
+=======
+    setShowResults(false);
+    setAppliedAlgorithmResult(null);
+
+    try {
+      // Show loading state
+      setAppliedAlgorithmResult({
+        loading: true,
+        algorithm: algorithm.name.english,
+        scope: selectedScope,
+      });
+      setShowResults(true);
+
+      let projectionName = null;
+      const algorithmParams = {};
+
+      // Create or get appropriate projection based on scope
+      if (selectedScope === "allGraph") {
+        const projection = await createCompleteProjection("english");
+        projectionName = projection.graphName;
+      } else if (selectedScope === "clustering") {
+        if (selectedClusterType === "categories" && selectedCategory) {
+          const projection = await createCategoryProjection(
+            selectedCategory,
+            "english"
+          );
+          projectionName = projection.graphName;
+          algorithmParams.category = selectedCategory;
+        } else if (
+          selectedClusterType === "definitions" &&
+          selectedDefinitionLevel
+        ) {
+          // For definitions, we'll use complete projection but filter by definition level
+          const projection = await createCompleteProjection("english");
+          projectionName = projection.graphName;
+          algorithmParams.definitionLevel = selectedDefinitionLevel;
+        } else if (selectedClusterType === "terms") {
+          const projection = await createCompleteProjection("english");
+          projectionName = projection.graphName;
+          algorithmParams.nodeType = "terms";
+>>>>>>> Stashed changes
         }
+      } else if (selectedScope === "recentResearch") {
+        // For recent research, use complete projection
+        const projection = await createCompleteProjection("english");
+        projectionName = projection.graphName;
+        algorithmParams.recent = true;
+      }
 
-        ctx.fill()
+      if (!projectionName) {
+        throw new Error("Failed to create or get graph projection");
+      }
 
+<<<<<<< Updated upstream
 
         ctx.fillStyle = "white"
         ctx.font = "bold 14px Arial"
@@ -174,11 +249,84 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
           ctx.fillStyle = "#333"
           ctx.font = "12px Arial"
           ctx.fillText(distance === Number.POSITIVE_INFINITY ? "∞" : distance, pos.x, pos.y + nodeRadius + 15)
-        }
+=======
+      // Run the appropriate algorithm
+      let results;
+      switch (algorithm.id) {
+        case "pagerank":
+          results = await runPageRank(projectionName, algorithmParams);
+          break;
+        case "louvain":
+          results = await runLouvain(projectionName, algorithmParams);
+          break;
+        case "betweenness":
+          results = await runBetweennessCentrality(
+            projectionName,
+            algorithmParams
+          );
+          break;
+        case "labelpropagation":
+          results = await runLabelPropagation(projectionName, algorithmParams);
+          break;
+        default:
+          throw new Error(`Algorithm ${algorithm.id} not implemented`);
       }
-    })
+
+      // Format results for display
+      const formattedResults = {
+        algorithm: algorithm.name.english,
+        scope: selectedScope,
+        projectionName: projectionName,
+        nodesProcessed:
+          results.nodePropertiesWritten || results.nodesProcessed || 0,
+        edgesProcessed:
+          results.relationshipsProcessed || results.edgesProcessed || 0,
+        executionTime: results.computeMillis
+          ? `${(results.computeMillis / 1000).toFixed(2)}s`
+          : "N/A",
+        results: results.results || [],
+        algorithmSpecific: results.algorithmSpecific || {},
+        loading: false,
+      };
+
+      setAppliedAlgorithmResult(formattedResults);
+
+      // Add to search history
+      try {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        const userId = userData?.id || userData?._id;
+
+        if (userId) {
+          await addSearchHistory({
+            userId: userId,
+            type: "algorithm",
+            query: `${algorithm.name.english} - ${selectedScope}`,
+            termId: null,
+            category: algorithm.category,
+          });
+>>>>>>> Stashed changes
+        }
+      } catch (historyError) {
+        console.warn("Failed to add to search history:", historyError);
+      }
+    } catch (error) {
+      console.error("Error applying algorithm:", error);
+
+      // Show error state
+      setAppliedAlgorithmResult({
+        algorithm: algorithm.name.english,
+        scope: selectedScope,
+        error: error.message || "Failed to apply algorithm",
+        loading: false,
+      });
+    }
+  };
+
+  if (!isOpen || !algorithm) {
+    return null;
   }
 
+<<<<<<< Updated upstream
   const calculateNodePositions = (width, height) => {
     const positions = {}
     const nodeCount = graphData.nodes.length
@@ -228,20 +376,19 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
         break
       default:
         steps = []
+=======
+  const renderGraph = (graphData) => {
+    if (!graphData || !graphData.nodes || !graphData.edges) {
+      return <p>No graph data available.</p>;
+>>>>>>> Stashed changes
     }
 
-    setExecutionSteps(steps)
-    setIsExecuting(false)
-  }
+    const { nodes, edges } = graphData;
 
-  const executeDijkstra = (startNode, endNode) => {
-    const steps = []
-    const nodes = graphData.nodes.map((n) => n.id)
-    const distances = {}
-    const previous = {}
-    const unvisited = new Set(nodes)
-    const visited = new Set()
+    const maxX = Math.max(...nodes.map((node) => node.x));
+    const maxY = Math.max(...nodes.map((node) => node.y));
 
+<<<<<<< Updated upstream
     // Initialize distances
     nodes.forEach((node) => {
       distances[node] = node === startNode ? 0 : Number.POSITIVE_INFINITY
@@ -937,254 +1084,312 @@ const AlgorithmModal = ({ algorithm, onClose, language = "english" }) => {
     if (!algorithm.parameters || algorithm.parameters.length === 0) {
       return null
     }
+=======
+    const viewBoxWidth = maxX + 20; // Add some padding
+    const viewBoxHeight = maxY + 20; // Add some padding
+>>>>>>> Stashed changes
 
     return (
-      <div className="algorithm-parameters">
-        <h3>{t.parameters}</h3>
-        <div className="parameters-form">
-          {algorithm.parameters.includes("startNode") && (
-            <div className="parameter-group">
-              <label htmlFor="startNode">{t.startNode}:</label>
-              <select
-                id="startNode"
-                value={userParams.startNode}
-                onChange={(e) => setUserParams({ ...userParams, startNode: e.target.value })}
-              >
-                {graphData.nodes.map((node) => (
-                  <option key={node.id} value={node.id}>
-                    {node.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {algorithm.parameters.includes("endNode") && (
-            <div className="parameter-group">
-              <label htmlFor="endNode">{t.endNode}:</label>
-              <select
-                id="endNode"
-                value={userParams.endNode}
-                onChange={(e) => setUserParams({ ...userParams, endNode: e.target.value })}
-              >
-                {graphData.nodes.map((node) => (
-                  <option key={node.id} value={node.id}>
-                    {node.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {algorithm.parameters.includes("dampingFactor") && (
-            <div className="parameter-group">
-              <label htmlFor="dampingFactor">{t.dampingFactor}:</label>
-              <input
-                id="dampingFactor"
-                type="number"
-                min="0"
-                max="1"
-                step="0.01"
-                value={userParams.dampingFactor}
-                onChange={(e) => setUserParams({ ...userParams, dampingFactor: Number.parseFloat(e.target.value) })}
-              />
-            </div>
-          )}
-
-          {algorithm.parameters.includes("iterations") && (
-            <div className="parameter-group">
-              <label htmlFor="iterations">{t.iterations}:</label>
-              <input
-                id="iterations"
-                type="number"
-                min="1"
-                max="100"
-                value={userParams.iterations}
-                onChange={(e) => setUserParams({ ...userParams, iterations: Number.parseInt(e.target.value) })}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  const renderExecutionResults = () => {
-    if (executionSteps.length === 0) return null
-
-    const currentStepData = executionSteps[currentStep]
-
-    return (
-      <div className="execution-results">
-        <h3>{t.results}</h3>
-
-        <div className="step-description">
-          <p>{currentStepData.description}</p>
-        </div>
-
-        <div className="step-data">
-          {currentStepData.distances && (
-            <div className="data-section">
-              <h4>Distances</h4>
-              <div className="data-grid">
-                {Object.entries(currentStepData.distances).map(([node, distance]) => (
-                  <div key={node} className="data-item">
-                    <span className="data-label">{node}:</span>
-                    <span className="data-value">{distance === Number.POSITIVE_INFINITY ? "∞" : distance}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.pageRank && (
-            <div className="data-section">
-              <h4>PageRank</h4>
-              <div className="data-grid">
-                {Object.entries(currentStepData.pageRank).map(([node, value]) => (
-                  <div key={node} className="data-item">
-                    <span className="data-label">{node}:</span>
-                    <span className="data-value">{value.toFixed(3)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.betweenness && (
-            <div className="data-section">
-              <h4>Betweenness</h4>
-              <div className="data-grid">
-                {Object.entries(currentStepData.betweenness).map(([node, value]) => (
-                  <div key={node} className="data-item">
-                    <span className="data-label">{node}:</span>
-                    <span className="data-value">{value.toFixed(3)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.communities && (
-            <div className="data-section">
-              <h4>Communities</h4>
-              <div className="data-grid">
-                {Object.entries(currentStepData.communities).map(([node, community]) => (
-                  <div key={node} className="data-item">
-                    <span className="data-label">{node}:</span>
-                    <span className="data-value">Community {community}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.queue && (
-            <div className="data-section">
-              <h4>Queue</h4>
-              <div className="queue-display">
-                {currentStepData.queue.length > 0 ? currentStepData.queue.join(" → ") : "(empty)"}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.stack && (
-            <div className="data-section">
-              <h4>Stack</h4>
-              <div className="stack-display">
-                {currentStepData.stack.length > 0 ? currentStepData.stack.join(" → ") : "(empty)"}
-              </div>
-            </div>
-          )}
-
-          {currentStepData.totalWeight !== undefined && (
-            <div className="data-section">
-              <h4>MST Weight</h4>
-              <div className="weight-display">{currentStepData.totalWeight}</div>
-            </div>
-          )}
-        </div>
-
-        <div className="step-navigation">
-          <button className="step-button" onClick={handlePrevStep} disabled={currentStep === 0}>
-            {t.prevStep}
-          </button>
-          <span className="step-indicator">
-            {t.step} {currentStep + 1} {t.of} {executionSteps.length}
-          </span>
-          <button className="step-button" onClick={handleNextStep} disabled={currentStep === executionSteps.length - 1}>
-            {t.nextStep}
-          </button>
-        </div>
-      </div>
-    )
-  }
+      <svg
+        width="100%"
+        height="200"
+        viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+      >
+        {edges.map((edge, index) => (
+          <line
+            key={`edge-${index}`}
+            x1={nodes.find((node) => node.id === edge.source)?.x}
+            y1={nodes.find((node) => node.id === edge.source)?.y}
+            x2={nodes.find((node) => node.id === edge.target)?.x}
+            y2={nodes.find((node) => node.id === edge.target)?.y}
+            stroke={edge.color || "#ccc"}
+            strokeWidth={edge.width || 2}
+          />
+        ))}
+        {nodes.map((node) => (
+          <circle
+            key={node.id}
+            cx={node.x}
+            cy={node.y}
+            r={node.size || 8}
+            fill={node.color || "#8B5CF6"}
+          />
+        ))}
+      </svg>
+    );
+  };
 
   return (
-    <div className="algorithm-modal-overlay" onClick={onClose}>
-      <div className="algorithm-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>{algorithm.name[language] || algorithm.name.english}</h2>
-          <button className="close-button" onClick={onClose} aria-label={t.close}>
-            <span className="sr-only">{t.close}</span>
-          </button>
+    <div className="algorithm-modal-overlay">
+      <div className="algorithm-modal">
+        <div className="algorithm-modal-header">
+          <h2>{algorithm.name.english}</h2>
+          <button onClick={onClose}>Close</button>
         </div>
-
-        <div className="modal-body">
-          <div className="algorithm-info">
-            <p className="algorithm-description">{algorithm.description[language] || algorithm.description.english}</p>
-
-            <div className="complexity-info">
-              <div className="complexity-item">
-                <span className="complexity-label">{t.timeComplexity}:</span>
-                <span className="complexity-value">{algorithm.timeComplexity}</span>
-              </div>
-              <div className="complexity-item">
-                <span className="complexity-label">{t.spaceComplexity}:</span>
-                <span className="complexity-value">{algorithm.spaceComplexity}</span>
-              </div>
-            </div>
-
-            <div className="formula-container">
-              <h3>{t.formula}</h3>
-              <div className="formula">{algorithm.formula}</div>
-              <p className="formula-explanation">
-                {algorithm.formulaExplanation[language] || algorithm.formulaExplanation.english}
-              </p>
-            </div>
-
-            <div className="pseudocode-container">
-              <h3>{t.pseudocode}</h3>
-              <pre className="pseudocode">
-                {algorithm.pseudocode.map((line, index) => (
-                  <div key={index} className="pseudocode-line">
-                    {line}
+        <div className="algorithm-modal-content">
+          <div className="algorithm-modal-section">
+            <h4>Overview</h4>
+            <p>{algorithm.overview}</p>
+          </div>
+          <div className="algorithm-modal-section">
+            <h4>How It Works</h4>
+            <p>{algorithm.howItWorks.english}</p>
+          </div>
+          <div className="algorithm-modal-section">
+            <h4>Examples</h4>
+            <div className="algorithm-examples">
+              <div className="example-container">
+                <div className="example-item">
+                  <h5>Before Algorithm</h5>
+                  <div className="example-graph before">
+                    {algorithm.before && renderGraph(algorithm.before)}
                   </div>
-                ))}
-              </pre>
+                </div>
+                <div className="example-item">
+                  <h5>After Algorithm</h5>
+                  <div className="example-graph after">
+                    {algorithm.after && renderGraph(algorithm.after)}
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="algorithm-modal-section">
+            <h4>Applications</h4>
+            <ul className="applications-list">
+              {algorithm.applications.english.map((app, index) => (
+                <li key={index}>{app}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="algorithm-modal-section">
+            <h4>Complexity</h4>
+            <div className="complexity-details">
+              <div className="complexity-item">
+                <span className="complexity-label">Time:</span>
+                <span className="complexity-value">
+                  {algorithm.timeComplexity}
+                </span>
+              </div>
+              <div className="complexity-item">
+                <span className="complexity-label">Space:</span>
+                <span className="complexity-value">
+                  {algorithm.spaceComplexity}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="algorithm-modal-section apply-algorithm-section">
+            <h4>Apply Algorithm</h4>
+            <div className="apply-controls">
+              <div className="scope-selection">
+                <label htmlFor="scope-select">Apply to:</label>
+                <select
+                  id="scope-select"
+                  value={selectedScope}
+                  onChange={(e) => handleScopeChange(e.target.value)}
+                  className="scope-select"
+                >
+                  <option value="">Select scope...</option>
+                  <option value="allGraph">All Graph</option>
+                  <option value="clustering">Clustering</option>
+                  <option value="recentResearch">Recent Research</option>
+                </select>
+              </div>
 
-            {renderParameters()}
+              {selectedScope === "clustering" && (
+                <div className="cluster-options">
+                  <select
+                    value={selectedClusterType || ""}
+                    onChange={(e) => handleClusterTypeChange(e.target.value)}
+                    className="cluster-type-select"
+                  >
+                    <option value="">Select cluster type...</option>
+                    <option value="terms">Terms</option>
+                    <option value="definitions">Definitions</option>
+                    <option value="categories">Categories</option>
+                  </select>
 
-            <div className="execution-controls">
-              <button className="execute-button" onClick={executeAlgorithm} disabled={isExecuting}>
-                {isExecuting ? t.executing : t.execute}
+                  {selectedClusterType === "definitions" && (
+                    <select
+                      value={selectedDefinitionLevel || ""}
+                      onChange={(e) =>
+                        handleDefinitionLevelChange(e.target.value)
+                      }
+                      className="definition-level-select"
+                    >
+                      <option value="">Select definition level...</option>
+                      <option value="primary">Primary</option>
+                      <option value="secondary">Secondary</option>
+                    </select>
+                  )}
+
+                  {selectedClusterType === "categories" && (
+                    <select
+                      value={selectedCategory || ""}
+                      onChange={(e) => handleCategoryChange(e.target.value)}
+                      className="category-select"
+                    >
+                      <option value="">Select category...</option>
+                      <option value="Computer Crime">Computer Crime</option>
+                      <option value="Personal Data">Personal Data</option>
+                      <option value="Electronic Commerce">
+                        Electronic Commerce
+                      </option>
+                      <option value="Organization">Organization</option>
+                      <option value="Networks">Networks</option>
+                      <option value="Intellectual Property">
+                        Intellectual Property
+                      </option>
+                      <option value="Miscellaneous">Miscellaneous</option>
+                      <option value="Computer Science">Computer Science</option>
+                    </select>
+                  )}
+                </div>
+              )}
+
+              <button
+                className="apply-algorithm-btn"
+                onClick={handleApplyAlgorithm}
+                disabled={
+                  !selectedScope ||
+                  (selectedScope === "clustering" && !selectedClusterType) ||
+                  (selectedClusterType === "definitions" &&
+                    !selectedDefinitionLevel) ||
+                  (selectedClusterType === "categories" && !selectedCategory)
+                }
+              >
+                Apply Algorithm
               </button>
             </div>
           </div>
-
-          <div className="algorithm-visualization">
-            <h3>{t.sampleGraph}</h3>
-            <div className="canvas-container">
-              <canvas ref={canvasRef} width={500} height={400} className="graph-canvas" />
+          {showResults && appliedAlgorithmResult && (
+            <div className="algorithm-modal-section results-section">
+              <div className="results-header">
+                <h4>Algorithm Results: {appliedAlgorithmResult.algorithm}</h4>
+                <button
+                  className="close-results-btn"
+                  onClick={() => setShowResults(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="results-content">
+                {appliedAlgorithmResult.loading ? (
+                  <div className="results-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Running algorithm...</p>
+                  </div>
+                ) : appliedAlgorithmResult.error ? (
+                  <div className="results-error">
+                    <p className="error-message">
+                      Error: {appliedAlgorithmResult.error}
+                    </p>
+                    <button
+                      className="retry-btn"
+                      onClick={handleApplyAlgorithm}
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="results-stats">
+                      <div className="stat-item">
+                        <span className="stat-label">Projection:</span>
+                        <span className="stat-value">
+                          {appliedAlgorithmResult.projectionName}
+                        </span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Nodes Processed:</span>
+                        <span className="stat-value">
+                          {appliedAlgorithmResult.nodesProcessed}
+                        </span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Edges Processed:</span>
+                        <span className="stat-value">
+                          {appliedAlgorithmResult.edgesProcessed}
+                        </span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Execution Time:</span>
+                        <span className="stat-value">
+                          {appliedAlgorithmResult.executionTime}
+                        </span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Scope:</span>
+                        <span className="stat-value">
+                          {appliedAlgorithmResult.scope}
+                        </span>
+                      </div>
+                    </div>
+                    {appliedAlgorithmResult.results &&
+                      appliedAlgorithmResult.results.length > 0 && (
+                        <div className="results-table">
+                          <h5>Top Results</h5>
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Rank</th>
+                                <th>Node</th>
+                                <th>Score</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {appliedAlgorithmResult.results
+                                .slice(0, 10)
+                                .map((result, index) => (
+                                  <tr key={result.nodeId || index}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                      {result.nodeName ||
+                                        result.name ||
+                                        `Node ${result.nodeId}`}
+                                    </td>
+                                    <td>
+                                      {typeof result.score === "number"
+                                        ? result.score.toFixed(4)
+                                        : result.score}
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    {appliedAlgorithmResult.algorithmSpecific &&
+                      Object.keys(appliedAlgorithmResult.algorithmSpecific)
+                        .length > 0 && (
+                        <div className="algorithm-specific-results">
+                          <h5>Algorithm-Specific Results</h5>
+                          <div className="specific-stats">
+                            {Object.entries(
+                              appliedAlgorithmResult.algorithmSpecific
+                            ).map(([key, value]) => (
+                              <div key={key} className="stat-item">
+                                <span className="stat-label">{key}:</span>
+                                <span className="stat-value">
+                                  {typeof value === "number"
+                                    ? value.toFixed(4)
+                                    : value}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                  </>
+                )}
+              </div>
             </div>
-
-            {renderExecutionResults()}
-          </div>
+          )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AlgorithmModal
+export default AlgorithmModal;

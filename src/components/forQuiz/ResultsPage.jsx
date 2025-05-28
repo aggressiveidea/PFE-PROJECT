@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Trophy, Share2, Home, Repeat, CheckCircle, XCircle, Activity } from "lucide-react"
@@ -11,21 +12,66 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   const percentage = (Number.parseInt(score) / totalQuestions) * 100
   const scoreBarRef = useRef(null)
   const categoryInfo = getCategoryDetails(category)
+=======
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Trophy,
+  Share2,
+  Home,
+  Repeat,
+  CheckCircle,
+  XCircle,
+  Activity,
+} from "lucide-react";
+import { getCategoryDetails } from "../../services/Api";
+import "./ResultsPage.css";
+
+const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
+  const { category, score } = useParams();
+  const navigate = useNavigate();
+  const totalQuestions = 5;
+  const percentage = (Number.parseInt(score) / totalQuestions) * 100;
+  const scoreBarRef = useRef(null);
+  const categoryInfo = getCategoryDetails(category);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     if (scoreBarRef.current) {
-      scoreBarRef.current.style.setProperty("--score-percentage", `${percentage}%`)
+      scoreBarRef.current.style.setProperty(
+        "--score-percentage",
+        `${percentage}%`
+      );
     }
 
     setQuizStats((prevStats) => {
-      const newTotalQuizzes = prevStats.totalQuizzes + 1
+      const newTotalQuizzes = prevStats.totalQuizzes + 1;
       const newAverageScore = Math.round(
+<<<<<<< Updated upstream
         (prevStats.averageScore * prevStats.totalQuizzes + percentage) / newTotalQuizzes,
       )
       let newTopCategory = prevStats.topCategory
       if (percentage >= 60) {
         if (prevStats.topCategory === "None" || percentage > prevStats.averageScore) {
           newTopCategory = categoryInfo.name
+=======
+        (prevStats.averageScore * prevStats.totalQuizzes + percentage) /
+          newTotalQuizzes
+      );
+
+      // Determine if this category should be the new top category
+      let newTopCategory = prevStats.topCategory;
+
+      // Always update top category if score is good enough
+      if (percentage >= 60) {
+        if (
+          prevStats.topCategory === "None" ||
+          percentage > prevStats.averageScore
+        ) {
+          newTopCategory = categoryInfo.name;
+>>>>>>> Stashed changes
         }
       }
 
@@ -33,13 +79,18 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
         totalQuizzes: newTotalQuizzes,
         averageScore: newAverageScore,
         topCategory: newTopCategory,
+<<<<<<< Updated upstream
       }
+=======
+      };
+>>>>>>> Stashed changes
 
-      localStorage.setItem("quizStats", JSON.stringify(updatedStats))
+      localStorage.setItem("quizStats", JSON.stringify(updatedStats));
 
-      return updatedStats
-    })
+      return updatedStats;
+    });
 
+<<<<<<< Updated upstream
     updateCategoryPerformance(category, percentage)
   }, [category, percentage, score, setQuizStats, updateCategoryPerformance, categoryInfo.name])
 
@@ -69,12 +120,57 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   const handleRetryQuiz = () => {
     navigate(`/quiz/question/${category}`)
   }
+=======
+    // Update category performance data
+    updateCategoryPerformance(category, percentage);
+  }, [
+    category,
+    percentage,
+    score,
+    setQuizStats,
+    updateCategoryPerformance,
+    categoryInfo.name,
+  ]);
 
-  const handleGoHome = () => {
-    navigate("/quiz")
+  let message = "";
+  let subMessage = "";
+  const trophyColor = categoryInfo.color || "#6366f1";
+
+  // Determine messages based on score
+  if (percentage >= 80) {
+    message = "Excellent Knowledge!";
+
+    if (percentage === 100) {
+      subMessage = `You've mastered the ${categoryInfo.name} category. Try another category to expand your knowledge!`;
+    } else {
+      subMessage = `You have a strong understanding of ${categoryInfo.name} concepts.`;
+    }
+  } else if (percentage >= 60) {
+    message = "Good Effort!";
+    subMessage = `You're building solid knowledge in ${categoryInfo.name}. Keep learning to improve your score.`;
+  } else if (percentage >= 40) {
+    message = "Nice Try!";
+    subMessage = `Some ${categoryInfo.name} concepts need more practice. Review and try again.`;
+  } else {
+    message = "Keep Learning!";
+    subMessage = `${categoryInfo.name} can be challenging. Start with the basics and build your knowledge step by step.`;
   }
 
+  const handleRetryQuiz = () => {
+    navigate(`/quiz/question/${category}`);
+  };
+>>>>>>> Stashed changes
+
+  const handleGoHome = () => {
+    navigate("/quiz");
+  };
+
   const handleShareResults = () => {
+<<<<<<< Updated upstream
+=======
+    // Create share text
+    const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`;
+>>>>>>> Stashed changes
 
     const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`
 
@@ -86,24 +182,34 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
           url: window.location.href,
         })
         .catch((err) => {
+<<<<<<< Updated upstream
           console.error("Error sharing:", err)
           copyToClipboard(shareText)
         })
     } else {
       copyToClipboard(shareText)
+=======
+          console.error("Error sharing:", err);
+          // Fallback - copy to clipboard
+          copyToClipboard(shareText);
+        });
+    } else {
+      // Fallback - copy to clipboard
+      copyToClipboard(shareText);
+>>>>>>> Stashed changes
     }
-  }
+  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        alert("Results copied to clipboard!")
+        alert("Results copied to clipboard!");
       })
       .catch((err) => {
-        console.error("Failed to copy:", err)
-      })
-  }
+        console.error("Failed to copy:", err);
+      });
+  };
 
   return (
     <div className="results-page">
@@ -157,7 +263,9 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
               <XCircle size={24} />
             </div>
             <h3>Incorrect Answers</h3>
-            <p className="incorrect-count">{totalQuestions - Number.parseInt(score)}</p>
+            <p className="incorrect-count">
+              {totalQuestions - Number.parseInt(score)}
+            </p>
           </div>
 
           <div className="score-detail-item">
@@ -170,17 +278,26 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
         </div>
 
         <div className="resultQuiz-actions">
-          <button className="resultQuiz-button resultQuiz-back-button" onClick={handleGoHome}>
+          <button
+            className="resultQuiz-button resultQuiz-back-button"
+            onClick={handleGoHome}
+          >
             <Home size={18} />
             <span>Back to Quiz</span>
           </button>
 
-          <button className="resultQuiz-button resultQuiz-retry-button" onClick={handleRetryQuiz}>
+          <button
+            className="resultQuiz-button resultQuiz-retry-button"
+            onClick={handleRetryQuiz}
+          >
             <Repeat size={18} />
             <span>Try Again</span>
           </button>
 
-          <button className="resultQuiz-button resultQuiz-share-button" onClick={handleShareResults}>
+          <button
+            className="resultQuiz-button resultQuiz-share-button"
+            onClick={handleShareResults}
+          >
             <Share2 size={18} />
             <span>Share Results</span>
           </button>
@@ -199,7 +316,7 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ResultsPage
+export default ResultsPage;

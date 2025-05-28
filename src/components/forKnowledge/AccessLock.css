@@ -1,385 +1,410 @@
-/* Access Lock Overlay */
-.access-lock-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
+/* Access Lock Styles - Matching Simple Search Style */
+._access_lock_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Main Container */
+._access_lock_container {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid #eaeaea;
+}
+
+.dark-mode ._access_lock_container {
+  background: #1a1a1a;
+  border-color: #333333;
+}
+
+._access_lock_container.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Content Area */
+._access_lock_content {
+  position: relative;
+  padding: 40px;
+  z-index: 10;
+}
+
+/* Lock Icon */
+._access_lock_icon_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+._access_lock_icon_wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: #4a6cf7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(74, 108, 247, 0.3);
+}
+
+._access_lock_icon {
+  color: white;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+}
+
+._access_lock_pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: rgba(74, 108, 247, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
   }
-  
-  /* Main Container */
-  .access-lock-container {
-    position: relative;
-    width: 100%;
-    max-width: 900px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+
+  70% {
+    transform: scale(1.5);
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
-  .access-lock-container.animate {
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Text Content */
+._access_lock_title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.dark-mode ._access_lock_title {
+  color: #f0f0f0;
+}
+
+._access_lock_description {
+  font-size: 1.125rem;
+  color: #666666;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.dark-mode ._access_lock_description {
+  color: #cccccc;
+}
+
+/* Features Section */
+._access_lock_features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+._access_lock_feature_item {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  border: 1px solid #eaeaea;
+}
+
+.dark-mode ._access_lock_feature_item {
+  background: #252525;
+  border-color: #333333;
+}
+
+._access_lock_feature_item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+._access_lock_feature_icon {
+  width: 48px;
+  height: 48px;
+  background: #4a6cf7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: white;
+}
+
+._access_lock_feature_text h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.dark-mode ._access_lock_feature_text h3 {
+  color: #f0f0f0;
+}
+
+._access_lock_feature_text p {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.5;
+}
+
+.dark-mode ._access_lock_feature_text p {
+  color: #cccccc;
+}
+
+/* Action Buttons */
+._access_lock_actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
-  
-  /* Content Area */
-  .access-lock-content {
-    position: relative;
-    padding: 40px;
-    z-index: 10;
+}
+
+._access_lock_signup_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #4a6cf7;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 16px 32px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 10px 25px rgba(74, 108, 247, 0.3);
+}
+
+._access_lock_signup_button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(74, 108, 247, 0.4);
+  background: #3a5de6;
+}
+
+._access_lock_login_link {
+  color: #4a6cf7;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+._access_lock_login_link:hover {
+  color: #3a5de6;
+  text-decoration: underline;
+}
+
+/* Decorative Elements */
+._access_lock_decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+._access_lock_decoration_circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+._access_lock_circle_1 {
+  width: 400px;
+  height: 400px;
+  top: -200px;
+  right: -100px;
+  background: radial-gradient(circle, #4a6cf7, transparent 70%);
+  animation: float 15s infinite alternate ease-in-out;
+}
+
+._access_lock_circle_2 {
+  width: 300px;
+  height: 300px;
+  bottom: -150px;
+  left: -100px;
+  background: radial-gradient(circle, #4a6cf7, transparent 70%);
+  animation: float 20s infinite alternate-reverse ease-in-out;
+}
+
+._access_lock_circle_3 {
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  background: radial-gradient(circle, #4a6cf7, transparent 70%);
+  animation: pulse 10s infinite;
+}
+
+._access_lock_decoration_line {
+  position: absolute;
+  background: linear-gradient(90deg, rgba(74, 108, 247, 0.3), transparent);
+  height: 1px;
+  width: 100%;
+  opacity: 0.2;
+}
+
+._access_lock_line_1 {
+  top: 20%;
+  animation: slide 30s infinite linear;
+}
+
+._access_lock_line_2 {
+  top: 50%;
+  animation: slide 25s infinite linear reverse;
+}
+
+._access_lock_line_3 {
+  bottom: 30%;
+  animation: slide 35s infinite linear;
+}
+
+._access_lock_decoration_dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #4a6cf7;
+  opacity: 0.5;
+}
+
+._access_lock_dot_1 {
+  top: 20%;
+  left: 10%;
+  animation: blink 3s infinite alternate;
+}
+
+._access_lock_dot_2 {
+  top: 70%;
+  left: 20%;
+  animation: blink 5s infinite alternate-reverse;
+}
+
+._access_lock_dot_3 {
+  top: 30%;
+  right: 15%;
+  animation: blink 4s infinite alternate;
+}
+
+._access_lock_dot_4 {
+  bottom: 20%;
+  right: 25%;
+  animation: blink 6s infinite alternate-reverse;
+}
+
+._access_lock_dot_5 {
+  top: 50%;
+  right: 50%;
+  animation: blink 7s infinite alternate;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
   }
-  
-  /* Lock Icon */
-  .lock-icon-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+
+  100% {
+    transform: translateY(30px) rotate(10deg);
   }
-  
-  .lock-icon-wrapper {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.5);
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
   }
-  
-  .lock-icon {
-    color: white;
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+
+  100% {
+    transform: translateX(100%);
   }
-  
-  .lock-pulse {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 50%;
-    background: rgba(139, 92, 246, 0.6);
-    animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.7;
-    }
-    70% {
-      transform: scale(1.5);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1.5);
-      opacity: 0;
-    }
-  }
-  
-  /* Text Content */
-  .access-lock-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: white;
-    text-align: center;
-    margin-bottom: 16px;
-    background: linear-gradient(to right, #c4b5fd, #818cf8);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
-  }
-  
-  .access-lock-description {
-    font-size: 1.125rem;
-    color: #cbd5e1;
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto 40px;
-    line-height: 1.6;
-  }
-  
-  /* Features Section */
-  .access-lock-features {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 40px;
-  }
-  
-  .feature-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 24px;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .feature-item:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 30px -15px rgba(139, 92, 246, 0.4);
-  }
-  
-  .feature-icon {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    color: white;
-  }
-  
-  .feature-text h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: white;
-    margin-bottom: 8px;
-  }
-  
-  .feature-text p {
-    font-size: 0.875rem;
-    color: #94a3b8;
-    line-height: 1.5;
-  }
-  
-  /* Action Buttons */
-  .access-lock-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    margin-top: 40px;
-    animation: fadeIn 0.6s ease-out;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .signup-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 16px 32px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    width: 100%;
-    max-width: 300px;
-    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.5);
-  }
-  
-  .signup-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.6);
-    background: linear-gradient(135deg, #9333ea, #4f46e5);
-  }
-  
-  .login-link {
-    color: #a5b4fc;
-    text-decoration: none;
-    font-size: 0.875rem;
-    transition: color 0.2s ease;
-  }
-  
-  .login-link:hover {
-    color: white;
-    text-decoration: underline;
-  }
-  
-  /* Decorative Elements */
-  .access-lock-decoration {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  
-  .decoration-circle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.1;
-  }
-  
-  .circle-1 {
-    width: 400px;
-    height: 400px;
-    top: -200px;
-    right: -100px;
-    background: radial-gradient(circle, #8b5cf6, transparent 70%);
-    animation: float 15s infinite alternate ease-in-out;
-  }
-  
-  .circle-2 {
-    width: 300px;
-    height: 300px;
-    bottom: -150px;
-    left: -100px;
-    background: radial-gradient(circle, #6366f1, transparent 70%);
-    animation: float 20s infinite alternate-reverse ease-in-out;
-  }
-  
-  .circle-3 {
-    width: 200px;
-    height: 200px;
-    top: 50%;
-    left: 50%;
-    background: radial-gradient(circle, #a78bfa, transparent 70%);
-    animation: pulse 10s infinite;
-  }
-  
-  .decoration-line {
-    position: absolute;
-    background: linear-gradient(90deg, rgba(139, 92, 246, 0.3), transparent);
-    height: 1px;
-    width: 100%;
+}
+
+@keyframes blink {
+  0% {
     opacity: 0.2;
   }
-  
-  .line-1 {
-    top: 20%;
-    animation: slide 30s infinite linear;
+
+  100% {
+    opacity: 0.8;
   }
-  
-  .line-2 {
-    top: 50%;
-    animation: slide 25s infinite linear reverse;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  ._access_lock_content {
+    padding: 30px 20px;
   }
-  
-  .line-3 {
-    bottom: 30%;
-    animation: slide 35s infinite linear;
+
+  ._access_lock_features {
+    grid-template-columns: 1fr;
   }
-  
-  .decoration-dot {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: #a78bfa;
-    opacity: 0.5;
+
+  ._access_lock_title {
+    font-size: 2rem;
   }
-  
-  .dot-1 {
-    top: 20%;
-    left: 10%;
-    animation: blink 3s infinite alternate;
+
+  ._access_lock_description {
+    font-size: 1rem;
   }
-  
-  .dot-2 {
-    top: 70%;
-    left: 20%;
-    animation: blink 5s infinite alternate-reverse;
+
+  ._access_lock_icon_wrapper {
+    width: 80px;
+    height: 80px;
   }
-  
-  .dot-3 {
-    top: 30%;
-    right: 15%;
-    animation: blink 4s infinite alternate;
+
+  ._access_lock_icon {
+    width: 36px;
+    height: 36px;
   }
-  
-  .dot-4 {
-    bottom: 20%;
-    right: 25%;
-    animation: blink 6s infinite alternate-reverse;
-  }
-  
-  .dot-5 {
-    top: 50%;
-    right: 50%;
-    animation: blink 7s infinite alternate;
-  }
-  
-  @keyframes float {
-    0% {
-      transform: translateY(0) rotate(0deg);
-    }
-    100% {
-      transform: translateY(30px) rotate(10deg);
-    }
-  }
-  
-  @keyframes slide {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  
-  @keyframes blink {
-    0% {
-      opacity: 0.2;
-    }
-    100% {
-      opacity: 0.8;
-    }
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 768px) {
-    .access-lock-content {
-      padding: 30px 20px;
-    }
-  
-    .access-lock-features {
-      grid-template-columns: 1fr;
-    }
-  
-    .access-lock-title {
-      font-size: 2rem;
-    }
-  
-    .access-lock-description {
-      font-size: 1rem;
-    }
-  
-    .lock-icon-wrapper {
-      width: 80px;
-      height: 80px;
-    }
-  
-    .lock-icon {
-      width: 36px;
-      height: 36px;
-    }
-  }
-  
+}

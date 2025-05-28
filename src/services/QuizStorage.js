@@ -97,3 +97,12 @@ const getCategoryDisplayName = (categoryId) => {
 
   return displayNames[categoryId] || categoryId
 }
+
+
+export const getCategoryPerformance = async () => {
+  console.log("hiiiiii");
+};
+
+export const getTopPerformanceCategories = async () => {
+  console.log("hiiiiii");
+};
