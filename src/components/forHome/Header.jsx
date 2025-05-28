@@ -1,16 +1,9 @@
-<<<<<<< Updated upstream
-import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
-import { getUserById } from "../../services/Api"
-import "./Header.css"
-=======
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getUserById } from "../../services/Api";
 import "./Header.css";
->>>>>>> Stashed changes
 
 const Header = ({ language = "en", setLanguage, darkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,6 +12,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Function to load user data from API or localStorage
   const loadUserData = async () => {
     try {
       setLoading(true);
@@ -26,17 +20,14 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
       const authData = JSON.parse(localStorage.getItem("authData") || "{}");
 
       if (storedUser) {
-<<<<<<< Updated upstream
-        const userData = JSON.parse(storedUser)
-=======
         const userData = JSON.parse(storedUser);
 
         // If we have a user ID and token, try to get fresh data from API
->>>>>>> Stashed changes
         if (userData._id && authData.token) {
           try {
             const freshUserData = await getUserById(userData._id);
             if (freshUserData) {
+              // Update localStorage with fresh data
               const updatedUser = {
                 ...userData,
                 ...freshUserData,
@@ -75,6 +66,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
   useEffect(() => {
     loadUserData();
 
+    // Listen for userUpdated event to refresh user data
     const handleUserUpdate = () => {
       console.log("Header: User updated event received");
       loadUserData();
@@ -145,6 +137,7 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
     return user.email ? user.email.split("@")[0] : "Guest";
   };
 
+  // Use imported translations if available, otherwise use default
   const translations = window.translations || {
     en: {
       home: "Home",
@@ -241,7 +234,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                   <a href="#about">{t.about}</a>
                 </li>
                 <li>
-<<<<<<< Updated upstream
                   <a href="/terms">Explore</a>
                 </li>
                 <li>
@@ -249,15 +241,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
                 </li>
                 <li>
                   <a href="/faq">FAQ</a>
-=======
-                  <a href="#FAQ">Explore</a>
-                </li>
-                <li>
-                  <a href="#explore">Knowledge graph</a>
-                </li>
-                <li>
-                  <a href="#footer">FAQ</a>
->>>>>>> Stashed changes
                 </li>
               </ul>
             )}
@@ -265,17 +248,8 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
         </div>
 
         <div className="user-section">
-<<<<<<< Updated upstream
           {/* <div className="language-select-container">
             <select value={language} onChange={(e) => setLanguage(e.target.value)} className="language-select">
-=======
-          <div className="language-select-container">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="language-select"
-            >
->>>>>>> Stashed changes
               <option value="en">English</option>
               <option value="fr">Français</option>
               <option value="ar">العربية</option>

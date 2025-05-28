@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 "use client";
 
 import { useState, useEffect } from "react";
@@ -285,7 +283,6 @@ const KnowledgeGraphPage = () => {
     >
       <Header />
       <div className="main-content">
-
         <div className="content-area">
           <div className="knowledge-graph-container">
             <div className="knowledge-graph-content">
@@ -487,4 +484,3 @@ const KnowledgeGraphPage = () => {
 };
 
 export default KnowledgeGraphPage;
->>>>>>> Stashed changes

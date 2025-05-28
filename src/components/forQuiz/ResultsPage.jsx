@@ -1,18 +1,3 @@
-<<<<<<< Updated upstream
-import { useEffect, useRef } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { Trophy, Share2, Home, Repeat, CheckCircle, XCircle, Activity } from "lucide-react"
-import { getCategoryDetails } from "../../services/Api"
-import "./ResultsPage.css"
-
-const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
-  const { category, score } = useParams()
-  const navigate = useNavigate()
-  const totalQuestions = 5
-  const percentage = (Number.parseInt(score) / totalQuestions) * 100
-  const scoreBarRef = useRef(null)
-  const categoryInfo = getCategoryDetails(category)
-=======
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -36,9 +21,9 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   const percentage = (Number.parseInt(score) / totalQuestions) * 100;
   const scoreBarRef = useRef(null);
   const categoryInfo = getCategoryDetails(category);
->>>>>>> Stashed changes
 
   useEffect(() => {
+    // Set the score percentage as a CSS variable for the animation
     if (scoreBarRef.current) {
       scoreBarRef.current.style.setProperty(
         "--score-percentage",
@@ -46,17 +31,10 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
       );
     }
 
+    // Update quiz stats
     setQuizStats((prevStats) => {
       const newTotalQuizzes = prevStats.totalQuizzes + 1;
       const newAverageScore = Math.round(
-<<<<<<< Updated upstream
-        (prevStats.averageScore * prevStats.totalQuizzes + percentage) / newTotalQuizzes,
-      )
-      let newTopCategory = prevStats.topCategory
-      if (percentage >= 60) {
-        if (prevStats.topCategory === "None" || percentage > prevStats.averageScore) {
-          newTopCategory = categoryInfo.name
-=======
         (prevStats.averageScore * prevStats.totalQuizzes + percentage) /
           newTotalQuizzes
       );
@@ -71,56 +49,21 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
           percentage > prevStats.averageScore
         ) {
           newTopCategory = categoryInfo.name;
->>>>>>> Stashed changes
         }
       }
 
+      // Store the updated stats in localStorage immediately
       const updatedStats = {
         totalQuizzes: newTotalQuizzes,
         averageScore: newAverageScore,
         topCategory: newTopCategory,
-<<<<<<< Updated upstream
-      }
-=======
       };
->>>>>>> Stashed changes
 
       localStorage.setItem("quizStats", JSON.stringify(updatedStats));
 
       return updatedStats;
     });
 
-<<<<<<< Updated upstream
-    updateCategoryPerformance(category, percentage)
-  }, [category, percentage, score, setQuizStats, updateCategoryPerformance, categoryInfo.name])
-
-  let message = ""
-  let subMessage = ""
-  const trophyColor = categoryInfo.color || "#6366f1"
-
-  if (percentage >= 80) {
-    message = "Excellent Knowledge!"
-
-    if (percentage === 100) {
-      subMessage = `You've mastered the ${categoryInfo.name} category. Try another category to expand your knowledge!`
-    } else {
-      subMessage = `You have a strong understanding of ${categoryInfo.name} concepts.`
-    }
-  } else if (percentage >= 60) {
-    message = "Good Effort!"
-    subMessage = `You're building solid knowledge in ${categoryInfo.name}. Keep learning to improve your score.`
-  } else if (percentage >= 40) {
-    message = "Nice Try!"
-    subMessage = `Some ${categoryInfo.name} concepts need more practice. Review and try again.`
-  } else {
-    message = "Keep Learning!"
-    subMessage = `${categoryInfo.name} can be challenging. Start with the basics and build your knowledge step by step.`
-  }
-
-  const handleRetryQuiz = () => {
-    navigate(`/quiz/question/${category}`)
-  }
-=======
     // Update category performance data
     updateCategoryPerformance(category, percentage);
   }, [
@@ -159,21 +102,16 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
   const handleRetryQuiz = () => {
     navigate(`/quiz/question/${category}`);
   };
->>>>>>> Stashed changes
 
   const handleGoHome = () => {
     navigate("/quiz");
   };
 
   const handleShareResults = () => {
-<<<<<<< Updated upstream
-=======
     // Create share text
     const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`;
->>>>>>> Stashed changes
 
-    const shareText = `I scored ${score}/${totalQuestions} (${percentage}%) on the ${categoryInfo.name} quiz! Can you beat my score?`
-
+    // Check if Web Share API is available
     if (navigator.share) {
       navigator
         .share({
@@ -182,13 +120,6 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
           url: window.location.href,
         })
         .catch((err) => {
-<<<<<<< Updated upstream
-          console.error("Error sharing:", err)
-          copyToClipboard(shareText)
-        })
-    } else {
-      copyToClipboard(shareText)
-=======
           console.error("Error sharing:", err);
           // Fallback - copy to clipboard
           copyToClipboard(shareText);
@@ -196,7 +127,6 @@ const ResultsPage = ({ darkMode, setQuizStats, updateCategoryPerformance }) => {
     } else {
       // Fallback - copy to clipboard
       copyToClipboard(shareText);
->>>>>>> Stashed changes
     }
   };
 

@@ -1,27 +1,3 @@
-<<<<<<< Updated upstream
-import { useState, useEffect, useRef } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, Check, X, Clock, AlertTriangle, Volume2, VolumeX } from "lucide-react"
-import { fetchQuizQuestions2, getCategoryDetails } from "../../services/Api"
-import "./QuestionPage.css"
-
-const QuestionPage = ({ darkMode }) => {
-  const { category } = useParams()
-  const navigate = useNavigate()
-
-  const [questions, setQuestions] = useState([])
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [selectedOption, setSelectedOption] = useState(null)
-  const [showAnswer, setShowAnswer] = useState(false)
-  const [score, setScore] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [timeSpent, setTimeSpent] = useState(0)
-  const [soundEnabled, setSoundEnabled] = useState(true)
-  const [isAnswerCorrect, setIsAnswerCorrect] = useState(null)
-  const [animateProgress, setAnimateProgress] = useState(false)
-  const [categoryInfo, setCategoryInfo] = useState({ name: "", color: "" })
-=======
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -54,7 +30,6 @@ const QuestionPage = ({ darkMode }) => {
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(null);
   const [animateProgress, setAnimateProgress] = useState(false);
   const [categoryInfo, setCategoryInfo] = useState({ name: "", color: "" });
->>>>>>> Stashed changes
 
   const tickAudioRef = useRef(null);
   const correctAudioRef = useRef(null);
@@ -63,27 +38,17 @@ const QuestionPage = ({ darkMode }) => {
   const questionContainerRef = useRef(null);
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    const details = getCategoryDetails(category)
-    setCategoryInfo(details)
-=======
     // Get category details
     const details = getCategoryDetails(category);
     setCategoryInfo(details);
->>>>>>> Stashed changes
 
     const loadQuestions = async () => {
       try {
         setLoading(true);
         setError(null);
 
-<<<<<<< Updated upstream
-        const fetchedQuestions = await fetchQuizQuestions2(category)
-        setQuestions(fetchedQuestions)
-=======
         const fetchedQuestions = await fetchQuizQuestions2(category);
         setQuestions(fetchedQuestions);
->>>>>>> Stashed changes
       } catch (err) {
         console.error("Error loading questions:", err);
         setError("Failed to load questions. Please try again.");
@@ -92,29 +57,20 @@ const QuestionPage = ({ darkMode }) => {
       }
     };
 
-<<<<<<< Updated upstream
-    loadQuestions()
-  }, [category])
-=======
     loadQuestions();
   }, [category]);
 
   // Animate progress bar when current question changes
->>>>>>> Stashed changes
   useEffect(() => {
     setAnimateProgress(true);
     const timer = setTimeout(() => setAnimateProgress(false), 600);
     return () => clearTimeout(timer);
   }, [currentQuestion]);
 
+  // Timer effect with ticking sound
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeSpent((prev) => {
-<<<<<<< Updated upstream
-        sessionStorage.setItem("quizTimeSpent", (prev + 1).toString())
-        if (soundEnabled && tickAudioRef.current) {
-          const now = Date.now()
-=======
         // Store time spent in session storage for results page
         sessionStorage.setItem("quizTimeSpent", (prev + 1).toString());
 
@@ -122,7 +78,6 @@ const QuestionPage = ({ darkMode }) => {
         if (soundEnabled && tickAudioRef.current) {
           const now = Date.now();
           // Ensure we don't play sounds too rapidly (debounce)
->>>>>>> Stashed changes
           if (now - lastTickTimeRef.current > 900) {
             tickAudioRef.current.currentTime = 0;
             tickAudioRef.current
@@ -138,19 +93,13 @@ const QuestionPage = ({ darkMode }) => {
     return () => clearInterval(timer);
   }, [soundEnabled]);
 
+  // Add slide-in animation when question changes
   useEffect(() => {
     if (questionContainerRef.current) {
-<<<<<<< Updated upstream
-      questionContainerRef.current.classList.add("question-enter")
-      const timer = setTimeout(() => {
-        if (questionContainerRef.current) {
-          questionContainerRef.current.classList.remove("question-enter")
-=======
       questionContainerRef.current.classList.add("question-enter");
       const timer = setTimeout(() => {
         if (questionContainerRef.current) {
           questionContainerRef.current.classList.remove("question-enter");
->>>>>>> Stashed changes
         }
       }, 500);
       return () => clearTimeout(timer);
@@ -162,15 +111,9 @@ const QuestionPage = ({ darkMode }) => {
   };
 
   const handleOptionSelect = (option) => {
-<<<<<<< Updated upstream
-    if (showAnswer) return
-    setSelectedOption(option)
-  }
-=======
     if (showAnswer) return; // Prevent changing answer after submission
     setSelectedOption(option);
   };
->>>>>>> Stashed changes
 
   const handleSubmit = () => {
     if (!selectedOption) return;
@@ -179,24 +122,9 @@ const QuestionPage = ({ darkMode }) => {
       selectedOption === questions[currentQuestion].correctAnswer;
     setIsAnswerCorrect(isCorrect);
 
-<<<<<<< Updated upstream
-    const isCorrect = selectedOption === questions[currentQuestion].correctAnswer
-    setIsAnswerCorrect(isCorrect)
-
-=======
->>>>>>> Stashed changes
     if (isCorrect) {
       setScore(score + 1);
       if (soundEnabled && correctAudioRef.current) {
-<<<<<<< Updated upstream
-        correctAudioRef.current.currentTime = 0
-        correctAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
-      }
-    } else {
-      if (soundEnabled && incorrectAudioRef.current) {
-        incorrectAudioRef.current.currentTime = 0
-        incorrectAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
-=======
         correctAudioRef.current.currentTime = 0;
         correctAudioRef.current
           .play()
@@ -208,7 +136,6 @@ const QuestionPage = ({ darkMode }) => {
         incorrectAudioRef.current
           .play()
           .catch((e) => console.log("Audio play prevented:", e));
->>>>>>> Stashed changes
       }
     }
     setShowAnswer(true);
@@ -221,24 +148,14 @@ const QuestionPage = ({ darkMode }) => {
       setShowAnswer(false);
       setIsAnswerCorrect(null);
     } else {
-<<<<<<< Updated upstream
-
-      navigate(`/quiz/results/${category}/${score}`)
-=======
       // Quiz completed, navigate to results page
       navigate(`/quiz/results/${category}/${score}`);
->>>>>>> Stashed changes
     }
   };
 
   const handleBack = () => {
-<<<<<<< Updated upstream
-    navigate("/quiz/category")
-  }
-=======
     navigate("/quiz/category");
   };
->>>>>>> Stashed changes
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -342,13 +259,9 @@ const QuestionPage = ({ darkMode }) => {
 
       <div className="progress-container">
         <div
-<<<<<<< Updated upstream
-          className={`progress-bar ${animateProgress ? "animate-progress" : ""}`}
-=======
           className={`progress-bar ${
             animateProgress ? "animate-progress" : ""
           }`}
->>>>>>> Stashed changes
           style={{
             width: `${progressPercentage}%`,
             background: `linear-gradient(to right, ${categoryInfo.color}, ${categoryInfo.color}CC)`,
@@ -426,14 +339,7 @@ const QuestionPage = ({ darkMode }) => {
         )}
       </div>
     </div>
-<<<<<<< Updated upstream
-  )
-}
-
-export default QuestionPage
-=======
   );
 };
 
 export default QuestionPage;
->>>>>>> Stashed changes

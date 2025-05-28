@@ -1,27 +1,16 @@
-<<<<<<< Updated upstream
-import { useState, useEffect } from "react"
-import { Lock, User, ArrowRight, Key, Shield } from "lucide-react"
-import { Link } from "react-router-dom"
-import "./AccessLock.css"
-=======
 import React, { useState, useEffect } from "react";
 import { Lock, User, ArrowRight, Key, Shield } from "lucide-react";
 import "./AccessLock.css";
->>>>>>> Stashed changes
 
 const AccessLock = ({ onClose }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    //after mount
-    setIsAnimating(true)
-=======
     // Start animation after component mounts
     setIsAnimating(true);
->>>>>>> Stashed changes
 
+    // Show signup form after lock animation completes
     const timer = setTimeout(() => {
       setShowSignup(true);
     }, 1000);
