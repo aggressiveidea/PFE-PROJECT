@@ -1,4 +1,3 @@
-"use client"
 import { useState } from "react"
 import "./BookLibDetail.css"
 import { saveItem, formatBookForLibrary } from "../../services/libraryService"

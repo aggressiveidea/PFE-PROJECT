@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 
-// Create a context for authentication
 const AuthContext = createContext({
   user: null,
   isAdmin: false,
@@ -12,14 +11,12 @@ const AuthContext = createContext({
   logout: () => {},
 })
 
-// Hook to use the auth context
 export const useAuth = () => useContext(AuthContext)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Function to refresh user data from localStorage
   const refreshUserData = () => {
     try {
       const userString = localStorage.getItem("user")
@@ -32,7 +29,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Load user data on initial mount
   useEffect(() => {
     const loadUser = () => {
       try {
@@ -50,22 +46,18 @@ export function AuthProvider({ children }) {
 
     loadUser()
 
-    // Listen for user updates
+
     const handleUserUpdate = () => loadUser()
     window.addEventListener("userUpdated", handleUserUpdate)
 
-    // Listen for role updates
     window.addEventListener("roleUpdated", handleUserUpdate)
 
-    // Set up polling to check for role changes
     const roleCheckInterval = setInterval(() => {
-      // Get the current user ID to compare with stored user
       const userString = localStorage.getItem("user")
       if (userString) {
         const userData = JSON.parse(userString)
         const userId = userData._id
 
-        // Check if there's a newer version of the user data
         const updatedUsersString = localStorage.getItem("updatedUsers")
         if (updatedUsersString) {
           try {
@@ -97,7 +89,6 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("user")
     localStorage.removeItem("authData")

@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { Eye, Heart, MessageCircle, TrendingUp, Clock } from "lucide-react"
 import { Swiper, SwiperSlide } from "swiper/react"
