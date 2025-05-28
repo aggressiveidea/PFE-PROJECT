@@ -1,5 +1,3 @@
-"use client"
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "./views/Home"
 import Header from "./components/forHome/Header"
@@ -21,7 +19,7 @@ import ContentAdminDashboard from "./views/DashboardContentAdmin"
 import QuizPage from "./views/QuizPage"
 import BookLib from "./views/BooksLib"
 import PasswordReset from "./components/password-reset"
-
+import ForgotPassword from "./components/forSignup/forgotPassword"
 function App() {
 
   console.log("App rendering, current path:", window.location.pathname)
@@ -49,6 +47,7 @@ function App() {
         <Route path="/quiz/*" element={<QuizPage />} />
         <Route path="/book" element={<BookLib />} />
         <Route path="/reset-password" element={<PasswordReset />} />
+         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="*"
           element={

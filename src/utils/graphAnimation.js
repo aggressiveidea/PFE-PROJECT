@@ -18,13 +18,13 @@ export const initKnowledgeGraphAnimation = (container) => {
     const nodes = Array.from({ length: 25 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 20 + 15, // Much larger nodes
+      radius: Math.random() * 20 + 15, 
       color: getRandomColor(),
       vx: (Math.random() - 0.5) * 0.8,
       vy: (Math.random() - 0.5) * 0.8,
     }))
   
-    // Generate more visible links
+
     const links = []
     for (let i = 0; i < nodes.length; i++) {
       const numLinks = Math.floor(Math.random() * 3) + 2 

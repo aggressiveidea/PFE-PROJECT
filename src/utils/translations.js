@@ -1,6 +1,5 @@
 export const translations = {
     en: {
-      // Header
       home: "Home",
       about: "About",
       explore: "Explore",
@@ -8,7 +7,6 @@ export const translations = {
       searchPlaceholder: "Search ICT terms...",
       startExploring: "Start Exploring",
   
-      // Hero
       heroTitle: "Explore ICT Terms in Three Languages",
       heroDescription:
         "Discover and visualize relationships between ICT terms in English, French, and Arabic with our interactive knowledge graph.",
@@ -18,7 +16,6 @@ export const translations = {
       ictTerms: "ICT Terms",
       categoriesCount: "Categories",
   
-      // Features
       newFeatures: "New Features",
       featuresTitle: "Why Use This Dictionary?",
       featuresDescription:
@@ -34,7 +31,6 @@ export const translations = {
       regularlyUpdated: "Regularly Updated",
       regularlyUpdatedDesc: "Our database is continuously updated with the latest ICT terminology and definitions.",
   
-      // Knowledge Graph
       interactive: "Interactive",
       knowledgeGraphTitle: "Explore the Knowledge Graph",
       knowledgeGraphDescription:
@@ -46,8 +42,7 @@ export const translations = {
       networking: "Networking",
       selectedTerm: "Selected Term",
       relatedTerms: "Related Terms",
-  
-      // Popular Terms
+
       trending: "Trending",
       popularTermsTitle: "Popular ICT Terms",
       popularTermsDescription: "Explore the most frequently searched ICT terms in our dictionary.",
@@ -55,8 +50,7 @@ export const translations = {
       ai: "AI",
       viewDetails: "View Details",
       exploreAllTerms: "Explore All Terms",
-  
-      // Term definitions
+ 
       aiDefinition: "The simulation of human intelligence processes by machines, especially computer systems.",
       cloudDefinition:
         "The delivery of different services through the Internet, including data storage, servers, databases, networking, and software.",
@@ -73,7 +67,6 @@ export const translations = {
       bigDataDefinition:
         "Extremely large data sets that may be analyzed computationally to reveal patterns, trends, and associations, especially relating to human behavior and interactions.",
   
-      // Footer
       footerDescription:
         "Explore ICT terminology in English, French, and Arabic with our interactive knowledge graph visualization.",
       usefulLinks: "Useful Links",
@@ -86,7 +79,7 @@ export const translations = {
     },
   
     fr: {
-      // Header
+    
       home: "Accueil",
       about: "À propos",
       explore: "Explorer",
@@ -94,7 +87,6 @@ export const translations = {
       searchPlaceholder: "Rechercher des termes TIC...",
       startExploring: "Commencer à Explorer",
   
-      // Hero
       heroTitle: "Explorez les Termes TIC en Trois Langues",
       heroDescription:
         "Découvrez et visualisez les relations entre les termes TIC en anglais, français et arabe avec notre graphe de connaissances interactif.",
@@ -104,7 +96,7 @@ export const translations = {
       ictTerms: "Termes TIC",
       categoriesCount: "Catégories",
   
-      // Features
+  
       newFeatures: "Nouvelles Fonctionnalités",
       featuresTitle: "Pourquoi Utiliser Ce Dictionnaire?",
       featuresDescription:
@@ -122,7 +114,6 @@ export const translations = {
       regularlyUpdatedDesc:
         "Notre base de données est continuellement mise à jour avec la dernière terminologie et définitions TIC.",
   
-      // Knowledge Graph
       interactive: "Interactif",
       knowledgeGraphTitle: "Explorez le Graphe de Connaissances",
       knowledgeGraphDescription:
@@ -135,7 +126,6 @@ export const translations = {
       selectedTerm: "Terme Sélectionné",
       relatedTerms: "Termes Connexes",
   
-      // Popular Terms
       trending: "Tendance",
       popularTermsTitle: "Termes TIC Populaires",
       popularTermsDescription: "Explorez les termes TIC les plus fréquemment recherchés dans notre dictionnaire.",
@@ -143,8 +133,7 @@ export const translations = {
       ai: "IA",
       viewDetails: "Voir les Détails",
       exploreAllTerms: "Explorer Tous les Termes",
-  
-      // Term definitions
+
       aiDefinition:
         "La simulation des processus d'intelligence humaine par des machines, en particulier des systèmes informatiques.",
       cloudDefinition:
@@ -162,7 +151,6 @@ export const translations = {
       bigDataDefinition:
         "Des ensembles de données extrêmement volumineux qui peuvent être analysés par calcul pour révéler des modèles, des tendances et des associations, en particulier concernant le comportement humain et les interactions.",
   
-      // Footer
       footerDescription:
         "Explorez la terminologie TIC en anglais, français et arabe avec notre visualisation interactive de graphe de connaissances.",
       usefulLinks: "Liens Utiles",
@@ -175,7 +163,7 @@ export const translations = {
     },
   
     ar: {
-      // Header
+  
       home: "الرئيسية",
       about: "حول",
       explore: "استكشاف",
@@ -183,7 +171,7 @@ export const translations = {
       searchPlaceholder: "ابحث عن مصطلحات تكنولوجيا المعلومات والاتصالات...",
       startExploring: "ابدأ الاستكشاف",
   
-      // Hero
+    
       heroTitle: "استكشف مصطلحات تكنولوجيا المعلومات والاتصالات بثلاث لغات",
       heroDescription:
         "اكتشف وتصور العلاقات بين مصطلحات تكنولوجيا المعلومات والاتصالات باللغات الإنجليزية والفرنسية والعربية مع رسم المعرفة التفاعلي.",
@@ -193,7 +181,7 @@ export const translations = {
       ictTerms: "مصطلحات تكنولوجيا المعلومات",
       categoriesCount: "الفئات",
   
-      // Features
+   
       newFeatures: "ميزات جديدة",
       featuresTitle: "لماذا تستخدم هذا القاموس؟",
       featuresDescription:
@@ -207,8 +195,7 @@ export const translations = {
       interactiveGraphDesc: "تصور العلاقات بين مصطلحات تكنولوجيا المعلومات والاتصالات واستكشاف الروابط في رسم تفاعلي.",
       regularlyUpdated: "تحديث منتظم",
       regularlyUpdatedDesc: "يتم تحديث قاعدة بياناتنا باستمرار بأحدث مصطلحات وتعريفات تكنولوجيا المعلومات والاتصالات.",
-  
-      // Knowledge Graph
+ 
       interactive: "تفاعلي",
       knowledgeGraphTitle: "استكشف رسم المعرفة",
       knowledgeGraphDescription:
@@ -221,7 +208,6 @@ export const translations = {
       selectedTerm: "المصطلح المحدد",
       relatedTerms: "المصطلحات ذات الصلة",
   
-      // Popular Terms
       trending: "الأكثر رواجاً",
       popularTermsTitle: "مصطلحات تكنولوجيا المعلومات والاتصالات الشائعة",
       popularTermsDescription: "استكشف مصطلحات تكنولوجيا المعلومات والاتصالات الأكثر بحثًا في قاموسنا.",
@@ -229,8 +215,7 @@ export const translations = {
       ai: "الذكاء الاصطناعي",
       viewDetails: "عرض التفاصيل",
       exploreAllTerms: "استكشاف جميع المصطلحات",
-  
-      // Term definitions
+
       aiDefinition: "محاكاة عمليات الذكاء البشري بواسطة الآلات، وخاصة أنظمة الكمبيوتر.",
       cloudDefinition:
         "تقديم خدمات مختلفة عبر الإنترنت، بما في ذلك تخزين البيانات والخوادم وقواعد البيانات والشبكات والبرمجيات.",
@@ -246,8 +231,7 @@ export const translations = {
         "ممارسة حماية الأنظمة والشبكات والبرامج من الهجمات الرقمية التي تهدف إلى الوصول إلى المعلومات الحساسة أو تغييرها أو تدميرها.",
       bigDataDefinition:
         "مجموعات بيانات كبيرة للغاية يمكن تحليلها حسابيًا للكشف عن الأنماط والاتجاهات والارتباطات، خاصة فيما يتعلق بالسلوك البشري والتفاعلات.",
-  
-      // Footer
+ 
       footerDescription:
         "استكشف مصطلحات تكنولوجيا المعلومات والاتصالات باللغات الإنجليزية والفرنسية والعربية مع تصور رسم المعرفة التفاعلي.",
       usefulLinks: "روابط مفيدة",

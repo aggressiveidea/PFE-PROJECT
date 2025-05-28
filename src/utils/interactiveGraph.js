@@ -6,14 +6,11 @@
  */
 export const initInteractiveGraph = (container, language) => {
     if (typeof window === "undefined") return () => {}
-  
-    // This would normally use D3.js or a similar library
-    // For this example, we'll create a simplified version
-  
+
     const width = container.clientWidth
     const height = container.clientHeight
   
-    // Create canvas for better performance
+
     const canvas = document.createElement("canvas")
     canvas.width = width * window.devicePixelRatio
     canvas.height = height * window.devicePixelRatio
@@ -24,7 +21,6 @@ export const initInteractiveGraph = (container, language) => {
     const ctx = canvas.getContext("2d")
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
   
-    // Sample data - in a real app, this would come from an API
     const categories = ["hardware", "software", "networking", "security", "ai"]
   
     // Generate nodes for each category

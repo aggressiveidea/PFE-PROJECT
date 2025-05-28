@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState, useCallback } from "react"
 import { ChevronLeft, ChevronRight, User } from "lucide-react"
 import "./TopCreators.css"
