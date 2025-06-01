@@ -2028,6 +2028,30 @@ export const deleteMessage = async (id) => {
   }
 };
 
+export const approveMessage = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/approve/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to approve message");
+
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Approval failed");
+  } catch (error) {
+    console.error("Error approving message:", error);
+    throw error;
+  }
+};
+
+
 export const approveArticle = async (id) => {
   try {
     console.log("...........", id);

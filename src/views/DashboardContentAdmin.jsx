@@ -35,7 +35,8 @@ import {
   getUnverifiedMessages,
   GetUnverifiedarticle,
   deleteMessage,
-} from "../services/Api"
+  approveMessage,
+} from "../services/Api";
 
 export default function ContentAdminDashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -168,7 +169,10 @@ export default function ContentAdminDashboard() {
           if (unverifiedMessages && Array.isArray(unverifiedMessages)) {
             const messagesWithUsers = await Promise.all(
               unverifiedMessages.map(async (msg) => {
-                try {
+                try
+                {
+                  
+                  console.log("the fucking mssgg", msg)
                   const user = await getUserById(msg.userID)
                   return {
                     ...msg,
@@ -321,24 +325,25 @@ export default function ContentAdminDashboard() {
           throw new Error("Approval failed")
         }
       } else if (activeTab === "messages") {
-        // Handle message approval - assuming there's an API for this
-        try {
+        // Call API to approve message
+        const response = await approveMessage(item._id);
+
+        if (response && response.success) {
           // Update local status
-          setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }))
+          setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }));
 
           // Update stats
           setStats((prev) => ({
             ...prev,
             pendingMessages: prev.pendingMessages - 1,
-          }))
+          }));
 
-          showNotification("success", "Message successfully approved!")
+          showNotification("success", "Message successfully approved!");
 
           // Refresh the data
-          fetchData()
-        } catch (error) {
-          console.error("Error approving message:", error)
-          throw error
+          fetchData();
+        } else {
+          throw new Error("Approval failed");
         }
       } else if (activeTab === "terms") {
         // Handle terms approval - assuming there's an API for this

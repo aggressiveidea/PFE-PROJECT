@@ -168,6 +168,7 @@ const ArticleDetail = () => {
         return
       }
 
+      console.log("hiiiiiiiiiiiiiiiiiiiiiiiiii", user)
       const content = { text: newComment, userID: user._id }
 
       const notification = document.createElement("div")

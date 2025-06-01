@@ -1,326 +1,956 @@
+"use client";
+
 import { useState } from "react";
+import {
+  Network,
+  Database,
+  Zap,
+  Cpu,
+  ShoppingCart,
+  FileText,
+  Server,
+  Globe,
+} from "lucide-react";
 import AlgorithmModal from "./AlgorithmModal";
 import "./GraphAlgorithms.css";
 
-const GraphAlgorithms = ({ language = "english" }) => {
+const GraphAlgorithmsEnhanced = ({
+  language = "english",
+  onAlgorithmSelect,
+}) => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
+  const [selectedScope, setSelectedScope] = useState("complete");
+  const [selectedTarget, setSelectedTarget] = useState(null);
+  const [selectedClusterType, setSelectedClusterType] = useState(null);
+  const [selectedDefinitionLevel, setSelectedDefinitionLevel] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [
+    /*showResults, setShowResults*/
+  ] = useState(false);
+  const [
+    /*appliedAlgorithmResult, setAppliedAlgorithmResult*/
+  ] = useState(null);
 
+  // Mock data for filtering counts
+  const filterCounts = {
+    categories: {
+      "Computer Crime": 8,
+      "Personal Data": 12,
+      "Electronic Commerce": 6,
+      Organization: 15,
+      Networks: 22,
+      "Intellectual Property": 9,
+      Miscellaneous: 18,
+      "Computer Science": 25,
+    },
+    definitions: {
+      Primary: 45,
+      Secondary: 32,
+    },
+    terms: 115,
+  };
+
+  // Translations
   const translations = {
     english: {
-      title: "Graph Data Algorithms",
-      subtitle: "Explore and visualize common graph algorithms",
+      title: "Graph Algorithms",
+      subtitle: "Explore terms and concepts powered by Neo4j graph technology",
+      primaryProvision: "Primary Algorithm",
+      applyTo: "Apply to:",
+      completeGraph: "Complete Graph",
+      lastResearch: "Last Research",
+      clustering: "Clustering",
+      custom: "Custom",
+      apply: "Apply Algorithm",
+      close: "Close",
+      complexity: "Complexity",
+      time: "Time:",
+      space: "Space:",
+      howItWorks: "How It Works",
+      applications: "Applications",
+      examples: "Examples",
+      beforeExample: "Before Algorithm",
+      afterExample: "After Algorithm",
+      byCategory: "By Category",
+      byDefinition: "By Definition",
+      firstLevel: "First Level",
+      secondLevel: "Second Level",
+      searchPlaceholder: "Search algorithms...",
+      filters: "Filters",
+      categories: "Categories",
+      definitions: "Definitions",
+      terms: "Terms",
+      showAll: "Show All",
+      networkTypes: {
+        networks: "Networks",
+        data: "Data",
+        electrical: "Electrical",
+        computer: "Computer",
+        ecommerce: "E-Commerce",
+        security: "Security",
+        cloud: "Cloud",
+        internet: "Internet",
+      },
+      algorithmCategories: {
+        all: "All Categories",
+        centrality: "Centrality",
+        community: "Community Detection",
+        pathfinding: "Path Finding",
+        structure: "Structure Analysis",
+        optimization: "Optimization",
+        clustering: "Clustering",
+      },
+      applicationScopes: {
+        complete: "Complete Graph",
+        lastResearch: "Last Research",
+        clusters: "Clusters",
+        terms: "Terms",
+        definitions: "Definitions",
+        categories: "Categories",
+      },
     },
     french: {
-      title: "Algorithmes de Données de Graphe",
-      subtitle: "Explorez et visualisez les algorithmes de graphe courants",
+      title: "Graphe de Connaissances",
+      subtitle:
+        "Explorez les termes et concepts alimentés par la technologie de graphe Neo4j",
+      primaryProvision: "Algorithme Principal",
+      applyTo: "Appliquer à:",
+      completeGraph: "Graphe Complet",
+      lastResearch: "Dernière Recherche",
+      clustering: "Regroupement",
+      custom: "Personnalisé",
+      apply: "Appliquer l'Algorithme",
+      close: "Fermer",
+      complexity: "Complexité",
+      time: "Temps:",
+      space: "Espace:",
+      howItWorks: "Comment Ça Marche",
+      applications: "Applications",
+      examples: "Exemples",
+      beforeExample: "Avant l'Algorithme",
+      afterExample: "Après l'Algorithme",
+      byCategory: "Par Catégorie",
+      byDefinition: "Par Définition",
+      firstLevel: "Premier Niveau",
+      secondLevel: "Deuxième Niveau",
+      searchPlaceholder: "Rechercher des algorithmes...",
+      filters: "Filtres",
+      categories: "Catégories",
+      definitions: "Définitions",
+      terms: "Termes",
+      showAll: "Tout Afficher",
+      networkTypes: {
+        networks: "Réseaux",
+        data: "Données",
+        electrical: "Électrique",
+        computer: "Informatique",
+        ecommerce: "Commerce Électronique",
+        security: "Sécurité",
+        cloud: "Cloud",
+        internet: "Internet",
+      },
+      algorithmCategories: {
+        all: "Toutes les Catégories",
+        centrality: "Centralité",
+        community: "Détection de Communauté",
+        pathfinding: "Recherche de Chemin",
+        structure: "Analyse de Structure",
+        optimization: "Optimisation",
+        clustering: "Regroupement",
+      },
+      applicationScopes: {
+        complete: "Graphe Complet",
+        lastResearch: "Dernière Recherche",
+        clusters: "Clusters",
+        terms: "Termes",
+        definitions: "Définitions",
+        categories: "Catégories",
+      },
     },
     arabic: {
-      title: "خوارزميات بيانات الرسم البياني",
-      subtitle: "استكشاف وتصور خوارزميات الرسم البياني الشائعة",
+      title: "رسم المعرفة البياني",
+      subtitle:
+        "استكشف المصطلحات والمفاهيم المدعومة بتقنية الرسم البياني Neo4j",
+      primaryProvision: "الخوارزمية الرئيسية",
+      applyTo: "تطبيق على:",
+      completeGraph: "الرسم البياني الكامل",
+      lastResearch: "آخر بحث",
+      clustering: "التجميع",
+      custom: "مخصص",
+      apply: "تطبيق الخوارزمية",
+      close: "إغلاق",
+      complexity: "التعقيد",
+      time: "الوقت:",
+      space: "المساحة:",
+      howItWorks: "كيف تعمل",
+      applications: "التطبيقات",
+      examples: "أمثلة",
+      beforeExample: "قبل الخوارزمية",
+      afterExample: "بعد الخوارزمية",
+      byCategory: "حسب الفئة",
+      byDefinition: "حسب التعريف",
+      firstLevel: "المستوى الأول",
+      secondLevel: "المستوى الثاني",
+      searchPlaceholder: "البحث عن الخوارزميات...",
+      filters: "المرشحات",
+      categories: "الفئات",
+      definitions: "التعريفات",
+      terms: "المصطلحات",
+      showAll: "إظهار الكل",
+      networkTypes: {
+        networks: "الشبكات",
+        data: "البيانات",
+        electrical: "الكهربائية",
+        computer: "الحاسوب",
+        ecommerce: "التجارة الإلكترونية",
+        security: "الأمن",
+        cloud: "السحابة",
+        internet: "الإنترنت",
+      },
+      algorithmCategories: {
+        all: "جميع الفئات",
+        centrality: "المركزية",
+        community: "اكتشاف المجتمع",
+        pathfinding: "إيجاد المسار",
+        structure: "تحليل البنية",
+        optimization: "التحسين",
+        clustering: "التجميع",
+      },
+      applicationScopes: {
+        complete: "الرسم البياني الكامل",
+        lastResearch: "آخر بحث",
+        clusters: "المجموعات",
+        terms: "المصطلحات",
+        definitions: "التعريفات",
+        categories: "الفئات",
+      },
     },
   };
 
   const t = translations[language] || translations.english;
 
+  // Real graph data for examples
+  const graphExamples = {
+    pagerank: {
+      before: {
+        nodes: [
+          { id: 1, x: 50, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 2, x: 100, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 4, x: 75, y: 80, size: 8, color: "#8B5CF6" },
+          { id: 5, x: 125, y: 80, size: 8, color: "#8B5CF6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#ccc", width: 2 },
+          { source: 2, target: 3, color: "#ccc", width: 2 },
+          { source: 1, target: 4, color: "#ccc", width: 2 },
+          { source: 2, target: 4, color: "#ccc", width: 2 },
+          { source: 2, target: 5, color: "#ccc", width: 2 },
+          { source: 3, target: 5, color: "#ccc", width: 2 },
+        ],
+      },
+      after: {
+        nodes: [
+          { id: 1, x: 50, y: 30, size: 6, color: "#EC4899" },
+          { id: 2, x: 100, y: 30, size: 12, color: "#EF4444" },
+          { id: 3, x: 150, y: 30, size: 8, color: "#10B981" },
+          { id: 4, x: 75, y: 80, size: 10, color: "#F59E0B" },
+          { id: 5, x: 125, y: 80, size: 7, color: "#3B82F6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#EF4444", width: 3 },
+          { source: 2, target: 3, color: "#10B981", width: 2 },
+          { source: 1, target: 4, color: "#F59E0B", width: 2 },
+          { source: 2, target: 4, color: "#EF4444", width: 3 },
+          { source: 2, target: 5, color: "#3B82F6", width: 2 },
+          { source: 3, target: 5, color: "#3B82F6", width: 2 },
+        ],
+      },
+    },
+    betweenness: {
+      before: {
+        nodes: [
+          { id: 1, x: 30, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 6, x: 150, y: 90, size: 8, color: "#8B5CF6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#ccc", width: 2 },
+          { source: 2, target: 3, color: "#ccc", width: 2 },
+          { source: 4, target: 5, color: "#ccc", width: 2 },
+          { source: 5, target: 6, color: "#ccc", width: 2 },
+          { source: 2, target: 5, color: "#ccc", width: 2 },
+        ],
+      },
+      after: {
+        nodes: [
+          { id: 1, x: 30, y: 30, size: 6, color: "#3B82F6" },
+          { id: 2, x: 90, y: 30, size: 14, color: "#EF4444" },
+          { id: 3, x: 150, y: 30, size: 6, color: "#3B82F6" },
+          { id: 4, x: 30, y: 90, size: 6, color: "#3B82F6" },
+          { id: 5, x: 90, y: 90, size: 14, color: "#EF4444" },
+          { id: 6, x: 150, y: 90, size: 6, color: "#3B82F6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#3B82F6", width: 2 },
+          { source: 2, target: 3, color: "#3B82F6", width: 2 },
+          { source: 4, target: 5, color: "#3B82F6", width: 2 },
+          { source: 5, target: 6, color: "#3B82F6", width: 2 },
+          { source: 2, target: 5, color: "#EF4444", width: 4 },
+        ],
+      },
+    },
+    louvain: {
+      before: {
+        nodes: [
+          { id: 1, x: 50, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 3, x: 130, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 4, x: 50, y: 70, size: 8, color: "#8B5CF6" },
+          { id: 5, x: 90, y: 70, size: 8, color: "#8B5CF6" },
+          { id: 6, x: 130, y: 70, size: 8, color: "#8B5CF6" },
+          { id: 7, x: 170, y: 50, size: 8, color: "#8B5CF6" },
+          { id: 8, x: 210, y: 50, size: 8, color: "#8B5CF6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#ccc", width: 2 },
+          { source: 1, target: 4, color: "#ccc", width: 2 },
+          { source: 1, target: 5, color: "#ccc", width: 2 },
+          { source: 2, target: 3, color: "#ccc", width: 2 },
+          { source: 2, target: 5, color: "#ccc", width: 2 },
+          { source: 3, target: 6, color: "#ccc", width: 2 },
+          { source: 4, target: 5, color: "#ccc", width: 2 },
+          { source: 5, target: 6, color: "#ccc", width: 2 },
+          { source: 6, target: 7, color: "#ccc", width: 2 },
+          { source: 7, target: 8, color: "#ccc", width: 2 },
+        ],
+      },
+      after: {
+        nodes: [
+          { id: 1, x: 50, y: 30, size: 8, color: "#EF4444" },
+          { id: 2, x: 90, y: 30, size: 8, color: "#EF4444" },
+          { id: 3, x: 130, y: 30, size: 8, color: "#10B981" },
+          { id: 4, x: 50, y: 70, size: 8, color: "#EF4444" },
+          { id: 5, x: 90, y: 70, size: 8, color: "#EF4444" },
+          { id: 6, x: 130, y: 70, size: 8, color: "#10B981" },
+          { id: 7, x: 170, y: 50, size: 8, color: "#3B82F6" },
+          { id: 8, x: 210, y: 50, size: 8, color: "#3B82F6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#EF4444", width: 2 },
+          { source: 1, target: 4, color: "#EF4444", width: 2 },
+          { source: 1, target: 5, color: "#EF4444", width: 2 },
+          { source: 2, target: 3, color: "#ccc", width: 1 },
+          { source: 2, target: 5, color: "#EF4444", width: 2 },
+          { source: 3, target: 6, color: "#10B981", width: 2 },
+          { source: 4, target: 5, color: "#EF4444", width: 2 },
+          { source: 5, target: 6, color: "#ccc", width: 1 },
+          { source: 6, target: 7, color: "#ccc", width: 1 },
+          { source: 7, target: 8, color: "#3B82F6", width: 2 },
+        ],
+      },
+    },
+    dijkstra: {
+      before: {
+        nodes: [
+          { id: 1, x: 30, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
+          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 6, x: 150, y: 90, size: 8, color: "#8B5CF6" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#ccc", width: 2 },
+          { source: 1, target: 4, color: "#ccc", width: 2 },
+          { source: 2, target: 3, color: "#ccc", width: 2 },
+          { source: 2, target: 5, color: "#ccc", width: 2 },
+          { source: 3, target: 6, color: "#ccc", width: 2 },
+          { source: 4, target: 5, color: "#ccc", width: 2 },
+          { source: 5, target: 6, color: "#ccc", width: 2 },
+        ],
+      },
+      after: {
+        nodes: [
+          { id: 1, x: 30, y: 30, size: 10, color: "#EF4444" },
+          { id: 2, x: 90, y: 30, size: 8, color: "#F59E0B" },
+          { id: 3, x: 150, y: 30, size: 8, color: "#10B981" },
+          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
+          { id: 6, x: 150, y: 90, size: 10, color: "#EF4444" },
+        ],
+        edges: [
+          { source: 1, target: 2, color: "#F59E0B", width: 3 },
+          { source: 1, target: 4, color: "#ccc", width: 1 },
+          { source: 2, target: 3, color: "#10B981", width: 3 },
+          { source: 2, target: 5, color: "#ccc", width: 1 },
+          { source: 3, target: 6, color: "#EF4444", width: 3 },
+          { source: 4, target: 5, color: "#ccc", width: 1 },
+          { source: 5, target: 6, color: "#ccc", width: 1 },
+        ],
+      },
+    },
+  };
+
+  // Enhanced algorithms with more examples
   const algorithms = [
-    {
-      id: "shortest-path",
-      name: {
-        english: "Shortest Path (Dijkstra's Algorithm)",
-        french: "Chemin le Plus Court (Algorithme de Dijkstra)",
-        arabic: "أقصر مسار (خوارزمية ديكسترا)",
-      },
-      description: {
-        english:
-          "Finds the shortest path between two nodes in a graph by iteratively selecting the unvisited node with the smallest tentative distance.",
-        french:
-          "Trouve le chemin le plus court entre deux nœuds dans un graphe en sélectionnant itérativement le nœud non visité avec la plus petite distance provisoire.",
-        arabic:
-          "تجد أقصر مسار بين عقدتين في الرسم البياني من خلال اختيار العقدة غير المزارة ذات المسافة المؤقتة الأصغر بشكل متكرر.",
-      },
-      timeComplexity: "O(|E| + |V|log|V|)",
-      spaceComplexity: "O(|V|)",
-      formula: "d[v] = min(d[v], d[u] + w(u,v))",
-      formulaExplanation: {
-        english:
-          "Where d[v] is the distance to vertex v, d[u] is the distance to vertex u, and w(u,v) is the weight of the edge from u to v.",
-        french:
-          "Où d[v] est la distance au sommet v, d[u] est la distance au sommet u, et w(u,v) est le poids de l'arête de u à v.",
-        arabic:
-          "حيث d[v] هي المسافة إلى الرأس v، و d[u] هي المسافة إلى الرأس u، و w(u,v) هي وزن الحافة من u إلى v.",
-      },
-      parameters: ["startNode", "endNode"],
-      pseudocode: [
-        "function Dijkstra(Graph, source):",
-        "    create vertex set Q",
-        "    for each vertex v in Graph:",
-        "        dist[v] ← INFINITY",
-        "        prev[v] ← UNDEFINED",
-        "        add v to Q",
-        "    dist[source] ← 0",
-        "",
-        "    while Q is not empty:",
-        "        u ← vertex in Q with min dist[u]",
-        "        remove u from Q",
-        "",
-        "        for each neighbor v of u:",
-        "            alt ← dist[u] + length(u, v)",
-        "            if alt < dist[v]:",
-        "                dist[v] ← alt",
-        "                prev[v] ← u",
-        "",
-        "    return dist[], prev[]",
-      ],
-    },
-    {
-      id: "bfs",
-      name: {
-        english: "Breadth-First Search (BFS)",
-        french: "Parcours en Largeur",
-        arabic: "البحث أولاً بالعرض",
-      },
-      description: {
-        english:
-          "Explores all vertices at the present depth before moving on to vertices at the next depth level. Useful for finding shortest paths in unweighted graphs.",
-        french:
-          "Explore tous les sommets à la profondeur actuelle avant de passer aux sommets du niveau de profondeur suivant. Utile pour trouver les chemins les plus courts dans les graphes non pondérés.",
-        arabic:
-          "يستكشف جميع الرؤوس في العمق الحالي قبل الانتقال إلى الرؤوس في مستوى العمق التالي. مفيد لإيجاد أقصر المسارات في الرسوم البيانية غير الموزونة.",
-      },
-      timeComplexity: "O(|V| + |E|)",
-      spaceComplexity: "O(|V|)",
-      formula: "Queue-based traversal",
-      formulaExplanation: {
-        english:
-          "Uses a queue data structure to keep track of vertices to be explored next.",
-        french:
-          "Utilise une structure de données de file pour suivre les sommets à explorer ensuite.",
-        arabic:
-          "يستخدم بنية بيانات الطابور لتتبع الرؤوس المراد استكشافها بعد ذلك.",
-      },
-      parameters: ["startNode"],
-      pseudocode: [
-        "function BFS(Graph, start):",
-        "    create queue Q",
-        "    mark start as visited",
-        "    Q.enqueue(start)",
-        "",
-        "    while Q is not empty:",
-        "        v = Q.dequeue()",
-        "        for each neighbor w of v:",
-        "            if w is not visited:",
-        "                mark w as visited",
-        "                Q.enqueue(w)",
-      ],
-    },
-    {
-      id: "dfs",
-      name: {
-        english: "Depth-First Search (DFS)",
-        french: "Parcours en Profondeur",
-        arabic: "البحث أولاً بالعمق",
-      },
-      description: {
-        english:
-          "Explores as far as possible along each branch before backtracking. Useful for topological sorting, finding connected components, and solving puzzles.",
-        french:
-          "Explore aussi loin que possible le long de chaque branche avant de revenir en arrière. Utile pour le tri topologique, la recherche de composants connectés et la résolution de puzzles.",
-        arabic:
-          "يستكشف بعيدًا قدر الإمكان على طول كل فرع قبل التراجع. مفيد للفرز الطوبولوجي، وإيجاد المكونات المتصلة، وحل الألغاز.",
-      },
-      timeComplexity: "O(|V| + |E|)",
-      spaceComplexity: "O(|V|)",
-      formula: "Stack-based traversal",
-      formulaExplanation: {
-        english:
-          "Uses a stack data structure (or recursion) to keep track of vertices to be explored next.",
-        french:
-          "Utilise une structure de données de pile (ou récursion) pour suivre les sommets à explorer ensuite.",
-        arabic:
-          "يستخدم بنية بيانات المكدس (أو التكرار) لتتبع الرؤوس المراد استكشافها بعد ذلك.",
-      },
-      parameters: ["startNode"],
-      pseudocode: [
-        "function DFS(Graph, start):",
-        "    mark start as visited",
-        "    for each neighbor w of start:",
-        "        if w is not visited:",
-        "            DFS(Graph, w)",
-      ],
-    },
     {
       id: "pagerank",
       name: {
-        english: "PageRank Algorithm",
-        french: "Algorithme PageRank",
+        english: "PageRank",
+        french: "PageRank",
         arabic: "خوارزمية تصنيف الصفحات",
       },
-      description: {
-        english:
-          "Measures the importance of each node in a graph based on the structure of incoming links, with the underlying assumption that more important nodes receive more links.",
-        french:
-          "Mesure l'importance de chaque nœud dans un graphe en fonction de la structure des liens entrants, avec l'hypothèse sous-jacente que les nœuds plus importants reçoivent plus de liens.",
-        arabic:
-          "تقيس أهمية كل عقدة في الرسم البياني بناءً على هيكل الروابط الواردة، مع الافتراض الأساسي أن العقد الأكثر أهمية تتلقى المزيد من الروابط.",
-      },
-      timeComplexity: "O(k|V| + |E|)",
-      spaceComplexity: "O(|V|)",
-      formula:
-        "PR(u) = (1-d) + d \\sum_{v \\in N_{in}(u)} \\frac{PR(v)}{|N_{out}(v)|}",
-      formulaExplanation: {
-        english:
-          "Where d is the damping factor, N_in(u) are nodes linking to u, and N_out(v) is the number of outgoing links from v.",
-        french:
-          "Où d est le facteur d'amortissement, N_in(u) sont les nœuds liés à u, et N_out(v) est le nombre de liens sortants de v.",
-        arabic:
-          "حيث d هو عامل التخميد، و N_in(u) هي العقد التي ترتبط بـ u، و N_out(v) هو عدد الروابط الخارجة من v.",
-      },
-      parameters: ["dampingFactor", "iterations"],
-      pseudocode: [
-        "function PageRank(Graph, d, iterations):",
-        "    for each vertex v in Graph:",
-        "        PR[v] ← 1/N",
-        "    for i from 1 to iterations:",
-        "        for each vertex v in Graph:",
-        "            PR[v] ← (1-d) + d * sum(PR[u]/L[u] for u linking to v)",
-        "    return PR[]",
-      ],
-    },
-    {
-      id: "community-detection",
-      name: {
-        english: "Community Detection (Louvain Method)",
-        french: "Détection de Communauté (Méthode de Louvain)",
-        arabic: "اكتشاف المجتمع (طريقة لوفان)",
+      category: "centrality",
+      categoryLabel: {
+        english: "CENTRALITY",
+        french: "CENTRALITÉ",
+        arabic: "المركزية",
       },
       description: {
         english:
-          "A hierarchical clustering algorithm that optimizes modularity by iteratively merging communities to find the optimal community structure.",
+          "Measures the importance of each node based on the structure of incoming links",
         french:
-          "Un algorithme de clustering hiérarchique qui optimise la modularité en fusionnant itérativement les communautés pour trouver la structure communautaire optimale.",
-        arabic:
-          "خوارزمية تجميع هرمية تحسن النمطية من خلال دمج المجتمعات بشكل متكرر للعثور على هيكل المجتمع الأمثل.",
+          "Mesure l'importance de chaque nœud en fonction de la structure des liens entrants",
+        arabic: "تقيس أهمية كل عقدة بناءً على هيكل الروابط الواردة",
       },
-      timeComplexity: "O(|E|)",
-      spaceComplexity: "O(|V| + |E|)",
-      formula:
-        "Q = \\frac{1}{2m}\\sum_{ij} \\left[ A_{ij} - \\frac{k_i k_j}{2m}\\right] \\delta(c_i, c_j)",
-      formulaExplanation: {
+      timeComplexity: "O(n + m)",
+      spaceComplexity: "O(n)",
+      howItWorks: {
         english:
-          "Where m is the number of edges, A is the adjacency matrix, k is the degree of nodes, and δ is 1 if nodes i and j are in the same community.",
+          "PageRank assigns a numerical weight to each node in a graph, with the purpose of measuring its relative importance within the set. The algorithm works by counting the number and quality of links to a page to determine a rough estimate of how important the website is.",
         french:
-          "Où m est le nombre d'arêtes, A est la matrice d'adjacence, k est le degré des nœuds, et δ est 1 si les nœuds i et j sont dans la même communauté.",
+          "PageRank attribue un poids numérique à chaque nœud d'un graphe, dans le but de mesurer son importance relative au sein de l'ensemble. L'algorithme fonctionne en comptant le nombre et la qualité des liens vers une page.",
         arabic:
-          "حيث m هو عدد الحواف، و A هي مصفوفة التجاور، و k هي درجة العقد، و δ هي 1 إذا كانت العقد i و j في نفس المجتمع.",
+          "تخصص خوارزمية PageRank وزنًا رقميًا لكل عقدة في الرسم البياني، بهدف قياس أهميتها النسبية ضمن المجموعة.",
       },
-      parameters: [],
-      pseudocode: [
-        "function Louvain(Graph):",
-        "    assign each node to its own community",
-        "    while modularity increases:",
-        "        for each node i:",
-        "            place i in community that maximizes modularity gain",
-        "        if no improvement:",
-        "            break",
-        "        merge nodes in same community",
-        "    return communities",
-      ],
+      applications: {
+        english: [
+          "Web search ranking",
+          "Social network analysis",
+          "Citation analysis in academic papers",
+          "Recommendation systems",
+        ],
+        french: [
+          "Classement des recherches Web",
+          "Analyse des réseaux sociaux",
+          "Analyse des citations dans les articles académiques",
+          "Systèmes de recommandation",
+        ],
+        arabic: [
+          "ترتيب نتائج البحث على الويب",
+          "تحليل الشبكات الاجتماعية",
+          "تحليل الاستشهادات في الأوراق الأكاديمية",
+          "أنظمة التوصية",
+        ],
+      },
+      before: graphExamples.pagerank.before,
+      after: graphExamples.pagerank.after,
+      overview:
+        "PageRank is a link analysis algorithm used by Google Search to rank web pages in their search engine results. It works by counting the number and quality of links to a page to determine a rough estimate of how important the website is.",
     },
     {
-      id: "centrality",
+      id: "betweenness",
       name: {
         english: "Betweenness Centrality",
         french: "Centralité d'Intermédiarité",
         arabic: "المركزية البينية",
       },
+      category: "centrality",
+      categoryLabel: {
+        english: "CENTRALITY",
+        french: "CENTRALITÉ",
+        arabic: "المركزية",
+      },
       description: {
         english:
-          "Measures the extent to which a node lies on paths between other nodes. Nodes with high betweenness may have considerable influence within a network.",
+          "Identifies nodes that act as bridges between different parts of a graph",
         french:
-          "Mesure dans quelle mesure un nœud se trouve sur les chemins entre d'autres nœuds. Les nœuds à forte intermédiarité peuvent avoir une influence considérable au sein d'un réseau.",
-        arabic:
-          "تقيس مدى وقوع العقدة على المسارات بين العقد الأخرى. قد يكون للعقد ذات المركزية البينية العالية تأثير كبير داخل الشبكة.",
+          "Identifie les nœuds qui agissent comme des ponts entre différentes parties d'un graphe",
+        arabic: "تحدد العقد التي تعمل كجسور بين أجزاء مختلفة من الرسم البياني",
       },
-      timeComplexity: "O(|V||E|)",
-      spaceComplexity: "O(|V|²)",
-      formula:
-        "C_B(v) = \\sum_{s \\neq v \\neq t} \\frac{\\sigma_{st}(v)}{\\sigma_{st}}",
-      formulaExplanation: {
+      timeComplexity: "O(n³)",
+      spaceComplexity: "O(n² + m)",
+      howItWorks: {
         english:
-          "Where σst is the total number of shortest paths from node s to node t and σst(v) is the number of those paths that pass through v.",
+          "Betweenness centrality is calculated by finding the shortest paths between all pairs of nodes in a graph and then counting how many of these paths pass through each node.",
         french:
-          "Où σst est le nombre total de chemins les plus courts du nœud s au nœud t et σst(v) est le nombre de ces chemins qui passent par v.",
+          "La centralité d'intermédiarité est calculée en trouvant les chemins les plus courts entre toutes les paires de nœuds dans un graphe.",
         arabic:
-          "حيث σst هو العدد الإجمالي لأقصر المسارات من العقدة s إلى العقدة t و σst(v) هو عدد تلك المسارات التي تمر عبر v.",
+          "يتم حساب المركزية البينية من خلال إيجاد أقصر المسارات بين جميع أزواج العقد في الرسم البياني.",
       },
-      parameters: [],
-      pseudocode: [
-        "function BetweennessCentrality(Graph):",
-        "    C_B[v] ← 0 for all v",
-        "    for each s in Graph:",
-        "        run BFS or Dijkstra from s",
-        "        compute dependencies δ[v] for all v",
-        "        add dependencies to C_B[v]",
-        "    return C_B[]",
-      ],
+      applications: {
+        english: [
+          "Identifying influential individuals in social networks",
+          "Finding bottlenecks in transportation networks",
+          "Detecting community bridges in networks",
+          "Network vulnerability analysis",
+        ],
+        french: [
+          "Identification des individus influents dans les réseaux sociaux",
+          "Recherche de goulots d'étranglement dans les réseaux de transport",
+          "Détection des ponts communautaires dans les réseaux",
+          "Analyse de la vulnérabilité du réseau",
+        ],
+        arabic: [
+          "تحديد الأفراد المؤثرين في الشبكات الاجتماعية",
+          "العثور على نقاط الاختناق في شبكات النقل",
+          "اكتشاف جسور المجتمع في الشبكات",
+          "تحليل نقاط ضعف الشبكة",
+        ],
+      },
+      before: graphExamples.betweenness.before,
+      after: graphExamples.betweenness.after,
+      overview:
+        "Betweenness centrality measures the extent to which a node lies on paths between other nodes. Nodes with high betweenness may have considerable influence within a network by virtue of their control over information passing between others.",
     },
     {
-      id: "mst",
+      id: "closeness",
       name: {
-        english: "Minimum Spanning Tree (Kruskal's Algorithm)",
-        french: "Arbre Couvrant Minimal (Algorithme de Kruskal)",
-        arabic: "شجرة امتداد الحد الأدنى (خوارزمية كروسكال)",
+        english: "Closeness Centrality",
+        french: "Centralité de Proximité",
+        arabic: "مركزية التقارب",
+      },
+      category: "centrality",
+      categoryLabel: {
+        english: "CENTRALITY",
+        french: "CENTRALITÉ",
+        arabic: "المركزية",
       },
       description: {
         english:
-          "Finds a subset of the edges that forms a tree that includes every vertex, where the total weight of all the edges in the tree is minimized.",
+          "Measures the average distance from each node to all other nodes in the graph",
         french:
-          "Trouve un sous-ensemble des arêtes qui forme un arbre incluant chaque sommet, où le poids total de toutes les arêtes de l'arbre est minimisé.",
+          "Mesure la distance moyenne de chaque nœud à tous les autres nœuds du graphe",
         arabic:
-          "تجد مجموعة فرعية من الحواف التي تشكل شجرة تتضمن كل رأس، حيث يتم تقليل الوزن الإجمالي لجميع الحواف في الشجرة.",
+          "يقيس متوسط المسافة من كل عقدة إلى جميع العقد الأخرى في الرسم البياني",
       },
-      timeComplexity: "O(|E|log|E|)",
-      spaceComplexity: "O(|V| + |E|)",
-      formula: "Greedy algorithm: Sort edges by weight, add if no cycle forms",
-      formulaExplanation: {
+      timeComplexity: "O(n²)",
+      spaceComplexity: "O(n²)",
+      howItWorks: {
         english:
-          "Kruskal's algorithm builds the MST by adding edges in order of increasing weight, skipping edges that would create a cycle.",
+          "Closeness centrality calculates the sum of the shortest distances between a node and all other nodes in the graph. A node with a high closeness centrality has short distances to all other nodes.",
         french:
-          "L'algorithme de Kruskal construit l'ACM en ajoutant des arêtes par ordre de poids croissant, en sautant les arêtes qui créeraient un cycle.",
+          "La centralité de proximité calcule la somme des distances les plus courtes entre un nœud et tous les autres nœuds du graphe.",
         arabic:
-          "تبني خوارزمية كروسكال شجرة امتداد الحد الأدنى عن طريق إضافة الحواف بترتيب الوزن المتزايد، وتخطي الحواف التي من شأنها أن تخلق دورة.",
+          "تحسب مركزية التقارب مجموع أقصر المسافات بين عقدة وجميع العقد الأخرى في الرسم البياني. العقدة ذات مركزية التقارب العالية لديها مسافات قصيرة إلى جميع العقد الأخرى.",
       },
-      parameters: [],
-      pseudocode: [
-        "function Kruskal(Graph):",
-        "    A = ∅",
-        "    for each vertex v in Graph:",
-        "        Make-Set(v)",
-        "    sort edges of Graph by weight",
-        "    for each edge (u, v) in Graph (in order of increasing weight):",
-        "        if Find-Set(u) ≠ Find-Set(v):",
-        "            A = A ∪ {(u, v)}",
-        "            Union(u, v)",
-        "    return A",
-      ],
+      applications: {
+        english: [
+          "Identifying key influencers in a network",
+          "Finding central locations in a transportation network",
+          "Analyzing information flow in social networks",
+        ],
+        french: [
+          "Identifier les influenceurs clés dans un réseau",
+          "Trouver des emplacements centraux dans un réseau de transport",
+          "Analyser le flux d'informations dans les réseaux sociaux",
+        ],
+        arabic: [
+          "تحديد المؤثرين الرئيسيين في الشبكة",
+          "إيجاد المواقع المركزية في شبكة النقل",
+          "تحليل تدفق المعلومات في الشبكات الاجتماعية",
+        ],
+      },
+      before: graphExamples.pagerank.before,
+      after: graphExamples.pagerank.after,
+      overview:
+        "Closeness centrality measures how close a node is to all other nodes in the network. It is calculated as the reciprocal of the sum of the shortest path distances from a node to all other nodes in the graph.",
+    },
+    {
+      id: "degree",
+      name: {
+        english: "Degree Centrality",
+        french: "Centralité de Degré",
+        arabic: "مركزية الدرجة",
+      },
+      category: "centrality",
+      categoryLabel: {
+        english: "CENTRALITY",
+        french: "CENTRALITÉ",
+        arabic: "المركزية",
+      },
+      description: {
+        english: "Measures the number of connections a node has",
+        french: "Mesure le nombre de connexions qu'un nœud possède",
+        arabic: "يقيس عدد الاتصالات التي تمتلكها العقدة",
+      },
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(n)",
+      howItWorks: {
+        english:
+          "Degree centrality is simply the count of how many connections (edges) a node has. In a directed graph, we can differentiate between in-degree (incoming connections) and out-degree (outgoing connections).",
+        french:
+          "La centralité de degré est simplement le nombre de connexions (arêtes) qu'un nœud possède. Dans un graphe orienté, nous pouvons différencier le degré entrant (connexions entrantes) et le degré sortant (connexions sortantes).",
+        arabic:
+          "مركزية الدرجة هي ببساطة عدد الاتصالات (الحواف) التي تمتلكها العقدة. في الرسم البياني الموجه، يمكننا التمييز بين الدرجة الداخلية (الاتصالات الواردة) والدرجة الخارجية (الاتصالات الصادرة).",
+      },
+      applications: {
+        english: [
+          "Identifying popular users in social networks",
+          "Finding important nodes in a network",
+          "Analyzing network connectivity",
+        ],
+        french: [
+          "Identifier les utilisateurs populaires dans les réseaux sociaux",
+          "Trouver les nœuds importants dans un réseau",
+          "Analyser la connectivité du réseau",
+        ],
+        arabic: [
+          "تحديد المستخدمين المشهورين في الشبكات الاجتماعية",
+          "إيجاد العقد المهمة في الشبكة",
+          "تحليل اتصال الشبكة",
+        ],
+      },
+      before: graphExamples.pagerank.before,
+      after: graphExamples.pagerank.after,
+      overview:
+        "Degree centrality is the simplest measure of node connectivity. It equals the number of edges that a node has. In directed networks, we can define indegree (number of incoming edges) and outdegree (number of outgoing edges).",
+    },
+    {
+      id: "louvain",
+      name: {
+        english: "Louvain Community Detection",
+        french: "Détection de Communauté Louvain",
+        arabic: "اكتشاف المجتمع لوفان",
+      },
+      category: "community",
+      categoryLabel: {
+        english: "COMMUNITY DETECTION",
+        french: "DÉTECTION DE COMMUNAUTÉ",
+        arabic: "اكتشاف المجتمع",
+      },
+      description: {
+        english:
+          "Identifies groups of nodes that are more densely connected to each other than to the rest of the network",
+        french:
+          "Identifie des groupes de nœuds qui sont plus densément connectés entre eux qu'au reste du réseau",
+        arabic:
+          "تحدد مجموعات من العقد التي ترتبط ببعضها البعض بشكل أكثر كثافة من بقية الشبكة",
+      },
+      timeComplexity: "O(n log n)",
+      spaceComplexity: "O(n + m)",
+      howItWorks: {
+        english:
+          "The Louvain method works in two phases that are repeated iteratively. First, it optimizes modularity locally by moving nodes between communities. Then, it aggregates nodes of the same community.",
+        french:
+          "La méthode de Louvain fonctionne en deux phases qui sont répétées de manière itérative. Elle optimise la modularité localement en déplaçant les nœuds entre les communautés.",
+        arabic:
+          "تعمل طريقة Louvain في مرحلتين يتم تكرارهما بشكل متكرر. تقوم بتحسين النمطية محليًا عن طريق نقل العقد بين المجتمعات.",
+      },
+      applications: {
+        english: [
+          "Social network analysis",
+          "Customer segmentation",
+          "Recommendation systems",
+          "Biological network analysis",
+        ],
+        french: [
+          "Analyse des réseaux sociaux",
+          "Segmentation des clients",
+          "Systèmes de recommandation",
+          "Analyse des réseaux biologiques",
+        ],
+        arabic: [
+          "تحليل الشبكات الاجتماعية",
+          "تقسيم العملاء",
+          "أنظمة التوصية",
+          "تحليل الشبكات البيولوجية",
+        ],
+      },
+      before: graphExamples.louvain.before,
+      after: graphExamples.louvain.after,
+      overview:
+        "The Louvain method is a fast algorithm for community detection in large networks. It optimizes modularity, which measures the density of connections within communities compared to connections between communities.",
+    },
+    {
+      id: "labelpropagation",
+      name: {
+        english: "Label Propagation",
+        french: "Propagation d'Étiquettes",
+        arabic: "انتشار التسمية",
+      },
+      category: "community",
+      categoryLabel: {
+        english: "COMMUNITY DETECTION",
+        french: "DÉTECTION DE COMMUNAUTÉ",
+        arabic: "اكتشاف المجتمع",
+      },
+      description: {
+        english:
+          "A fast algorithm for finding community structure in large networks",
+        french:
+          "Un algorithme rapide pour trouver la structure communautaire dans les grands réseaux",
+        arabic: "خوارزمية سريعة لإيجاد هيكل المجتمع في الشبكات الكبيرة",
+      },
+      timeComplexity: "O(m)",
+      spaceComplexity: "O(n)",
+      howItWorks: {
+        english:
+          "Label Propagation works by initially assigning a unique label to each node and then iteratively updating the label of each node to be the one that the majority of its neighbors have.",
+        french:
+          "La propagation d'étiquettes fonctionne en attribuant initialement une étiquette unique à chaque nœud, puis en mettant à jour itérativement l'étiquette de chaque nœud.",
+        arabic:
+          "يعمل انتشار التسمية عن طريق تعيين تسمية فريدة لكل عقدة في البداية، ثم تحديث تسمية كل عقدة بشكل متكرر لتكون هي التسمية التي تمتلكها غالبية جيرانها.",
+      },
+      applications: {
+        english: [
+          "Identifying communities in social networks",
+          "Analyzing social influence",
+          "Detecting fraud in financial networks",
+        ],
+        french: [
+          "Identifier les communautés dans les réseaux sociaux",
+          "Analyser l'influence sociale",
+          "Détecter la fraude dans les réseaux financiers",
+        ],
+        arabic: [
+          "تحديد المجتمعات في الشبكات الاجتماعية",
+          "تحليل التأثير الاجتماعي",
+          "اكتشاف الاحتيال في الشبكات المالية",
+        ],
+      },
+      before: graphExamples.louvain.before,
+      after: graphExamples.louvain.after,
+      overview:
+        "Label Propagation is a semi-supervised machine learning algorithm that assigns labels to previously unlabeled data points. It works by propagating labels through the network based on the principle that connected nodes are likely to have the same label.",
+    },
+    {
+      id: "wcc",
+      name: {
+        english: "Weakly Connected Components",
+        french: "Composantes Connexes Faibles",
+        arabic: "المكونات المتصلة ضعيفة",
+      },
+      category: "structure",
+      categoryLabel: {
+        english: "STRUCTURE ANALYSIS",
+        french: "ANALYSE DE STRUCTURE",
+        arabic: "تحليل البنية",
+      },
+      description: {
+        english:
+          "Finds sets of nodes that are reachable from each other, ignoring direction of edges",
+        french:
+          "Trouve des ensembles de nœuds qui sont accessibles les uns aux autres, en ignorant la direction des arêtes",
+        arabic:
+          "يجد مجموعات من العقد التي يمكن الوصول إليها من بعضها البعض، مع تجاهل اتجاه الحواف",
+      },
+      timeComplexity: "O(n + m)",
+      spaceComplexity: "O(n)",
+      howItWorks: {
+        english:
+          "Weakly Connected Components identifies components by traversing the graph as if all edges were undirected.",
+        french:
+          "Les composantes connexes faibles identifient les composantes en parcourant le graphe comme si toutes les arêtes étaient non orientées.",
+        arabic:
+          "تحدد المكونات المتصلة ضعيفة المكونات عن طريق اجتياز الرسم البياني كما لو كانت جميع الحواف غير موجهة.",
+      },
+      applications: {
+        english: [
+          "Network partitioning",
+          "Identifying disconnected subgraphs",
+          "Analyzing network resilience",
+        ],
+        french: [
+          "Partitionnement de réseau",
+          "Identifier les sous-graphes déconnectés",
+          "Analyser la résilience du réseau",
+        ],
+        arabic: [
+          "تقسيم الشبكة",
+          "تحديد الرسوم البيانية الفرعية المنفصلة",
+          "تحليل مرونة الشبكة",
+        ],
+      },
+      before: graphExamples.louvain.before,
+      after: graphExamples.louvain.after,
+      overview:
+        "Weakly Connected Components finds subgraphs where all nodes are connected to each other by some path, ignoring the direction of edges. This is useful for identifying isolated parts of a directed graph.",
+    },
+    {
+      id: "dijkstra",
+      name: {
+        english: "Dijkstra's Shortest Path",
+        french: "Plus Court Chemin de Dijkstra",
+        arabic: "أقصر مسار لديكسترا",
+      },
+      category: "pathfinding",
+      categoryLabel: {
+        english: "PATH FINDING",
+        french: "RECHERCHE DE CHEMIN",
+        arabic: "إيجاد المسار",
+      },
+      description: {
+        english: "Finds the shortest path between two nodes in a graph",
+        french:
+          "Trouve le chemin le plus court entre deux nœuds dans un graphe",
+        arabic: "يجد أقصر مسار بين عقدتين في الرسم البياني",
+      },
+      timeComplexity: "O(m + n log n)",
+      spaceComplexity: "O(n)",
+      howItWorks: {
+        english:
+          "Dijkstra's algorithm works by maintaining a set of nodes whose shortest distance from the source is already known. It starts with the source node and gradually includes more nodes.",
+        french:
+          "L'algorithme de Dijkstra fonctionne en maintenant un ensemble de nœuds dont la distance la plus courte depuis la source est déjà connue.",
+        arabic:
+          "تعمل خوارزمية Dijkstra عن طريق الاحتفاظ بمجموعة من العقد التي تكون أقصر مسافة لها من المصدر معروفة بالفعل.",
+      },
+      applications: {
+        english: [
+          "Navigation and route planning",
+          "Network routing protocols",
+          "Flight scheduling",
+          "Resource allocation",
+        ],
+        french: [
+          "Navigation et planification d'itinéraire",
+          "Protocoles de routage réseau",
+          "Planification des vols",
+          "Allocation des ressources",
+        ],
+        arabic: [
+          "التنقل وتخطيط المسار",
+          "بروتوكولات توجيه الشبكة",
+          "جدولة الرحلات",
+          "تخصيص الموارد",
+        ],
+      },
+      before: graphExamples.dijkstra.before,
+      after: graphExamples.dijkstra.after,
+      overview:
+        "Dijkstra's algorithm finds the shortest path between nodes in a graph. It works by visiting vertices in order of increasing distance from the source, and for each vertex, relaxing all outgoing edges.",
     },
   ];
 
-  const handleAlgorithmClick = (algorithm) => {
-    setSelectedAlgorithm(algorithm);
+  const getCategoryColor = (category) => {
+    const colors = {
+      centrality: "#3b82f6", // Blue-500
+      community: "#8b5cf6", // Purple-500
+      pathfinding: "#22c55e", // Green-500
+      structure: "#f97316", // Orange-500
+      optimization: "#eab308", // Yellow-500
+      clustering: "#06b6d4", // Cyan-500
+    };
+    return colors[category] || "#6366f1";
   };
 
-  const closeModal = () => {
+  const handleAlgorithmClick = (algorithm) => {
+    setSelectedAlgorithm(algorithm);
+    setSelectedClusterType(null);
+    setSelectedDefinitionLevel(null);
+    setSelectedCategory(null);
+    setSelectedScope("complete");
+    setIsModalOpen(true);
+  };
+
+  const handleCloseDetails = () => {
     setSelectedAlgorithm(null);
+    setIsModalOpen(false);
+  };
+
+  const handleScopeChange = (scope) => {
+    setSelectedScope(scope);
+    setSelectedTarget(null);
+    setSelectedClusterType(null);
+    setSelectedDefinitionLevel(null);
+    setSelectedCategory(null);
+  };
+
+  const handleTargetChange = (target) => {
+    setSelectedTarget(target);
+  };
+
+  const handleClusterTypeChange = (type) => {
+    setSelectedClusterType(type);
+    setSelectedDefinitionLevel(null);
+    setSelectedCategory(null);
+  };
+
+  const handleDefinitionLevelChange = (level) => {
+    setSelectedDefinitionLevel(level);
+    setSelectedCategory(null);
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  /*const handleApplyAlgorithm = () => {
+    if (selectedAlgorithm && onAlgorithmSelect) {
+      const options = {
+        ...selectedAlgorithm,
+        scope: selectedScope,
+      }
+
+      if (selectedScope === "clusters") {
+        if (selectedClusterType === "definitions" && selectedDefinitionLevel) {
+          options.definitionLevel = selectedDefinitionLevel
+        } else if (selectedClusterType === "categories" && selectedCategory) {
+          options.category = selectedCategory
+        }
+        options.clusterType = selectedClusterType
+      }
+
+      // Simulate results
+      const mockResults = {
+        algorithm: selectedAlgorithm.name.english,
+        scope: selectedScope,
+        nodesProcessed: Math.floor(Math.random() * 1000) + 100,
+        edgesProcessed: Math.floor(Math.random() * 5000) + 500,
+        executionTime: (Math.random() * 2 + 0.1).toFixed(2) + "s",
+        results: [
+          { id: 1, name: "Node A", score: 0.95 },
+          { id: 2, name: "Node B", score: 0.87 },
+          { id: 3, name: "Node C", score: 0.76 },
+          { id: 4, name: "Node D", score: 0.65 },
+          { id: 5, name: "Node E", score: 0.54 },
+        ],
+      }
+
+      setAppliedAlgorithmResult(mockResults)
+      setShowResults(true)
+      setIsModalOpen(false)
+
+      if (onAlgorithmSelect) {
+        onAlgorithmSelect(options)
+      }
+    }
+  }*/
+
+  const handleCategoryChangeMain = (category) => {
+    //setActiveCategory(category)
+  };
+
+  // Network type icons
+  const networkIcons = {
+    networks: <Network size={20} />,
+    data: <Database size={20} />,
+    electrical: <Zap size={20} />,
+    computer: <Cpu size={20} />,
+    ecommerce: <ShoppingCart size={20} />,
+    security: <FileText size={20} />,
+    cloud: <Server size={20} />,
+    internet: <Globe size={20} />,
   };
 
   return (
-    <div className="graph-algorithms-section">
-      <div className="algorithms-header">
-        <h2>{t.title}</h2>
-        <p className="algorithms-subtitle">{t.subtitle}</p>
+    <div className="enhanced-graph-algorithms">
+      {/* Header with Title and Subtitle - Clean Style */}
+      <div className="knowledge-graph-header">
+        <h1 className="main-title">Graph Algorithms</h1>
+        <p className="main-subtitle">
+          Explore terms and concepts powered by Neo4j graph technology
+        </p>
+        <div className="header-divider"></div>
       </div>
 
+      {/* Algorithm Cards Grid */}
       <div className="algorithms-grid">
         {algorithms.map((algorithm) => (
           <div
@@ -328,33 +958,73 @@ const GraphAlgorithms = ({ language = "english" }) => {
             className="algorithm-card"
             onClick={() => handleAlgorithmClick(algorithm)}
           >
-            <h3>{algorithm.name[language] || algorithm.name.english}</h3>
-            <p>
+            {/* Keep existing card content but remove the application-scope-dropdown section from card-footer */}
+            <div className="card-header">
+              <div
+                className="algorithm-icon"
+                style={{
+                  backgroundColor: getCategoryColor(algorithm.category),
+                }}
+              >
+                <Network size={24} />
+              </div>
+              <div className="algorithm-info">
+                <h3 className="algorithm-name">
+                  {algorithm.name[language] || algorithm.name.english}
+                </h3>
+                <div
+                  className="algorithm-category"
+                  style={{ color: getCategoryColor(algorithm.category) }}
+                >
+                  {algorithm.categoryLabel[language] ||
+                    algorithm.categoryLabel.english}
+                </div>
+              </div>
+            </div>
+
+            <p className="algorithm-description">
               {algorithm.description[language] || algorithm.description.english}
             </p>
+
             <div className="algorithm-complexity">
-              <span className="time-complexity">
-                <span className="complexity-label">Time:</span>{" "}
-                {algorithm.timeComplexity}
-              </span>
-              <span className="space-complexity">
-                <span className="complexity-label">Space:</span>{" "}
-                {algorithm.spaceComplexity}
-              </span>
+              <div className="complexity-item">
+                <span className="complexity-label">{t.time}</span>
+                <span className="complexity-value">
+                  {algorithm.timeComplexity}
+                </span>
+              </div>
+              <div className="complexity-item">
+                <span className="complexity-label">{t.space}</span>
+                <span className="complexity-value">
+                  {algorithm.spaceComplexity}
+                </span>
+              </div>
+            </div>
+
+            <div className="card-footer">
+              <button
+                className="view-details-btn"
+                style={{
+                  backgroundColor: getCategoryColor(algorithm.category),
+                }}
+              >
+                View Details
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {selectedAlgorithm && (
+      {/* Algorithm Modal */}
+      {selectedAlgorithm && isModalOpen && (
         <AlgorithmModal
+          isOpen={isModalOpen}
+          onClose={handleCloseDetails}
           algorithm={selectedAlgorithm}
-          onClose={closeModal}
-          language={language}
         />
       )}
     </div>
   );
 };
 
-export default GraphAlgorithms;
+export default GraphAlgorithmsEnhanced;

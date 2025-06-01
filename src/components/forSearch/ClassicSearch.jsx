@@ -1,194 +1,289 @@
+"use client";
+
 import { useState, useEffect, useMemo } from "react";
-import {
-  Search,
-  Database,
-  Code,
-  Server,
-  Shield,
-  Cpu,
-  Zap,
-  BookOpen,
-  Hash,
-  Sparkles,
-  ChevronDown,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import "./ClassicSearch.css";
 
-const ClassicSearch = ({
-  terms,
-  allTerms,
-  onTermSelect,
-  onSearchChange,
-  viewMode = "card",
-  language = "en",
-  hasMore = false,
-  loadMoreTerms,
-}) => {
+const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
   const [searchInput, setSearchInput] = useState("");
   const [filteredTerms, setFilteredTerms] = useState(terms);
+  const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [activeCategories, setActiveCategories] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const [suggestedTerms, setSuggestedTerms] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [visibleTerms, setVisibleTerms] = useState(6);
 
+  // Fixed French legal terms to always include in suggestions
+  const fixedSuggestedTerms = [
+    {
+      name: "Droit d'accès",
+      category: "Personal Data",
+      definition:
+        "Le droit pour une personne d'obtenir la confirmation que des données à caractère personnel la concernant sont ou ne sont pas traitées et d'accéder auxdites données.",
+      reference: "Article 15 RGPD",
+      priority: 10,
+      categories: [{ type: "Personal Data" }],
+    },
+    {
+      name: "Droit à l'information",
+      category: "Personal Data",
+      definition:
+        "Le droit d'être informé de manière claire et transparente sur le traitement des données personnelles.",
+      reference: "Articles 13-14 RGPD",
+      priority: 9,
+      categories: [{ type: "Personal Data" }],
+    },
+    {
+      name: "Droit de contestation",
+      category: "Personal Data",
+      definition:
+        "Le droit de contester une décision prise uniquement sur la base d'un traitement automatisé.",
+      reference: "Article 22 RGPD",
+      priority: 9,
+      categories: [{ type: "Personal Data" }],
+    },
+    {
+      name: "Droit de rectification",
+      category: "Personal Data",
+      definition:
+        "Le droit d'obtenir la rectification des données à caractère personnel inexactes et de compléter les données incomplètes.",
+      reference: "Article 16 RGPD",
+      priority: 9,
+      categories: [{ type: "Personal Data" }],
+    },
+    {
+      name: "Droit de retrait",
+      category: "Personal Data",
+      definition:
+        "Le droit de retirer son consentement à tout moment lorsque le traitement est fondé sur le consentement.",
+      reference: "Article 7(3) RGPD",
+      priority: 9,
+      categories: [{ type: "Personal Data" }],
+    },
+    {
+      name: "Droit d'opposition",
+      category: "Personal Data",
+      definition:
+        "Le droit de s'opposer à tout moment au traitement des données à caractère personnel pour des raisons tenant à sa situation particulière.",
+      reference: "Article 21 RGPD",
+      priority: 5,
+      categories: [{ type: "Personal Data" }],
+    },
+  ];
+
+  // Function to get color for a category - purple-themed colors
   const getCategoryColor = (category) => {
     const colorMap = {
-      "Computer Science": "#8b5cf6", // Violet
+      "Computer Crime": "#e879f9", // Pink
+      "Personal Data": "#9333ea", // Purple
+      "Electronic Commerce": "#c026d3", // Fuchsia
+      Organizations: "#8b5cf6", // Violet
       Networks: "#6366f1", // Indigo
-      "Software Development": "#a855f7", // Purple
-      "Data Management": "#d946ef", // Fuchsia
-      Cybersecurity: "#ec4899", // Pink
-      "Données personnelles": "#9333ea", // Purple
-      "Commerce électronique": "#c026d3", // Fuchsia
-      Réseaux: "#7c3aed", // Violet
-      "Criminalité informatique": "#e879f9", // Pink
-      Divers: "#8b5cf6", // Violet
-      "Contrat Informatique": "#a78bfa", // Violet
-      "Propriété intellectuelle": "#c084fc", // Purple
-      Organisations: "#8b5cf6", // Violet
+      "Intellectual Property": "#c084fc", // Purple
+      Miscellaneous: "#8b5cf6", // Violet
+      "Computer Contracts": "#a78bfa", // Violet
     };
-    return colorMap[category] || "#8b5cf6";
+    return colorMap[category] || "#8b5cf6"; // Default violet
   };
 
+  // Category translations (standardized)
   const categoryTranslations = {
-    en: {
-      "Computer Science": "Computer Science Law",
+    english: {
+      "Computer Crime": "Computer Crime Law",
+      "Personal Data": "Personal Data Law",
+      "Electronic Commerce": "Electronic Commerce Law",
+      Organizations: "Organizations Law",
       Networks: "Network Law",
-      "Software Development": "Software Law",
-      "Data Management": "Data Law",
-      Cybersecurity: "Cybersecurity Law",
-      "Données personnelles": "Personal Data Law",
-      "Commerce électronique": "E-Commerce Law",
-      Réseaux: "Network Law",
-      "Criminalité informatique": "Computer Crime Law",
-      Divers: "Miscellaneous Law",
-      "Contrat Informatique": "IT Contract Law",
-      "Propriété intellectuelle": "Intellectual Property Law",
-      Organisations: "Organizational Law",
+      "Intellectual Property": "Intellectual Property Law",
+      Miscellaneous: "Miscellaneous Law",
+      "Computer Contracts": "Computer Contracts Law",
     },
-    fr: {
-      "Computer Science": "Loi d'Informatique",
-      Networks: "Loi des Réseaux",
-      "Software Development": "Loi des Logiciels",
-      "Data Management": "Loi des Données",
-      Cybersecurity: "Loi de Cybersécurité",
-      "Données personnelles": "Loi des Données Personnelles",
-      "Commerce électronique": "Loi du Commerce Électronique",
-      Réseaux: "Loi des Réseaux",
-      "Criminalité informatique": "Loi de Criminalité Informatique",
-      Divers: "Lois Diverses",
-      "Contrat Informatique": "Loi des Contrats Informatiques",
-      "Propriété intellectuelle": "Loi de Propriété Intellectuelle",
-      Organisations: "Loi des Organisations",
+    french: {
+      "Computer Crime": "Criminalité informatique",
+      "Personal Data": "Données personnelles",
+      "Electronic Commerce": "Commerce électronique",
+      Organizations: "Organisations",
+      Networks: "Réseaux",
+      "Intellectual Property": "Propriété intellectuelle",
+      Miscellaneous: "Divers",
+      "Computer Contracts": "Contrats informatiques",
     },
-    ar: {
-      "Computer Science": "قانون علوم الكمبيوتر",
-      Networks: "قانون الشبكات",
-      "Software Development": "قانون تطوير البرمجيات",
-      "Data Management": "قانون إدارة البيانات",
-      Cybersecurity: "قانون الأمن السيبراني",
-      "Données personnelles": "قانون البيانات الشخصية",
-      "Commerce électronique": "قانون التجارة الإلكترونية",
-      Réseaux: "قانون الشبكات",
-      "Criminalité informatique": "قانون الجرائم المعلوماتية",
-      Divers: "قوانين متنوعة",
-      "Contrat Informatique": "قانون عقود تكنولوجيا المعلومات",
-      "Propriété intellectuelle": "قانون الملكية الفكرية",
-      Organisations: "قانون المنظمات",
+    arabic: {
+      "Computer Crime": "الجريمة الإلكترونية",
+      "Personal Data": "البيانات الشخصية",
+      "Electronic Commerce": "التجارة الإلكترونية",
+      Organizations: "المنظمات",
+      Networks: "الشبكات",
+      "Intellectual Property": "الملكية الفكرية",
+      Miscellaneous: "متنوعة",
+      "Computer Contracts": "العقود الإلكترونية",
     },
   };
 
+  // Get the first 7 categories based on language
   const getLanguageSpecificCategories = () => {
-    try {
-      const allCategories = Object.keys(categoryTranslations[language] || {});
-      return allCategories.slice(0, 7);
-    } catch (err) {
-      console.error("Error getting language categories:", err);
-      return [];
-    }
+    const allCategories = Object.keys(
+      categoryTranslations[selectedLanguage] || {}
+    );
+    return allCategories.slice(0, 7); // Only return the first 7 categories
   };
+
+  // Filter terms based on search input, active categories, and language
   useEffect(() => {
-    try {
-      let results = [...terms];
+    let results = [...terms];
 
-      // Filter by search term
-      if (searchInput) {
-        results = results.filter((term) =>
-          term.name.toLowerCase().includes(searchInput.toLowerCase())
-        );
-        if (onSearchChange) {
-          onSearchChange(searchInput);
-        }
-      }
+    // Filter by search term
+    if (searchInput && hasSearched) {
+      results = results.filter((term) =>
+        term.name.toLowerCase().includes(searchInput.toLowerCase())
+      );
 
-      if (activeCategories.length > 0) {
-        results = results.filter((term) => {
-          if (term.allDefinitions && term.allDefinitions.length > 0) {
-            return term.allDefinitions.some((def) =>
-              def.categories.some((cat) => activeCategories.includes(cat))
-            );
-          }
-          return activeCategories.includes(term.category);
-        });
-      }
+      // Generate suggested terms based on search, always including fixed French terms
+      const searchBasedSuggestions = terms
+        .filter(
+          (term) =>
+            !results.includes(term) &&
+            (term.category.toLowerCase().includes(searchInput.toLowerCase()) ||
+              (term.categories &&
+                term.categories.some((cat) =>
+                  cat.type.toLowerCase().includes(searchInput.toLowerCase())
+                )))
+        )
+        .slice(0, 3);
 
-      setFilteredTerms(results);
-    } catch (err) {
-      console.error("Error filtering terms:", err);
-      setFilteredTerms([]);
+      // Combine fixed terms with search-based suggestions, sorted by priority
+      const combinedSuggestions = [
+        ...fixedSuggestedTerms,
+        ...searchBasedSuggestions,
+      ]
+        .sort((a, b) => (b.priority || 0) - (a.priority || 0))
+        .slice(0, 8);
+
+      setSuggestedTerms(combinedSuggestions);
+    } else {
+      // When no search is active, show fixed terms as default suggestions
+      setSuggestedTerms(fixedSuggestedTerms.slice(0, 6));
     }
-  }, [searchInput, activeCategories, terms, language, onSearchChange]);
+
+    // Filter by active categories
+    if (activeCategories.length > 0) {
+      results = results.filter((term) => {
+        // For terms with multiple categories
+        if (term.categories && term.categories.length > 0) {
+          return term.categories.some((cat) =>
+            activeCategories.includes(cat.type)
+          );
+        }
+        // For terms with a single category
+        return activeCategories.includes(term.category);
+      });
+    }
+
+    setFilteredTerms(results);
+  }, [searchInput, activeCategories, terms, selectedLanguage, hasSearched]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    setHasSearched(true);
+    if (onSearch) onSearch(searchInput);
   };
 
+  // Update the search functionality to include autocomplete
+  // Modify the handleInputChange function to provide autocomplete suggestions
   const handleInputChange = (e) => {
     setSearchInput(e.target.value);
-  };
 
-  const handleCategoryToggle = (category) => {
-    try {
-      setActiveCategories((prev) => {
-        if (prev.includes(category)) {
-          return prev.filter((c) => c !== category);
-        } else {
-          return [...prev, category];
-        }
-      });
-    } catch (err) {
-      console.error("Error toggling category:", err);
+    // Generate suggestions as user types (autocomplete)
+    if (e.target.value.length > 1) {
+      const autocompleteSuggestions = terms
+        .filter(
+          (term) =>
+            term.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+            (term.category &&
+              term.category
+                .toLowerCase()
+                .includes(e.target.value.toLowerCase())) ||
+            (term.categories &&
+              term.categories.some((cat) =>
+                cat.type.toLowerCase().includes(e.target.value.toLowerCase())
+              ))
+        )
+        .slice(0, 3);
+
+      // Include fixed terms that match the search
+      const matchingFixedTerms = fixedSuggestedTerms.filter((term) =>
+        term.name.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+
+      const combinedSuggestions = [
+        ...matchingFixedTerms,
+        ...autocompleteSuggestions,
+      ]
+        .sort((a, b) => (b.priority || 0) - (a.priority || 0))
+        .slice(0, 8);
+
+      setSuggestedTerms(combinedSuggestions);
+      setHasSearched(true);
+    } else if (e.target.value === "") {
+      setSuggestedTerms(fixedSuggestedTerms.slice(0, 6));
+      setHasSearched(false);
     }
   };
 
+  const handleLanguageChange = (e) => {
+    setSelectedLanguage(e.target.value);
+    // Reset active categories when language changes
+    setActiveCategories([]);
+  };
+
+  const handleCategoryToggle = (category) => {
+    setActiveCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((c) => c !== category);
+      } else {
+        return [...prev, category];
+      }
+    });
+  };
+
+  // Get language-specific categories
   const languageCategories = useMemo(() => {
     return getLanguageSpecificCategories();
-  }, [language]);
+  }, [selectedLanguage]);
 
+  // Get category name based on selected language
   const getCategoryName = (category) => {
-    return categoryTranslations[language][category] || category;
+    return categoryTranslations[selectedLanguage][category] || category;
   };
-  const getCategoryIcon = (category) => {
-    const icons = {
-      "Computer Science": <Cpu size={16} />,
-      Networks: <Server size={16} />,
-      "Software Development": <Code size={16} />,
-      "Data Management": <Database size={16} />,
-      Cybersecurity: <Shield size={16} />,
-      "Données personnelles": <BookOpen size={16} />,
-      "Commerce électronique": <Zap size={16} />,
-      Réseaux: <Server size={16} />,
-      "Criminalité informatique": <Shield size={16} />,
-      Divers: <BookOpen size={16} />,
-      "Contrat Informatique": <Code size={16} />,
-      "Propriété intellectuelle": <BookOpen size={16} />,
-      Organisations: <Database size={16} />,
-    };
-    return icons[category] || <BookOpen size={16} />;
+
+  // Add function to show more terms
+  const handleShowMore = () => {
+    setVisibleTerms((prev) => prev + 6);
+  };
+
+  const handleTermSelect = (term) => {
+    if (onTermSelect) onTermSelect(term);
   };
 
   return (
     <div className="_terms_search_container">
       <div className="_terms_search_header">
+        <div className="_terms_search_language_selector">
+          <label htmlFor="language-select">Language:</label>
+          <select
+            id="language-select"
+            value={selectedLanguage}
+            onChange={handleLanguageChange}
+            className="_terms_search_language_select"
+          >
+            <option value="english">English</option>
+            <option value="french">French</option>
+            <option value="arabic">Arabic</option>
+          </select>
+        </div>
+
         <form onSubmit={handleSearchSubmit} className="_terms_search_form">
           <div className="_terms_search_input_wrapper">
             <Search size={18} className="_terms_search_icon" />
@@ -196,7 +291,7 @@ const ClassicSearch = ({
               type="text"
               value={searchInput}
               onChange={handleInputChange}
-              placeholder="Search for laws..."
+              placeholder="Search for terms..."
               className="_terms_search_input"
             />
           </div>
@@ -215,10 +310,7 @@ const ClassicSearch = ({
       </div>
 
       <div className="_terms_search_categories">
-        <h3 className="_terms_search_categories_title">
-          <Sparkles size={18} className="_terms_search_category_icon" />
-          Law Categories
-        </h3>
+        <h3 className="_terms_search_categories_title">Categories</h3>
         <div className="_terms_search_categories_list">
           {languageCategories.map((category, index) => (
             <button
@@ -231,9 +323,7 @@ const ClassicSearch = ({
               }}
               onClick={() => handleCategoryToggle(category)}
             >
-              {getCategoryIcon(category)}
               <span>{getCategoryName(category)}</span>
-              <div className="_terms_category_btn_glow"></div>
             </button>
           ))}
         </div>
@@ -241,211 +331,192 @@ const ClassicSearch = ({
 
       <div className="_terms_search_results">
         <div className="_terms_search_results_header">
-          <h3>
-            <Code size={20} className="_terms_search_results_icon" />
-            Legal Provisions
-          </h3>
+          <h3>Terms</h3>
           <span className="_terms_search_results_count">
-            {filteredTerms.length} of {allTerms.length} laws found
+            {filteredTerms.length} terms found
           </span>
         </div>
 
-        {viewMode === "card" ? (
-          <div className="_terms_search_results_grid">
-            {filteredTerms.map((term, index) => {
-              // Get all unique categories from all definitions
-              const allCategories = new Set();
+        <div className="_terms_search_results_grid">
+          {filteredTerms.slice(0, visibleTerms).map((term, index) => {
+            // Get all categories for the term
+            const categories = term.categories
+              ? term.categories.map((cat) => cat.type)
+              : term.category
+              ? [term.category]
+              : [];
 
-              if (term.allDefinitions && term.allDefinitions.length > 0) {
-                term.allDefinitions.forEach((def) => {
-                  def.categories.forEach((cat) => allCategories.add(cat));
-                });
-              } else if (term.category) {
-                allCategories.add(term.category);
-              }
+            // Get the primary category for styling
+            const primaryCategory = categories[0] || "Miscellaneous";
 
-              const categories = Array.from(allCategories);
+            // Get the primary definition
+            const primaryDefinition =
+              term.definition ||
+              (term.categories &&
+                term.categories[0] &&
+                term.categories[0].principale &&
+                term.categories[0].principale[0] &&
+                term.categories[0].principale[0].definition_principale &&
+                term.categories[0].principale[0].definition_principale[0]) ||
+              "No definition available";
 
-              // Get the primary category for styling
-              const primaryCategory = categories[0] || "Divers";
-              const cardColor = getCategoryColor(primaryCategory);
+            // Get references if available
+            const references = term.reference
+              ? [term.reference]
+              : (term.categories &&
+                  term.categories[0] &&
+                  term.categories[0].principale &&
+                  term.categories[0].principale[0] &&
+                  term.categories[0].principale[0].references) ||
+                [];
 
-              // Get the primary definition
-              const primaryDefinition =
-                term.definition || "No definition available";
-
-              // Get references if available
-              const references = term.reference ? [term.reference] : [];
-
-              return (
-                <div
-                  key={index}
-                  className="_terms_search_term_card"
-                  style={{
-                    "--card-color": cardColor,
-                  }}
-                  onClick={() => onTermSelect(term)}
-                  onMouseEnter={() => setHoveredCard(index)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="_terms_card_glow"></div>
-                  <div className="_terms_search_term_header">
-                    <div className="_terms_search_term_title_wrapper">
-                      {getCategoryIcon(primaryCategory)}
-                      <h4>{term.name}</h4>
-                    </div>
-                    <div className="_terms_search_term_categories">
-                      {categories.map((category, catIndex) => (
-                        <span
-                          key={catIndex}
-                          className="_terms_search_category_tag"
-                          style={{
-                            backgroundColor: `${getCategoryColor(category)}20`,
-                            color: getCategoryColor(category),
-                          }}
-                        >
-                          {getCategoryName(category)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="_terms_search_term_content">
-                    <p className="_terms_search_term_definition">
-                      {primaryDefinition}
-                    </p>
-                    {references && references.length > 0 && (
-                      <div className="_terms_search_term_references">
-                        {references.map((ref, refIndex) => (
-                          <div
-                            key={refIndex}
-                            className="_terms_search_term_reference"
-                          >
-                            <BookOpen
-                              size={14}
-                              className="_terms_search_reference_icon"
-                            />
-                            <span>{ref}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="_terms_search_term_footer">
-                      <span className="_terms_search_term_click_hint">
-                        View full legal provision
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    className="_terms_search_save_button"
-                    style={{
-                      backgroundColor: cardColor,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log(`Saving law: ${term.name}`);
-                    }}
-                  >
-                    <span className="_terms_search_btn_text">
-                      Add to Library
+            return (
+              <div
+                key={index}
+                className="_terms_search_term_card"
+                onClick={() => handleTermSelect(term)}
+                style={{
+                  "--card-bg-color": `rgba(${getCategoryColor(primaryCategory)
+                    .replace("#", "")
+                    .match(/.{2}/g)
+                    .map((x) => Number.parseInt(x, 16))
+                    .join(", ")}, 0.05)`,
+                  "--category-color": getCategoryColor(primaryCategory),
+                }}
+              >
+                <div className="_terms_search_term_header">
+                  <div className="_terms_search_term_title_container">
+                    <h4 className="_terms_search_term_title">{term.name}</h4>
+                    <span
+                      className="_terms_search_term_category_name"
+                      style={{ color: getCategoryColor(primaryCategory) }}
+                    >
+                      {getCategoryName(primaryCategory)}
                     </span>
-                    <div className="_terms_search_btn_icon">
-                      <Hash size={16} />
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
-
-            {filteredTerms.length === 0 && (
-              <div className="_terms_search_no_results">
-                <p>No laws found for this criteria.</p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="_terms_search_results_list_view">
-            {filteredTerms.map((term, index) => {
-              // Get all unique categories from all definitions
-              const allCategories = new Set();
-
-              if (term.allDefinitions && term.allDefinitions.length > 0) {
-                term.allDefinitions.forEach((def) => {
-                  def.categories.forEach((cat) => allCategories.add(cat));
-                });
-              } else if (term.category) {
-                allCategories.add(term.category);
-              }
-
-              const categories = Array.from(allCategories);
-
-              // Get the primary category for styling
-              const primaryCategory = categories[0] || "Divers";
-              const termColor = getCategoryColor(primaryCategory);
-
-              return (
-                <div
-                  key={index}
-                  className="_terms_search_term_list_item"
-                  onClick={() => onTermSelect(term)}
-                  style={{
-                    "--term-color": termColor,
-                    borderLeft: `4px solid ${termColor}`,
-                  }}
-                >
-                  <div className="_terms_search_term_list_content">
-                    <div className="_terms_search_term_list_header">
-                      {getCategoryIcon(primaryCategory)}
-                      <h5>{term.name}</h5>
-                    </div>
-                    <div className="_terms_search_term_list_categories">
-                      {categories.map((category, catIndex) => (
-                        <span
-                          key={catIndex}
-                          className="_terms_search_term_list_category"
-                          style={{
-                            backgroundColor: `${getCategoryColor(category)}20`,
-                            color: getCategoryColor(category),
-                          }}
-                        >
-                          {getCategoryName(category)}
-                        </span>
-                      ))}
-                    </div>
                   </div>
-                  <button
-                    className="_terms_search_term_list_button"
+                </div>
+
+                <div className="_terms_search_term_content">
+                  <h5
+                    className="_terms_search_term_section_title"
                     style={{
-                      backgroundColor: termColor,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log(`Adding ${term.name} to library`);
+                      "--card-color": getCategoryColor(primaryCategory),
                     }}
                   >
-                    <Hash size={16} />
-                  </button>
+                    Primary Legal Provision
+                  </h5>
+                  <p className="_terms_search_term_definition">
+                    {primaryDefinition}
+                  </p>
+
+                  {references && references.length > 0 && (
+                    <div className="_terms_search_term_references">
+                      <h6 className="_terms_search_term_references_title">
+                        Legal References
+                      </h6>
+                      {references.map((ref, refIndex) => (
+                        <div
+                          key={refIndex}
+                          className="_terms_search_term_reference"
+                        >
+                          <span
+                            className="_terms_search_reference_icon"
+                            style={{ color: getCategoryColor(primaryCategory) }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                              <polyline points="14 2 14 8 20 8"></polyline>
+                              <line x1="16" y1="13" x2="8" y2="13"></line>
+                              <line x1="16" y1="17" x2="8" y2="17"></line>
+                              <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                          </span>
+                          <span>{ref}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              );
-            })}
-
-            {filteredTerms.length === 0 && (
-              <div className="_terms_search_no_results">
-                <p>No laws found for this criteria.</p>
+                <button
+                  className="_terms_search_save_button"
+                  style={{
+                    "--save-btn-color": getCategoryColor(primaryCategory),
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Add save functionality here
+                    console.log(`Saving term: ${term.name}`);
+                  }}
+                >
+                  <span className="_terms_search_btn_text">Add to Library</span>
+                </button>
               </div>
-            )}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
-        {/* Show More button */}
-        {hasMore && filteredTerms.length > 0 && (
-          <button
-            className="_terms_search_show_more_button"
-            onClick={loadMoreTerms}
-          >
-            <span>Show More</span>
-            <ChevronDown size={16} />
+        {filteredTerms.length > visibleTerms && (
+          <button className="_terms_search_show_more" onClick={handleShowMore}>
+            Show More Terms
           </button>
         )}
+      </div>
+
+      {/* Suggested Terms Section */}
+      <div className="_terms_search_suggested">
+        <h3 className="_terms_search_suggested_title">Suggested Terms</h3>
+        <div className="_terms_search_suggested_list">
+          {suggestedTerms.length > 0 ? (
+            suggestedTerms.map((term, index) => {
+              const category = term.categories
+                ? term.categories[0]?.type
+                : term.category;
+              return (
+                <div
+                  key={index}
+                  className="_terms_search_suggested_item"
+                  onClick={() => handleTermSelect(term)}
+                  style={{
+                    "--suggestion-color": getCategoryColor(category),
+                  }}
+                >
+                  <span className="_terms_search_suggested_name">
+                    {term.name}
+                  </span>
+                  <span
+                    className="_terms_search_suggested_category"
+                    style={{
+                      backgroundColor: `rgba(${getCategoryColor(category)
+                        .replace("#", "")
+                        .match(/.{2}/g)
+                        .map((x) => Number.parseInt(x, 16))
+                        .join(", ")}, 0.2)`,
+                      color: getCategoryColor(category),
+                    }}
+                  >
+                    {getCategoryName(category)}
+                  </span>
+                </div>
+              );
+            })
+          ) : (
+            <div className="_terms_search_empty_message">
+              {hasSearched
+                ? "No suggestions found for this search"
+                : "Search for a term to see suggestions"}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

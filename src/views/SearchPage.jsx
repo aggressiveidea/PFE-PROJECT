@@ -126,7 +126,7 @@ const initialTermsData = [
   },
 ]
 
-const SearchPage = () => {
+function SearchPage() {
   const [searchType, setSearchType] = useState("classic")
   const [selectedLanguage, setSelectedLanguage] = useState("english")
   const [selectedTerm, setSelectedTerm] = useState(null)
