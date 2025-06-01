@@ -2251,7 +2251,29 @@ export const addToFavorites = async (id, userid) => {
   }
 };
 
-export const getownerswritng = async (id) => {};
+export const getownerswritng = async ( ownerId ) =>
+{
+  console.log("iddd",ownerId);
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `http://localhost:5000/articles/owner/${ownerId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch owner's articles");
+  }
+
+  const result = await response.json();
+  return result.data;
+};
 
 export const getCategoryDetails = async () => {
   console.log("hiiiiii");

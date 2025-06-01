@@ -134,7 +134,8 @@ export default function UserProfile() {
       if (user.role === "Ict-expert" || user.role === "Content-admin") {
         setLoadingWritings(true);
         try {
-          const writings = await getownerswritng(user._id);
+            const writings = await getownerswritng( user._id );
+            console.log("wtfff", writings); 
           if (writings && Array.isArray(writings)) {
             setUserWritings(writings);
           }
