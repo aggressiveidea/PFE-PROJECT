@@ -3,7 +3,7 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import Sidebar from "../components/Sidebar"
 import { useState } from "react"
-import "./darkMode.css"
+import "../styles/darkMode.css"
 
 export default function ClientLayout({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)

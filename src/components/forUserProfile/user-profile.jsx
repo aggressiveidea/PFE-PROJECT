@@ -14,7 +14,7 @@ import {
   Bookmark,
   Share2,
 } from "lucide-react";
-import "./user-profile.css";
+import "../styles/user-profile.css";
 import {
   getUserById,
   getownerswritng,

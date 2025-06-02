@@ -1,4 +1,4 @@
-// This file contains the quiz questions for each level
+
 
 export const level1 = [
     {

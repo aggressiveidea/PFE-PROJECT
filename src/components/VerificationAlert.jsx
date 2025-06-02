@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { resendVerificationEmail } from "../services/Api"
-import './VerificationAlert.css'
+import '../styles/VerificationAlert.css'
 
 const VerificationAlert = ({ email, onClose }) => {
   const [resendStatus, setResendStatus] = useState("")

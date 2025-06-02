@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { X, Hash } from "lucide-react";
 import ClassicSearch from "../components/forSearch/ClassicSearch";

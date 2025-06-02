@@ -1,9 +1,3 @@
-/**
- * Initialize the interactive knowledge graph visualization
- * @param {HTMLElement} container - The container element for the graph
- * @param {string} language - The current language
- * @returns {Function} - Cleanup function
- */
 export const initInteractiveGraph = (container, language) => {
     if (typeof window === "undefined") return () => {}
 
@@ -23,7 +17,6 @@ export const initInteractiveGraph = (container, language) => {
   
     const categories = ["hardware", "software", "networking", "security", "ai"]
   
-    // Generate nodes for each category
     const nodes = []
     const categoryColors = {
       hardware: "#9333EA",
@@ -39,7 +32,7 @@ export const initInteractiveGraph = (container, language) => {
       label: language === "en" ? "ICT" : language === "fr" ? "TIC" : "تكنولوجيا المعلومات",
       x: width / 2,
       y: height / 2,
-      radius: 40, // Larger central node
+      radius: 40,
       color: "#ffffff",
       textColor: "#333333",
       category: "center",
@@ -49,22 +42,20 @@ export const initInteractiveGraph = (container, language) => {
     // Create category nodes
     categories.forEach((category, i) => {
       const angle = (i / categories.length) * Math.PI * 2
-      const distance = 180 // Increased distance
+      const distance = 180 
   
       nodes.push({
         id: category,
         label: category,
         x: width / 2 + Math.cos(angle) * distance,
         y: height / 2 + Math.sin(angle) * distance,
-        radius: 30, // Larger category nodes
+        radius: 30, 
         color: categoryColors[category],
         textColor: "#ffffff",
         category,
         fixed: true,
       })
     })
-  
-    // Create term nodes
     const terms = [
       { id: "ai-1", label: "Machine Learning", category: "ai" },
       { id: "ai-2", label: "Neural Networks", category: "ai" },
@@ -87,9 +78,8 @@ export const initInteractiveGraph = (container, language) => {
       // Find the parent category node
       const parentNode = nodes.find((node) => node.id === term.category)
       const angle = Math.random() * Math.PI * 2
-      const distance = 90 + Math.random() * 40 // Increased distance
+      const distance = 90 + Math.random() * 40 
   
-      // Calculate text width to determine node size
       ctx.font = "12px Arial"
       const textWidth = ctx.measureText(term.label).width
   
@@ -98,7 +88,7 @@ export const initInteractiveGraph = (container, language) => {
         label: term.label,
         x: parentNode.x + Math.cos(angle) * distance,
         y: parentNode.y + Math.sin(angle) * distance,
-        radius: Math.max(20, textWidth / 1.5), // Size based on text width
+        radius: Math.max(20, textWidth / 1.5), 
         color: categoryColors[term.category],
         textColor: "#ffffff",
         category: term.category,
@@ -109,41 +99,33 @@ export const initInteractiveGraph = (container, language) => {
       })
     })
   
-    // Create links
     const links = []
   
-    // Link center to categories
     categories.forEach((category) => {
       links.push({ source: "center", target: category, strength: 0.1 })
     })
   
-    // Link terms to their categories
     terms.forEach((term) => {
       links.push({ source: term.category, target: term.id, strength: 0.05 })
     })
   
-    // Add some cross-category links
     links.push({ source: "ai-1", target: "software-2", strength: 0.02 })
     links.push({ source: "networking-3", target: "security-1", strength: 0.02 })
     links.push({ source: "hardware-2", target: "ai-2", strength: 0.02 })
   
-    // Interaction state
     let selectedNode = null
     let hoveredNode = null
     let isDragging = false
     let draggedNode = null
   
-    // Animation loop
     let animationFrameId
   
     const animate = () => {
       ctx.clearRect(0, 0, width, height)
   
-      // Apply forces (simplified physics)
       nodes.forEach((node) => {
         if (node.fixed || node === draggedNode) return
   
-        // Apply forces from links
         links.forEach((link) => {
           if (link.source === node.id || link.target === node.id) {
             const otherNodeId = link.source === node.id ? link.target : link.source
@@ -163,13 +145,11 @@ export const initInteractiveGraph = (container, language) => {
           }
         })
   
-        // Apply center gravity
         const dx = width / 2 - node.x
         const dy = height / 2 - node.y
         node.vx += dx * 0.0005
         node.vy += dy * 0.0005
   
-        // Apply damping
         node.vx *= 0.95
         node.vy *= 0.95
   

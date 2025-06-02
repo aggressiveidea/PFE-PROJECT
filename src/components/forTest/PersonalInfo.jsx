@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Shield, Edit2, Save, X, Camera, User, Mail, FileText, Calendar, Clock, Code, Terminal } from "lucide-react"
 import Sidebar from "../forDashboard/Sidebar"
 import Header from "../forHome/Header"
-import "./PersonalInfo.css"
+import "../styles/PersonalInfo.css"
 import { updateUser, getProfile, getUserById } from "../../services/Api"
 
 export default function PersonalInfo() {

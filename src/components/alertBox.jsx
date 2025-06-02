@@ -1,4 +1,4 @@
-import "./alertBox.css"
+import "../styles/AlertBox.css"
 
 const AlertBox = ({ message, type = "error", onClose }) => {
   const alertClass = `alert-box ${type === "success" ? "alert-success" : "alert-error"}`

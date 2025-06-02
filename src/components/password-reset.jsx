@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useSearchParams, Link } from "react-router-dom"
 import { verifyResetLink, resetPassword } from "../services/Api"
-import "./password-reset.css"
+import "../styles/password-reset.css"
 
 const PasswordReset = () => {
   const [formData, setFormData] = useState({

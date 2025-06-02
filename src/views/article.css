@@ -1,4 +1,4 @@
-/* Global styles for the app */
+
 :root {
     --primary-purple: #9333ea;
     --primary-violet: #8b5cf6;
@@ -10,7 +10,7 @@
     --bg-dark: #0f172a;
 }
 
-/* Dark mode background */
+
 .app-container {
     min-height: 100vh;
     background-color: #000000;
@@ -23,7 +23,7 @@
     color: white;
 }
 
-/* Stars background */
+
 .stars-container {
     position: fixed;
     top: 0;

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import "./NetworkGraph.css"
+import "../styles/NetworkGraph.css"
 
 export default function NetworkGraph() {
   const canvasRef = useRef(null)
@@ -11,7 +11,6 @@ export default function NetworkGraph() {
     let particles = []
     const connections = []
 
-    // Set canvas size
     const resizeCanvas = () => {
       canvas.width = canvas.offsetWidth
       canvas.height = canvas.offsetHeight
@@ -19,7 +18,6 @@ export default function NetworkGraph() {
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
-    // Particle class
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width
@@ -45,7 +43,6 @@ export default function NetworkGraph() {
       }
     }
 
-    // Initialize particles
     const init = () => {
       particles = []
       for (let i = 0; i < 50; i++) {
@@ -53,7 +50,6 @@ export default function NetworkGraph() {
       }
     }
 
-    // Draw connections between particles
     const connect = () => {
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
@@ -73,7 +69,6 @@ export default function NetworkGraph() {
       }
     }
 
-    // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 

@@ -1,4 +1,3 @@
-"use client";
 import "./AlgorithmModal.css";
 import { useState, useEffect } from "react";
 

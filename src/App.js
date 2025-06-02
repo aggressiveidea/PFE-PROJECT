@@ -6,7 +6,7 @@ import Signin from "./views/Signin"
 import SearchPage from "./views/SearchPage"
 import Dashboard from "./views/Dashboard"
 import UserManagement from "./views/user-management"
-import Library from "./views/Library" // Updated import
+import Library from "./views/Library" 
 import Setting from "./components/forProfile/Settings"
 import Faq from "./components/forFAQ/FaqPage"
 import ICTDictionary from "./views/ICTDictionary"
@@ -24,7 +24,6 @@ import ForgotPassword from "./components/forSignup/forgotPassword"
 function AppContent() {
   const location = useLocation()
   
-  // Define routes where header should be hidden
   const hideHeaderRoutes = ['/signup', '/login', '/forgot-password', '/reset-password']
   const shouldHideHeader = hideHeaderRoutes.includes(location.pathname)
 

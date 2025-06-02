@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { getUserById } from "../services/Api"
-import "./VerificationSuccess.css"
+import "../styles/VerificationSuccess.css"
 
 function VerificationSuccess() {
   const [status, setStatus] = useState("success")
