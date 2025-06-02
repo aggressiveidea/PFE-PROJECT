@@ -7,6 +7,7 @@ import VerificationAlert from "../components/VerificationAlert"
 import { motion } from "framer-motion"
 import "./Signup.css"
 import { registerUser } from "../services/Api"
+import { useNavigate } from "react-router-dom"
 
 const countries = [
   "Afghanistan",
@@ -223,6 +224,7 @@ function Signup() {
   const [registeredEmail, setRegisteredEmail] = useState("")
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [typingComplete, setTypingComplete] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const darkModeEnabled =
@@ -447,13 +449,12 @@ function Signup() {
 
       {showVerification && <VerificationAlert email={registeredEmail} onClose={() => setShowVerification(false)} />}
 
+      <div className="back-home-button-container">
+        <button className="back-home-button" onClick={() => navigate("/")}>Back Home</button>
+      </div>
+
       <div className="signup-layout">
         <motion.div className="signup-form-section" initial="hidden" animate="visible" variants={containerVariants}>
-          <motion.div className="signup-header" variants={itemVariants}>
-            <h2>Sign Up</h2>
-            <p className="signup-subtitle">Create your account to get started.</p>
-          </motion.div>
-
           <motion.form onSubmit={handleSubmit} variants={itemVariants}>
             <div className="signup-input-container">
               <motion.div variants={itemVariants}>

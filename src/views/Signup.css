@@ -428,3 +428,53 @@ body.dark-mode {
     font-size: 1.75rem;
   }
 }
+.back-home-button-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.back-home-button {
+  padding: 10px 20px;
+  background: var(--signup-gradient);
+  color: var(--signup-white);
+  border: none;
+  border-radius: var(--signup-border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--signup-transition);
+  box-shadow: var(--signup-shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.back-home-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--signup-shadow-lg);
+}
+
+.back-home-button:active {
+  transform: translateY(0);
+}
+
+.back-home-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: all 0.6s;
+}
+
+.back-home-button:hover::before {
+  left: 100%;
+}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom"
 import Home from "./views/Home"
 import Header from "./components/forHome/Header"
 import Signup from "./views/Signup"
@@ -20,13 +20,19 @@ import QuizPage from "./views/QuizPage"
 import BookLib from "./views/BooksLib"
 import PasswordReset from "./components/password-reset"
 import ForgotPassword from "./components/forSignup/forgotPassword"
-function App() {
 
-  console.log("App rendering, current path:", window.location.pathname)
+function AppContent() {
+  const location = useLocation()
+  
+  // Define routes where header should be hidden
+  const hideHeaderRoutes = ['/signup', '/login', '/forgot-password', '/reset-password']
+  const shouldHideHeader = hideHeaderRoutes.includes(location.pathname)
+
+  console.log("App rendering, current path:", location.pathname)
 
   return (
-    <Router>
-      <Header />
+    <>
+      {!shouldHideHeader && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
@@ -47,18 +53,26 @@ function App() {
         <Route path="/quiz/*" element={<QuizPage />} />
         <Route path="/book" element={<BookLib />} />
         <Route path="/reset-password" element={<PasswordReset />} />
-         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="*"
           element={
             <div style={{ padding: "50px", textAlign: "center" }}>
               <h1>Page Not Found</h1>
-              <p>The requested page {window.location.pathname} does not exist.</p>
+              <p>The requested page {location.pathname} does not exist.</p>
               <button onClick={() => (window.location.href = "/")}>Go to Home</button>
             </div>
           }
         />
       </Routes>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }

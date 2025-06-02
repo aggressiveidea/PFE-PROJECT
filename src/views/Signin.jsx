@@ -189,6 +189,10 @@ function Signin() {
     <div className={`signin-container ${isDarkMode ? "signin-dark-mode" : ""}`}>
       {alertMessage && <AlertBox message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />}
 
+      <div className="back-home-button-container">
+        <button className="back-home-button" onClick={() => navigate("/")}>Back Home</button>
+      </div>
+
       <div className="signin-layout">
         <div className="signin-visual-section">
           <NetworkGraph />
@@ -224,11 +228,6 @@ function Signin() {
         </div>
 
         <motion.div className="signin-form-section" initial="hidden" animate="visible" variants={containerVariants}>
-          <motion.div className="signin-header" variants={itemVariants}>
-            <h2>Welcome Back</h2>
-            <p className="signin-subtitle">Enter your credentials to access your account</p>
-          </motion.div>
-
           <motion.form onSubmit={handleSubmit} className="signin-form" variants={itemVariants}>
             <div className="signin-input-group">
               <motion.div variants={itemVariants}>

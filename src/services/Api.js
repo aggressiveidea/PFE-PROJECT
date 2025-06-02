@@ -1372,323 +1372,6 @@ export const clearSearchHistory = async (userId) => {
   }
 };
 
-// Existing API functions continue...
-export const fetchQuizQuestions = async (level) => {
-  try {
-    // Map our level to Open Trivia DB difficulty
-    const difficulty = level.toLowerCase();
-
-    // Fetch questions from API
-    const response = await fetch(
-      `https://opentdb.com/api.php?amount=5&category=18&difficulty=${difficulty}&type=multiple`
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch questions");
-    }
-
-    const data = await response.json();
-
-    if (
-      data.response_code !== 0 ||
-      !data.results ||
-      data.results.length === 0
-    ) {
-      console.warn(
-        "API returned an error or no questions, using fallback questions"
-      );
-      return getFallbackQuestions(level);
-    }
-
-    // Format questions
-    return data.results.map((q) => {
-      // Combine correct and incorrect answers and shuffle
-      const options = [...q.incorrect_answers, q.correct_answer].sort(
-        () => Math.random() - 0.5
-      );
-
-      return {
-        question: q.question,
-        options: options,
-        correctAnswer: q.correct_answer,
-      };
-    });
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-    return getFallbackQuestions(level);
-  }
-};
-
-// Enhanced fallback questions with more options for each difficulty level
-export const getFallbackQuestions = (level) => {
-  const questions = {
-    easy: [
-      {
-        question: "What does CPU stand for?",
-        options: [
-          "Central Processing Unit",
-          "Computer Personal Unit",
-          "Central Process Utility",
-          "Central Processor Unifier",
-        ],
-        correctAnswer: "Central Processing Unit",
-      },
-      {
-        question: "Which of these is a type of computer memory?",
-        options: ["RAM", "MAP", "TAP", "SAP"],
-        correctAnswer: "RAM",
-      },
-      {
-        question: "What does URL stand for?",
-        options: [
-          "Uniform Resource Locator",
-          "Universal Resource Link",
-          "Unified Resource Locator",
-          "Universal Resource Locator",
-        ],
-        correctAnswer: "Uniform Resource Locator",
-      },
-      {
-        question: "Which of these is an input device?",
-        options: ["Keyboard", "Monitor", "Printer", "Speaker"],
-        correctAnswer: "Keyboard",
-      },
-      {
-        question:
-          "What file extension is used for Microsoft Excel spreadsheets?",
-        options: [".xlsx", ".docx", ".pptx", ".txt"],
-        correctAnswer: ".xlsx",
-      },
-      {
-        question: "What does PDF stand for?",
-        options: [
-          "Portable Document Format",
-          "Personal Document File",
-          "Printable Document Form",
-          "Published Document Format",
-        ],
-        correctAnswer: "Portable Document Format",
-      },
-      {
-        question: "Which company developed the Windows operating system?",
-        options: ["Microsoft", "Apple", "Google", "IBM"],
-        correctAnswer: "Microsoft",
-      },
-      {
-        question: "What does USB stand for?",
-        options: [
-          "Universal Serial Bus",
-          "United Serial Bus",
-          "Universal System Bus",
-          "Unified Serial Bus",
-        ],
-        correctAnswer: "Universal Serial Bus",
-      },
-      {
-        question:
-          "Which of these is used to store data permanently in a computer?",
-        options: ["Hard Disk Drive", "RAM", "CPU", "ROM"],
-        correctAnswer: "Hard Disk Drive",
-      },
-      {
-        question: "What is the main function of an email client?",
-        options: [
-          "Send and receive emails",
-          "Browse the internet",
-          "Edit documents",
-          "Play games",
-        ],
-        correctAnswer: "Send and receive emails",
-      },
-    ],
-    medium: [
-      {
-        question: "What is the function of an operating system?",
-        options: [
-          "Manage computer hardware and software resources",
-          "Create documents and spreadsheets",
-          "Browse the internet",
-          "Play video games",
-        ],
-        correctAnswer: "Manage computer hardware and software resources",
-      },
-      {
-        question: "Which of these is a cloud storage service?",
-        options: ["Dropbox", "Firefox", "Photoshop", "Excel"],
-        correctAnswer: "Dropbox",
-      },
-      {
-        question: "What does HTML stand for?",
-        options: [
-          "Hypertext Markup Language",
-          "Hypertext Markdown Language",
-          "Hypertext Machine Language",
-          "Hyperlink Text Markup Language",
-        ],
-        correctAnswer: "Hypertext Markup Language",
-      },
-      {
-        question: "Which of these is a database management system?",
-        options: ["MySQL", "Windows", "Chrome", "Photoshop"],
-        correctAnswer: "MySQL",
-      },
-      {
-        question: "What is the purpose of a firewall in computer networks?",
-        options: [
-          "Monitor and control incoming and outgoing network traffic",
-          "Increase internet speed",
-          "Store website data locally",
-          "Convert digital signals to analog",
-        ],
-        correctAnswer:
-          "Monitor and control incoming and outgoing network traffic",
-      },
-      {
-        question: "What is the difference between HTTP and HTTPS?",
-        options: [
-          "HTTPS is encrypted and secure",
-          "HTTP is faster than HTTPS",
-          "HTTPS works only on mobile devices",
-          "HTTP supports more file types",
-        ],
-        correctAnswer: "HTTPS is encrypted and secure",
-      },
-      {
-        question:
-          "Which programming language is commonly used for web development?",
-        options: ["JavaScript", "C++", "Swift", "COBOL"],
-        correctAnswer: "JavaScript",
-      },
-      {
-        question: "What is the purpose of CSS in web development?",
-        options: [
-          "Style and layout of web pages",
-          "Server-side processing",
-          "Database management",
-          "Network security",
-        ],
-        correctAnswer: "Style and layout of web pages",
-      },
-      {
-        question: "What is a cookie in the context of web browsing?",
-        options: [
-          "Small piece of data stored on the user's computer",
-          "A type of computer virus",
-          "A programming language",
-          "A hardware component",
-        ],
-        correctAnswer: "Small piece of data stored on the user's computer",
-      },
-      {
-        question: "What is the function of a router in a network?",
-        options: [
-          "Forward data packets between computer networks",
-          "Store large amounts of data",
-          "Process complex calculations",
-          "Display visual information",
-        ],
-        correctAnswer: "Forward data packets between computer networks",
-      },
-    ],
-    hard: [
-      {
-        question:
-          "Which protocol is used to secure communication between a web browser and a website?",
-        options: ["HTTPS", "FTP", "SMTP", "DHCP"],
-        correctAnswer: "HTTPS",
-      },
-      {
-        question: "What is the time complexity of a binary search algorithm?",
-        options: ["O(log n)", "O(n)", "O(n²)", "O(n log n)"],
-        correctAnswer: "O(log n)",
-      },
-      {
-        question: "Which of these is NOT a programming paradigm?",
-        options: [
-          "Distributive Programming",
-          "Object-Oriented Programming",
-          "Functional Programming",
-          "Procedural Programming",
-        ],
-        correctAnswer: "Distributive Programming",
-      },
-      {
-        question: "What is the purpose of a VPN?",
-        options: [
-          "Establish a protected network connection when using public networks",
-          "Increase internet speed",
-          "Store large files in the cloud",
-          "Convert file formats",
-        ],
-        correctAnswer:
-          "Establish a protected network connection when using public networks",
-      },
-      {
-        question: "Which of these is a NoSQL database?",
-        options: ["MongoDB", "MySQL", "PostgreSQL", "Oracle"],
-        correctAnswer: "MongoDB",
-      },
-      {
-        question:
-          "What is the difference between symmetric and asymmetric encryption?",
-        options: [
-          "Asymmetric uses different keys for encryption and decryption",
-          "Symmetric is always more secure",
-          "Asymmetric is always faster",
-          "Symmetric uses multiple keys for the same message",
-        ],
-        correctAnswer:
-          "Asymmetric uses different keys for encryption and decryption",
-      },
-      {
-        question: "What is a RESTful API?",
-        options: [
-          "An architectural style for designing networked applications",
-          "A programming language for artificial intelligence",
-          "A type of database management system",
-          "A security protocol for wireless networks",
-        ],
-        correctAnswer:
-          "An architectural style for designing networked applications",
-      },
-      {
-        question: "What is the purpose of normalization in database design?",
-        options: [
-          "Minimize data redundancy and dependency",
-          "Increase processing speed",
-          "Enhance graphical user interface",
-          "Improve network connectivity",
-        ],
-        correctAnswer: "Minimize data redundancy and dependency",
-      },
-      {
-        question:
-          "Which of these is a principle of object-oriented programming?",
-        options: [
-          "Encapsulation",
-          "Fragmentation",
-          "Centralization",
-          "Normalization",
-        ],
-        correctAnswer: "Encapsulation",
-      },
-      {
-        question:
-          "What is the purpose of a load balancer in a server architecture?",
-        options: [
-          "Distribute network traffic across multiple servers",
-          "Increase storage capacity",
-          "Encrypt sensitive data",
-          "Compress large files",
-        ],
-        correctAnswer: "Distribute network traffic across multiple servers",
-      },
-    ],
-  };
-  const levelQuestions = questions[level.toLowerCase()] || questions.medium;
-
-  return levelQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
-};
 
 //hadi for books les loulous
 
@@ -2275,14 +1958,6 @@ export const getownerswritng = async ( ownerId ) =>
   return result.data;
 };
 
-export const getCategoryDetails = async () => {
-  console.log("hiiiiii");
-};
-
-export const fetchQuizQuestions2 = async () => {
-  console.log("shiiiitttt");
-};
-
 export const loginUserOrg = async (email, password) => {
   try {
     const response = await fetch("http://localhost:5000/auth/login", {
@@ -2305,3 +1980,494 @@ export const loginUserOrg = async (email, password) => {
     throw error;
   }
 };
+export const getCategoryDetails = (categoryId) => {
+  const categoryMap = {
+    "personal-data": {
+      name: "Personal Data",
+      color: "#3b82f6",
+      description: "Data protection, privacy laws, and GDPR compliance",
+    },
+    "e-commerce": {
+      name: "E-commerce",
+      color: "#10b981",
+      description: "Online business, digital transactions, and regulations",
+    },
+    networks: {
+      name: "Networks",
+      color: "#8b5cf6",
+      description: "Network infrastructure, protocols, and communication",
+    },
+    cybercrime: {
+      name: "Cybercrime",
+      color: "#ef4444",
+      description: "Digital security, computer crimes, and cyber threats",
+    },
+    miscellaneous: {
+      name: "Miscellaneous",
+      color: "#f59e0b",
+      description: "Emerging technologies and digital transformation",
+    },
+    "it-contract": {
+      name: "IT Contract",
+      color: "#06b6d4",
+      description: "Technology agreements and service contracts",
+    },
+    "intellectual-property": {
+      name: "Intellectual Property",
+      color: "#ec4899",
+      description: "Patents, copyrights, and digital IP protection",
+    },
+    organizations: {
+      name: "Organizations",
+      color: "#84cc16",
+      description: "IT governance and regulatory organizations",
+    },
+  }
+
+  return (
+    categoryMap[categoryId] || {
+      name: "Unknown Category",
+      color: "#6b7280",
+      description: "Category description not available",
+    }
+  )
+}
+
+const shuffleArray = (array) => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+export const fetchQuizQuestions2 = async (category) => {
+  try {
+    const questionBank = {
+      "personal-data": [
+        {
+          question: "What is a 'subscriber' in telecommunications law?",
+          options: [
+            "A person who owns telecommunications equipment",
+            "Any natural or legal person who has concluded a contract with a telecommunications service provider",
+            "An employee of a telecommunications company",
+            "A government regulator of telecommunications",
+          ],
+          correctAnswer:
+            "Any natural or legal person who has concluded a contract with a telecommunications service provider",
+        },
+        {
+          question:
+            "True or False: Access rights in privacy law allow individuals to view and modify their personal data.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "In data protection, what does 'access' primarily refer to?",
+          options: [
+            "Physical access to computer systems",
+            "Network connectivity permissions",
+            "The ability to view, modify, and challenge the accuracy of personal data",
+            "Administrative privileges in databases",
+          ],
+          correctAnswer: "The ability to view, modify, and challenge the accuracy of personal data",
+        },
+        {
+          question:
+            "Complete the sentence: The EU Directive 97/66/EC concerns the processing of _____ data in telecommunications.",
+          options: ["technical", "administrative", "commercial", "personal"],
+          correctAnswer: "personal",
+        },
+        {
+          question: "Which principle is fundamental to personal data protection?",
+          options: [
+            "All data must be stored indefinitely",
+            "Companies can use personal data without consent",
+            "Data subjects have the right to access their personal information",
+            "Personal data can be shared freely between organizations",
+          ],
+          correctAnswer: "Data subjects have the right to access their personal information",
+        },
+      ],
+      "e-commerce": [
+        {
+          question: "What is an 'abbreviation' in the context of electronic messages?",
+          options: [
+            "A type of email header",
+            "A network protocol identifier",
+            "A simple text compression technique",
+            "A shortened version of a message that can verify integrity or serve as an electronic signature",
+          ],
+          correctAnswer:
+            "A shortened version of a message that can verify integrity or serve as an electronic signature",
+        },
+        {
+          question:
+            "True or False: A Certificate Revocation List (CRL) contains certificates that have been revoked before their expiration date.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What is the primary purpose of encryption in e-commerce?",
+          options: [
+            "To compress data for faster transmission",
+            "To transform clear messages into coded, unintelligible messages for interceptors",
+            "To organize database records",
+            "To create user interfaces",
+          ],
+          correctAnswer: "To transform clear messages into coded, unintelligible messages for interceptors",
+        },
+        {
+          question: "In digital certificates, what does a 'subscriber' refer to?",
+          options: [
+            "Someone who pays for internet services",
+            "A person named in a certificate who holds a private key corresponding to a public key",
+            "A database administrator",
+            "A network security officer",
+          ],
+          correctAnswer: "A person named in a certificate who holds a private key corresponding to a public key",
+        },
+        {
+          question: "Cryptography in e-commerce ensures three main security aspects. Which is NOT one of them?",
+          options: ["Message integrity", "Data compression", "Confidentiality", "Authentication"],
+          correctAnswer: "Data compression",
+        },
+      ],
+      networks: [
+        {
+          question: "According to telecommunications law, what constitutes 'access' to networks?",
+          options: [
+            "Physical entry to telecommunications buildings",
+            "Permission to use telephone lines",
+            "Provision of means, hardware, software, or services to enable electronic communications",
+            "Authorization to install network equipment",
+          ],
+          correctAnswer: "Provision of means, hardware, software, or services to enable electronic communications",
+        },
+        {
+          question:
+            "True or False: A network subscriber pays a fixed fee for access rights, independent of usage billing.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What is the primary characteristic of network access in telecommunications?",
+          options: [
+            "It provides unlimited data storage",
+            "It enables the provision of electronic communication services",
+            "It guarantees 100% uptime",
+            "It includes free technical support",
+          ],
+          correctAnswer: "It enables the provision of electronic communication services",
+        },
+        {
+          question:
+            "Complete the definition: Network access involves making available _____ to enable communication services.",
+          options: [
+            "exclusively wireless connections",
+            "only physical infrastructure",
+            "means, hardware, software, or services",
+            "government-approved equipment only",
+          ],
+          correctAnswer: "means, hardware, software, or services",
+        },
+        {
+          question: "Which French law regulates electronic communications and audiovisual services?",
+          options: [
+            "Law No. 2004-669 of July 9, 2004",
+            "Neither law applies",
+            "Both laws work together",
+            "Law No. 1986-1067 of September 30, 1986",
+          ],
+          correctAnswer: "Both laws work together",
+        },
+      ],
+      cybercrime: [
+        {
+          question: "What constitutes 'illegal access' according to the Budapest Convention on Cybercrime?",
+          options: [
+            "Using someone else's computer with permission",
+            "Accessing public websites",
+            "Intentional access without right to all or part of a computer system",
+            "Reading publicly available information",
+          ],
+          correctAnswer: "Intentional access without right to all or part of a computer system",
+        },
+        {
+          question:
+            "True or False: 'Device abuse' includes the production and distribution of tools designed to commit computer crimes.",
+          options: ["True", "False"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What is cryptanalysis in the context of cybercrime?",
+          options: [
+            "Creating new encryption algorithms",
+            "The art of analyzing encrypted messages to decode them and break the code",
+            "Installing security software",
+            "Monitoring network traffic",
+          ],
+          correctAnswer: "The art of analyzing encrypted messages to decode them and break the code",
+        },
+        {
+          question:
+            "Complete the sentence: Differential cryptanalysis is a technique that analyzes the evolution of _____ applied to two plaintext messages.",
+          options: ["file sizes", "encryption differences", "transmission speeds", "user permissions"],
+          correctAnswer: "encryption differences",
+        },
+        {
+          question: "According to cybercrime law, which element is essential for illegal access charges?",
+          options: [
+            "Physical presence at the crime scene",
+            "Use of specialized hacking tools",
+            "Financial gain from the access",
+            "Intentional action without authorization",
+          ],
+          correctAnswer: "Intentional action without authorization",
+        },
+      ],
+      miscellaneous: [
+        {
+          question: "What does 'access' mean in the context of information retrieval?",
+          options: [
+            "Permission to enter a building",
+            "The means used to obtain information from a storage medium",
+            "Network connection speed",
+            "User authentication credentials",
+          ],
+          correctAnswer: "The means used to obtain information from a storage medium",
+        },
+        {
+          question:
+            "True or False: Computer crime encompasses all offenses involving the use of computer technologies.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What characterizes information society crimes according to EU communications?",
+          options: [
+            "Only crimes committed in physical locations",
+            "Exploitation of information networks without geographical constraints",
+            "Crimes involving only financial institutions",
+            "Offenses limited to government systems",
+          ],
+          correctAnswer: "Exploitation of information networks without geographical constraints",
+        },
+        {
+          question:
+            "Complete the definition: Information and communication technologies enable the circulation of data that are _____ and _____.",
+          options: ["physical and permanent", "visible and stable", "intangible and volatile", "local and restricted"],
+          correctAnswer: "intangible and volatile",
+        },
+        {
+          question: "What is the primary goal of creating a safer information society?",
+          options: [
+            "Limiting access to technology",
+            "Strengthening information infrastructure security and fighting cybercrime",
+            "Reducing internet usage",
+            "Eliminating digital communications",
+          ],
+          correctAnswer: "Strengthening information infrastructure security and fighting cybercrime",
+        },
+      ],
+      "it-contract": [
+        {
+          question: "What is a Service Level Agreement (SLA) in IT contracts?",
+          options: [
+            "A software installation guide",
+            "A contract defining the level of service expected from a service provider",
+            "A user manual for applications",
+            "A network configuration document",
+          ],
+          correctAnswer: "A contract defining the level of service expected from a service provider",
+        },
+        {
+          question: "True or False: Software licensing agreements define the legal permissions for using software.",
+          options: ["True", "False"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What does SaaS stand for in IT contracts?",
+          options: ["Security as a Standard", "Software as a Service", "System as a Solution", "Storage as a Service"],
+          correctAnswer: "Software as a Service",
+        },
+        {
+          question:
+            "Complete the sentence: An End User License Agreement (EULA) is a contract between the software _____ and the _____.",
+          options: [
+            "developer and distributor",
+            "vendor and retailer",
+            "publisher and user",
+            "manufacturer and installer",
+          ],
+          correctAnswer: "publisher and user",
+        },
+        {
+          question: "Which element is typically NOT included in IT service contracts?",
+          options: [
+            "Performance metrics",
+            "Personal medical information",
+            "Support procedures",
+            "Liability limitations",
+          ],
+          correctAnswer: "Personal medical information",
+        },
+      ],
+      "intellectual-property": [
+        {
+          question: "What does 'computer-generated' mean in copyright law?",
+          options: [
+            "Any work created using a computer",
+            "Software code written by programmers",
+            "A work created by computer without human intervention",
+            "Digital art created by humans using computers",
+          ],
+          correctAnswer: "A work created by computer without human intervention",
+        },
+        {
+          question: "True or False: Cryptography techniques can be considered intellectual property.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "According to New Zealand's Copyright Act 1994, what defines computer-generated works?",
+          options: [
+            "Any digital file created on a computer",
+            "Works created by computer in circumstances where there is no human author",
+            "Software applications developed by teams",
+            "Websites designed using computer tools",
+          ],
+          correctAnswer: "Works created by computer in circumstances where there is no human author",
+        },
+        {
+          question:
+            "Complete the sentence: Intellectual property in IT contexts often involves protection of _____ and _____.",
+          options: [
+            "hardware and cables",
+            "algorithms and software",
+            "buildings and equipment",
+            "employees and contractors",
+          ],
+          correctAnswer: "algorithms and software",
+        },
+        {
+          question: "Which is a key consideration for computer-generated intellectual property?",
+          options: [
+            "Ensuring the computer is properly licensed",
+            "Determining authorship when no human directly creates the work",
+            "Verifying the computer's processing speed",
+            "Confirming the computer's physical location",
+          ],
+          correctAnswer: "Determining authorship when no human directly creates the work",
+        },
+      ],
+      organizations: [
+        {
+          question: "What does ISO stand for in international standards?",
+          options: [
+            "International Standards Office",
+            "International Organization for Standardization",
+            "Internet Security Organization",
+            "Information Systems Oversight",
+          ],
+          correctAnswer: "International Organization for Standardization",
+        },
+        {
+          question:
+            "True or False: The IEEE is primarily concerned with electrical and electronics engineering standards.",
+          options: ["False", "True"],
+          correctAnswer: "True",
+        },
+        {
+          question: "What is the primary role of the W3C (World Wide Web Consortium)?",
+          options: [
+            "Providing internet access",
+            "Developing web standards and protocols",
+            "Manufacturing computer hardware",
+            "Regulating telecommunications",
+          ],
+          correctAnswer: "Developing web standards and protocols",
+        },
+        {
+          question:
+            "Complete the sentence: The IETF (Internet Engineering Task Force) is responsible for developing _____ standards.",
+          options: ["computer hardware", "software licensing", "internet protocol", "data storage"],
+          correctAnswer: "internet protocol",
+        },
+        {
+          question: "Which organization would most likely develop standards for information security management?",
+          options: [
+            "Local government agencies",
+            "ISO (International Organization for Standardization)",
+            "Individual software companies",
+            "University research departments",
+          ],
+          correctAnswer: "ISO (International Organization for Standardization)",
+        },
+      ],
+    }
+    let categoryQuestions = questionBank[category] || questionBank["miscellaneous"]
+    categoryQuestions = categoryQuestions.map((question) => {
+      const correctAnswer = question.correctAnswer
+      const shuffledOptions = shuffleArray(question.options)
+
+      return {
+        question: question.question,
+        options: shuffledOptions,
+        correctAnswer: correctAnswer,
+      }
+    })
+    const shuffled = shuffleArray(categoryQuestions)
+    return shuffled.slice(0, 5)
+  } catch (error) {
+    console.error("Error fetching quiz questions:", error)
+    const fallbackQuestions = [
+      {
+        question: "What does ICT stand for?",
+        options: [
+          "Internet and Computer Technology",
+          "Information and Communication Technology",
+          "Information and Computer Technology",
+          "Internet and Communication Technology",
+        ],
+        correctAnswer: "Information and Communication Technology",
+      },
+      {
+        question: "Which of the following is a programming language?",
+        options: ["HTML", "JavaScript", "CSS", "HTTP"],
+        correctAnswer: "JavaScript",
+      },
+      {
+        question: "What does URL stand for?",
+        options: [
+          "Universal Resource Link",
+          "Uniform Resource Locator",
+          "Unified Resource Locator",
+          "Universal Resource Locator",
+        ],
+        correctAnswer: "Uniform Resource Locator",
+      },
+      {
+        question: "What is the main purpose of a firewall?",
+        options: ["Data storage", "Network security", "File compression", "Image editing"],
+        correctAnswer: "Network security",
+      },
+      {
+        question: "Which protocol is used for secure web browsing?",
+        options: ["HTTP", "FTP", "HTTPS", "SMTP"],
+        correctAnswer: "HTTPS",
+      },
+    ]
+    return fallbackQuestions.map((question) => {
+      const correctAnswer = question.correctAnswer
+      const shuffledOptions = shuffleArray(question.options)
+
+      return {
+        question: question.question,
+        options: shuffledOptions,
+        correctAnswer: correctAnswer,
+      }
+    })
+  }
+}

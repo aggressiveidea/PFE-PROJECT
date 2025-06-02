@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, TrendingUp, Eye, ArrowRight, Globe, Monitor, Package, Shield, Brain, Cpu } from 'lucide-react'
+import { Sparkles, TrendingUp, Eye, ArrowRight, Globe, Database, ShoppingCart, Network, Shield, FileQuestion, FileText, Copyright, Building } from 'lucide-react'
 import "./PopularTerms.css"
 
 const PopularTerms = () => {
@@ -8,83 +8,111 @@ const PopularTerms = () => {
 
   const categories = [
     { id: "all", name: "All", icon: <Globe size={16} /> },
-    { id: "hardware", name: "Hardware", icon: <Monitor size={16} /> },
-    { id: "software", name: "Software", icon: <Package size={16} /> },
-    { id: "networking", name: "Networking", icon: <Globe size={16} /> },
-    { id: "security", name: "Security", icon: <Shield size={16} /> },
-    { id: "ai", name: "AI", icon: <Brain size={16} /> },
+    { id: "personal-data", name: "Personal Data", icon: <Database size={16} /> },
+    { id: "e-commerce", name: "E-commerce", icon: <ShoppingCart size={16} /> },
+    { id: "networks", name: "Networks", icon: <Network size={16} /> },
+    { id: "cybercrime", name: "Cybercrime", icon: <Shield size={16} /> },
+    { id: "miscellaneous", name: "Miscellaneous", icon: <FileQuestion size={16} /> },
+    { id: "it-contract", name: "IT Contract", icon: <FileText size={16} /> },
+    { id: "intellectual-property", name: "Intellectual Property", icon: <Copyright size={16} /> },
+    { id: "organizations", name: "Organizations", icon: <Building size={16} /> },
   ]
 
   const terms = [
     {
       id: 1,
-      name: "Artificial Intelligence",
-      definition: "The simulation of human intelligence processes by machines, especially computer systems.",
-      category: "ai",
+      name: "GDPR Compliance",
+      definition: "General Data Protection Regulation compliance ensuring the protection of personal data and privacy rights of EU citizens.",
+      category: "personal-data",
       popularity: 95,
       trending: true,
     },
     {
       id: 2,
-      name: "Cloud Computing",
-      definition:
-        "The delivery of different services through the Internet, including data storage, servers, databases, networking, and software.",
-      category: "networking",
+      name: "Digital Signature",
+      definition: "A cryptographic mechanism used to verify the authenticity and integrity of digital messages or documents in e-commerce transactions.",
+      category: "e-commerce",
       popularity: 88,
       trending: true,
     },
     {
       id: 3,
-      name: "Machine Learning",
-      definition:
-        "A subset of AI that provides systems the ability to automatically learn and improve from experience without being explicitly programmed.",
-      category: "ai",
+      name: "Network Access Control",
+      definition: "Security solutions that provide means, hardware, software, or services to enable and control electronic communications access.",
+      category: "networks",
       popularity: 92,
       trending: true,
     },
     {
       id: 4,
-      name: "Blockchain",
-      definition:
-        "A distributed ledger technology that maintains a continuously growing list of records, called blocks, which are linked and secured using cryptography.",
-      category: "security",
+      name: "Illegal Access",
+      definition: "Intentional access without right to all or part of a computer system, as defined by cybercrime legislation.",
+      category: "cybercrime",
       popularity: 78,
       trending: false,
     },
     {
       id: 5,
-      name: "Internet of Things",
-      definition:
-        "The network of physical objects embedded with sensors, software, and other technologies for the purpose of connecting and exchanging data with other devices and systems over the Internet.",
-      category: "networking",
+      name: "Information Society",
+      definition: "A society where information and communication technologies enable the circulation of intangible and volatile data without geographical constraints.",
+      category: "miscellaneous",
       popularity: 85,
       trending: true,
     },
     {
       id: 6,
-      name: "Virtual Reality",
-      definition:
-        "A simulated experience that can be similar to or completely different from the real world, created using computer technology and special equipment.",
-      category: "hardware",
+      name: "Service Level Agreement",
+      definition: "A contract defining the level of service expected from a service provider, including performance metrics and support procedures.",
+      category: "it-contract",
       popularity: 72,
       trending: false,
     },
     {
       id: 7,
-      name: "Cybersecurity",
-      definition:
-        "The practice of protecting systems, networks, and programs from digital attacks that aim to access, change, or destroy sensitive information.",
-      category: "security",
+      name: "Computer-Generated Works",
+      definition: "Works created by computer in circumstances where there is no human author, raising questions about intellectual property ownership.",
+      category: "intellectual-property",
       popularity: 89,
       trending: true,
     },
     {
       id: 8,
-      name: "Big Data",
-      definition:
-        "Extremely large data sets that may be analyzed computationally to reveal patterns, trends, and associations, especially relating to human behavior and interactions.",
-      category: "software",
+      name: "ISO Standards",
+      definition: "International Organization for Standardization standards that provide frameworks for information security management and IT governance.",
+      category: "organizations",
       popularity: 81,
+      trending: false,
+    },
+    {
+      id: 9,
+      name: "Data Subject Rights",
+      definition: "Rights that allow individuals to view, modify, and challenge the accuracy of their personal data under privacy legislation.",
+      category: "personal-data",
+      popularity: 87,
+      trending: true,
+    },
+    {
+      id: 10,
+      name: "Certificate Revocation List",
+      definition: "A list of digital certificates that have been revoked before their expiration date, crucial for e-commerce security.",
+      category: "e-commerce",
+      popularity: 74,
+      trending: false,
+    },
+    {
+      id: 11,
+      name: "Cryptanalysis",
+      definition: "The art of analyzing encrypted messages to decode them and break the code, often used in cybercrime investigations.",
+      category: "cybercrime",
+      popularity: 83,
+      trending: true,
+    },
+    {
+      id: 12,
+      name: "End User License Agreement",
+      definition: "A contract between the software publisher and the user that defines the legal permissions for using software.",
+      category: "it-contract",
+      popularity: 69,
       trending: false,
     },
   ]

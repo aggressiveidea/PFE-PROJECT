@@ -25,25 +25,35 @@ const BecomeExpert = () => {
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
         const authData = JSON.parse(localStorage.getItem("authData") || "{}")
 
-        console.log("BecomeExpert: Stored user:", storedUser)
-        console.log("BecomeExpert: Auth data:", authData)
+        console.log("BecomeExpert - User Status Check:")
+        console.log("- Stored user:", storedUser)
+        console.log("- Auth data:", authData)
+        console.log("- Has email:", !!storedUser.email)
+        console.log("- Has token:", !!authData.token)
+        console.log("- Is verified:", storedUser.isVerified || false)
 
         if (storedUser && storedUser.email) {
-          setUser({
+          const userStatus = {
             ...storedUser,
             isSignedIn: true,
             isVerified: storedUser.isVerified || false,
             hasToken: !!authData.token,
-          })
+          }
+
+          console.log("BecomeExpert - Final user status:", userStatus)
+          setUser(userStatus)
         } else {
-          setUser({
+          const guestStatus = {
             isSignedIn: false,
             isVerified: false,
             hasToken: false,
-          })
+          }
+
+          console.log("BecomeExpert - Guest status:", guestStatus)
+          setUser(guestStatus)
         }
       } catch (error) {
-        console.error("BecomeExpert: Error checking user status:", error)
+        console.error("BecomeExpert - Error checking user status:", error)
         setUser({
           isSignedIn: false,
           isVerified: false,
@@ -55,8 +65,9 @@ const BecomeExpert = () => {
     }
 
     checkUserStatus()
+
     const handleUserUpdate = () => {
-      console.log("BecomeExpert: User updated event received")
+      console.log("BecomeExpert - User updated event received, rechecking status...")
       checkUserStatus()
     }
 
@@ -72,11 +83,22 @@ const BecomeExpert = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    console.log(`BecomeExpert - Form field updated: ${name} = ${value}`)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    console.log("BecomeExpert - Form submission attempted")
+    console.log("- User status:", {
+      isSignedIn: user?.isSignedIn,
+      isVerified: user?.isVerified,
+      hasToken: user?.hasToken,
+    })
+    console.log("- Form data:", formData)
+
     if (!user || !user.isSignedIn || !user.isVerified) {
+      console.log("BecomeExpert - Access denied, showing sign-up required")
       setShowSignUpRequired(true)
       return
     }
@@ -85,15 +107,19 @@ const BecomeExpert = () => {
     setError("")
 
     try {
+      console.log("BecomeExpert - Submitting application to API...")
       const response = await submitExpertApplication(formData)
+      console.log("BecomeExpert - API response:", response)
 
       if (response.success) {
+        console.log("BecomeExpert - Application submitted successfully")
         setIsSubmitted(true)
       } else {
+        console.error("BecomeExpert - Application submission failed:", response.message)
         setError(response.message || "Failed to submit application")
       }
     } catch (error) {
-      console.error("Error submitting application:", error)
+      console.error("BecomeExpert - Error submitting application:", error)
       setError(error.message || "Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -101,14 +127,17 @@ const BecomeExpert = () => {
   }
 
   const handleSignUp = () => {
+    console.log("BecomeExpert - Redirecting to sign up page")
     window.location.href = "/signup"
   }
 
   const handleSignIn = () => {
+    console.log("BecomeExpert - Redirecting to sign in page")
     window.location.href = "/login"
   }
 
   const resetForm = () => {
+    console.log("BecomeExpert - Resetting form")
     setIsSubmitted(false)
     setShowSignUpRequired(false)
     setFormData({
@@ -142,6 +171,7 @@ const BecomeExpert = () => {
   }
 
   if (loading) {
+    console.log("BecomeExpert - Rendering loading state")
     return (
       <section id="become-expert" className="expert-become-expert">
         <div className="expert-container">
@@ -153,6 +183,8 @@ const BecomeExpert = () => {
       </section>
     )
   }
+
+  console.log("BecomeExpert - Rendering main component")
 
   return (
     <section id="become-expert" className="expert-become-expert">
@@ -480,29 +512,9 @@ const BecomeExpert = () => {
             </AnimatePresence>
           </motion.div>
         </div>
-        {process.env.NODE_ENV === "development" && user && (
-          <motion.div
-            className="expert-debug-info"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.5 }}
-          >
-            <h4>Debug Info (Development Only):</h4>
-            <p>
-              Status: {user.isSignedIn ? "Signed In" : "Not Signed In"} |{user.isVerified ? " Verified" : " Unverified"}{" "}
-              | Token: {user.hasToken ? "Present" : "Missing"}
-            </p>
-            {user.email && <p>Email: {user.email}</p>}
-            {user.role && <p>Role: {user.role}</p>}
-          </motion.div>
-        )}
       </div>
     </section>
   )
 }
 
 export default BecomeExpert
-
-
-
-

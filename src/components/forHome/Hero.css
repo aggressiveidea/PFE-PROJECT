@@ -1,4 +1,4 @@
-.hero {
+.tired-hero {
   position: relative;
   padding: 140px 24px 100px;
   background: linear-gradient(135deg, rgb(17, 17, 27) 0%, rgb(24, 24, 38) 100%);
@@ -8,7 +8,7 @@
   align-items: center;
 }
 
-.hero-container {
+.tired-hero-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
@@ -17,11 +17,11 @@
   margin: 0 auto;
 }
 
-.hero-content {
+.tired-hero-content {
   max-width: 600px;
 }
 
-.hero h1 {
+.tired-hero h1 {
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   line-height: 1.1;
   margin-bottom: 24px;
@@ -32,19 +32,19 @@
   font-weight: 700;
 }
 
-.hero p {
+.tired-hero p {
   font-size: clamp(1rem, 1.2vw, 1.25rem);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 40px;
 }
 
-.hero-search {
+.tired-hero-search {
   position: relative;
   margin-bottom: 48px;
 }
 
-.hero-search-input {
+.tired-hero-search-input {
   width: 100%;
   padding: 16px 56px 16px 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -55,17 +55,17 @@
   transition: all var(--transition-speed);
 }
 
-.hero-search-input:focus {
+.tired-hero-search-input:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-.hero-search-input::placeholder {
+.tired-hero-search-input::placeholder {
   color: rgba(255, 255, 255, 0.4);
 }
 
-.hero-search-btn {
+.tired-hero-search-btn {
   position: absolute;
   right: 16px;
   top: 50%;
@@ -80,22 +80,25 @@
   transition: color var(--transition-speed);
 }
 
-.hero-search-btn:hover {
+.tired-hero-search-btn:hover {
   color: white;
 }
 
-.hero-stats {
+.tired-hero-stats {
   display: flex;
   gap: 48px;
 }
 
-.stat-item {
+.tired-stat-item {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
-.stat-number {
+.tired-stat-number {
   font-size: 2.5rem;
   font-weight: 700;
   background: linear-gradient(90deg, #9333ea, #c026d3);
@@ -104,13 +107,13 @@
   color: transparent;
 }
 
-.stat-label {
+.tired-stat-label {
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
 }
 
-.hero-graph-container {
+.tired-hero-graph-container {
   position: relative;
   height: 600px;
   border-radius: 24px;
@@ -120,7 +123,7 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.hero-graph {
+.tired-hero-graph {
   position: absolute;
   top: 0;
   left: 0;
@@ -129,54 +132,55 @@
 }
 
 @media (max-width: 1024px) {
-  .hero {
+  .tired-hero {
     padding: 120px 24px 80px;
   }
 
-  .hero-container {
+  .tired-hero-container {
     grid-template-columns: 1fr;
     gap: 48px;
     text-align: center;
   }
 
-  .hero-content {
+  .tired-hero-content {
     margin: 0 auto;
   }
 
-  .hero-stats {
+  .tired-hero-stats {
     justify-content: center;
   }
 
-  .hero-graph-container {
+  .tired-hero-graph-container {
     height: 400px;
   }
 }
 
 @media (max-width: 640px) {
-  .hero {
+  .tired-hero {
     padding: 100px 16px 60px;
   }
 
-  .hero-stats {
+  .tired-hero-stats {
     flex-direction: column;
     gap: 32px;
     align-items: center;
   }
 
-  .stat-item {
+  .tired-stat-item {
     align-items: center;
   }
 
-  .hero-graph-container {
+  .tired-hero-graph-container {
     height: 300px;
   }
 }
-.buttons {
+
+.tired-buttons {
   display: flex;
   gap: 8px;
 }
 
-.buttons button {
+.tired-buttons button {
   padding: 5px 10px;
   border-radius: 8px;
   font-size: 1rem;
@@ -187,38 +191,39 @@
   outline: none;
 }
 
-.buttons button:first-child { 
+.tired-buttons button:first-child { 
   background: linear-gradient(90deg, #9333ea, #c026d3);
   color: white;
   box-shadow: 0 4px 10px rgba(144, 20, 255, 0.2);
 }
 
-.buttons button:first-child:hover {
+.tired-buttons button:first-child:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(144, 20, 255, 0.4);
 }
 
-.buttons button:last-child { 
+.tired-buttons button:last-child { 
   background: transparent;
   color: #9333ea;
   border: 2px solid #9333ea;
 }
 
-.buttons button:last-child:hover {
+.tired-buttons button:last-child:hover {
   background: #9333ea;
   color: white;
   box-shadow: 0 4px 10px rgba(144, 20, 255, 0.3);
 }
-.buttons {
+
+.tired-buttons {
   display: flex;
   gap: 12px;
 }
 
-.buttons a {
+.tired-buttons a {
   text-decoration: none;
 }
 
-.btn-signup {
+.tired-btn-signup {
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 1rem;
@@ -232,12 +237,12 @@
   box-shadow: 0 4px 10px rgba(144, 20, 255, 0.3);
 }
 
-.btn-signup:hover {
+.tired-btn-signup:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 20px rgba(144, 20, 255, 0.5);
 }
 
-.btn-login {
+.tired-btn-login {
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 1rem;
@@ -249,9 +254,8 @@
   background: transparent;
 }
 
-.btn-login:hover {
+.tired-btn-login:hover {
   background: #9333ea;
   color: white;
   box-shadow: 0 4px 10px rgba(144, 20, 255, 0.3);
 }
-

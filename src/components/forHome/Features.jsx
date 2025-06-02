@@ -1,13 +1,23 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { Globe, Network, RefreshCw, Zap, Users } from "lucide-react"
 import { translations } from "../../utils/translations"
 import "./Features.css"
 
 const Features = ({ language = "en" }) => {
+  const navigate = useNavigate()
   const t = translations[language] || translations.en
   const isRtl = language === "ar"
   const [activeFeature, setActiveFeature] = useState(0)
+
+  const handleExplore = () => {
+    navigate("/terms")
+  }
+
+  const handleGetStarted = () => {
+    navigate("/terms")
+  }
 
   const features = [
     {
@@ -212,6 +222,7 @@ const Features = ({ language = "en" }) => {
                       <motion.button
                         className="features-explore-button"
                         style={{ borderColor: feature.color, color: feature.color }}
+                        onClick={handleExplore}
                         whileHover={{
                           backgroundColor: `${feature.color}10`,
                           borderColor: feature.color,
@@ -246,6 +257,7 @@ const Features = ({ language = "en" }) => {
             </div>
             <motion.button
               className="features-get-started-button"
+              onClick={handleGetStarted}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -259,7 +271,3 @@ const Features = ({ language = "en" }) => {
 }
 
 export default Features
-
-
-
-
