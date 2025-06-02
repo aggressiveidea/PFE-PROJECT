@@ -5,7 +5,7 @@ import LibraryCard from "./LibraryCard";
 import "./library.css";
 
 const ArticlesList = ({
-  data, // Real data from localStorage passed from parent
+  data,  
   searchQuery,
   categoryFilter,
   languageFilter,
@@ -13,7 +13,7 @@ const ArticlesList = ({
   showFavoritesOnly,
   currentPage,
   currentLanguage,
-  onCardClick, // Navigation handler from parent
+  onCardClick,  
 }) => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [animateItems, setAnimateItems] = useState(false);
@@ -21,7 +21,7 @@ const ArticlesList = ({
 
   useEffect(() => {
     const filtered = data.filter((item) => {
-      // Search in title, content, author name
+       
       const titleMatch = item.title
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -34,15 +34,15 @@ const ArticlesList = ({
       const matchesSearch =
         searchQuery === "" || titleMatch || contentMatch || authorMatch;
 
-      // Category filter
+       
       const matchesCategory =
         categoryFilter === "all" || item.category === categoryFilter;
 
-      // Language filter (if applicable)
+       
       const matchesLanguage =
         languageFilter === "all" || item.language === languageFilter;
 
-      // Favorites filter (you can implement this based on your needs)
+       
       const matchesFavorites = !showFavoritesOnly || item.isFavorite;
 
       return (
@@ -50,7 +50,7 @@ const ArticlesList = ({
       );
     });
 
-    // Sort the filtered data
+     
     filtered.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":
@@ -92,7 +92,7 @@ const ArticlesList = ({
     currentLanguage,
   ]);
 
-  // Pagination
+   
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedItems = filteredItems.slice(
     startIndex,

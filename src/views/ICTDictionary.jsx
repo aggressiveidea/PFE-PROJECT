@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import Header from "../components/forHome/Header";
@@ -20,17 +19,17 @@ const KnowledgeGraphPage = () => {
   const [searchHistory, setSearchHistory] = useState([]);
   const [activeHistoryFilter, setActiveHistoryFilter] = useState("all");
 
-  // Set RTL direction for Arabic language
+   
   const isRTL = selectedLanguage === "arabic";
 
-  // Check if user is verified
+   
   useEffect(() => {
     const checkUserVerification = () => {
       try {
-        // Get user data from localStorage
+         
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
-        // Check if user exists and is verified
+         
         if (userData && userData.isVerified === true) {
           setIsUserVerified(true);
         } else {
@@ -46,7 +45,7 @@ const KnowledgeGraphPage = () => {
 
     checkUserVerification();
 
-    // Listen for user updates
+     
     window.addEventListener("userUpdated", checkUserVerification);
 
     return () => {
@@ -54,7 +53,7 @@ const KnowledgeGraphPage = () => {
     };
   }, []);
 
-  // Initialize dark mode from localStorage
+   
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -65,7 +64,7 @@ const KnowledgeGraphPage = () => {
       document.documentElement.classList.remove("dark-mode");
     }
 
-    // Listen for dark mode changes from other components
+     
     const handleDarkModeChange = () => {
       const isDarkMode = localStorage.getItem("darkMode") === "true";
       setDarkMode(isDarkMode);
@@ -77,7 +76,7 @@ const KnowledgeGraphPage = () => {
     };
   }, []);
 
-  // Fetch search history when history panel is opened
+   
   useEffect(() => {
     if (showHistory) {
       fetchSearchHistory();
@@ -86,7 +85,7 @@ const KnowledgeGraphPage = () => {
 
   const fetchSearchHistory = async () => {
     try {
-      // Mock data using the actual terms and specified enum types
+       
       const mockHistory = [
         {
           id: 1,
@@ -148,7 +147,7 @@ const KnowledgeGraphPage = () => {
 
       setSearchHistory(mockHistory);
 
-      // Uncomment and modify when ready to use actual API
+       
       /*
       const response = await fetch('/api/search-history');
       if (!response.ok) {
@@ -198,7 +197,7 @@ const KnowledgeGraphPage = () => {
     }
   };
 
-  // Translations
+   
   const translations = {
     english: {
       title: "Knowledge Graph",
@@ -260,11 +259,11 @@ const KnowledgeGraphPage = () => {
 
   const t = translations[selectedLanguage] || translations.english;
 
-  // Language button colors
+   
   const languageColors = {
-    english: "#8b5cf6", // Purple
-    french: "#ec4899", // Pink
-    arabic: "#3b82f6", // Blue
+    english: "#8b5cf6",  
+    french: "#ec4899",  
+    arabic: "#3b82f6",  
   };
 
   if (isLoading) {

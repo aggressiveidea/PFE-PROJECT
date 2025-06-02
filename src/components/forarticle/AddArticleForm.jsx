@@ -91,15 +91,15 @@ export default function AddArticleForm({ setArticles }) {
     try {
       const createdArticle = await addArticle(articleData)
 
-      // 1. Update React state
+       
       setArticles((prev) => [...prev, createdArticle])
 
-      // 2. Update localStorage
+       
       const storedArticles = JSON.parse(localStorage.getItem("articles")) || []
       storedArticles.push(createdArticle)
       localStorage.setItem("articles", JSON.stringify(storedArticles))
 
-      // 3. Reset & feedback
+       
       setShowSuccess(true)
       setFormData({
         title: "",

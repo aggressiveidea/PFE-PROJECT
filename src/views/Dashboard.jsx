@@ -29,11 +29,11 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    // Fetch data when component mounts
+     
     const fetchDashboardData = async () => {
       setLoading(true)
       try {
-        // Get auth token from localStorage
+         
         const authData = JSON.parse(localStorage.getItem("authData") || "{}")
         const token = authData.token
 
@@ -42,7 +42,7 @@ export default function Dashboard() {
           return
         }
 
-        // Fetch all data in parallel
+         
         const [totalUsersData, activeUsersData, countryStatsData, activityStatsData] = await Promise.all([
           getTotalUsers(token),
           getActiveUsers(token),
@@ -55,7 +55,7 @@ export default function Dashboard() {
         console.log("Country Stats:", countryStatsData)
         console.log("Activity Stats:", activityStatsData)
 
-        // Set statistics data
+         
         setStatsData({
           totalUsers: totalUsersData?.User || 0,
           totalExperts: totalUsersData?.["Ict-expert"] || 0,
@@ -63,7 +63,7 @@ export default function Dashboard() {
           activeExperts: activeUsersData?.activeExperts || 0,
         })
 
-        // Format country data for the pie chart
+         
         if (countryStatsData && Array.isArray(countryStatsData)) {
           const formattedCountryData = countryStatsData.map((item, index) => ({
             name: item._id || "Unknown",
@@ -73,7 +73,7 @@ export default function Dashboard() {
           setCountryData(formattedCountryData)
         }
 
-        // Format activity data for the line chart
+         
         if (activityStatsData && Array.isArray(activityStatsData)) {
           const formattedActivityData = activityStatsData.map((item) => ({
             name: getMonthName(item._id.month),
@@ -165,9 +165,9 @@ export default function Dashboard() {
                 <span className="dashboardAdmin-code-function">await</span>{" "}
                 <span className="dashboardAdmin-code-method">admin.getAnalytics</span>();
                 <br />
-                <span className="dashboardAdmin-code-comment">// Total Users: {statsData?.totalUsers || 0}</span>
+                <span className="dashboardAdmin-code-comment">{statsData?.totalUsers || 0}</span>
                 <br />
-                <span className="dashboardAdmin-code-comment">// Active Users: {statsData?.activeUsers || 0}</span>
+                <span className="dashboardAdmin-code-comment">{statsData?.activeUsers || 0}</span>
               </div>
             </div>
 

@@ -50,7 +50,7 @@ export default function ArticleCard({
   const ownerId = useMemo(() => article?.ownerId, [article?.ownerId]);
   const userId = useMemo(() => user?._id, [user?._id]);
 
-  // Fixed category color - use article ID to ensure consistent color
+   
   const categoryColor = useMemo(() => {
     const colors = [
       "var(--color-primary)",
@@ -59,7 +59,7 @@ export default function ArticleCard({
       "var(--color-hard)",
       "var(--color-primary-light)",
     ];
-    // Use article ID to generate consistent color index
+     
     const colorIndex = articleId
       ? articleId.charCodeAt(articleId.length - 1) % colors.length
       : 0;
@@ -111,7 +111,7 @@ export default function ArticleCard({
     }
   }, [articleId]);
 
-  // Update local counts when article prop changes
+   
   useEffect(() => {
     setLocalCounts({
       favorites: article?.favorites || 0,
@@ -175,13 +175,13 @@ export default function ArticleCard({
     (e) => {
       e.stopPropagation();
 
-      // Increment share count locally
+       
       setLocalCounts((prev) => ({
         ...prev,
         share: prev.share + 1,
       }));
 
-      // Trigger card reload
+       
       setReloadKey((prevKey) => prevKey + 1);
 
       if (navigator.share && article) {
@@ -223,13 +223,13 @@ export default function ArticleCard({
     (e) => {
       e.stopPropagation();
 
-      // Increment or decrement favorites count locally
+       
       setLocalCounts((prev) => ({
         ...prev,
         favorites: isFavorite ? prev.favorites - 1 : prev.favorites + 1,
       }));
 
-      // Trigger card reload
+       
       setReloadKey((prevKey) => prevKey + 1);
 
       if (articleId && onToggleFavorite) {
@@ -249,7 +249,7 @@ export default function ArticleCard({
     (e) => {
       e.stopPropagation();
 
-      // Trigger card reload
+       
       setReloadKey((prevKey) => prevKey + 1);
 
       try {
@@ -257,12 +257,12 @@ export default function ArticleCard({
         let newBookmarks;
 
         if (isBookmarked) {
-          // Remove bookmark
+           
           newBookmarks = bookmarks.filter(
             (bookmark) => bookmark.id !== articleId
           );
         } else {
-          // Add complete article data to bookmarks
+           
           const bookmarkData = {
             id: articleId,
             title: article?.title || "Untitled Article",

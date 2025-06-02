@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
@@ -15,10 +14,10 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Define alphabet for index
+   
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-  // Function to get color for a category - purple-themed colors
+   
   const getCategoryColor = (category) => {
     const colorMap = {
       "Computer Crime": "#e879f9",
@@ -33,7 +32,7 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     return colorMap[category] || "#8b5cf6";
   };
 
-  // Category translations (standardized)
+   
   const categoryTranslations = {
     english: {
       "Computer Crime": "Computer Crime Law",
@@ -67,22 +66,22 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     },
   };
 
-  // Get category name based on selected language
+   
   const getCategoryName = (category) => {
     return categoryTranslations[language]?.[category] || category;
   };
 
-  // Organiser les termes par lettre initiale en utilisant les termes de l'API
+   
   useEffect(() => {
     if (terms && terms.length > 0) {
       const organizedTerms = {};
 
-      // Initialiser toutes les lettres de l'alphabet
+       
       alphabet.forEach((letter) => {
         organizedTerms[letter] = [];
       });
 
-      // Organiser les termes par lettre initiale
+       
       terms.forEach((term) => {
         const firstLetter = term.name.charAt(0).toUpperCase();
         if (alphabet.includes(firstLetter)) {
@@ -92,7 +91,7 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
 
       setIndexedTerms(organizedTerms);
 
-      // Définir la première lettre avec des termes comme active
+       
       const firstLetterWithTerms = alphabet.find(
         (letter) => organizedTerms[letter].length > 0
       );
@@ -100,7 +99,7 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
         setActiveIndex(firstLetterWithTerms);
       }
 
-      // Générer des termes suggérés
+       
       const allTerms = terms;
       const randomTerms = [...allTerms]
         .sort(() => 0.5 - Math.random())
@@ -109,7 +108,7 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     }
   }, [terms, language]);
 
-  // Filter terms based on search input
+   
   const getFilteredTerms = () => {
     if (!activeIndex || !indexedTerms[activeIndex]) return [];
 
@@ -121,11 +120,11 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     );
   };
 
-  // Update the search functionality to include autocomplete
+   
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
 
-    // Generate suggestions as user types (autocomplete)
+     
     if (e.target.value.length > 1) {
       const allTerms = Object.values(indexedTerms).flat();
       const autocompleteSuggestions = allTerms
@@ -150,7 +149,7 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     e.preventDefault();
     setSearchedTerm(searchInput);
 
-    // Generate suggested terms based on search
+     
     if (searchInput) {
       const allTerms = Object.values(indexedTerms).flat();
       const relatedTerms = allTerms
@@ -177,10 +176,10 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     setVisibleTerms((prev) => prev + 6);
   };
 
-  // Modifiez la fonction handleTermSelect pour sauvegarder dans localStorage
+   
   const handleTermSelect = (term) => {
     if (onTermSelect) {
-      // Sauvegarder dans localStorage avant de passer au parent
+       
       try {
         const savedTerms = JSON.parse(
           localStorage.getItem("savedTerms") || "[]"

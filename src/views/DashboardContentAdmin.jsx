@@ -66,12 +66,12 @@ export default function ContentAdminDashboard() {
   })
   const [isLoading, setIsLoading] = useState(true)
 
-  // Active tab state
+   
   const [activeTab, setActiveTab] = useState("articles")
 
   const user = JSON.parse(localStorage.getItem("user") || "{}")
 
-  // Calculate dashboard stats from API data
+   
   const fetchStats = async () => {
     try {
       const calculateStats = () => {
@@ -91,11 +91,11 @@ export default function ContentAdminDashboard() {
 
       calculateStats()
 
-      // Get unverified/pending items
+       
       const [unverifiedArticles, unverifiedMessages, unverifiedTerms] = await Promise.all([
         GetUnverifiedarticle(),
         getUnverifiedMessages(),
-        [], // Assuming there's no API for unverified terms yet
+        [],  
       ])
 
       setStats({
@@ -116,14 +116,14 @@ export default function ContentAdminDashboard() {
     fetchStats()
   }, [])
 
-  // Load data from API based on active tab
+   
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      // Clear selected item when changing tabs
+       
       setSelectedItem(null)
 
-      // Load data based on active tab
+       
       if (activeTab === "articles") {
         try {
           const unverifiedArticles = await GetUnverifiedarticle()
@@ -207,17 +207,17 @@ export default function ContentAdminDashboard() {
     fetchData()
   }, [activeTab])
 
-  // Show notification function
+   
   const showNotification = (type, message) => {
     setNotification({ show: true, type, message })
 
-    // Auto-hide notification after 3 seconds
+     
     setTimeout(() => {
       setNotification({ show: false, type: "", message: "" })
     }, 3000)
   }
 
-  // Get categories based on active tab
+   
   const getCategories = () => {
     if (activeTab === "articles") {
       return ["all", ...new Set(articles.map((a) => a.category).filter(Boolean))]
@@ -231,7 +231,7 @@ export default function ContentAdminDashboard() {
 
   const categories = getCategories()
 
-  // Filter items based on active tab
+   
   const getFilteredItems = () => {
     if (activeTab === "articles") {
       return articles
@@ -292,7 +292,7 @@ export default function ContentAdminDashboard() {
   const filteredItems = getFilteredItems()
 
   const handleSelectItem = (item) => {
-    // Ensure the item has the user's profile picture
+     
     const itemWithProfilePic = {
       ...item,
       profileImgUrl: item.profileImgUrl || item.avatar || user.profileImgUrl || "/placeholder.svg?height=40&width=40",
@@ -303,36 +303,36 @@ export default function ContentAdminDashboard() {
   const handleValidateItem = async (item) => {
     try {
       if (activeTab === "articles") {
-        // Call API to approve article
+         
         const response = await approveArticle(item._id)
 
         if (response && response.success) {
-          // Update local status
+           
           setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }))
 
-          // Update stats
+           
           setStats((prev) => ({
             ...prev,
             pendingArticles: prev.pendingArticles - 1,
           }))
 
-          // Show success notification
+           
           showNotification("success", "Article successfully approved!")
 
-          // Refresh the data
+           
           fetchData()
         } else {
           throw new Error("Approval failed")
         }
       } else if (activeTab === "messages") {
-        // Call API to approve message
+         
         const response = await approveMessage(item._id);
 
         if (response && response.success) {
-          // Update local status
+           
           setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }));
 
-          // Update stats
+           
           setStats((prev) => ({
             ...prev,
             pendingMessages: prev.pendingMessages - 1,
@@ -340,18 +340,18 @@ export default function ContentAdminDashboard() {
 
           showNotification("success", "Message successfully approved!");
 
-          // Refresh the data
+           
           fetchData();
         } else {
           throw new Error("Approval failed");
         }
       } else if (activeTab === "terms") {
-        // Handle terms approval - assuming there's an API for this
+         
         try {
-          // Update local status
+           
           setItemStatuses((prev) => ({ ...prev, [item._id]: "validated" }))
 
-          // Update stats
+           
           setStats((prev) => ({
             ...prev,
             pendingTerms: prev.pendingTerms - 1,
@@ -359,7 +359,7 @@ export default function ContentAdminDashboard() {
 
           showNotification("success", "Term successfully approved!")
 
-          // Refresh the data
+           
           fetchData()
         } catch (error) {
           console.error("Error approving term:", error)
@@ -382,77 +382,77 @@ export default function ContentAdminDashboard() {
 
         console.log("✅ Successfully deleted article from server")
 
-        // Update status
+         
         setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }))
 
-        // Update stats
+         
         setStats((prev) => ({
           ...prev,
           totalArticles: prev.totalArticles - 1,
           pendingArticles: prev.pendingArticles - 1,
         }))
 
-        // Show success notification
+         
         showNotification("error", "Article has been rejected and removed.")
 
-        // If the rejected article is currently selected, clear selection
+         
         if (selectedItem && selectedItem._id === item._id) {
           setSelectedItem(null)
         }
 
-        // Refresh the data
+         
         fetchData()
       } else if (activeTab === "messages") {
-        // Handle message rejection
+         
         try {
           const response = await deleteMessage(item._id)
 
           if (!response) throw new Error("Delete message failed")
 
-          // Update status
+           
           setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }))
 
-          // Update stats
+           
           setStats((prev) => ({
             ...prev,
             totalMessages: prev.totalMessages - 1,
             pendingMessages: prev.pendingMessages - 1,
           }))
 
-          // If the rejected message is currently selected, clear selection
+           
           if (selectedItem && selectedItem._id === item._id) {
             setSelectedItem(null)
           }
 
           showNotification("error", "Message has been rejected and removed.")
 
-          // Refresh the data
+           
           fetchData()
         } catch (error) {
           console.error("Error deleting message:", error)
           throw error
         }
       } else if (activeTab === "terms") {
-        // Handle terms rejection - assuming there's an API for this
+         
         try {
-          // Update status
+           
           setItemStatuses((prev) => ({ ...prev, [item._id]: "rejected" }))
 
-          // Update stats
+           
           setStats((prev) => ({
             ...prev,
             totalTerms: prev.totalTerms - 1,
             pendingTerms: prev.pendingTerms - 1,
           }))
 
-          // If the rejected term is currently selected, clear selection
+           
           if (selectedItem && selectedItem._id === item._id) {
             setSelectedItem(null)
           }
 
           showNotification("error", "Term has been rejected and removed.")
 
-          // Refresh the data
+           
           fetchData()
         } catch (error) {
           console.error("Error rejecting term:", error)
@@ -469,7 +469,7 @@ export default function ContentAdminDashboard() {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]))
   }
 
-  // Format date function
+   
   const formatDate = (dateString) => {
     if (!dateString) return ""
 
@@ -481,7 +481,7 @@ export default function ContentAdminDashboard() {
     })
   }
 
-  // Get section title based on active tab
+   
   const getSectionTitle = () => {
     switch (activeTab) {
       case "articles":
@@ -495,7 +495,7 @@ export default function ContentAdminDashboard() {
     }
   }
 
-  // Get section icon based on active tab
+   
   const getSectionIcon = () => {
     switch (activeTab) {
       case "articles":
@@ -509,7 +509,7 @@ export default function ContentAdminDashboard() {
     }
   }
 
-  // Get preview component based on active tab
+   
   const renderPreview = () => {
     if (!selectedItem) {
       return (
@@ -548,7 +548,7 @@ export default function ContentAdminDashboard() {
       <Header
         language={language}
         setLanguage={setLanguage}
-        darkMode={false} // Force light mode
+        darkMode={false}  
       />
       <Sidebar
         collapsed={sidebarCollapsed}

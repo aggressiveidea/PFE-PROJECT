@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -86,7 +85,7 @@ export default function UserProfile() {
     fetchUserData();
   }, [userId]);
 
-  // Fetch favorite articles data
+   
   useEffect(() => {
     const fetchFavoriteArticles = async () => {
       if (
@@ -102,7 +101,7 @@ export default function UserProfile() {
       const articlesData = [];
 
       try {
-        // Fetch each article by ID
+         
         for (const articleId of user.favourites) {
           try {
             const articleData = await getArticleById(articleId);
@@ -125,12 +124,12 @@ export default function UserProfile() {
     fetchFavoriteArticles();
   }, [user._id, user.favourites]);
 
-  // Fetch user writings if they are an ICT expert or Content admin
+   
   useEffect(() => {
     const fetchUserWritings = async () => {
       if (!user._id) return;
 
-      // Only fetch writings for ICT experts or Content admins
+       
       if (user.role === "Ict-expert" || user.role === "Content-admin") {
         setLoadingWritings(true);
         try {
@@ -171,7 +170,7 @@ export default function UserProfile() {
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
     } catch (e) {
-      return dateString.slice(0, 10); // Fallback to simple slice if date is invalid
+      return dateString.slice(0, 10);  
     }
   };
 
@@ -200,7 +199,7 @@ export default function UserProfile() {
   const isExpertOrAdmin =
     user.role === "Ict-expert" || user.role === "Content-admin";
 
-  // Function to render article cards
+   
   const renderArticleCard = (article, isFavorite) => {
     return (
       <div key={article._id} className="up_article-card">

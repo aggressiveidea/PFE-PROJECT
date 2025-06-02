@@ -35,7 +35,7 @@ function Articlepage() {
 
   const [favorites, setFavorites] = useState([]);
 
-  // Fetch user's favorites from the database
+   
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -75,7 +75,7 @@ function Articlepage() {
   const [topArticles, setTopArticles] = useState([]);
 
   const fetchArticles = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);  
 
     try {
       console.log("Fetching articles...");
@@ -125,7 +125,7 @@ function Articlepage() {
     }
   };
 
-  // Add garden color effect to CTA button on hover
+   
   useEffect(() => {
     const ctaButton = document.querySelector(".cta-button");
     if (ctaButton) {
@@ -154,15 +154,15 @@ function Articlepage() {
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
 
     try {
-      // Update the database
+       
       if (favorites.includes(id)) {
-        // Remove from favorites
+         
         await removeFromFavorites(id);
       } else {
-        // Add to favorites
+         
         await addToFavorites(id, user._id);
       }
-      // Update the favorite counter
+       
       await favorCounter(id);
     } catch (error) {
       console.error("Error updating favorites in database:", error);
@@ -179,38 +179,38 @@ function Articlepage() {
 
     if (canEdit) {
       setArticleToEdit(article);
-      // Show form
+       
       setShowUpdateForm(true);
-      // Prevent scrolling when modal is open
+       
       document.body.style.overflow = "hidden";
     }
   };
 
   const handleUpdateArticle = async (updatedArticle) => {
     try {
-      // Fetch the response
+       
       const response = await updatearticle(updatedArticle._id, updatedArticle);
 
       if (!response.success) {
         throw new Error("Error updating article");
       }
 
-      // Update the articles in the state
+       
       setArticles((prevArticles) =>
         prevArticles.map((article) =>
           article._id === updatedArticle._id ? updatedArticle : article
         )
       );
 
-      // Close the update form and reset the article to edit
+       
       setShowUpdateForm(false);
       setArticleToEdit(null);
-      // Re-enable scrolling
+       
       document.body.style.overflow = "auto";
 
       console.log("Successfully updated");
 
-      // Fetch the updated list of articles (if necessary)
+       
       fetchArticles();
     } catch (error) {
       console.error("Error updating article:", error);
@@ -220,7 +220,7 @@ function Articlepage() {
   const handleCloseUpdateForm = () => {
     setShowUpdateForm(false);
     setArticleToEdit(null);
-    // Re-enable scrolling
+     
     document.body.style.overflow = "auto";
   };
 
@@ -262,14 +262,14 @@ function Articlepage() {
         setArticles((prev) => [...prev, ...response]);
         setIndex((prev) => prev + 12);
 
-        // If we got less than 12, then there's no more data
+         
         if (response.length === 0) {
           setHasMore(false);
         }
 
         setAlertMessage("Articles loaded successfully!");
       } else {
-        setHasMore(false); // No articles returned
+        setHasMore(false);  
         setAlertMessage("No more articles found.");
       }
     } catch (error) {
@@ -280,9 +280,9 @@ function Articlepage() {
     }
   };
 
-  // Filter articles based on search, category, and language
+   
   const filteredArticles = articles.filter((article) => {
-    // Filter by search term
+     
     if (
       searchTerm &&
       !article.title?.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -292,7 +292,7 @@ function Articlepage() {
       return false;
     }
 
-    // Filter by category
+     
     if (
       categoryFilter !== "All Categories" &&
       article.category !== categoryFilter
@@ -300,7 +300,7 @@ function Articlepage() {
       return false;
     }
 
-    // Filter by language
+     
     if (
       languageFilter !== "All Languages" &&
       !article.language?.includes(languageFilter)

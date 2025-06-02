@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { Search } from "lucide-react";
@@ -13,7 +12,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
   const [hasSearched, setHasSearched] = useState(false);
   const [visibleTerms, setVisibleTerms] = useState(6);
 
-  // Function to get color for a category - purple-themed colors
   const getCategoryColor = (category) => {
     const colorMap = {
       "Computer Crime": "#e879f9",
@@ -28,7 +26,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     return colorMap[category] || "#8b5cf6";
   };
 
-  // Category translations (standardized)
   const categoryTranslations = {
     english: {
       "Computer Crime": "Computer Crime Law",
@@ -62,7 +59,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     },
   };
 
-  // Get the first 7 categories based on language
   const getLanguageSpecificCategories = () => {
     const allCategories = Object.keys(
       categoryTranslations[selectedLanguage] || {}
@@ -70,11 +66,9 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     return allCategories.slice(0, 7);
   };
 
-  // Filter terms based on search input, active categories, and language
   useEffect(() => {
     let results = [...terms];
 
-    // Filter by search term
     if (searchInput && hasSearched) {
       results = results.filter(
         (term) =>
@@ -105,7 +99,7 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
       setSuggestedTerms([]);
     }
 
-    // Filter by active categories
+  
     if (activeCategories.length > 0) {
       results = results.filter((term) => {
         if (term.categories && term.categories.length > 0) {
@@ -167,12 +161,12 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     });
   };
 
-  // Get language-specific categories
+
   const languageCategories = useMemo(() => {
     return getLanguageSpecificCategories();
   }, [selectedLanguage]);
 
-  // Get category name based on selected language
+
   const getCategoryName = (category) => {
     return categoryTranslations[selectedLanguage][category] || category;
   };
@@ -183,7 +177,7 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
 
   const handleTermSelect = (term) => {
     if (onTermSelect) {
-      // Sauvegarder dans localStorage avant de passer au parent
+ 
       try {
         const savedTerms = JSON.parse(
           localStorage.getItem("savedTerms") || "[]"
@@ -377,7 +371,7 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Add save functionality here
+                
                     try {
                       const savedTerms = JSON.parse(
                         localStorage.getItem("savedTerms") || "[]"

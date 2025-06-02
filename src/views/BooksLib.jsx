@@ -21,21 +21,21 @@ const BooksLib = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // State for books data from API
+   
   const [booksData, setBooksData] = useState({
     featured: [],
     popular: [],
     new: [],
   });
 
-  // State for filtered books
+   
   const [filteredBooks, setFilteredBooks] = useState({
     featured: [],
     popular: [],
     new: [],
   });
 
-  // Sample categories
+   
   const categories = [
     { id: "programming", name: "Programming" },
     { id: "cybersecurity", name: "Cybersecurity" },
@@ -48,7 +48,7 @@ const BooksLib = () => {
     { id: "web-development", name: "Web Development" },
   ];
 
-  // Fetch books from API
+   
   useEffect(() => {
     const fetchBooks = async () => {
       setIsLoading(true);
@@ -60,16 +60,16 @@ const BooksLib = () => {
         console.log("API response:", response);
 
         if (response && response.data) {
-          // Process the books data
+           
           const books = response.data;
           console.log("Books data:", books);
 
-          // Organize books into categories
-          // This is a simple categorization - you might want to adjust based on your actual data
+           
+           
           const categorizedBooks = {
-            featured: books.slice(0, 5), // First 5 books as featured
-            popular: books.slice(5, 10), // Next 5 as popular
-            new: books.slice(10), // Rest as new
+            featured: books.slice(0, 5),  
+            popular: books.slice(5, 10),  
+            new: books.slice(10),  
           };
 
           console.log("Categorized books:", categorizedBooks);
@@ -89,19 +89,19 @@ const BooksLib = () => {
     fetchBooks();
   }, []);
 
-  // Initialize with filtered books
+   
   useEffect(() => {
     setFilteredBooks(booksData);
   }, [booksData]);
 
-  // Apply dark mode to the entire document and header
+   
   useEffect(() => {
-    // Force light mode initially
+     
     if (darkMode === false) {
       document.body.classList.remove("BookLib-body-dark-mode");
       document.documentElement.style.setProperty("--sidebar-z-index", "50");
 
-      // Remove dark mode from header
+       
       const appHeader = document.querySelector("header");
       if (appHeader) {
         appHeader.classList.remove("BookLib-dark-header");
@@ -110,14 +110,14 @@ const BooksLib = () => {
       document.body.classList.add("BookLib-body-dark-mode");
       document.documentElement.style.setProperty("--sidebar-z-index", "50");
 
-      // Find and update the header from the parent application if it exists
+       
       const appHeader = document.querySelector("header");
       if (appHeader) {
         appHeader.classList.add("BookLib-dark-header");
       }
     }
 
-    // Cleanup function
+     
     return () => {
       document.body.classList.remove("BookLib-body-dark-mode");
       const appHeader = document.querySelector("header");
@@ -127,7 +127,7 @@ const BooksLib = () => {
     };
   }, [darkMode]);
 
-  // Filter books based on search parameters
+   
   useEffect(() => {
     if (searchParams.searchTerm === "" && searchParams.category === "all") {
       setFilteredBooks(booksData);
@@ -180,10 +180,10 @@ const BooksLib = () => {
 
   const handleBookClick = (book) => {
     if (book.pdfLink) {
-      // If the book has a PDF URL, open it in a new tab
+       
       window.open(book.pdfLink, "_blank");
     } else {
-      // Otherwise, show the book details
+       
       setSelectedBook(book);
     }
   };
@@ -194,10 +194,10 @@ const BooksLib = () => {
 
   const handleAddToLibrary = (book) => {
     try {
-      // Get existing saved books from localStorage
+       
       const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
 
-      // Check if book is already saved
+       
       const isAlreadySaved = savedBooks.some(
         (savedBook) => savedBook.id === book._id || savedBook.id === book.id
       );
@@ -207,7 +207,7 @@ const BooksLib = () => {
         return;
       }
 
-      // Create complete book data object for saving
+       
       const bookData = {
         id: book._id || book.id || Date.now().toString(),
         title: book.title || "Untitled Book",
@@ -230,18 +230,18 @@ const BooksLib = () => {
         downloadCount: book.downloadCount || 0,
         fileSize: book.fileSize || "Unknown",
         addedToLibraryAt: new Date().toISOString(),
-        source: "digital_library", // To distinguish from other sources
+        source: "digital_library",  
       };
 
-      // Add to saved books array
+       
       const updatedSavedBooks = [...savedBooks, bookData];
 
-      // Save to localStorage
+       
       localStorage.setItem("savedBooks", JSON.stringify(updatedSavedBooks));
 
       alert(`"${book.title}" has been added to your digital library!`);
 
-      // Optional: You can also trigger a state update if you want to show saved status immediately
+       
       console.log("Book saved to digital library:", bookData);
     } catch (error) {
       console.error("Error saving book to digital library:", error);
@@ -250,7 +250,7 @@ const BooksLib = () => {
   };
 
   const handleReadNow = (book) => {
-    // Implementation for reading the book - open the PDF URL
+     
     if (book.pdfLink) {
       window.open(book.pdfLink, "_blank");
     } else {
@@ -266,17 +266,17 @@ const BooksLib = () => {
     try {
       console.log("Adding new book:", newBook);
 
-      // The API call is now handled in the BookLibAddForm component
-      // Here we just need to update our local state with the book data
-      // including the image preview for the UI
+       
+       
+       
 
-      // Add the new book to the "new" category
+       
       setBooksData((prevData) => ({
         ...prevData,
         new: [
           {
             ...newBook,
-            // Use the preview URL for display in the UI if available
+             
             coverImgUrl: newBook.coverImgPreview || newBook.coverImgUrl,
           },
           ...prevData.new,

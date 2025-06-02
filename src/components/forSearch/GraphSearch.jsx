@@ -13,7 +13,7 @@ const GraphSearch = () => {
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName)
 
-    // Handle zoom functionality
+     
     if (buttonName === "zoomIn") {
       setZoomLevel((prev) => Math.min(prev + 0.2, 3))
     } else if (buttonName === "zoomOut") {
@@ -25,19 +25,19 @@ const GraphSearch = () => {
         })
       }
     } else if (buttonName === "download") {
-      // Placeholder for download functionality
+       
       alert("Download functionality would save the current graph view")
     } else if (buttonName === "reload") {
-      // Reset zoom and position
+       
       setZoomLevel(1)
       setPosition({ x: 0, y: 0 })
     }
 
-    // Reset active button state after a short delay
+     
     setTimeout(() => setActiveButton(null), 300)
   }
 
-  // Handle mouse down for dragging
+   
   const handleMouseDown = (e) => {
     setIsDragging(true)
     setStartPosition({
@@ -46,7 +46,7 @@ const GraphSearch = () => {
     })
   }
 
-  // Handle mouse move for dragging
+   
   const handleMouseMove = (e) => {
     if (isDragging) {
       setPosition({
@@ -56,12 +56,12 @@ const GraphSearch = () => {
     }
   }
 
-  // Handle mouse up to stop dragging
+   
   const handleMouseUp = () => {
     setIsDragging(false)
   }
 
-  // Add and remove event listeners
+   
   useEffect(() => {
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove)

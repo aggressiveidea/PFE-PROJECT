@@ -26,10 +26,10 @@ const GraphAlgorithmsEnhanced = ({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [
-    /*showResults, setShowResults*/
+    showResults, setShowResults
   ] = useState(false);
   const [
-    /*appliedAlgorithmResult, setAppliedAlgorithmResult*/
+    appliedAlgorithmResult, setAppliedAlgorithmResult
   ] = useState(null);
 
   // Mock data for filtering counts

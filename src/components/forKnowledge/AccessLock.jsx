@@ -7,10 +7,10 @@ const AccessLock = ({ onClose }) => {
   const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
-    // Start animation after component mounts
+     
     setIsAnimating(true);
 
-    // Show signup form after lock animation completes
+     
     const timer = setTimeout(() => {
       setShowSignup(true);
     }, 1000);
@@ -19,12 +19,12 @@ const AccessLock = ({ onClose }) => {
   }, []);
 
   const handleSignupClick = () => {
-    // Handle signup navigation - replace with your routing logic
+     
     window.location.href = "/signup";
   };
 
   const handleLoginClick = () => {
-    // Handle login navigation - replace with your routing logic
+     
     window.location.href = "/login";
   };
 

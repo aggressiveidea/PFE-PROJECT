@@ -7,7 +7,7 @@ import IndexedSearch from "../components/forSearch/IndexedSearch";
 import { getAllterms } from "../services/Api";
 import "./SearchPage.css";
 
-// Mock data for initial render
+ 
 const initialTermsData = [];
 
 const SearchPage = () => {
@@ -30,7 +30,7 @@ const SearchPage = () => {
   const [isSaved, setIsSaved] = useState(false);
   const ITEMS_PER_PAGE = 8;
 
-  // Fonction pour convertir le nom de la langue en code pour l'API
+   
   const getLanguageCode = (languageName) => {
     switch (languageName) {
       case "english":
@@ -44,7 +44,7 @@ const SearchPage = () => {
     }
   };
 
-  // Fonction utilitaire pour le localStorage
+   
   const termStorage = {
     saveTerm: (term) => {
       try {
@@ -88,7 +88,7 @@ const SearchPage = () => {
     },
   };
 
-  // Fetch terms data from API with language code
+   
   useEffect(() => {
     const fetchTerms = async () => {
       try {
@@ -112,7 +112,7 @@ const SearchPage = () => {
           throw new Error("No data received from the API");
         }
 
-        // Transform the data to match the expected format
+         
         const transformedData = data.map((term) => {
           const validRelatedTerms =
             term.definitions && term.definitions[0]?.relatedTerms
@@ -124,14 +124,14 @@ const SearchPage = () => {
           return {
             id: term.id || "",
             name: term.name || "",
-            // Store all definitions for detailed view
+             
             allDefinitions: term.definitions || [],
-            // Store categories structure for modal display
+             
             categories:
               term.definitions && term.definitions[0]?.categories
                 ? term.definitions[0].categories
                 : null,
-            // Also keep a simple format for the cards display
+             
             category:
               (term.definitions &&
                 term.definitions[0]?.categories &&
@@ -142,7 +142,7 @@ const SearchPage = () => {
               "No definition available",
             reference:
               (term.definitions && term.definitions[0]?.references) || "",
-            // Store related terms if available
+             
             relatedTerms: validRelatedTerms,
           };
         });
@@ -169,13 +169,13 @@ const SearchPage = () => {
     fetchTerms();
   }, [selectedLanguage]);
 
-  // Update the handleTermSelect function to work with the new data structure and find related terms
+   
   const handleTermSelect = (term) => {
     setSelectedTerm(term);
     setIsSaved(termStorage.isTermSaved(term.id || term.name));
     setExpandedSections({});
 
-    // Find related terms based on the relatedTerms array from the API
+     
     let related = [];
 
     if (term.relatedTerms && term.relatedTerms.length > 0) {
@@ -243,7 +243,7 @@ const SearchPage = () => {
     }
   };
 
-  // Fonction pour gérer la sauvegarde manuelle
+   
   const handleSaveTerm = () => {
     if (selectedTerm) {
       const success = termStorage.saveTerm(selectedTerm);
@@ -257,7 +257,7 @@ const SearchPage = () => {
     setSelectedTerm(null);
   };
 
-  // Function to get color for a category - purple-themed colors
+   
   const getCategoryColor = (category) => {
     const colorMap = {
       "Computer Science": "#8b5cf6",
@@ -277,7 +277,7 @@ const SearchPage = () => {
     return colorMap[category] || "#8b5cf6";
   };
 
-  // Close modal when clicking outside
+   
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -294,7 +294,7 @@ const SearchPage = () => {
     };
   }, [selectedTerm]);
 
-  // Prevent scrolling when modal is open
+   
   useEffect(() => {
     if (selectedTerm) {
       document.body.style.overflow = "hidden";
@@ -425,7 +425,7 @@ const SearchPage = () => {
                 ))
               ) : selectedTerm.categories &&
                 selectedTerm.categories.length > 0 ? (
-                // Fallback to categories structure if allDefinitions is not available
+                 
                 selectedTerm.categories.map((category, catIndex) => (
                   <div key={catIndex} className="_terms_term_category_section">
                     <div
@@ -526,7 +526,7 @@ const SearchPage = () => {
                   </div>
                 ))
               ) : (
-                // For simple terms without complex structure
+                 
                 <div className="_terms_term_simple_details">
                   <div
                     className="_terms_term_category_header"

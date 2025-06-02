@@ -5,7 +5,7 @@ import LibraryCard from "./LibraryCard";
 import "./library.css";
 
 const TermsList = ({
-  data, // Real data from localStorage passed from parent
+  data,  
   searchQuery,
   categoryFilter,
   languageFilter,
@@ -20,7 +20,7 @@ const TermsList = ({
 
   useEffect(() => {
     const filtered = data.filter((item) => {
-      // Search functionality
+       
       const titleMatch = item.title
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -29,15 +29,15 @@ const TermsList = ({
         .includes(searchQuery.toLowerCase());
       const matchesSearch = searchQuery === "" || titleMatch || definitionMatch;
 
-      // Category filter
+       
       const matchesCategory =
         categoryFilter === "all" || item.category === categoryFilter;
 
-      // Language filter
+       
       const matchesLanguage =
         languageFilter === "all" || item.language === languageFilter;
 
-      // Favorites filter
+       
       const matchesFavorites = !showFavoritesOnly || item.isFavorite;
 
       return (
@@ -45,7 +45,7 @@ const TermsList = ({
       );
     });
 
-    // Sort the filtered data
+     
     filtered.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":

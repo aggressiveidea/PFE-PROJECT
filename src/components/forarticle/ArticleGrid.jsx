@@ -144,7 +144,7 @@ export default function ArticlesSection({
     [articles]
   );
 
-  // Delete article
+   
   const handleDeleteArticle = useCallback(
     (articleId) => {
       if (window.confirm("Are you sure you want to delete this article?")) {

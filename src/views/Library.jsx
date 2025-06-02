@@ -27,12 +27,12 @@ const Library = () => {
   const [language, setLanguage] = useState("en");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Real data from localStorage
+   
   const [savedArticles, setSavedArticles] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
   const [savedTerms, setSavedTerms] = useState([]);
 
-  // Check for dark mode preference
+   
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -44,7 +44,7 @@ const Library = () => {
     }
   }, []);
 
-  // Update dark mode when it changes
+   
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
     if (darkMode) {
@@ -54,25 +54,25 @@ const Library = () => {
     }
   }, [darkMode]);
 
-  // Load real data from localStorage
+   
   useEffect(() => {
     const loadSavedData = () => {
       try {
-        // Load saved articles (bookmarks from ArticleCard)
+         
         const bookmarkedArticles = JSON.parse(
           localStorage.getItem("articles") || "[]"
         );
         console.log("Loaded articles:", bookmarkedArticles);
         setSavedArticles(bookmarkedArticles);
 
-        // Load saved books (from BooksLib)
+         
         const savedBooksData = JSON.parse(
           localStorage.getItem("saved_books") || "[]"
         );
         console.log("Loaded books:", savedBooksData);
         setSavedBooks(savedBooksData);
 
-        // Load saved terms (placeholder for now - will be implemented later)
+         
         const savedTermsData = JSON.parse(
           localStorage.getItem("saved_terms") || "[]"
         );
@@ -93,7 +93,7 @@ const Library = () => {
 
     loadSavedData();
 
-    // Listen for localStorage changes to update the data in real-time
+     
     const handleStorageChange = () => {
       loadSavedData();
     };
@@ -105,7 +105,7 @@ const Library = () => {
     };
   }, []);
 
-  // Simulate loading data with real data loading
+   
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
@@ -114,11 +114,11 @@ const Library = () => {
     return () => clearTimeout(timer);
   }, [activeTab]);
 
-  // Get filtered and sorted data based on current filters
+   
   const getFilteredData = (data, type) => {
     let filteredData = [...data];
 
-    // Apply search filter
+     
     if (searchQuery.trim()) {
       filteredData = filteredData.filter((item) => {
         const searchTerm = searchQuery.toLowerCase();
@@ -132,7 +132,7 @@ const Library = () => {
       });
     }
 
-    // Apply category filter
+     
     if (categoryFilter !== "all") {
       filteredData = filteredData.filter((item) => {
         const itemCategory = item.category || "uncategorized";
@@ -142,7 +142,7 @@ const Library = () => {
       });
     }
 
-    // Apply language filter (if applicable)
+     
     if (languageFilter !== "all") {
       filteredData = filteredData.filter((item) => {
         const itemLanguage = item.language || "en";
@@ -150,7 +150,7 @@ const Library = () => {
       });
     }
 
-    // Apply sorting
+     
     filteredData.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":
@@ -183,7 +183,7 @@ const Library = () => {
     return filteredData;
   };
 
-  // Get current data based on active tab
+   
   const getCurrentData = () => {
     switch (activeTab) {
       case "articles":
@@ -197,7 +197,7 @@ const Library = () => {
     }
   };
 
-  // Get statistics for the welcome section
+   
   const getStats = () => {
     return {
       articles: savedArticles.length,
@@ -207,7 +207,7 @@ const Library = () => {
     };
   };
 
-  // Reset filters
+   
   const resetFilters = () => {
     setSearchQuery("");
     setCategoryFilter("all");
@@ -217,12 +217,12 @@ const Library = () => {
     setCurrentPage(1);
   };
 
-  // Toggle sidebar
+   
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
-  // Mobile menu handlers
+   
   const closeMobileMenu = () => {
     setMobileOpen(false);
   };
@@ -231,27 +231,27 @@ const Library = () => {
     setMobileOpen(true);
   };
 
-  // Handle page change
+   
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    // Scroll to top of results
+     
     document
       .querySelector(".library-content")
       .scrollIntoView({ behavior: "smooth" });
   };
 
-  // Handle card click navigation
+   
   const handleCardClick = (item, type) => {
     if (type === "articles") {
-      // Navigate to the article using the id from localStorage
+       
       window.open(`http://localhost:3000/articles/${item.id}`, "_blank");
     } else if (type === "books") {
-      // You can add book navigation here if needed
+       
       console.log("Book clicked:", item);
     }
   };
 
-  // Calculate pagination
+   
   const itemsPerPage = 10;
   const currentData = getCurrentData();
   const totalPages = Math.ceil(currentData.length / itemsPerPage);

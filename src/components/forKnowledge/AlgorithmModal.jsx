@@ -1,489 +1,694 @@
 "use client";
 import "./AlgorithmModal.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Hard-coded algorithm results data
+// Hard-coded algorithm results data from actual Neo4j queries
 const MOCK_ALGORITHM_RESULTS = {
-  pagerank: {
-    success: true,
-    algorithm: "pagerank",
-    projectionName: "gds_subgraph_Encryption_1748875707441",
-    results: [
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "222",
-        score: 0.18946428571428575,
-        internalId: 2262,
-      },
-      {
-        label: "Electronic Commerce",
-        nodeType: "Category",
-        nodeId: { low: 341, high: 0 },
-        score: 0.18946428571428575,
-        internalId: 1896,
-      },
-      {
-        label: "Encoding",
-        nodeType: "Term",
-        nodeId: "352",
-        score: 0.18946428571428575,
-        internalId: 2392,
-      },
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "123",
-        score: 0.17125,
-        internalId: 2163,
-      },
-      {
-        label: "Operation by which a clear message is transformed ...",
-        nodeType: "Definition",
-        nodeId: "222_0_p_0",
-        score: 0.17125,
-        internalId: 3039,
-      },
-      {
-        label: "The use of unusual codes or signals allowing the c...",
-        nodeType: "Definition",
-        nodeId: "222_0_s_0",
-        score: 0.17125,
-        internalId: 3040,
-      },
-      {
-        label: "Is a cryptographic transformation of data producin...",
-        nodeType: "Definition",
-        nodeId: "123_0_p_0",
-        score: 0.16821428571428573,
-        internalId: 2914,
-      },
-      {
-        label: "Process by which a document can be made incomprehe...",
-        nodeType: "Definition",
-        nodeId: "123_0_s_0",
-        score: 0.16821428571428573,
-        internalId: 2915,
-      },
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "230",
-        score: 0.16821428571428573,
-        internalId: 2270,
-      },
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "232",
-        score: 0.16821428571428573,
-        internalId: 2272,
-      },
-    ],
-    resultCount: 10,
+  // Full Graph Results
+  fullGraph: {
+    pagerank: {
+      success: true,
+      algorithm: "pagerank",
+      projectionName: "fullGraph",
+      results: [
+        {
+          label: "Commerce électronique",
+          nodeType: "Category",
+          nodeId: "341",
+          score: 90.19076941311728,
+          internalId: 1896,
+        },
+        {
+          label: "Electronic Commerce",
+          nodeType: "Category",
+          nodeId: "342",
+          score: 90.10184319004303,
+          internalId: 1897,
+        },
+        {
+          label: "التجارة الإلكترونية",
+          nodeType: "Category",
+          nodeId: "343",
+          score: 89.62724911102532,
+          internalId: 1898,
+        },
+        {
+          label: "Criminalité informatique",
+          nodeType: "Category",
+          nodeId: "344",
+          score: 49.304560957843975,
+          internalId: 1899,
+        },
+        {
+          label: "Computer Crime",
+          nodeType: "Category",
+          nodeId: "345",
+          score: 48.43145140275401,
+          internalId: 1900,
+        },
+        {
+          label: "Networks",
+          nodeType: "Category",
+          nodeId: "346",
+          score: 28.18375528727949,
+          internalId: 1901,
+        },
+        {
+          label: "Réseaux",
+          nodeType: "Category",
+          nodeId: "347",
+          score: 27.978670028398927,
+          internalId: 1902,
+        },
+        {
+          label: "الشبكات",
+          nodeType: "Category",
+          nodeId: "348",
+          score: 24.842604717746898,
+          internalId: 1903,
+        },
+        {
+          label: "Personal Data",
+          nodeType: "Category",
+          nodeId: "349",
+          score: 18.48151659304295,
+          internalId: 1904,
+        },
+        {
+          label: "Données personnelles",
+          nodeType: "Category",
+          nodeId: "350",
+          score: 18.224506079874068,
+          internalId: 1905,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 5679,
+      relationshipCount: 12756,
+    },
+
+    louvain: {
+      success: true,
+      algorithm: "louvain",
+      projectionName: "fullGraph",
+      results: [
+        {
+          label: "APPZ",
+          nodeType: "Term",
+          nodeId: "1001",
+          communityId: 219,
+          internalId: 2001,
+        },
+        {
+          label: "Abus de dispositifs",
+          nodeType: "Term",
+          nodeId: "1002",
+          communityId: 219,
+          internalId: 2002,
+        },
+        {
+          label: "Accès illicite à des systèmes d'information",
+          nodeType: "Term",
+          nodeId: "1003",
+          communityId: 219,
+          internalId: 2003,
+        },
+        {
+          label: "Accès illégal",
+          nodeType: "Term",
+          nodeId: "1004",
+          communityId: 219,
+          internalId: 2004,
+        },
+        {
+          label: "Accès non autorisé",
+          nodeType: "Term",
+          nodeId: "1005",
+          communityId: 219,
+          internalId: 2005,
+        },
+        {
+          label: "Accès ou maintien frauduleux dans un système informatique",
+          nodeType: "Term",
+          nodeId: "1006",
+          communityId: 219,
+          internalId: 2006,
+        },
+        {
+          label: "Action du virus",
+          nodeType: "Term",
+          nodeId: "1007",
+          communityId: 219,
+          internalId: 2007,
+        },
+        {
+          label: "Antispyware",
+          nodeType: "Term",
+          nodeId: "1008",
+          communityId: 219,
+          internalId: 2008,
+        },
+        {
+          label: "Antitroyen",
+          nodeType: "Term",
+          nodeId: "1009",
+          communityId: 219,
+          internalId: 2009,
+        },
+        {
+          label: "Antivirus",
+          nodeType: "Term",
+          nodeId: "1010",
+          communityId: 219,
+          internalId: 2010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 5679,
+      relationshipCount: 12756,
+    },
+
+    betweenness: {
+      success: true,
+      algorithm: "betweenness",
+      projectionName: "fullGraph",
+      results: [
+        {
+          label: "Virus",
+          nodeType: "Term",
+          nodeId: "2001",
+          score: 327.0,
+          internalId: 3001,
+        },
+        {
+          label: "Malware",
+          nodeType: "Term",
+          nodeId: "2002",
+          score: 260.1538461538462,
+          internalId: 3002,
+        },
+        {
+          label: "وصول غير قانوني",
+          nodeType: "Term",
+          nodeId: "2003",
+          score: 250.0,
+          internalId: 3003,
+        },
+        {
+          label: "موقع",
+          nodeType: "Term",
+          nodeId: "2004",
+          score: 198.0,
+          internalId: 3004,
+        },
+        {
+          label: "Données",
+          nodeType: "Term",
+          nodeId: "2005",
+          score: 164.2,
+          internalId: 3005,
+        },
+        {
+          label: "موقع",
+          nodeType: "Term",
+          nodeId: "2006",
+          score: 147.5,
+          internalId: 3006,
+        },
+        {
+          label: "Cryptolope",
+          nodeType: "Term",
+          nodeId: "2007",
+          score: 142.95384615384617,
+          internalId: 3007,
+        },
+        {
+          label: "كريبتولوب",
+          nodeType: "Term",
+          nodeId: "2008",
+          score: 105.11904761904763,
+          internalId: 3008,
+        },
+        {
+          label: "قرصنة",
+          nodeType: "Term",
+          nodeId: "2009",
+          score: 105.0,
+          internalId: 3009,
+        },
+        {
+          label: "Données à caractère personnel",
+          nodeType: "Term",
+          nodeId: "2010",
+          score: 99.0,
+          internalId: 3010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 5679,
+      relationshipCount: 12756,
+    },
+
+    nodeSimilarity: {
+      success: true,
+      algorithm: "nodeSimilarity",
+      projectionName: "fullGraph",
+      results: [
+        {
+          label: "Décryptage → Décryption",
+          nodeType: "Similarity",
+          nodeId: "sim_001",
+          score: 1.0,
+          internalId: 4001,
+        },
+        {
+          label: "Données nominatives → Données personnelles",
+          nodeType: "Similarity",
+          nodeId: "sim_002",
+          score: 1.0,
+          internalId: 4002,
+        },
+        {
+          label: "Acheminement → Routing",
+          nodeType: "Similarity",
+          nodeId: "sim_003",
+          score: 1.0,
+          internalId: 4003,
+        },
+        {
+          label: "Cyberresistant → Cybermilitant",
+          nodeType: "Similarity",
+          nodeId: "sim_004",
+          score: 1.0,
+          internalId: 4004,
+        },
+        {
+          label: "Décryption → Décryptage",
+          nodeType: "Similarity",
+          nodeId: "sim_005",
+          score: 1.0,
+          internalId: 4005,
+        },
+      ],
+      resultCount: 5,
+      nodeCount: 5679,
+      relationshipCount: 12756,
+    },
   },
 
-  betweenness: {
-    success: true,
-    algorithm: "betweenness",
-    projectionName: "gds_subgraph_Encryption_1748875707441",
-    results: [
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "123",
-        score: 4,
-        internalId: 2163,
-      },
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "222",
-        score: 2,
-        internalId: 2262,
-      },
-      {
-        label: "Is a cryptographic transformation of data producin...",
-        nodeType: "Definition",
-        nodeId: "123_0_p_0",
-        score: 0,
-        internalId: 2914,
-      },
-      {
-        label: "Process by which a document can be made incomprehe...",
-        nodeType: "Definition",
-        nodeId: "123_0_s_0",
-        score: 0,
-        internalId: 2915,
-      },
-      {
-        label: "Electronic Commerce",
-        nodeType: "Category",
-        nodeId: { low: 341, high: 0 },
-        score: 0,
-        internalId: 1896,
-      },
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "230",
-        score: 0,
-        internalId: 2270,
-      },
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "232",
-        score: 0,
-        internalId: 2272,
-      },
-      {
-        label: "Encoding",
-        nodeType: "Term",
-        nodeId: "352",
-        score: 0,
-        internalId: 2392,
-      },
-      {
-        label: "Operation by which a clear message is transformed ...",
-        nodeType: "Definition",
-        nodeId: "222_0_p_0",
-        score: 0,
-        internalId: 3039,
-      },
-      {
-        label: "The use of unusual codes or signals allowing the c...",
-        nodeType: "Definition",
-        nodeId: "222_0_s_0",
-        score: 0,
-        internalId: 3040,
-      },
-    ],
-    resultCount: 10,
+  // Categories Graph Results
+  categoriesGraph: {
+    pagerank: {
+      success: true,
+      algorithm: "pagerank",
+      projectionName: "categoriesGraph",
+      results: [
+        {
+          label: "Contrats informatiques",
+          nodeType: "Category",
+          nodeId: "cat_001",
+          score: 0.15000000000000002,
+          internalId: 5001,
+        },
+        {
+          label: "Criminalité informatique",
+          nodeType: "Category",
+          nodeId: "cat_002",
+          score: 0.15000000000000002,
+          internalId: 5002,
+        },
+        {
+          label: "Données personnelles",
+          nodeType: "Category",
+          nodeId: "cat_003",
+          score: 0.15000000000000002,
+          internalId: 5003,
+        },
+        {
+          label: "Organisations",
+          nodeType: "Category",
+          nodeId: "cat_004",
+          score: 0.15000000000000002,
+          internalId: 5004,
+        },
+        {
+          label: "Propriété intellectuelle",
+          nodeType: "Category",
+          nodeId: "cat_005",
+          score: 0.15000000000000002,
+          internalId: 5005,
+        },
+        {
+          label: "Réseaux",
+          nodeType: "Category",
+          nodeId: "cat_006",
+          score: 0.15000000000000002,
+          internalId: 5006,
+        },
+        {
+          label: "Divers",
+          nodeType: "Category",
+          nodeId: "cat_007",
+          score: 0.15000000000000002,
+          internalId: 5007,
+        },
+        {
+          label: "Electronic Commerce",
+          nodeType: "Category",
+          nodeId: "cat_008",
+          score: 0.15000000000000002,
+          internalId: 5008,
+        },
+        {
+          label: "Computer Contracts",
+          nodeType: "Category",
+          nodeId: "cat_009",
+          score: 0.15000000000000002,
+          internalId: 5009,
+        },
+        {
+          label: "Commerce électronique",
+          nodeType: "Category",
+          nodeId: "cat_010",
+          score: 0.15000000000000002,
+          internalId: 5010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 24,
+      relationshipCount: 0,
+    },
+
+    louvain: {
+      success: true,
+      algorithm: "louvain",
+      projectionName: "categoriesGraph",
+      results: [
+        {
+          label: "Commerce électronique",
+          nodeType: "Category",
+          nodeId: "cat_001",
+          communityId: 0,
+          internalId: 5001,
+        },
+        {
+          label: "Contrats informatiques",
+          nodeType: "Category",
+          nodeId: "cat_002",
+          communityId: 1,
+          internalId: 5002,
+        },
+        {
+          label: "Criminalité informatique",
+          nodeType: "Category",
+          nodeId: "cat_003",
+          communityId: 2,
+          internalId: 5003,
+        },
+        {
+          label: "Données personnelles",
+          nodeType: "Category",
+          nodeId: "cat_004",
+          communityId: 3,
+          internalId: 5004,
+        },
+        {
+          label: "Organisations",
+          nodeType: "Category",
+          nodeId: "cat_005",
+          communityId: 4,
+          internalId: 5005,
+        },
+        {
+          label: "Propriété intellectuelle",
+          nodeType: "Category",
+          nodeId: "cat_006",
+          communityId: 5,
+          internalId: 5006,
+        },
+        {
+          label: "Réseaux",
+          nodeType: "Category",
+          nodeId: "cat_007",
+          communityId: 6,
+          internalId: 5007,
+        },
+        {
+          label: "Divers",
+          nodeType: "Category",
+          nodeId: "cat_008",
+          communityId: 7,
+          internalId: 5008,
+        },
+        {
+          label: "Electronic Commerce",
+          nodeType: "Category",
+          nodeId: "cat_009",
+          communityId: 8,
+          internalId: 5009,
+        },
+        {
+          label: "Computer Contracts",
+          nodeType: "Category",
+          nodeId: "cat_010",
+          communityId: 9,
+          internalId: 5010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 24,
+      relationshipCount: 0,
+    },
+
+    betweenness: {
+      success: true,
+      algorithm: "betweenness",
+      projectionName: "categoriesGraph",
+      results: [
+        {
+          label: "Contrats informatiques",
+          nodeType: "Category",
+          nodeId: "cat_001",
+          score: 0.0,
+          internalId: 5001,
+        },
+        {
+          label: "Criminalité informatique",
+          nodeType: "Category",
+          nodeId: "cat_002",
+          score: 0.0,
+          internalId: 5002,
+        },
+        {
+          label: "Données personnelles",
+          nodeType: "Category",
+          nodeId: "cat_003",
+          score: 0.0,
+          internalId: 5003,
+        },
+        {
+          label: "Organisations",
+          nodeType: "Category",
+          nodeId: "cat_004",
+          score: 0.0,
+          internalId: 5004,
+        },
+        {
+          label: "Propriété intellectuelle",
+          nodeType: "Category",
+          nodeId: "cat_005",
+          score: 0.0,
+          internalId: 5005,
+        },
+        {
+          label: "Réseaux",
+          nodeType: "Category",
+          nodeId: "cat_006",
+          score: 0.0,
+          internalId: 5006,
+        },
+        {
+          label: "Divers",
+          nodeType: "Category",
+          nodeId: "cat_007",
+          score: 0.0,
+          internalId: 5007,
+        },
+        {
+          label: "Electronic Commerce",
+          nodeType: "Category",
+          nodeId: "cat_008",
+          score: 0.0,
+          internalId: 5008,
+        },
+        {
+          label: "Computer Contracts",
+          nodeType: "Category",
+          nodeId: "cat_009",
+          score: 0.0,
+          internalId: 5009,
+        },
+        {
+          label: "Commerce électronique",
+          nodeType: "Category",
+          nodeId: "cat_010",
+          score: 0.0,
+          internalId: 5010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 24,
+      relationshipCount: 0,
+    },
   },
 
-  louvain: {
-    success: true,
-    algorithm: "louvain",
-    projectionName: "gds_subgraph_Encryption_1748875707441",
-    results: [
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "230",
-        communityId: 6,
-        internalId: 2270,
-      },
-      {
-        label: "Cryptography",
-        nodeType: "Term",
-        nodeId: "232",
-        communityId: 6,
-        internalId: 2272,
-      },
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "123",
-        communityId: 6,
-        internalId: 2163,
-      },
-      {
-        label: "Is a cryptographic transformation of data producin...",
-        nodeType: "Definition",
-        nodeId: "123_0_p_0",
-        communityId: 6,
-        internalId: 2914,
-      },
-      {
-        label: "Process by which a document can be made incomprehe...",
-        nodeType: "Definition",
-        nodeId: "123_0_s_0",
-        communityId: 6,
-        internalId: 2915,
-      },
-      {
-        label: "Electronic Commerce",
-        nodeType: "Category",
-        nodeId: { low: 341, high: 0 },
-        communityId: 9,
-        internalId: 1896,
-      },
-      {
-        label: "Encoding",
-        nodeType: "Term",
-        nodeId: "352",
-        communityId: 9,
-        internalId: 2392,
-      },
-      {
-        label: "Encryption",
-        nodeType: "Term",
-        nodeId: "222",
-        communityId: 9,
-        internalId: 2262,
-      },
-      {
-        label: "Operation by which a clear message is transformed ...",
-        nodeType: "Definition",
-        nodeId: "222_0_p_0",
-        communityId: 9,
-        internalId: 3039,
-      },
-      {
-        label: "The use of unusual codes or signals allowing the c...",
-        nodeType: "Definition",
-        nodeId: "222_0_s_0",
-        communityId: 9,
-        internalId: 3040,
-      },
-    ],
-  },
-
-  // Additional mock data for other algorithms
-  labelpropagation: {
-    success: true,
-    algorithm: "labelpropagation",
-    projectionName: "gds_subgraph_sample_123456789",
-    results: [
-      {
-        label: "Data Protection",
-        nodeType: "Term",
-        nodeId: "101",
-        communityId: 1,
-        internalId: 2001,
-      },
-      {
-        label: "GDPR",
-        nodeType: "Term",
-        nodeId: "102",
-        communityId: 1,
-        internalId: 2002,
-      },
-      {
-        label: "Privacy Policy",
-        nodeType: "Definition",
-        nodeId: "101_0_p_0",
-        communityId: 1,
-        internalId: 3001,
-      },
-      {
-        label: "Cybersecurity",
-        nodeType: "Term",
-        nodeId: "201",
-        communityId: 2,
-        internalId: 2101,
-      },
-      {
-        label: "Firewall",
-        nodeType: "Term",
-        nodeId: "202",
-        communityId: 2,
-        internalId: 2102,
-      },
-    ],
-    resultCount: 5,
-  },
-
-  closeness: {
-    success: true,
-    algorithm: "closeness",
-    projectionName: "gds_subgraph_sample_987654321",
-    results: [
-      {
-        label: "Digital Rights",
-        nodeType: "Term",
-        nodeId: "301",
-        score: 0.8542,
-        internalId: 2301,
-      },
-      {
-        label: "E-commerce Law",
-        nodeType: "Category",
-        nodeId: "302",
-        score: 0.7891,
-        internalId: 2302,
-      },
-      {
-        label: "Online Contract",
-        nodeType: "Term",
-        nodeId: "303",
-        score: 0.7234,
-        internalId: 2303,
-      },
-      {
-        label: "Digital Signature",
-        nodeType: "Term",
-        nodeId: "304",
-        score: 0.6987,
-        internalId: 2304,
-      },
-    ],
-    resultCount: 4,
-  },
-
-  degree: {
-    success: true,
-    algorithm: "degree",
-    projectionName: "gds_subgraph_sample_456789123",
-    results: [
-      {
-        label: "Internet Law",
-        nodeType: "Category",
-        nodeId: "401",
-        score: 15,
-        internalId: 2401,
-      },
-      {
-        label: "Intellectual Property",
-        nodeType: "Category",
-        nodeId: "402",
-        score: 12,
-        internalId: 2402,
-      },
-      {
-        label: "Copyright",
-        nodeType: "Term",
-        nodeId: "403",
-        score: 8,
-        internalId: 2403,
-      },
-      {
-        label: "Patent",
-        nodeType: "Term",
-        nodeId: "404",
-        score: 6,
-        internalId: 2404,
-      },
-    ],
-    resultCount: 4,
-  },
-
-  wcc: {
-    success: true,
-    algorithm: "wcc",
-    projectionName: "gds_subgraph_sample_789123456",
-    results: [
-      {
-        label: "Computer Crime",
-        nodeType: "Category",
-        nodeId: "501",
-        componentId: 1,
-        internalId: 2501,
-      },
-      {
-        label: "Hacking",
-        nodeType: "Term",
-        nodeId: "502",
-        componentId: 1,
-        internalId: 2502,
-      },
-      {
-        label: "Malware",
-        nodeType: "Term",
-        nodeId: "503",
-        componentId: 1,
-        internalId: 2503,
-      },
-      {
-        label: "Data Breach",
-        nodeType: "Term",
-        nodeId: "504",
-        componentId: 2,
-        internalId: 2504,
-      },
-    ],
-    resultCount: 4,
-  },
-
-  trianglecount: {
-    success: true,
-    algorithm: "trianglecount",
-    projectionName: "gds_subgraph_sample_321654987",
-    results: [
-      {
-        label: "Network Security",
-        nodeType: "Term",
-        nodeId: "601",
-        triangleCount: 5,
-        internalId: 2601,
-      },
-      {
-        label: "VPN",
-        nodeType: "Term",
-        nodeId: "602",
-        triangleCount: 3,
-        internalId: 2602,
-      },
-      {
-        label: "SSL Certificate",
-        nodeType: "Term",
-        nodeId: "603",
-        triangleCount: 2,
-        internalId: 2603,
-      },
-      {
-        label: "Authentication",
-        nodeType: "Term",
-        nodeId: "604",
-        triangleCount: 1,
-        internalId: 2604,
-      },
-    ],
-    resultCount: 4,
-  },
-
-  clusteringcoefficient: {
-    success: true,
-    algorithm: "clusteringcoefficient",
-    projectionName: "gds_subgraph_sample_654321987",
-    results: [
-      {
-        label: "Software License",
-        nodeType: "Term",
-        nodeId: "701",
-        coefficient: 0.9876,
-        internalId: 2701,
-      },
-      {
-        label: "Open Source",
-        nodeType: "Term",
-        nodeId: "702",
-        coefficient: 0.8543,
-        internalId: 2702,
-      },
-      {
-        label: "Proprietary Software",
-        nodeType: "Term",
-        nodeId: "703",
-        coefficient: 0.7321,
-        internalId: 2703,
-      },
-      {
-        label: "GPL License",
-        nodeType: "Definition",
-        nodeId: "701_0_p_0",
-        coefficient: 0.6789,
-        internalId: 3701,
-      },
-    ],
-    resultCount: 4,
+  // Terms Graph Results
+  termsGraph: {
+    pagerank: {
+      success: true,
+      algorithm: "pagerank",
+      projectionName: "termsGraph",
+      results: [
+        {
+          label: "Flooding",
+          nodeType: "Term",
+          nodeId: "term_001",
+          score: 4.290333571833674,
+          internalId: 6001,
+        },
+        {
+          label: "Mailbombing",
+          nodeType: "Term",
+          nodeId: "term_002",
+          score: 4.28288227312458,
+          internalId: 6002,
+        },
+        {
+          label: "Precomputation attack",
+          nodeType: "Term",
+          nodeId: "term_003",
+          score: 3.6871567854424105,
+          internalId: 6003,
+        },
+        {
+          label: "سلطة التصديق",
+          nodeType: "Term",
+          nodeId: "term_004",
+          score: 3.034305589579139,
+          internalId: 6004,
+        },
+        {
+          label: "Signatory",
+          nodeType: "Term",
+          nodeId: "term_005",
+          score: 2.9893416412042,
+          internalId: 6005,
+        },
+        {
+          label: "Signature",
+          nodeType: "Term",
+          nodeId: "term_006",
+          score: 2.9893416412042,
+          internalId: 6006,
+        },
+        {
+          label: "Attack",
+          nodeType: "Term",
+          nodeId: "term_007",
+          score: 2.8782058100780734,
+          internalId: 6007,
+        },
+        {
+          label: "مخترق",
+          nodeType: "Term",
+          nodeId: "term_008",
+          score: 2.8073174477428395,
+          internalId: 6008,
+        },
+        {
+          label: "التجارة بين الشركات",
+          nodeType: "Term",
+          nodeId: "term_009",
+          score: 2.727844573949351,
+          internalId: 6009,
+        },
+        {
+          label: "Accès illégal",
+          nodeType: "Term",
+          nodeId: "term_010",
+          score: 2.727844573949351,
+          internalId: 6010,
+        },
+      ],
+      resultCount: 10,
+      nodeCount: 2559,
+      relationshipCount: 3131,
+    },
   },
 };
 
-const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
+const AlgorithmModal = ({
+  isOpen,
+  onClose,
+  algorithm,
+  customProjections = [],
+}) => {
   const [selectedScope, setSelectedScope] = useState("");
   const [selectedClusterType, setSelectedClusterType] = useState("");
   const [selectedDefinitionLevel, setSelectedDefinitionLevel] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [appliedAlgorithmResult, setAppliedAlgorithmResult] = useState(null);
+  const [customProjectionsState, setCustomProjections] = useState([]);
+  const [selectedCustomProjection, setSelectedCustomProjection] = useState("");
+
+  useEffect(() => {
+    // Fetch custom projections from API
+    const fetchCustomProjections = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/gds/projections"
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCustomProjections(data);
+      } catch (error) {
+        console.error("Error fetching custom projections:", error);
+      }
+    };
+
+    fetchCustomProjections();
+  }, []);
+
+  // Update custom projections when prop changes
+  useEffect(() => {
+    setCustomProjections(customProjections);
+  }, [customProjections]);
+
+  const fetchCustomAlgorithmResults = async (projectionName, algorithmId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/gds/projections/${projectionName}/${algorithmId}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Error fetching ${algorithmId} results:`, error);
+      throw error;
+    }
+  };
 
   const handleScopeChange = (scope) => {
     setSelectedScope(scope);
     setSelectedClusterType("");
     setSelectedDefinitionLevel("");
     setSelectedCategory("");
+    setSelectedCustomProjection("");
   };
 
   const handleClusterTypeChange = (type) => {
@@ -633,10 +838,12 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
       Definition: "#06B6D4",
       Category: "#10B981",
       Unknown: "#6B7280",
+      Similarity: "#A855F7",
     };
     return colors[nodeType] || colors["Unknown"];
   };
 
+  // Update the handleApplyAlgorithm function to handle both hard-coded and custom results
   const handleApplyAlgorithm = async () => {
     if (!selectedScope) {
       console.error("No scope selected");
@@ -655,21 +862,59 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
       });
       setShowResults(true);
 
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      let results;
+      let projectionName;
 
-      // Get mock results based on algorithm
-      const mockResults = MOCK_ALGORITHM_RESULTS[algorithm.id];
+      // Handle custom projections
+      if (selectedScope === "custom" && selectedCustomProjection) {
+        projectionName = selectedCustomProjection;
 
-      if (!mockResults) {
-        throw new Error(
-          `No mock data available for algorithm: ${algorithm.id}`
+        // Fetch results from API
+        results = await fetchCustomAlgorithmResults(
+          projectionName,
+          algorithm.id
         );
+      } else {
+        // Use hard-coded results
+        // Simulate API delay
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        // Determine which hard-coded dataset to use
+        let datasetKey;
+        if (selectedScope === "allGraph") {
+          datasetKey = "fullGraph";
+          projectionName = "fullGraph";
+        } else if (selectedScope === "clustering") {
+          if (selectedClusterType === "categories") {
+            datasetKey = "categoriesGraph";
+            projectionName = "categoriesGraph";
+          } else if (selectedClusterType === "terms") {
+            datasetKey = "termsGraph";
+            projectionName = "termsGraph";
+          } else {
+            datasetKey = "fullGraph";
+            projectionName = "fullGraph";
+          }
+        } else {
+          datasetKey = "fullGraph";
+          projectionName = "fullGraph";
+        }
+
+        // Get mock results based on algorithm and dataset
+        const mockResults = MOCK_ALGORITHM_RESULTS[datasetKey]?.[algorithm.id];
+
+        if (!mockResults) {
+          throw new Error(
+            `No data available for algorithm: ${algorithm.id} in dataset: ${datasetKey}`
+          );
+        }
+
+        results = mockResults;
       }
 
       // Format results for display
       const formattedResults = formatAlgorithmResults(
-        mockResults.results || [],
+        results.results || [],
         algorithm.id
       );
 
@@ -677,20 +922,26 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
         algorithm: algorithm.name.english,
         algorithmId: algorithm.id,
         scope: selectedScope,
-        projectionName: mockResults.projectionName,
-        nodesProcessed:
-          mockResults.resultCount || mockResults.results?.length || 0,
-        edgesProcessed: Math.floor(Math.random() * 50) + 10, // Random edge count for demo
-        executionTime: `${(Math.random() * 2 + 0.5).toFixed(2)}s`, // Random execution time
+        projectionName: projectionName,
+        nodesProcessed: results.resultCount || results.results?.length || 0,
+        edgesProcessed:
+          results.relationshipCount || Math.floor(Math.random() * 50) + 10,
+        executionTime:
+          results.executionTime || `${(Math.random() * 2 + 0.5).toFixed(2)}s`,
         results: formattedResults,
-        rawResults: mockResults.results || [],
+        rawResults: results.results || [],
         algorithmSpecific: {
           projectionType: selectedScope,
+          nodeCount: results.nodeCount,
+          relationshipCount: results.relationshipCount,
           ...(selectedCategory && { category: selectedCategory }),
           ...(selectedDefinitionLevel && {
             definitionLevel: selectedDefinitionLevel,
           }),
           ...(selectedClusterType && { clusterType: selectedClusterType }),
+          ...(selectedCustomProjection && {
+            customProjection: selectedCustomProjection,
+          }),
         },
         loading: false,
       };
@@ -850,6 +1101,7 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
                   <option value="allGraph">All Graph</option>
                   <option value="clustering">Clustering</option>
                   <option value="recentResearch">Recent Research</option>
+                  <option value="custom">Custom Projection</option>
                 </select>
               </div>
 
@@ -904,6 +1156,29 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
                 </div>
               )}
 
+              {selectedScope === "custom" && (
+                <div className="custom-projection-selection">
+                  <label htmlFor="custom-projection-select">
+                    Select Custom Projection:
+                  </label>
+                  <select
+                    id="custom-projection-select"
+                    value={selectedCustomProjection}
+                    onChange={(e) =>
+                      setSelectedCustomProjection(e.target.value)
+                    }
+                    className="custom-projection-select"
+                  >
+                    <option value="">Select projection...</option>
+                    {customProjectionsState.map((projection, index) => (
+                      <option key={index} value={projection}>
+                        {projection}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <button
                 className="apply-algorithm-btn"
                 onClick={handleApplyAlgorithm}
@@ -912,7 +1187,8 @@ const AlgorithmModal = ({ isOpen, onClose, algorithm }) => {
                   (selectedScope === "clustering" && !selectedClusterType) ||
                   (selectedClusterType === "definitions" &&
                     !selectedDefinitionLevel) ||
-                  (selectedClusterType === "categories" && !selectedCategory)
+                  (selectedClusterType === "categories" && !selectedCategory) ||
+                  (selectedScope === "custom" && !selectedCustomProjection)
                 }
               >
                 Apply Algorithm

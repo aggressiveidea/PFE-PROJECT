@@ -1,10 +1,10 @@
-// GDS API Service for Frontend
+ 
 class GDSApi {
   constructor(baseUrl = "http://localhost:3001/api/gds") {
     this.baseUrl = baseUrl;
   }
 
-  // Helper method for making API calls
+   
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
     const config = {
@@ -36,7 +36,7 @@ class GDSApi {
     }
   }
 
-  // ============= PROJECTION MANAGEMENT =============
+   
 
   /**
    * Create a new GDS projection
@@ -93,7 +93,7 @@ class GDSApi {
     return this.request(`/projections/${projectionName}/relationships`);
   }
 
-  // ============= CENTRALITY ALGORITHMS =============
+   
 
   /**
    * Run PageRank algorithm
@@ -135,7 +135,7 @@ class GDSApi {
     });
   }
 
-  // ============= COMMUNITY DETECTION ALGORITHMS =============
+   
 
   /**
    * Run Louvain Community Detection algorithm
@@ -167,7 +167,7 @@ class GDSApi {
     });
   }
 
-  // ============= CLUSTERING & SIMILARITY ALGORITHMS =============
+   
 
   /**
    * Run Triangle Count algorithm
@@ -202,7 +202,7 @@ class GDSApi {
     });
   }
 
-  // ============= ENHANCED ALGORITHMS =============
+   
 
   /**
    * Run Enhanced PageRank algorithm
@@ -244,7 +244,7 @@ class GDSApi {
     });
   }
 
-  // ============= SUGGESTION SYSTEMS =============
+   
 
   /**
    * Get smart term suggestions using multiple advanced algorithms
@@ -285,7 +285,7 @@ class GDSApi {
     });
   }
 
-  // ============= WORKFLOWS =============
+   
 
   /**
    * Run complete workflow with single algorithm
@@ -307,7 +307,7 @@ class GDSApi {
     });
   }
 
-  // ============= SEARCH & UTILITY =============
+   
 
   /**
    * Get available algorithms
@@ -350,7 +350,7 @@ class GDSApi {
     return this.request("/relationship-types");
   }
 
-  // ============= CONVENIENCE METHODS =============
+   
 
   /**
    * Complete term suggestion workflow
@@ -367,7 +367,7 @@ class GDSApi {
     let projectionName = null;
 
     try {
-      // Step 1: Create projection
+       
       const projectionResult = await this.createSubgraphProjection(
         termName,
         depth,
@@ -375,19 +375,19 @@ class GDSApi {
       );
       projectionName = projectionResult.projectionName;
 
-      // Step 2: Get suggestions
+       
       const suggestions = await this.getSuggestedTerms(
         termName,
         maxSuggestions,
         algorithms
       );
 
-      // Step 3: Clean up projection
+       
       await this.dropProjection(projectionName);
 
       return suggestions;
     } catch (error) {
-      // Clean up projection if it was created
+       
       if (projectionName) {
         try {
           await this.dropProjection(projectionName);
@@ -470,7 +470,7 @@ class GDSApi {
     let projectionName = null;
 
     try {
-      // Create projection
+       
       const projectionResult = await this.createSubgraphProjection(
         termName,
         depth,
@@ -488,7 +488,7 @@ class GDSApi {
       };
 
       if (includeAllAlgorithms) {
-        // Run all algorithms
+         
         analysis.centrality = await this.runAllCentralityAlgorithms(
           projectionName
         );
@@ -506,16 +506,16 @@ class GDSApi {
           termName
         );
       } else {
-        // Run only key algorithms
+         
         analysis.suggestions = await this.getSmartSuggestions(termName, 10);
       }
 
-      // Clean up projection
+       
       await this.dropProjection(projectionName);
 
       return analysis;
     } catch (error) {
-      // Clean up projection if it was created
+       
       if (projectionName) {
         try {
           await this.dropProjection(projectionName);
@@ -528,9 +528,9 @@ class GDSApi {
   }
 }
 
-// Export singleton instance
+ 
 const gdsApi = new GDSApi();
 export default gdsApi;
 
-// Also export the class for custom instances
+ 
 export { GDSApi };

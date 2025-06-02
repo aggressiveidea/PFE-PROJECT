@@ -1,47 +1,26 @@
-export const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:9999/api/v1";
+import axios from "axios";
 
-console.log("API_BASE_URL:", API_BASE_URL);
-
-const getAuthToken = () => {
-  const authData = localStorage.getItem("authData");
-  if (authData) {
-    try {
-      const parsed = JSON.parse(authData);
-      return parsed.token;
-    } catch (e) {
-      return null;
-    }
-  }
-  return null;
-};
-
-const getAuthHeaders = () => {
-  const token = getAuthToken();
-  const headers = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  return headers;
-};
-
-const determineRoleFromEmail = (email) => {
-  if (email === "imessaoudenealdjia@gmail.com") {
-    return "admin";
-  }
-  if (email.includes("admin")) {
-    return "admin";
-  }
-  return "teacher";
-};
-
-export async function loginUser(email, password) {
+ 
+export const registerUser = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch("http://localhost:5000/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("error registering user:", error);
+    throw error;
+  }
+};
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await fetch("http://localhost:5000/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,631 +29,817 @@ export async function loginUser(email, password) {
     });
 
     if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ message: "Login failed" }));
-      throw new Error(errorData.message || "Login failed");
+      throw new Error("Failed to login");
     }
 
     const data = await response.json();
-
-    if (data.data && data.data.user) {
-      if (!data.data.user.role) {
-        data.data.user.role = determineRoleFromEmail(data.data.user.email);
-      }
-    }
-    if (
-      data.success &&
-      data.data &&
-      data.data.user &&
-      data.data.user.role === "Administrator"
-    ) {
-      data.data.user.role = "admin";
-    }
-
+    console.log("Backend response:", data);
     return data;
   } catch (error) {
+    console.log("Error login:", error);
     throw error;
   }
-}
+};
 
-export async function getTeacherScheduleForSemester(semester) {
+export const getProfile = async (token) => {
   try {
-    const authData = localStorage.getItem("authData");
-    if (!authData) {
-      throw new Error("No authentication data found");
-    }
-
-    const parsed = JSON.parse(authData);
-    if (!parsed.token) {
-      throw new Error("No authentication token found");
-    }
-
-    const scheduleUrl = `${API_BASE_URL}/teacher/me/schedule/${semester}`;
-
-    const response = await fetch(scheduleUrl, {
+    const response = await fetch("http://localhost:5000/auth/profile", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${parsed.token}`,
+        Authorization: `Bearer ${token}`,
       },
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { success: true, data: { scheduledClasses: [] } };
-      }
-      throw new Error(`Failed to fetch schedule: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching teacher schedule:", error);
-    throw error;
-  }
-}
-
-export async function getTeacherTodaySchedule() {
-  try {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
-
-    const currentSemester =
-      currentMonth >= 9 || currentMonth <= 1 ? "First" : "Second";
-
-    const scheduleResponse = await getTeacherScheduleForSemester(
-      currentSemester
-    );
-
-    if (!scheduleResponse.success || !scheduleResponse.data) {
-      return { success: true, data: [] };
-    }
-
-    const allClasses = scheduleResponse.data.scheduledClasses || [];
-
-    const today = new Date();
-    const dayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const todayName = dayNames[today.getDay()];
-    const todayClasses = allClasses.filter(
-      (classItem) =>
-        classItem.day && classItem.day.toLowerCase() === todayName.toLowerCase()
-    );
-
-    const transformedClasses = todayClasses.map((classItem) => ({
-      time: getTimeDisplayFromSlot(classItem.slot),
-      section: classItem.section
-        ? `${classItem.section.speciality?.name || ""} ${
-            classItem.section.code || ""
-          }`.trim()
-        : "N/A",
-      course: classItem.course?.name || "Unknown Course",
-      classroom:
-        classItem.classroom?.name || (classItem.isOnline ? "Online" : "TBA"),
-      building: classItem.classroom?.building || "",
-      slot: classItem.slot,
-      classType: classItem.type || "Lecture",
-      groupName: classItem.group?.name || null,
-      isOnline: classItem.isOnline || false,
-    }));
-
-    return {
-      success: true,
-      data: transformedClasses,
-      semester: currentSemester,
-      totalClasses: allClasses.length,
-    };
-  } catch (error) {
-    console.error("Error fetching today's schedule:", error);
-    throw error;
-  }
-}
-
-export async function getTeacherNextClass() {
-  try {
-    const todayScheduleResponse = await getTeacherTodaySchedule();
-
-    if (!todayScheduleResponse.success || !todayScheduleResponse.data.length) {
-      return { success: true, data: null };
-    }
-
-    const todayClasses = todayScheduleResponse.data;
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-
-    let nextClass = null;
-    let minTimeDiff = Number.POSITIVE_INFINITY;
-
-    todayClasses.forEach((classItem) => {
-      const startTime = parseTimeToMinutes(classItem.time.split(" - ")[0]);
-      const timeDiff = startTime - currentTime;
-
-      if (timeDiff > 0 && timeDiff < minTimeDiff) {
-        minTimeDiff = timeDiff;
-        nextClass = classItem;
-      }
-    });
-
-    return {
-      success: true,
-      data: nextClass,
-    };
-  } catch (error) {
-    console.error("Error fetching next class:", error);
-    throw error;
-  }
-}
-
-export async function getTeacherWeeklyStats() {
-  try {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
-    const currentSemester =
-      currentMonth >= 9 || currentMonth <= 1 ? "First" : "Second";
-
-    const scheduleResponse = await getTeacherScheduleForSemester(
-      currentSemester
-    );
-
-    if (!scheduleResponse.success || !scheduleResponse.data) {
-      return {
-        success: true,
-        data: {
-          todayClasses: 0,
-          weeklyClasses: 0,
-          totalClasses: 0,
-        },
-      };
-    }
-
-    const allClasses = scheduleResponse.data.scheduledClasses || [];
-
-    const today = new Date();
-    const dayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const todayName = dayNames[today.getDay()];
-    const todayClasses = allClasses.filter(
-      (classItem) =>
-        classItem.day && classItem.day.toLowerCase() === todayName.toLowerCase()
-    ).length;
-
-    const weeklyClasses = allClasses.length;
-
-    return {
-      success: true,
-      data: {
-        todayClasses,
-        weeklyClasses,
-        totalClasses: allClasses.length,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching weekly stats:", error);
-    throw error;
-  }
-}
-function getTimeDisplayFromSlot(slot) {
-  const timeSlots = {
-    Slot1: "08:00 - 09:30",
-    Slot2: "09:40 - 11:10",
-    Slot3: "11:20 - 12:50",
-    Slot4: "13:00 - 14:30",
-    Slot5: "14:40 - 16:10",
-    Slot6: "16:20 - 17:50",
-  };
-  return timeSlots[slot] || "00:00 - 00:00";
-}
-
-function parseTimeToMinutes(timeString) {
-  const [hours, minutes] = timeString.split(":").map(Number);
-  return hours * 60 + minutes;
-}
-
-export async function getAllTeachers() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to fetch teachers , status: ${response.status}`,
-      }));
-      throw new Error(errorData.message || "failed to fetch teachers");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function createTeacher(data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ message: "Failed to create teacher" }));
-      throw new Error(errorData.message || "Failed to create teacher");
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function updateTeacher(id, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher/${id}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response
-        .json()
-        .catch(() => ({ message: "Failed to update teacher" }));
-      throw new Error(errorData.message || "Failed to update teacher");
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function deleteTeacher(id) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to delete teacher. Status: ${response.status}`,
-      }));
-      throw new Error(errorData.message || "Failed to delete teacher");
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAllSections() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/section`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to fetch sections. Status: ${response.status}`,
-      }));
-      throw new Error(errorData.message || "failed to fetch sections");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAllClassrooms() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/classroom`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to fetch classrooms. Status: ${response.status}`,
-      }));
-      throw new Error(errorData.message || "failed to fetch classrooms");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAllCourses() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/course`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to fetch courses. Status: ${response.status}`,
-      }));
-      throw new Error(errorData.message || "Failed to fetch courses");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getMyProfile() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      method: "GET",
-      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
       throw new Error("Failed to fetch profile");
     }
 
-    const data = await response.json();
-    if (data.success && data.data && data.data.user && !data.data.user.role) {
-      data.data.user.role = determineRoleFromEmail(data.data.user.email);
-    }
-
-    return data;
+    return await response.json();
   } catch (error) {
+    console.error("Error fetching profile:", error);
     throw error;
   }
-}
+};
 
-export async function getUserById(userId) {
+export const getAllUsers = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}`, {
+    const response = await fetch("http://localhost:5000/user/all", {
       method: "GET",
-      headers: getAuthHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch user by ID");
+      throw new Error("Failed to fetch all users");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
+    console.error("Error fetching users:", error);
     throw error;
   }
-}
+};
 
-export async function getCompleteUserProfile() {
+export const getUserById = async (userId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
+     
+    console.log("userId to fetch:", userId);
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch complete profile");
+    const authData = JSON.parse(localStorage.getItem("authData") || "{}");
+    const token = authData.token;
+
+    console.log("userrrrrr", authData);
+    console.log("user", token);
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+     
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const data = await response.json();
-
-    if (data.success && data.data && data.data.user) {
-      if (!data.data.user.role) {
-        data.data.user.role = determineRoleFromEmail(data.data.user.email);
-      }
-
-      if (data.data.user.role === "Administrator") {
-        data.data.user.role = "admin";
-      }
-    }
-
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function updateUserProfile(userId, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to update user profile. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function createClassroom(data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/classroom`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to create classroom. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getClassrooms() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/classroom`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("failed to fetch classrooms");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function updateClassroom(id, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/classroom/${id}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to update classroom. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function deleteClassroom(id) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/classroom/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `failed to delete classroom. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getSectionSchedule(sectionId, semester) {
-  try {
-    const url = `${API_BASE_URL}/section/${sectionId}/schedule/${semester}`;
-    const headers = getAuthHeaders();
-
-    const response = await fetch(url, {
+    const response = await fetch(`http://localhost:5000/user/${userId}`, {
       method: "GET",
       headers: headers,
     });
 
-    const responseText = await response.text();
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (parseError) {
-      responseData = { message: responseText };
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
     }
+
+    const res = await response.json();
+    console.log("userrr", res);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+export const createUser = async (data) => {
+  try {
+    const response = await fetch("http://localhost:5000/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
     if (!response.ok) {
-      let errorMessage = "failed to fetch section schedule";
-
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        } else if (
-          responseData.errors &&
-          Array.isArray(responseData.errors) &&
-          responseData.errors.length > 0
-        ) {
-          errorMessage =
-            responseData.errors[0].message || responseData.errors[0];
-        } else if (typeof responseData === "string") {
-          errorMessage = responseData;
-        }
-      }
-
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.responseData = responseData;
-      throw error;
+      throw new Error("Failed to create user");
     }
 
-    return responseData;
+    return await response.json();
   } catch (error) {
-    const enhancedError = new Error(
-      `section schedule fetch failed: ${error.message}`
-    );
-    enhancedError.originalError = error;
-    enhancedError.sectionId = sectionId;
-    enhancedError.semester = semester;
-
-    throw enhancedError;
+    console.error("Error creating user:", error);
+    throw error;
   }
-}
+};
 
-export async function getSectionScheduleStatistics(sectionId, semester) {
+export const updateUser = async (id, data) => {
+  try {
+    if (!id) {
+      console.error("Update user called without ID:", { id, data });
+      throw new Error("User ID is required for update");
+    }
+
+    const authData = JSON.parse(localStorage.getItem("authData") || "{}");
+    const token = authData.token;
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const cleanData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userBio: data.userBio || "",
+    };
+
+    if (data.role) {
+      cleanData.role = data.role;
+    }
+
+    if (data.profileImgUrl && !data.profileImgUrl.includes("placeholder.svg")) {
+      cleanData.profileImgUrl = data.profileImgUrl;
+    }
+
+    console.log(
+      `Sending PUT request to http://localhost:5000/user/${id} with data:`,
+      cleanData
+    );
+
+    const response = await fetch(`http://localhost:5000/user/${id}`, {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify(cleanData),
+    });
+
+    console.log(
+      "Update response status:",
+      response.status,
+      response.statusText
+    );
+
+    const responseData = await response.json();
+    console.log("Update response data:", responseData);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update user: ${responseData.message || response.statusText}`
+      );
+    }
+
+    if (responseData && responseData.success === true) {
+      return responseData;
+    } else {
+      throw new Error(responseData.message || "Failed to update user");
+    }
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/user/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
+export const updatepassword = async (id, data) => {
+  try {
+    const response = await fetch(`http://localhost:5000/user/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
+
+export const resendVerificationEmail = async (email) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/section/${sectionId}/schedule/${semester}/other/statistics`,
+      "http://localhost:5000/auth/resend-verification",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error resending verification email:", error);
+    throw error;
+  }
+};
+
+export const getallarticles = async (index) => {
+  try {
+    console.log("index", index);
+    const response = await fetch(
+      `http://localhost:5000/articles/index?index=${index}`,
       {
         method: "GET",
-        headers: getAuthHeaders(),
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
 
     if (!response.ok) {
-<<<<<<< Updated upstream
+      throw new Error("Failed to get all of the articles");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+
+export const getArticleById = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get all of the articles");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+
+export const getarticlebytitle = async (title) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/title?title=${title}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by title");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+
+export const getarticlebycat = async (category, limit) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/category?category=${category}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by category");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+
+export const getarticlbBylang = async (language) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/articles/language?language=${language}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get articles by language");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error getting in article :", error);
+    throw error;
+  }
+};
+
+export const addArticle = async (data) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("verified", data);  
+
+    const response = await fetch("http://localhost:5000/articles/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),  
+    });
+
+    console.log("idj whayyy", response);
+    if (!response.ok) {
+      throw new Error("Failed to add article");
+    }
+
+    const res = await response.json();
+    console.log("the fetching answer", res);
+    return res.data;
+  } catch (error) {
+    console.error("❌ Error adding article:", error);
+    throw error;
+  }
+};
+
+export const updatearticle = async (id, data) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update article");
+    }
+
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error("Error updating article :", error);
+    throw error;
+  }
+};
+
+export const deletearticle = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("the id", id);
+    const response = await fetch(`http://localhost:5000/articles/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete article");
+    }
+
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error("Error deleting article :", error);
+    throw error;
+  }
+};
+
+export const getTotalUsers = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/total", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch total users");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching total users:", error);
+    throw error;
+  }
+};
+
+export const getActiveUsers = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/active-users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch active users");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+    throw error;
+  }
+};
+
+export const getUsersByCountry = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/user-country", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users by country");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching users by country:", error);
+    throw error;
+  }
+};
+
+export const getUserActivityPerMonth = async (token) => {
+  try {
+    const response = await fetch("http://localhost:5000/admin/user-activity", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user activity per month");
+    }
+
+    const res = await response.json();
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user activity per month:", error);
+    throw error;
+  }
+};
+
+export const updateUserRole = async (userId, newRole, token) => {
+  try {
+    if (!userId) {
+      throw new Error("User ID is required for role update");
+    }
+
+    if (!token) {
+      throw new Error("Authentication token is required");
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const roleData = {
+      role: newRole,
+    };
+
+    console.log(
+      `Sending role update request to http://localhost:5000/user/role/${userId} with role: ${newRole}`
+    );
+
+    const response = await fetch(`http://localhost:5000/user/role/${userId}`, {
+      method: "PATCH",
+      headers: headers,
+      body: JSON.stringify(roleData),
+    });
+
+    console.log(
+      "Role update response status:",
+      response.status,
+      response.statusText
+    );
+
+    const responseData = await response.json();
+    console.log("Role update response data:", responseData);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update user role: ${
+          responseData.message || response.statusText
+        }`
+      );
+    }
+
+    return {
+      success: true,
+      data: responseData.data || responseData,
+    };
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to update user role",
+    };
+  }
+};
+
+export const submitExpertApplication = async (applicationData) => {
+  try {
+    const response = await fetch("http://localhost:5000/user/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(applicationData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to submit application",
+      };
+    }
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error) {
+    console.error("Error submitting expert application:", error);
+    return {
+      success: false,
+      message: error.message || "An error occurred during submission",
+    };
+  }
+};
+
+export const classicSearch = async (query, page = 1, limit = 8) => {
+  try {
+    const url = new URL("http://localhost:3001/api/search/classic");
+
+    if (query) url.searchParams.append("query", query);
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("limit", limit.toString());
+
+    console.log("Fetching from:", url.toString());
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Search API error:", response.status, response.statusText);
+      throw new Error("Failed to perform classic search");
+    }
+
+    const data = await response.json();
+
+     
+    if (!data) {
+      console.error("Invalid search response format:", data);
+      return [];
+    }
+
+     
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data.results && Array.isArray(data.results)) {
+      return data.results;
+    } else {
+      console.error("Unexpected response format:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error in classic search:", error);
+
+    return [];
+  }
+};
+
+export const indexedSearch = async (
+  letter,
+  page = 1,
+  limit = 8,
+  language = "en"
+) => {
+  try {
+    if (!letter || letter.length !== 1) {
+      console.error("Invalid letter parameter:", letter);
+      return [];
+    }
+
+    const url = new URL(
+      `http://localhost:3001/api/search/indexed/${letter}?language=${language}`
+    );
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("limit", limit.toString());
+
+    console.log("Fetching from:", url.toString());
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        "Indexed search API error:",
+        response.status,
+        response.statusText
+      );
+      throw new Error("Failed to perform indexed search");
+    }
+
+    const data = await response.json();
+
+    console.log("hhhhhhhhhhhhhhhhh", data);
+     
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data.results && Array.isArray(data.results)) {
+      return data.results;
+    } else {
+      console.error("Unexpected response format:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error in indexed search:", error);
+     
+    return [];
+  }
+};
+
+export const graphSearch = async (termName, depth = 2) => {
+  try {
+    if (!termName) {
+      console.error("Missing term name parameter");
+      return { nodes: [], edges: [] };
+    }
+
+    const url = new URL("http://localhost:3001/api/search/graph");
+    url.searchParams.append("term", termName);
+    url.searchParams.append("depth", depth.toString());
+
+    console.log("Fetching from:", url.toString());
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        "Graph search API error:",
+        response.status,
+        response.statusText
+      );
+      throw new Error("Failed to perform graph search");
+    }
+
+    const data = await response.json();
+
+     
+    if (!data) {
+      console.error("Invalid graph search response format:", data);
+      return { nodes: [], edges: [] };
+    }
+
+    return {
+      nodes: data.nodes || [],
+      edges: data.links || [],
+    };
+  } catch (error) {
+    console.error("Error in graph search:", error);
+     
+    return { nodes: [], edges: [] };
+  }
+};
+
+export const runGraphAlgorithm = async (algorithm, params = {}) => {
+  try {
+    if (!algorithm) {
+      console.error("Missing algorithm parameter");
+      throw new Error("Algorithm parameter is required");
+    }
+
+    const queryParams = new URLSearchParams(params).toString();
+    const url = `http://localhost:3001/api/search/algorithms/${algorithm}?${queryParams}`;
+
+    console.log("Fetching from:", url);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        "algorithm API error:",
+        response.status,
+        response.statusText
+      );
+      throw new Error(`failed to run algorithm: ${algorithm}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error running algorithm ${algorithm}:`, error);
+    throw error;
+  }
+};
+
+export const getAllterms = async (language) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3001/api/search/all?language=${language}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
       throw new Error("failed to fetch all terms");
     }
 
@@ -685,7 +850,7 @@ export async function getSectionScheduleStatistics(sectionId, semester) {
   }
 };
 
-// ==================== GRAPH PROJECTIONS API ====================
+ 
 
 /**
  * Get all available graph projections
@@ -855,7 +1020,7 @@ export const createNodeCentricProjection = async (
   }
 };
 
-// ==================== GRAPH ALGORITHMS API ====================
+ 
 
 /**
  * Run PageRank algorithm
@@ -1123,7 +1288,7 @@ export const findSemanticClusters = async (graphName, config = {}) => {
   }
 };
 
-// ==================== SEARCH HISTORY API ====================
+ 
 
 /**
  * Get search history for a user
@@ -1207,12 +1372,11 @@ export const clearSearchHistory = async (userId) => {
   }
 };
 
-
 //hadi for books les loulous
 
 const API_BASE_URL = "http://localhost:5000";
 
-// Get all books
+ 
 export const getBooks = async () => {
   try {
     console.log("API: Fetching books...");
@@ -1294,7 +1458,7 @@ export const verifyResetLink = async (userId) => {
   try {
     console.log("Verifying reset link for user:", userId);
 
-    // Check if parameter exists
+     
     if (!userId) {
       console.error("Missing userId");
       return { isValid: false, message: "Reset link is incomplete" };
@@ -1365,7 +1529,7 @@ export const resetPassword = async (userId, password) => {
       throw new Error(data.message || "Failed to reset password");
     }
 
-    // Clear any stored auth data to ensure user is logged out
+     
     localStorage.removeItem("authData");
     localStorage.removeItem("user");
 
@@ -1431,583 +1595,387 @@ export const GetAllMessages = async (id) => {
       throw new Error("Failed to fetch all messages");
     }
 
-    // Parse the JSON body
+     
     const result = await response.json();
     console.log("Parsed response:", result);
 
-    // Check if the response has the expected structure
+     
     if (result.success && Array.isArray(result.data)) {
       console.log("Messages array:", result.data);
       return result.data;
-=======
-      throw new Error("failed to fetch section schedule statistics");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function createSectionSchedule(sectionId, semester, scheduleData) {
-  const requiredFields = [
-    "day",
-    "slot",
-    "courseId",
-    "teacherId",
-    "classroomId",
-    "classType",
-  ];
-  const missingFields = requiredFields.filter((field) => !scheduleData[field]);
-
-  if (missingFields.length > 0) {
-    throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
-  }
-
-  try {
-    const url = `${API_BASE_URL}/section/${sectionId}/schedule/${semester}`;
-    const headers = getAuthHeaders();
-    const requestBody = JSON.stringify(scheduleData);
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: requestBody,
-    });
-
-    const responseText = await response.text();
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (parseError) {
-      responseData = { message: responseText };
-    }
-
-    if (!response.ok) {
-      let errorMessage = "Failed to create schedule";
-
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        } else if (
-          responseData.errors &&
-          Array.isArray(responseData.errors) &&
-          responseData.errors.length > 0
-        ) {
-          errorMessage =
-            responseData.errors[0].message || responseData.errors[0];
-        } else if (typeof responseData === "string") {
-          errorMessage = responseData;
-        }
-      }
-
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.responseData = responseData;
-      throw error;
-    }
-
-    return responseData;
-  } catch (error) {
-    const enhancedError = new Error(
-      `Schedule creation failed: ${error.message}`
-    );
-    enhancedError.originalError = error;
-    enhancedError.sectionId = sectionId;
-    enhancedError.semester = semester;
-    enhancedError.scheduleData = scheduleData;
-
-    throw enhancedError;
-  }
-}
-
-export async function updateSectionSchedule(
-  sectionId,
-  semester,
-  scheduleId,
-  scheduleData
-) {
-  try {
-    const url = `${API_BASE_URL}/section/${sectionId}/schedule/${semester}/${scheduleId}`;
-    const headers = getAuthHeaders();
-
-    const updateData = {
-      day: scheduleData.day,
-      slot: scheduleData.slot,
-      courseId: scheduleData.courseId,
-      teacherId: scheduleData.teacherId,
-      classroomId: scheduleData.classroomId,
-      classType: scheduleData.classType,
-      groupsId: scheduleData.groupsId,
-      isOnline: scheduleData.isOnline,
-    };
-
-    Object.keys(updateData).forEach((key) => {
-      if (
-        updateData[key] === null ||
-        updateData[key] === undefined ||
-        updateData[key] === ""
-      ) {
-        delete updateData[key];
-      }
-    });
-
-    const requestBody = JSON.stringify(updateData);
-    console.log("API: Update request data:", updateData);
-
-    const response = await fetch(url, {
-      method: "PUT",
-      headers: headers,
-      body: requestBody,
-    });
-
-    const responseText = await response.text();
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (parseError) {
-      responseData = { message: responseText };
-    }
-
-    if (!response.ok) {
-      let errorMessage = "Failed to update schedule";
-
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        } else if (
-          responseData.errors &&
-          Array.isArray(responseData.errors) &&
-          responseData.errors.length > 0
-        ) {
-          errorMessage =
-            responseData.errors[0].message || responseData.errors[0];
-        } else if (typeof responseData === "string") {
-          errorMessage = responseData;
-        }
-      }
-
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.responseData = responseData;
-      throw error;
-    }
-
-    return responseData;
-  } catch (error) {
-    const enhancedError = new Error(`Schedule update failed: ${error.message}`);
-    enhancedError.originalError = error;
-    enhancedError.sectionId = sectionId;
-    enhancedError.semester = semester;
-    enhancedError.scheduleId = scheduleId;
-    enhancedError.scheduleData = scheduleData;
-
-    throw enhancedError;
-  }
-}
-
-export async function deleteSectionSchedule(sectionId, semester, scheduleId) {
-  try {
-    const url = `${API_BASE_URL}/section/${sectionId}/schedule/${semester}/${scheduleId}`;
-    const headers = getAuthHeaders();
-
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: headers,
-    });
-
-    const responseText = await response.text();
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (parseError) {
-      responseData = { message: responseText };
-    }
-
-    if (!response.ok) {
-      let errorMessage = "Failed to delete schedule";
-
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        } else if (
-          responseData.errors &&
-          Array.isArray(responseData.errors) &&
-          responseData.errors.length > 0
-        ) {
-          errorMessage =
-            responseData.errors[0].message || responseData.errors[0];
-        } else if (typeof responseData === "string") {
-          errorMessage = responseData;
-        }
-      }
-
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.responseData = responseData;
-      throw error;
-    }
-
-    return responseData;
-  } catch (error) {
-    const enhancedError = new Error(
-      `Schedule deletion failed: ${error.message}`
-    );
-    enhancedError.originalError = error;
-    enhancedError.sectionId = sectionId;
-    enhancedError.semester = semester;
-    enhancedError.scheduleId = scheduleId;
-
-    throw enhancedError;
-  }
-}
-
-export async function generateSectionSchedule(
-  sectionId,
-  semester,
-  assignmentsData
-) {
-  try {
-    console.log(
-      "Generating schedule for section:",
-      sectionId,
-      "semester:",
-      semester
-    );
-    console.log("Assignments data:", assignmentsData);
-
-    if (!sectionId) {
-      throw new Error("Section ID is required");
-    }
-    if (!semester) {
-      throw new Error("Semester is required");
-    }
-    if (
-      !assignmentsData ||
-      !assignmentsData.assignments ||
-      !Array.isArray(assignmentsData.assignments)
-    ) {
-      throw new Error("Valid assignments data is required");
-    }
-    if (assignmentsData.assignments.length === 0) {
-      throw new Error("At least one assignment is required");
-    }
-
-    // Validate each assignment
-    assignmentsData.assignments.forEach((assignment, index) => {
-      if (!assignment.courseId) {
-        throw new Error(`Assignment ${index + 1}: Course ID is required`);
-      }
-      if (!assignment.teacherId) {
-        throw new Error(`Assignment ${index + 1}: Teacher ID is required`);
-      }
-      if (!assignment.classType) {
-        throw new Error(`Assignment ${index + 1}: Class type is required`);
-      }
-      // groupId can be null for lectures, but should be present for TP/TD
-      if (
-        (assignment.classType === "DirectedWork" ||
-          assignment.classType === "PracticalWork") &&
-        !assignment.groupId
-      ) {
-        throw new Error(
-          `Assignment ${index + 1}: Group ID is required for ${
-            assignment.classType
-          }`
-        );
-      }
-      if (assignment.classType === "Lecture" && assignment.groupId) {
-        throw new Error(
-          `Assignment ${
-            index + 1
-          }: Group ID should not be specified for lectures`
-        );
-      }
-    });
-
-    const url = `${API_BASE_URL}/section/${sectionId}/schedule/${semester}/other/generate`;
-    const headers = getAuthHeaders();
-    const requestBody = JSON.stringify(assignmentsData);
-
-    console.log("Making API request to:", url);
-    console.log("Request body:", requestBody);
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: headers,
-      body: requestBody,
-    });
-
-    const responseText = await response.text();
-    console.log("Raw response:", responseText);
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error("Failed to parse response as JSON:", parseError);
-      responseData = { message: responseText };
-    }
-
-    if (!response.ok) {
-      let errorMessage = "Failed to generate schedule";
-
-      if (responseData) {
-        if (responseData.message) {
-          errorMessage = responseData.message;
-        } else if (responseData.error) {
-          errorMessage = responseData.error;
-        } else if (
-          responseData.errors &&
-          Array.isArray(responseData.errors) &&
-          responseData.errors.length > 0
-        ) {
-          errorMessage =
-            responseData.errors[0].message || responseData.errors[0];
-        } else if (typeof responseData === "string") {
-          errorMessage = responseData;
-        }
-      }
-
-      const error = new Error(errorMessage);
-      error.status = response.status;
-      error.responseData = responseData;
-      throw error;
-    }
-
-    console.log("Schedule generation successful:", responseData);
-    return responseData;
-  } catch (error) {
-    console.error("Error in generateSectionSchedule:", error);
-    const enhancedError = new Error(
-      `Schedule generation failed: ${error.message}`
-    );
-    enhancedError.originalError = error;
-    enhancedError.sectionId = sectionId;
-    enhancedError.semester = semester;
-    enhancedError.assignmentsData = assignmentsData;
-
-    throw enhancedError;
-  }
-}
-
-export async function generateSectionTimetablePdf(sectionId, semester) {
-  try {
-    console.log(
-      `Generating PDF for section ${sectionId}, semester ${semester}`
-    );
-    const response = await fetch(
-      `${API_BASE_URL}/section/${sectionId}/schedule/${semester}/other/generate-pdf`,
-      {
-        method: "GET",
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("PDF generation failed:", response.status, errorText);
-      throw new Error(
-        `Failed to generate PDF: ${response.status} ${errorText}`
-      );
-    }
-
-    const contentType = response.headers.get("content-type");
-    console.log("Response content type:", contentType);
-
-    if (contentType && contentType.includes("application/pdf")) {
-      console.log("Received PDF file directly");
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      return {
-        success: true,
-        data: {
-          pdfUrl: url,
-          blob: blob,
-        },
-      };
-    } else if (contentType && contentType.includes("application/json")) {
-      console.log("Received JSON response");
-      const data = await response.json();
-      console.log("PDF generation response:", data);
-      return data;
->>>>>>> Stashed changes
     } else {
-      try {
-        const data = await response.json();
-        console.log("PDF generation response (JSON):", data);
-        return data;
-      } catch (jsonError) {
-        console.log("Failed to parse as JSON, treating as PDF blob");
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-
-        return {
-          success: true,
-          data: {
-            pdfUrl: url,
-            blob: blob,
-          },
-        };
-      }
+      console.error("Unexpected response format:", result);
+      return [];
     }
   } catch (error) {
-    console.error("Error in generateSectionTimetablePdf:", error);
+    console.error("Error fetching messages:", error);
     throw error;
   }
-}
+};
 
-export async function getSpecialities() {
+ 
+export const sendMessage = async (id, data) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/speciality`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch specialities");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function createSection(data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/section`, {
+    console.log("Sending message for article:", id);
+    const response = await fetch(`http://localhost:5000/chat/${id}`, {
       method: "POST",
-      headers: getAuthHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to create section. Status: ${response.status}`,
-      }));
-      throw errorData;
+      throw new Error(`Failed to send message: ${response.status}`);
     }
 
-    const responseData = await response.json();
-    return responseData;
+     
+    const result = await response.json();
+    console.log("Message sent successfully:", result);
+
+    if (result && result.success && result.data) {
+      return result;
+    } else {
+      console.error("Unexpected response format:", result);
+      throw new Error("Invalid response format");
+    }
   } catch (error) {
+    console.error("Error sending message:", error);
     throw error;
   }
-}
+};
 
-export async function updateSection(id, data) {
+export const getUnverifiedMessages = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/section/${id}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/unverified`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to update section. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
+    if (!response.ok) throw new Error("Failed to fetch unverified messages");
+    const result = await response.json();
 
-    const responseData = await response.json();
-    return responseData;
+    if (result?.success && Array.isArray(result.data)) return result.data;
+    return [];
   } catch (error) {
+    console.error("Error fetching unverified messages:", error);
     throw error;
   }
-}
+};
 
-export async function deleteSection(id) {
+export const GetMessageById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/section/${id}`, {
+    const response = await fetch(`http://localhost:5000/chat/message/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch message");
+    const result = await response.json();
+
+    if (result?.success && result.data) return result.data;
+    throw new Error("Invalid response format");
+  } catch (error) {
+    console.error("Error fetching message by ID:", error);
+    throw error;
+  }
+};
+
+export const deleteMessage = async (id) => {
+  try {
+    console.log("iddd", id);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/${id}`, {
       method: "DELETE",
-      headers: getAuthHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to delete section. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
+    if (!response.ok) throw new Error("Failed to delete message");
+    const result = await response.json();
 
-    const responseData = await response.json();
-    return responseData;
+    if (result?.success) return true;
+    throw new Error("Delete failed");
   } catch (error) {
+    console.error("Error deleting message:", error);
     throw error;
   }
-}
+};
 
-<<<<<<< Updated upstream
+export const approveMessage = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/chat/approve/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to approve message");
+
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Approval failed");
+  } catch (error) {
+    console.error("Error approving message:", error);
+    throw error;
+  }
+};
+
+export const approveArticle = async (id) => {
+  try {
+    console.log("...........", id);
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:5000/articles//notif/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to approve article");
+    }
+
+    const res = await response.json();
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.error("Error approuving article :", error);
+    throw error;
+  }
+};
+
+export const commentCounter = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `http://localhost:5000/articles/comment/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+         
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to update comment counter");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Comment counter update failed");
+  } catch (error) {
+    console.error("Error updating comment counter:", error);
+    throw error;
+  }
+};
+
+export const favorCounter = async (id) => {
+  try {
+    console.log(id);
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:5000/articles/favor/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log("result", result);
+
+    if (response.success === "true")
+      throw new Error("Failed to update favor counter");
+    console.log(result);
+    return result.success;
+  } catch (error) {
+    console.error("Error updating favor counter:", error);
+    throw error;
+  }
+};
+
+export const shareCounter = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:5000/articles/share/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+       
+    });
+
+    if (!response.sucees) throw new Error("Failed to update share counter");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Share counter update failed");
+  } catch (error) {
+    console.error("Error updating share counter:", error);
+    throw error;
+  }
+};
+
+export const GetUnverifiedarticle = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/articles/notif`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to approve article");
+    const result = await response.json();
+
+    if (result?.success && result.data) return result.data;
+    throw new Error("Article approval failed");
+  } catch (error) {
+    console.error("Error approving article:", error);
+    throw error;
+  }
+};
+
+export const removeFromFavorites = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/user/favorites/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok)
+      throw new Error("Failed to remove article from favorites");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Removing favorite failed");
+  } catch (error) {
+    console.error("Error removing from favorites:", error);
+    throw error;
+  }
+};
+
+export const getFavorites = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:5000/user/favorites/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to get favorite articles");
+    const result = await response.json();
+
+    console.log("hellllooooo", result?.success);
+    console.log("hellllooooolll", result);
+    return result.favorites;
+  } catch (error) {
+    console.error("Error getting favorites:", error);
+    throw error;
+  }
+};
+
+export const addToFavorites = async (id, userid) => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("iddddddd", id);
+    const response = await fetch(
+      `http://localhost:5000/user/favorites/${userid}/${id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to add article to favorites");
+    const result = await response.json();
+
+    if (result?.success) return result;
+    throw new Error("Favorite action failed");
+  } catch (error) {
+    console.error("Error adding to favorites:", error);
+    throw error;
+  }
+};
+
+export const getownerswritng = async (ownerId) => {
+  console.log("iddd", ownerId);
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `http://localhost:5000/articles/owner/${ownerId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch owner's articles");
+  }
+
   const result = await response.json();
   return result.data;
 };
 
 export const loginUserOrg = async (email, password) => {
-=======
-export async function createTeacherComplaint(data) {
->>>>>>> Stashed changes
   try {
-    const response = await fetch(`${API_BASE_URL}/teacher-complaint`, {
+    const response = await fetch("http://localhost:5000/auth/login", {
       method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to create teacher complaint. Status: ${response.status}`,
-      }));
-      const errorMessage =
-        errorData.errors && errorData.errors[0] && errorData.errors[0].message
-          ? errorData.errors[0].message
-          : errorData.message || "Unknown error";
-
-      const error = new Error(errorMessage);
-      error.originalError = errorData;
-      throw error;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getTeacherComplaints(teacherId) {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/teacher-complaint/teacher/${teacherId}`,
-      {
-        method: "GET",
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch teacher complaints");
+      throw new Error("Failed to login");
     }
 
     const data = await response.json();
+    console.log("Backend response:", data);
     return data;
   } catch (error) {
+    console.log("Error login:", error);
     throw error;
   }
-<<<<<<< Updated upstream
 };
 export const getCategoryDetails = (categoryId) => {
   const categoryMap = {
@@ -2051,7 +2019,7 @@ export const getCategoryDetails = (categoryId) => {
       color: "#84cc16",
       description: "IT governance and regulatory organizations",
     },
-  }
+  };
 
   return (
     categoryMap[categoryId] || {
@@ -2059,17 +2027,17 @@ export const getCategoryDetails = (categoryId) => {
       color: "#6b7280",
       description: "Category description not available",
     }
-  )
-}
+  );
+};
 
 const shuffleArray = (array) => {
-  const shuffled = [...array]
+  const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
-  return shuffled
-}
+  return shuffled;
+};
 
 export const fetchQuizQuestions2 = async (category) => {
   try {
@@ -2093,14 +2061,16 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "True",
         },
         {
-          question: "In data protection, what does 'access' primarily refer to?",
+          question:
+            "In data protection, what does 'access' primarily refer to?",
           options: [
             "Physical access to computer systems",
             "Network connectivity permissions",
             "The ability to view, modify, and challenge the accuracy of personal data",
             "Administrative privileges in databases",
           ],
-          correctAnswer: "The ability to view, modify, and challenge the accuracy of personal data",
+          correctAnswer:
+            "The ability to view, modify, and challenge the accuracy of personal data",
         },
         {
           question:
@@ -2109,19 +2079,22 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "personal",
         },
         {
-          question: "Which principle is fundamental to personal data protection?",
+          question:
+            "Which principle is fundamental to personal data protection?",
           options: [
             "All data must be stored indefinitely",
             "Companies can use personal data without consent",
             "Data subjects have the right to access their personal information",
             "Personal data can be shared freely between organizations",
           ],
-          correctAnswer: "Data subjects have the right to access their personal information",
+          correctAnswer:
+            "Data subjects have the right to access their personal information",
         },
       ],
       "e-commerce": [
         {
-          question: "What is an 'abbreviation' in the context of electronic messages?",
+          question:
+            "What is an 'abbreviation' in the context of electronic messages?",
           options: [
             "A type of email header",
             "A network protocol identifier",
@@ -2145,34 +2118,45 @@ export const fetchQuizQuestions2 = async (category) => {
             "To organize database records",
             "To create user interfaces",
           ],
-          correctAnswer: "To transform clear messages into coded, unintelligible messages for interceptors",
+          correctAnswer:
+            "To transform clear messages into coded, unintelligible messages for interceptors",
         },
         {
-          question: "In digital certificates, what does a 'subscriber' refer to?",
+          question:
+            "In digital certificates, what does a 'subscriber' refer to?",
           options: [
             "Someone who pays for internet services",
             "A person named in a certificate who holds a private key corresponding to a public key",
             "A database administrator",
             "A network security officer",
           ],
-          correctAnswer: "A person named in a certificate who holds a private key corresponding to a public key",
+          correctAnswer:
+            "A person named in a certificate who holds a private key corresponding to a public key",
         },
         {
-          question: "Cryptography in e-commerce ensures three main security aspects. Which is NOT one of them?",
-          options: ["Message integrity", "Data compression", "Confidentiality", "Authentication"],
+          question:
+            "Cryptography in e-commerce ensures three main security aspects. Which is NOT one of them?",
+          options: [
+            "Message integrity",
+            "Data compression",
+            "Confidentiality",
+            "Authentication",
+          ],
           correctAnswer: "Data compression",
         },
       ],
       networks: [
         {
-          question: "According to telecommunications law, what constitutes 'access' to networks?",
+          question:
+            "According to telecommunications law, what constitutes 'access' to networks?",
           options: [
             "Physical entry to telecommunications buildings",
             "Permission to use telephone lines",
             "Provision of means, hardware, software, or services to enable electronic communications",
             "Authorization to install network equipment",
           ],
-          correctAnswer: "Provision of means, hardware, software, or services to enable electronic communications",
+          correctAnswer:
+            "Provision of means, hardware, software, or services to enable electronic communications",
         },
         {
           question:
@@ -2181,14 +2165,16 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "True",
         },
         {
-          question: "What is the primary characteristic of network access in telecommunications?",
+          question:
+            "What is the primary characteristic of network access in telecommunications?",
           options: [
             "It provides unlimited data storage",
             "It enables the provision of electronic communication services",
             "It guarantees 100% uptime",
             "It includes free technical support",
           ],
-          correctAnswer: "It enables the provision of electronic communication services",
+          correctAnswer:
+            "It enables the provision of electronic communication services",
         },
         {
           question:
@@ -2202,7 +2188,8 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "means, hardware, software, or services",
         },
         {
-          question: "Which French law regulates electronic communications and audiovisual services?",
+          question:
+            "Which French law regulates electronic communications and audiovisual services?",
           options: [
             "Law No. 2004-669 of July 9, 2004",
             "Neither law applies",
@@ -2214,14 +2201,16 @@ export const fetchQuizQuestions2 = async (category) => {
       ],
       cybercrime: [
         {
-          question: "What constitutes 'illegal access' according to the Budapest Convention on Cybercrime?",
+          question:
+            "What constitutes 'illegal access' according to the Budapest Convention on Cybercrime?",
           options: [
             "Using someone else's computer with permission",
             "Accessing public websites",
             "Intentional access without right to all or part of a computer system",
             "Reading publicly available information",
           ],
-          correctAnswer: "Intentional access without right to all or part of a computer system",
+          correctAnswer:
+            "Intentional access without right to all or part of a computer system",
         },
         {
           question:
@@ -2237,16 +2226,23 @@ export const fetchQuizQuestions2 = async (category) => {
             "Installing security software",
             "Monitoring network traffic",
           ],
-          correctAnswer: "The art of analyzing encrypted messages to decode them and break the code",
+          correctAnswer:
+            "The art of analyzing encrypted messages to decode them and break the code",
         },
         {
           question:
             "Complete the sentence: Differential cryptanalysis is a technique that analyzes the evolution of _____ applied to two plaintext messages.",
-          options: ["file sizes", "encryption differences", "transmission speeds", "user permissions"],
+          options: [
+            "file sizes",
+            "encryption differences",
+            "transmission speeds",
+            "user permissions",
+          ],
           correctAnswer: "encryption differences",
         },
         {
-          question: "According to cybercrime law, which element is essential for illegal access charges?",
+          question:
+            "According to cybercrime law, which element is essential for illegal access charges?",
           options: [
             "Physical presence at the crime scene",
             "Use of specialized hacking tools",
@@ -2258,14 +2254,16 @@ export const fetchQuizQuestions2 = async (category) => {
       ],
       miscellaneous: [
         {
-          question: "What does 'access' mean in the context of information retrieval?",
+          question:
+            "What does 'access' mean in the context of information retrieval?",
           options: [
             "Permission to enter a building",
             "The means used to obtain information from a storage medium",
             "Network connection speed",
             "User authentication credentials",
           ],
-          correctAnswer: "The means used to obtain information from a storage medium",
+          correctAnswer:
+            "The means used to obtain information from a storage medium",
         },
         {
           question:
@@ -2274,30 +2272,39 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "True",
         },
         {
-          question: "What characterizes information society crimes according to EU communications?",
+          question:
+            "What characterizes information society crimes according to EU communications?",
           options: [
             "Only crimes committed in physical locations",
             "Exploitation of information networks without geographical constraints",
             "Crimes involving only financial institutions",
             "Offenses limited to government systems",
           ],
-          correctAnswer: "Exploitation of information networks without geographical constraints",
+          correctAnswer:
+            "Exploitation of information networks without geographical constraints",
         },
         {
           question:
             "Complete the definition: Information and communication technologies enable the circulation of data that are _____ and _____.",
-          options: ["physical and permanent", "visible and stable", "intangible and volatile", "local and restricted"],
+          options: [
+            "physical and permanent",
+            "visible and stable",
+            "intangible and volatile",
+            "local and restricted",
+          ],
           correctAnswer: "intangible and volatile",
         },
         {
-          question: "What is the primary goal of creating a safer information society?",
+          question:
+            "What is the primary goal of creating a safer information society?",
           options: [
             "Limiting access to technology",
             "Strengthening information infrastructure security and fighting cybercrime",
             "Reducing internet usage",
             "Eliminating digital communications",
           ],
-          correctAnswer: "Strengthening information infrastructure security and fighting cybercrime",
+          correctAnswer:
+            "Strengthening information infrastructure security and fighting cybercrime",
         },
       ],
       "it-contract": [
@@ -2309,16 +2316,23 @@ export const fetchQuizQuestions2 = async (category) => {
             "A user manual for applications",
             "A network configuration document",
           ],
-          correctAnswer: "A contract defining the level of service expected from a service provider",
+          correctAnswer:
+            "A contract defining the level of service expected from a service provider",
         },
         {
-          question: "True or False: Software licensing agreements define the legal permissions for using software.",
+          question:
+            "True or False: Software licensing agreements define the legal permissions for using software.",
           options: ["True", "False"],
           correctAnswer: "True",
         },
         {
           question: "What does SaaS stand for in IT contracts?",
-          options: ["Security as a Standard", "Software as a Service", "System as a Solution", "Storage as a Service"],
+          options: [
+            "Security as a Standard",
+            "Software as a Service",
+            "System as a Solution",
+            "Storage as a Service",
+          ],
           correctAnswer: "Software as a Service",
         },
         {
@@ -2333,7 +2347,8 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "publisher and user",
         },
         {
-          question: "Which element is typically NOT included in IT service contracts?",
+          question:
+            "Which element is typically NOT included in IT service contracts?",
           options: [
             "Performance metrics",
             "Personal medical information",
@@ -2352,22 +2367,26 @@ export const fetchQuizQuestions2 = async (category) => {
             "A work created by computer without human intervention",
             "Digital art created by humans using computers",
           ],
-          correctAnswer: "A work created by computer without human intervention",
+          correctAnswer:
+            "A work created by computer without human intervention",
         },
         {
-          question: "True or False: Cryptography techniques can be considered intellectual property.",
+          question:
+            "True or False: Cryptography techniques can be considered intellectual property.",
           options: ["False", "True"],
           correctAnswer: "True",
         },
         {
-          question: "According to New Zealand's Copyright Act 1994, what defines computer-generated works?",
+          question:
+            "According to New Zealand's Copyright Act 1994, what defines computer-generated works?",
           options: [
             "Any digital file created on a computer",
             "Works created by computer in circumstances where there is no human author",
             "Software applications developed by teams",
             "Websites designed using computer tools",
           ],
-          correctAnswer: "Works created by computer in circumstances where there is no human author",
+          correctAnswer:
+            "Works created by computer in circumstances where there is no human author",
         },
         {
           question:
@@ -2381,14 +2400,16 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "algorithms and software",
         },
         {
-          question: "Which is a key consideration for computer-generated intellectual property?",
+          question:
+            "Which is a key consideration for computer-generated intellectual property?",
           options: [
             "Ensuring the computer is properly licensed",
             "Determining authorship when no human directly creates the work",
             "Verifying the computer's processing speed",
             "Confirming the computer's physical location",
           ],
-          correctAnswer: "Determining authorship when no human directly creates the work",
+          correctAnswer:
+            "Determining authorship when no human directly creates the work",
         },
       ],
       organizations: [
@@ -2409,7 +2430,8 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "True",
         },
         {
-          question: "What is the primary role of the W3C (World Wide Web Consortium)?",
+          question:
+            "What is the primary role of the W3C (World Wide Web Consortium)?",
           options: [
             "Providing internet access",
             "Developing web standards and protocols",
@@ -2421,11 +2443,17 @@ export const fetchQuizQuestions2 = async (category) => {
         {
           question:
             "Complete the sentence: The IETF (Internet Engineering Task Force) is responsible for developing _____ standards.",
-          options: ["computer hardware", "software licensing", "internet protocol", "data storage"],
+          options: [
+            "computer hardware",
+            "software licensing",
+            "internet protocol",
+            "data storage",
+          ],
           correctAnswer: "internet protocol",
         },
         {
-          question: "Which organization would most likely develop standards for information security management?",
+          question:
+            "Which organization would most likely develop standards for information security management?",
           options: [
             "Local government agencies",
             "ISO (International Organization for Standardization)",
@@ -2435,22 +2463,23 @@ export const fetchQuizQuestions2 = async (category) => {
           correctAnswer: "ISO (International Organization for Standardization)",
         },
       ],
-    }
-    let categoryQuestions = questionBank[category] || questionBank["miscellaneous"]
+    };
+    let categoryQuestions =
+      questionBank[category] || questionBank["miscellaneous"];
     categoryQuestions = categoryQuestions.map((question) => {
-      const correctAnswer = question.correctAnswer
-      const shuffledOptions = shuffleArray(question.options)
+      const correctAnswer = question.correctAnswer;
+      const shuffledOptions = shuffleArray(question.options);
 
       return {
         question: question.question,
         options: shuffledOptions,
         correctAnswer: correctAnswer,
-      }
-    })
-    const shuffled = shuffleArray(categoryQuestions)
-    return shuffled.slice(0, 5)
+      };
+    });
+    const shuffled = shuffleArray(categoryQuestions);
+    return shuffled.slice(0, 5);
   } catch (error) {
-    console.error("Error fetching quiz questions:", error)
+    console.error("Error fetching quiz questions:", error);
     const fallbackQuestions = [
       {
         question: "What does ICT stand for?",
@@ -2479,7 +2508,12 @@ export const fetchQuizQuestions2 = async (category) => {
       },
       {
         question: "What is the main purpose of a firewall?",
-        options: ["Data storage", "Network security", "File compression", "Image editing"],
+        options: [
+          "Data storage",
+          "Network security",
+          "File compression",
+          "Image editing",
+        ],
         correctAnswer: "Network security",
       },
       {
@@ -2487,159 +2521,16 @@ export const fetchQuizQuestions2 = async (category) => {
         options: ["HTTP", "FTP", "HTTPS", "SMTP"],
         correctAnswer: "HTTPS",
       },
-    ]
+    ];
     return fallbackQuestions.map((question) => {
-      const correctAnswer = question.correctAnswer
-      const shuffledOptions = shuffleArray(question.options)
+      const correctAnswer = question.correctAnswer;
+      const shuffledOptions = shuffleArray(question.options);
 
       return {
         question: question.question,
         options: shuffledOptions,
         correctAnswer: correctAnswer,
-      }
-    })
-=======
-}
-
-export async function getAllTeacherComplaints() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher-complaint`, {
-      method: "GET",
-      headers: getAuthHeaders(),
+      };
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch all teacher complaints");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
   }
-}
-
-export async function getTeacherComplaintById(complaintId) {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/teacher-complaint/${complaintId}`,
-      {
-        method: "GET",
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch teacher complaint");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function updateTeacherComplaint(complaintId, data) {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/teacher-complaint/${complaintId}`,
-      {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to update teacher complaint. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function deleteTeacherComplaint(complaintId) {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/teacher-complaint/${complaintId}`,
-      {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: `Failed to delete teacher complaint. Status: ${response.status}`,
-      }));
-      throw errorData;
-    }
-
-    const responseData = await response.json();
-    return responseData;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getTeacherByUserId(userId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teacher/user/${userId}`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch teacher by user ID");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAllAuditLogs() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auditlog`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch audit logs");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getAuditLogById(auditlogId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auditlog/${auditlogId}`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch audit log");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
->>>>>>> Stashed changes
-  }
-}
+};
