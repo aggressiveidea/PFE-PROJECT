@@ -1,4 +1,4 @@
-"use client";
+ 
 
 import { useState } from "react";
 import {
@@ -32,7 +32,7 @@ const GraphAlgorithmsEnhanced = ({
     appliedAlgorithmResult, setAppliedAlgorithmResult
   ] = useState(null);
 
-  // Mock data for filtering counts
+   
   const filterCounts = {
     categories: {
       "Computer Crime": 8,
@@ -51,7 +51,7 @@ const GraphAlgorithmsEnhanced = ({
     terms: 115,
   };
 
-  // Translations
+   
   const translations = {
     english: {
       title: "Graph Algorithms",
@@ -230,7 +230,7 @@ const GraphAlgorithmsEnhanced = ({
 
   const t = translations[language] || translations.english;
 
-  // Real graph data for examples
+   
   const graphExamples = {
     pagerank: {
       before: {
@@ -396,7 +396,6 @@ const GraphAlgorithmsEnhanced = ({
     },
   };
 
-  // Enhanced algorithms with more examples
   const algorithms = [
     {
       id: "pagerank",
@@ -509,109 +508,6 @@ const GraphAlgorithmsEnhanced = ({
         "Betweenness centrality measures the extent to which a node lies on paths between other nodes. Nodes with high betweenness may have considerable influence within a network by virtue of their control over information passing between others.",
     },
     {
-      id: "closeness",
-      name: {
-        english: "Closeness Centrality",
-        french: "Centralité de Proximité",
-        arabic: "مركزية التقارب",
-      },
-      category: "centrality",
-      categoryLabel: {
-        english: "CENTRALITY",
-        french: "CENTRALITÉ",
-        arabic: "المركزية",
-      },
-      description: {
-        english:
-          "Measures the average distance from each node to all other nodes in the graph",
-        french:
-          "Mesure la distance moyenne de chaque nœud à tous les autres nœuds du graphe",
-        arabic:
-          "يقيس متوسط المسافة من كل عقدة إلى جميع العقد الأخرى في الرسم البياني",
-      },
-      timeComplexity: "O(n²)",
-      spaceComplexity: "O(n²)",
-      howItWorks: {
-        english:
-          "Closeness centrality calculates the sum of the shortest distances between a node and all other nodes in the graph. A node with a high closeness centrality has short distances to all other nodes.",
-        french:
-          "La centralité de proximité calcule la somme des distances les plus courtes entre un nœud et tous les autres nœuds du graphe.",
-        arabic:
-          "تحسب مركزية التقارب مجموع أقصر المسافات بين عقدة وجميع العقد الأخرى في الرسم البياني. العقدة ذات مركزية التقارب العالية لديها مسافات قصيرة إلى جميع العقد الأخرى.",
-      },
-      applications: {
-        english: [
-          "Identifying key influencers in a network",
-          "Finding central locations in a transportation network",
-          "Analyzing information flow in social networks",
-        ],
-        french: [
-          "Identifier les influenceurs clés dans un réseau",
-          "Trouver des emplacements centraux dans un réseau de transport",
-          "Analyser le flux d'informations dans les réseaux sociaux",
-        ],
-        arabic: [
-          "تحديد المؤثرين الرئيسيين في الشبكة",
-          "إيجاد المواقع المركزية في شبكة النقل",
-          "تحليل تدفق المعلومات في الشبكات الاجتماعية",
-        ],
-      },
-      before: graphExamples.pagerank.before,
-      after: graphExamples.pagerank.after,
-      overview:
-        "Closeness centrality measures how close a node is to all other nodes in the network. It is calculated as the reciprocal of the sum of the shortest path distances from a node to all other nodes in the graph.",
-    },
-    {
-      id: "degree",
-      name: {
-        english: "Degree Centrality",
-        french: "Centralité de Degré",
-        arabic: "مركزية الدرجة",
-      },
-      category: "centrality",
-      categoryLabel: {
-        english: "CENTRALITY",
-        french: "CENTRALITÉ",
-        arabic: "المركزية",
-      },
-      description: {
-        english: "Measures the number of connections a node has",
-        french: "Mesure le nombre de connexions qu'un nœud possède",
-        arabic: "يقيس عدد الاتصالات التي تمتلكها العقدة",
-      },
-      timeComplexity: "O(n)",
-      spaceComplexity: "O(n)",
-      howItWorks: {
-        english:
-          "Degree centrality is simply the count of how many connections (edges) a node has. In a directed graph, we can differentiate between in-degree (incoming connections) and out-degree (outgoing connections).",
-        french:
-          "La centralité de degré est simplement le nombre de connexions (arêtes) qu'un nœud possède. Dans un graphe orienté, nous pouvons différencier le degré entrant (connexions entrantes) et le degré sortant (connexions sortantes).",
-        arabic:
-          "مركزية الدرجة هي ببساطة عدد الاتصالات (الحواف) التي تمتلكها العقدة. في الرسم البياني الموجه، يمكننا التمييز بين الدرجة الداخلية (الاتصالات الواردة) والدرجة الخارجية (الاتصالات الصادرة).",
-      },
-      applications: {
-        english: [
-          "Identifying popular users in social networks",
-          "Finding important nodes in a network",
-          "Analyzing network connectivity",
-        ],
-        french: [
-          "Identifier les utilisateurs populaires dans les réseaux sociaux",
-          "Trouver les nœuds importants dans un réseau",
-          "Analyser la connectivité du réseau",
-        ],
-        arabic: [
-          "تحديد المستخدمين المشهورين في الشبكات الاجتماعية",
-          "إيجاد العقد المهمة في الشبكة",
-          "تحليل اتصال الشبكة",
-        ],
-      },
-      before: graphExamples.pagerank.before,
-      after: graphExamples.pagerank.after,
-      overview:
-        "Degree centrality is the simplest measure of node connectivity. It equals the number of edges that a node has. In directed networks, we can define indegree (number of incoming edges) and outdegree (number of outgoing edges).",
-    },
-    {
       id: "louvain",
       name: {
         english: "Louvain Community Detection",
@@ -668,63 +564,67 @@ const GraphAlgorithmsEnhanced = ({
         "The Louvain method is a fast algorithm for community detection in large networks. It optimizes modularity, which measures the density of connections within communities compared to connections between communities.",
     },
     {
-      id: "labelpropagation",
+      id: "jaccard",
       name: {
-        english: "Label Propagation",
-        french: "Propagation d'Étiquettes",
-        arabic: "انتشار التسمية",
+        english: "Jaccard Similarity",
+        french: "Similarité de Jaccard",
+        arabic: "تشابه جاكارد",
       },
-      category: "community",
+      category: "similarity",
       categoryLabel: {
-        english: "COMMUNITY DETECTION",
-        french: "DÉTECTION DE COMMUNAUTÉ",
-        arabic: "اكتشاف المجتمع",
+        english: "SIMILARITY",
+        french: "SIMILARITÉ",
+        arabic: "التشابه",
       },
       description: {
         english:
-          "A fast algorithm for finding community structure in large networks",
+          "Measures similarity between finite sample sets by comparing their intersection to their union",
         french:
-          "Un algorithme rapide pour trouver la structure communautaire dans les grands réseaux",
-        arabic: "خوارزمية سريعة لإيجاد هيكل المجتمع في الشبكات الكبيرة",
+          "Mesure la similarité entre des ensembles d'échantillons finis en comparant leur intersection à leur union",
+        arabic:
+          "يقيس التشابه بين مجموعات العينات المحدودة بمقارنة تقاطعها مع اتحادها",
       },
-      timeComplexity: "O(m)",
+      timeComplexity: "O(n)",
       spaceComplexity: "O(n)",
       howItWorks: {
         english:
-          "Label Propagation works by initially assigning a unique label to each node and then iteratively updating the label of each node to be the one that the majority of its neighbors have.",
+          "The Jaccard similarity coefficient is defined as the size of the intersection divided by the size of the union of the sample sets.",
         french:
-          "La propagation d'étiquettes fonctionne en attribuant initialement une étiquette unique à chaque nœud, puis en mettant à jour itérativement l'étiquette de chaque nœud.",
+          "Le coefficient de similarité de Jaccard est défini comme la taille de l'intersection divisée par la taille de l'union des ensembles d'échantillons.",
         arabic:
-          "يعمل انتشار التسمية عن طريق تعيين تسمية فريدة لكل عقدة في البداية، ثم تحديث تسمية كل عقدة بشكل متكرر لتكون هي التسمية التي تمتلكها غالبية جيرانها.",
+          "يتم تعريف معامل تشابه جاكارد على أنه حجم التقاطع مقسومًا على حجم اتحاد مجموعات العينات.",
       },
       applications: {
         english: [
-          "Identifying communities in social networks",
-          "Analyzing social influence",
-          "Detecting fraud in financial networks",
+          "Document similarity",
+          "Recommendation systems",
+          "Duplicate detection",
+          "Data mining",
         ],
         french: [
-          "Identifier les communautés dans les réseaux sociaux",
-          "Analyser l'influence sociale",
-          "Détecter la fraude dans les réseaux financiers",
+          "Similarité documentaire",
+          "Systèmes de recommandation",
+          "Détection de doublons",
+          "Exploration de données",
         ],
         arabic: [
-          "تحديد المجتمعات في الشبكات الاجتماعية",
-          "تحليل التأثير الاجتماعي",
-          "اكتشاف الاحتيال في الشبكات المالية",
+          "تشابه المستندات",
+          "أنظمة التوصية",
+          "كشف التكرارات",
+          "تنقيب البيانات",
         ],
       },
-      before: graphExamples.louvain.before,
-      after: graphExamples.louvain.after,
+      before: graphExamples.pagerank.before,
+      after: graphExamples.pagerank.after,
       overview:
-        "Label Propagation is a semi-supervised machine learning algorithm that assigns labels to previously unlabeled data points. It works by propagating labels through the network based on the principle that connected nodes are likely to have the same label.",
+        "The Jaccard index measures similarity between finite sample sets by comparing their intersection to their union. It ranges from 0 (no similarity) to 1 (identical sets).",
     },
     {
-      id: "wcc",
+      id: "triangle-count",
       name: {
-        english: "Weakly Connected Components",
-        french: "Composantes Connexes Faibles",
-        arabic: "المكونات المتصلة ضعيفة",
+        english: "Triangle Count",
+        french: "Compte de Triangles",
+        arabic: "عد المثلثات",
       },
       category: "structure",
       categoryLabel: {
@@ -734,108 +634,56 @@ const GraphAlgorithmsEnhanced = ({
       },
       description: {
         english:
-          "Finds sets of nodes that are reachable from each other, ignoring direction of edges",
+          "Counts the number of triangles passing through each node in a graph",
         french:
-          "Trouve des ensembles de nœuds qui sont accessibles les uns aux autres, en ignorant la direction des arêtes",
-        arabic:
-          "يجد مجموعات من العقد التي يمكن الوصول إليها من بعضها البعض، مع تجاهل اتجاه الحواف",
+          "Compte le nombre de triangles passant par chaque nœud dans un graphe",
+        arabic: "يعد عدد المثلثات التي تمر عبر كل عقدة في الرسم البياني",
       },
-      timeComplexity: "O(n + m)",
+      timeComplexity: "O(m^(3/2))",
       spaceComplexity: "O(n)",
       howItWorks: {
         english:
-          "Weakly Connected Components identifies components by traversing the graph as if all edges were undirected.",
+          "Triangle counting works by identifying sets of three nodes that are all connected to each other (forming a triangle). This can be done by checking all possible triplets or using more efficient methods.",
         french:
-          "Les composantes connexes faibles identifient les composantes en parcourant le graphe comme si toutes les arêtes étaient non orientées.",
+          "Le comptage de triangles fonctionne en identifiant des ensembles de trois nœuds qui sont tous connectés les uns aux autres (formant un triangle).",
         arabic:
-          "تحدد المكونات المتصلة ضعيفة المكونات عن طريق اجتياز الرسم البياني كما لو كانت جميع الحواف غير موجهة.",
+          "يعمل حساب المثلثات عن طريق تحديد مجموعات من ثلاث عقد متصلة ببعضها البعض (تشكل مثلثًا).",
       },
       applications: {
         english: [
-          "Network partitioning",
-          "Identifying disconnected subgraphs",
-          "Analyzing network resilience",
+          "Social network analysis",
+          "Spam detection",
+          "Link recommendation",
+          "Graph clustering",
         ],
         french: [
-          "Partitionnement de réseau",
-          "Identifier les sous-graphes déconnectés",
-          "Analyser la résilience du réseau",
+          "Analyse des réseaux sociaux",
+          "Détection de spam",
+          "Recommandation de liens",
+          "Regroupement de graphes",
         ],
         arabic: [
-          "تقسيم الشبكة",
-          "تحديد الرسوم البيانية الفرعية المنفصلة",
-          "تحليل مرونة الشبكة",
+          "تحليل الشبكات الاجتماعية",
+          "كشف البريد المزعج",
+          "توصية الروابط",
+          "تجميع الرسم البياني",
         ],
       },
-      before: graphExamples.louvain.before,
-      after: graphExamples.louvain.after,
+      before: graphExamples.pagerank.before,
+      after: graphExamples.pagerank.after,
       overview:
-        "Weakly Connected Components finds subgraphs where all nodes are connected to each other by some path, ignoring the direction of edges. This is useful for identifying isolated parts of a directed graph.",
-    },
-    {
-      id: "dijkstra",
-      name: {
-        english: "Dijkstra's Shortest Path",
-        french: "Plus Court Chemin de Dijkstra",
-        arabic: "أقصر مسار لديكسترا",
-      },
-      category: "pathfinding",
-      categoryLabel: {
-        english: "PATH FINDING",
-        french: "RECHERCHE DE CHEMIN",
-        arabic: "إيجاد المسار",
-      },
-      description: {
-        english: "Finds the shortest path between two nodes in a graph",
-        french:
-          "Trouve le chemin le plus court entre deux nœuds dans un graphe",
-        arabic: "يجد أقصر مسار بين عقدتين في الرسم البياني",
-      },
-      timeComplexity: "O(m + n log n)",
-      spaceComplexity: "O(n)",
-      howItWorks: {
-        english:
-          "Dijkstra's algorithm works by maintaining a set of nodes whose shortest distance from the source is already known. It starts with the source node and gradually includes more nodes.",
-        french:
-          "L'algorithme de Dijkstra fonctionne en maintenant un ensemble de nœuds dont la distance la plus courte depuis la source est déjà connue.",
-        arabic:
-          "تعمل خوارزمية Dijkstra عن طريق الاحتفاظ بمجموعة من العقد التي تكون أقصر مسافة لها من المصدر معروفة بالفعل.",
-      },
-      applications: {
-        english: [
-          "Navigation and route planning",
-          "Network routing protocols",
-          "Flight scheduling",
-          "Resource allocation",
-        ],
-        french: [
-          "Navigation et planification d'itinéraire",
-          "Protocoles de routage réseau",
-          "Planification des vols",
-          "Allocation des ressources",
-        ],
-        arabic: [
-          "التنقل وتخطيط المسار",
-          "بروتوكولات توجيه الشبكة",
-          "جدولة الرحلات",
-          "تخصيص الموارد",
-        ],
-      },
-      before: graphExamples.dijkstra.before,
-      after: graphExamples.dijkstra.after,
-      overview:
-        "Dijkstra's algorithm finds the shortest path between nodes in a graph. It works by visiting vertices in order of increasing distance from the source, and for each vertex, relaxing all outgoing edges.",
+        "Triangle counting is a measure used in graph theory to determine the number of triangles (3-cliques) in an undirected graph. It's often used as a measure of clustering in networks.",
     },
   ];
 
   const getCategoryColor = (category) => {
     const colors = {
-      centrality: "#3b82f6", // Blue-500
-      community: "#8b5cf6", // Purple-500
-      pathfinding: "#22c55e", // Green-500
-      structure: "#f97316", // Orange-500
-      optimization: "#eab308", // Yellow-500
-      clustering: "#06b6d4", // Cyan-500
+      centrality: "#3b82f6",  
+      community: "#8b5cf6",  
+      pathfinding: "#22c55e",  
+      structure: "#f97316",  
+      optimization: "#eab308",  
+      clustering: "#06b6d4",  
     };
     return colors[category] || "#6366f1";
   };
@@ -885,7 +733,7 @@ const GraphAlgorithmsEnhanced = ({
     //setActiveCategory(category)
   };
 
-  // Network type icons
+   
   const networkIcons = {
     networks: <Network size={20} />,
     data: <Database size={20} />,

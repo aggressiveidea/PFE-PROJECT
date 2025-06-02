@@ -1,10 +1,10 @@
-"use client";
+ 
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { getAllterms } from "../../services/Api";
 import "./GraphVisualization.css";
 
-// Import graph libraries
+ 
 import Graph from "graphology";
 import Sigma from "sigma";
 import forceAtlas2 from "graphology-layout-forceatlas2";
@@ -28,7 +28,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 
-// Import the GraphLegend component
+ 
 import GraphLegend from "./GraphExport";
 
 const GraphVisualization = ({ language = "english" }) => {
@@ -49,12 +49,12 @@ const GraphVisualization = ({ language = "english" }) => {
   const [isLayoutRunning, setIsLayoutRunning] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
 
-  // Add state for drag-and-drop functionality
+   
   const [draggedNode, setDraggedNode] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [connectedNodes, setConnectedNodes] = useState([]);
 
-  // Add state for filters
+   
   const [showFilters, setShowFilters] = useState(false);
   const [nodeTypeFilters, setNodeTypeFilters] = useState({
     term: true,
@@ -66,14 +66,14 @@ const GraphVisualization = ({ language = "english" }) => {
   const [showNodeTypeFilters, setShowNodeTypeFilters] = useState(false);
   const [clusterByCategory, setClusterByCategory] = useState(false);
 
-  // Refs for Sigma.js
+   
   const containerRef = useRef(null);
   const sigmaRef = useRef(null);
   const graphRef = useRef(null);
   const lastClickedNodeRef = useRef(null);
   const lastClickTimeRef = useRef(0);
 
-  // Define categories with proper capitalization
+   
   const categories = {
     english: [
       "Computer Crime",
@@ -107,29 +107,29 @@ const GraphVisualization = ({ language = "english" }) => {
     ],
   };
 
-  // Update the node colors to be more vibrant and distinct
+   
   const nodeColors = {
     term: {
-      default: "#8B5CF6", // Purple for terms
-      selected: "#FF5722", // Orange for selected
-      grayed: "#D1C4E9", // Light purple for grayed out terms
+      default: "#8B5CF6",  
+      selected: "#FF5722",  
+      grayed: "#D1C4E9",  
     },
     definition: {
-      primary: "#3B82F6", // Blue for primary definitions
-      secondary: "#EC4899", // Pink for secondary definitions
-      selected: "#FF5722", // Orange for selected
-      grayed: "#BBDEFB", // Light blue for grayed out definitions
+      primary: "#3B82F6",  
+      secondary: "#EC4899",  
+      selected: "#FF5722",  
+      grayed: "#BBDEFB",  
     },
     category: {
-      "Computer Crime": "#EF4444", // Red
-      "Personal Data": "#EC4899", // Pink
-      "Electronic Commerce": "#10B981", // Green
-      Organization: "#F59E0B", // Yellow
-      Networks: "#3B82F6", // Blue
-      "Intellectual Property": "#8B5CF6", // Purple
-      Miscellaneous: "#6366F1", // Indigo
-      "Computer Science": "#06B6D4", // Cyan
-      // French translations
+      "Computer Crime": "#EF4444",  
+      "Personal Data": "#EC4899",  
+      "Electronic Commerce": "#10B981",  
+      Organization: "#F59E0B",  
+      Networks: "#3B82F6",  
+      "Intellectual Property": "#8B5CF6",  
+      Miscellaneous: "#6366F1",  
+      "Computer Science": "#06B6D4",  
+       
       "Criminalité informatique": "#EF4444",
       "Données personnelles": "#EC4899",
       "Commerce électronique": "#10B981",
@@ -138,7 +138,7 @@ const GraphVisualization = ({ language = "english" }) => {
       "Propriété intellectuelle": "#8B5CF6",
       Divers: "#6366F1",
       Informatique: "#06B6D4",
-      // Arabic translations
+       
       "جرائم الكمبيوتر": "#EF4444",
       "البيانات الشخصية": "#EC4899",
       "التجارة الإلكترونية": "#10B981",
@@ -147,11 +147,11 @@ const GraphVisualization = ({ language = "english" }) => {
       "الملكية الفكرية": "#8B5CF6",
       متنوع: "#6366F1",
       "علوم الكمبيوتر": "#06B6D4",
-      grayed: "#E5E5E5", // Light gray for grayed out categories
+      grayed: "#E5E5E5",  
     },
   };
 
-  // Add category emojis
+   
   const categoryEmojis = {
     "Computer Crime": "🔒",
     "Personal Data": "👤",
@@ -161,7 +161,7 @@ const GraphVisualization = ({ language = "english" }) => {
     "Intellectual Property": "©️",
     Miscellaneous: "📦",
     "Computer Science": "💻",
-    // French translations
+     
     "Criminalité informatique": "🔒",
     "Données personnelles": "👤",
     "Commerce électronique": "🛒",
@@ -170,7 +170,7 @@ const GraphVisualization = ({ language = "english" }) => {
     "Propriété intellectuelle": "©️",
     Divers: "📦",
     Informatique: "💻",
-    // Arabic translations
+     
     "جرائم الكمبيوتر": "🔒",
     "البيانات الشخصية": "👤",
     "التجارة الإلكترونية": "🛒",
@@ -181,7 +181,7 @@ const GraphVisualization = ({ language = "english" }) => {
     "علوم الكمبيوتر": "💻",
   };
 
-  // Map language prop to API language code
+   
   const getLanguageCode = useCallback(() => {
     switch (language) {
       case "english":
@@ -195,22 +195,22 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, [language]);
 
-  // Toggle dark/light mode
+   
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode((prev) => !prev);
   }, []);
 
-  // Toggle legend visibility
+   
   const toggleLegend = useCallback(() => {
     setShowLegend((prev) => !prev);
   }, []);
 
-  // Toggle filters panel
+   
   const toggleFilters = useCallback(() => {
     setShowFilters((prev) => !prev);
   }, []);
 
-  // Initialize category filters when categories are available
+   
   useEffect(() => {
     const currentCategories = categories[language] || categories.english;
     const initialCategoryFilters = {};
@@ -222,7 +222,7 @@ const GraphVisualization = ({ language = "english" }) => {
     setCategoryFilters(initialCategoryFilters);
   }, [language]);
 
-  // Fetch data and transform it into graph structure
+   
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -239,7 +239,7 @@ const GraphVisualization = ({ language = "english" }) => {
           throw new Error("No data received from API");
         }
 
-        // Transform API data into graph structure
+         
         const graphStructure = transformDataToGraph(termsData, languageCode);
         setGraphData(graphStructure);
         setFilteredGraphData(graphStructure);
@@ -256,24 +256,24 @@ const GraphVisualization = ({ language = "english" }) => {
     fetchData();
   }, [language, getLanguageCode]);
 
-  // Transform API data to focus on terms, definitions, and categories
+   
   const transformDataToGraph = (termsData, languageCode) => {
     const nodes = [];
     const relationships = [];
     const categoryNodes = new Map();
     const nodeIds = new Set();
 
-    // Get the appropriate category list for the current language
+     
     const categoryList = categories[language] || categories.english;
 
-    // Create category nodes first
+     
     categoryList.forEach((category, index) => {
       const categoryId = `cat-${index}`;
 
-      // Skip if this category ID already exists
+       
       if (nodeIds.has(categoryId)) return;
 
-      // Add emoji to category label
+       
       const emoji = categoryEmojis[category] || "";
       const labelWithEmoji = `${emoji} ${category}`;
 
@@ -284,50 +284,50 @@ const GraphVisualization = ({ language = "english" }) => {
         nodeType: "category",
         language: languageCode,
         size: 15,
-        color: nodeColors.category[category] || "#6366F1", // Use vibrant colors
-        category: category, // Store the category for filtering
+        color: nodeColors.category[category] || "#6366F1",  
+        category: category,  
       };
       nodes.push(categoryNode);
       categoryNodes.set(category, categoryNode.id);
       nodeIds.add(categoryId);
     });
 
-    // Process terms and ensure unique IDs
+     
     termsData.forEach((term) => {
-      if (!term || !term.id) return; // Skip invalid terms
+      if (!term || !term.id) return;  
 
       const termId = `term-${term.id}`;
 
-      // Skip if this term ID already exists
+       
       if (nodeIds.has(termId)) return;
 
-      // Add term node
+       
       const termNode = {
         id: termId,
         label: term.name || "Unnamed Term",
         nodeType: "term",
         language: languageCode,
         size: 8,
-        color: nodeColors.term.default, // Purple for terms
-        categories: [], // Will store categories for filtering
+        color: nodeColors.term.default,  
+        categories: [],  
       };
       nodes.push(termNode);
       nodeIds.add(termId);
 
-      // Process definitions
+       
       if (term.definitions && term.definitions.length > 0) {
         term.definitions.forEach((def, defIndex) => {
-          if (!def || def.language !== languageCode) return; // Skip invalid or wrong language definitions
+          if (!def || def.language !== languageCode) return;  
 
           const defId = `def-${term.id}-${defIndex}`;
 
-          // Skip if this definition ID already exists
+           
           if (nodeIds.has(defId)) return;
 
-          // Track categories for this definition
+           
           const defCategories = [];
 
-          // Add definition node
+           
           const defNode = {
             id: defId,
             label:
@@ -343,45 +343,45 @@ const GraphVisualization = ({ language = "english" }) => {
             color:
               def.type === "primary"
                 ? nodeColors.definition.primary
-                : nodeColors.definition.secondary, // Blue for primary, Pink for secondary
-            categories: [], // Will store categories for filtering
+                : nodeColors.definition.secondary,  
+            categories: [],  
           };
           nodes.push(defNode);
           nodeIds.add(defId);
 
-          // Add relationship between term and definition
+           
           relationships.push({
             id: `rel-term-def-${term.id}-${defIndex}`,
             source: termNode.id,
             target: defNode.id,
             relType: "HAS_DEFINITION",
             label: "HAS_DEFINITION",
-            color: "#4C8EDA", // Blue
+            color: "#4C8EDA",  
             size: 2,
-            weight: 0.2, // Add a low weight to increase distance
+            weight: 0.2,  
           });
 
-          // Process categories
+           
           if (def.categories && def.categories.length > 0) {
             def.categories.forEach((category) => {
-              if (!category) return; // Skip invalid categories
+              if (!category) return;  
 
-              // Find the closest matching category from our predefined list
+               
               const matchedCategory = findClosestCategory(
                 category,
                 categoryList
               );
 
               if (matchedCategory && categoryNodes.has(matchedCategory)) {
-                // Add category to definition's categories
+                 
                 defNode.categories.push(matchedCategory);
 
-                // Add category to term's categories if not already there
+                 
                 if (!termNode.categories.includes(matchedCategory)) {
                   termNode.categories.push(matchedCategory);
                 }
 
-                // Add relationship between definition and category
+                 
                 relationships.push({
                   id: `rel-def-cat-${term.id}-${defIndex}-${categoryNodes.get(
                     matchedCategory
@@ -390,11 +390,11 @@ const GraphVisualization = ({ language = "english" }) => {
                   target: categoryNodes.get(matchedCategory),
                   relType: "BELONGS_TO",
                   label: "BELONGS_TO",
-                  color: "#8DCC93", // Green
+                  color: "#8DCC93",  
                   size: 1,
                 });
 
-                // Add direct relationship between term and category for better visualization
+                 
                 relationships.push({
                   id: `rel-term-cat-${term.id}-${categoryNodes.get(
                     matchedCategory
@@ -403,14 +403,14 @@ const GraphVisualization = ({ language = "english" }) => {
                   target: categoryNodes.get(matchedCategory),
                   relType: "BELONGS_TO",
                   label: "BELONGS_TO",
-                  color: "#8DCC93", // Green
-                  size: 0.5, // Thinner line
+                  color: "#8DCC93",  
+                  size: 0.5,  
                 });
               }
             });
           }
 
-          // Process related terms
+           
           if (def.relatedTerms && def.relatedTerms.length > 0) {
             def.relatedTerms.forEach((relatedTerm, rtIndex) => {
               if (
@@ -423,19 +423,19 @@ const GraphVisualization = ({ language = "english" }) => {
 
               const relatedTermId = `term-${relatedTerm.id}`;
 
-              // Only create relationship if the target term exists or will exist
+               
               if (
                 nodeIds.has(relatedTermId) ||
                 termsData.some((t) => t.id === relatedTerm.id)
               ) {
-                // Add relationship between terms
+                 
                 relationships.push({
                   id: `rel-term-term-${term.id}-${relatedTerm.id}-${rtIndex}`,
                   source: termNode.id,
                   target: relatedTermId,
                   relType: "RELATED_TO",
                   label: "RELATED_TO",
-                  color: "#FFC454", // Yellow
+                  color: "#FFC454",  
                   size: 1.5,
                 });
               }
@@ -448,16 +448,16 @@ const GraphVisualization = ({ language = "english" }) => {
     return { nodes, relationships };
   };
 
-  // Find the closest matching category from our predefined list
+   
   const findClosestCategory = (category, categoryList) => {
     if (!category) return categoryList[0];
 
-    // Direct match
+     
     if (categoryList.includes(category)) {
       return category;
     }
 
-    // Case insensitive match
+     
     const lowerCategory = category.toLowerCase();
     for (const cat of categoryList) {
       if (cat.toLowerCase() === lowerCategory) {
@@ -465,7 +465,7 @@ const GraphVisualization = ({ language = "english" }) => {
       }
     }
 
-    // Partial match
+     
     for (const cat of categoryList) {
       if (
         cat.toLowerCase().includes(lowerCategory) ||
@@ -475,16 +475,16 @@ const GraphVisualization = ({ language = "english" }) => {
       }
     }
 
-    // Default to first category if no match found
+     
     return categoryList[0];
   };
 
-  // Apply filters to the graph
+   
   const applyFilters = useCallback(() => {
     if (!graphRef.current) return;
 
     try {
-      // Apply node type filters
+       
       graphRef.current.forEachNode((nodeId) => {
         const nodeType = graphRef.current.getNodeAttribute(nodeId, "nodeType");
         const nodeCategories =
@@ -492,31 +492,31 @@ const GraphVisualization = ({ language = "english" }) => {
         const nodeCategory = graphRef.current.getNodeAttribute(
           nodeId,
           "category"
-        ); // For category nodes
+        );  
 
-        // Check if node type is filtered
+         
         const isNodeTypeVisible = nodeTypeFilters[nodeType] || false;
 
-        // Check if node's categories are filtered (for terms and definitions)
+         
         let isCategoryVisible = true;
         if (nodeType === "term" || nodeType === "definition") {
-          // If node has categories, check if any of them are visible
+           
           if (nodeCategories.length > 0) {
             isCategoryVisible = nodeCategories.some(
               (cat) => categoryFilters[cat]
             );
           }
         } else if (nodeType === "category") {
-          // For category nodes, check if this specific category is visible
+           
           isCategoryVisible = categoryFilters[nodeCategory] || false;
         }
 
-        // Node is visible only if both node type and category are visible
+         
         const isVisible = isNodeTypeVisible && isCategoryVisible;
         graphRef.current.setNodeAttribute(nodeId, "hidden", !isVisible);
       });
 
-      // Apply edge filters - only show edges between visible nodes
+       
       graphRef.current.forEachEdge((edgeId, attributes, source, target) => {
         const isSourceVisible = !graphRef.current.getNodeAttribute(
           source,
@@ -533,12 +533,12 @@ const GraphVisualization = ({ language = "english" }) => {
         );
       });
 
-      // Apply clustering if enabled
+       
       if (clusterByCategory) {
         applyClustering();
       }
 
-      // Refresh the renderer
+       
       if (sigmaRef.current) {
         sigmaRef.current.refresh();
       }
@@ -547,15 +547,15 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, [nodeTypeFilters, categoryFilters, clusterByCategory]);
 
-  // Replace the cleanupTooltips function with this improved version
+   
   const cleanupTooltips = useCallback(() => {
     try {
       if (containerRef.current) {
-        // Find all tooltips
+         
         const tooltips =
           containerRef.current.querySelectorAll(".sigma-tooltip");
 
-        // Safely remove each tooltip
+         
         tooltips.forEach((tooltip) => {
           try {
             if (tooltip && tooltip.parentNode) {
@@ -566,7 +566,7 @@ const GraphVisualization = ({ language = "english" }) => {
           }
         });
 
-        // Also check for tooltips stored in graph nodes
+         
         if (graphRef.current) {
           graphRef.current.forEachNode((nodeId) => {
             try {
@@ -594,15 +594,15 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, []);
 
-  // Apply clustering by category
+   
   const applyClustering = useCallback(() => {
     if (!graphRef.current || !sigmaRef.current) return;
 
     try {
-      // Reset positions first
+       
       circular.assign(graphRef.current);
 
-      // Get visible category nodes
+       
       const visibleCategories = [];
       graphRef.current.forEachNode((nodeId) => {
         const nodeType = graphRef.current.getNodeAttribute(nodeId, "nodeType");
@@ -619,8 +619,8 @@ const GraphVisualization = ({ language = "english" }) => {
         }
       });
 
-      // Position categories in a circle with a larger radius
-      const radius = 20; // Increased from 10 for more spacing
+       
+      const radius = 20;  
       const angleStep = (2 * Math.PI) / visibleCategories.length;
 
       visibleCategories.forEach((catNode, index) => {
@@ -631,7 +631,7 @@ const GraphVisualization = ({ language = "english" }) => {
         graphRef.current.setNodeAttribute(catNode.id, "x", x);
         graphRef.current.setNodeAttribute(catNode.id, "y", y);
 
-        // Position related nodes around their category with more spacing
+         
         graphRef.current.forEachNode((nodeId) => {
           if (nodeId === catNode.id) return;
 
@@ -647,11 +647,11 @@ const GraphVisualization = ({ language = "english" }) => {
             const nodeCategories =
               graphRef.current.getNodeAttribute(nodeId, "categories") || [];
 
-            // If this node belongs to this category
+             
             if (nodeCategories.includes(catNode.category)) {
-              // Position it near the category with some randomness and more distance
-              const nodeRadius = radius * 0.7; // Increased from 0.5 for more spacing
-              const nodeAngle = angle + (Math.random() * 0.8 - 0.4) * angleStep; // Wider angle spread
+               
+              const nodeRadius = radius * 0.7;  
+              const nodeAngle = angle + (Math.random() * 0.8 - 0.4) * angleStep;  
               const nodeX = x + nodeRadius * Math.cos(nodeAngle);
               const nodeY = y + nodeRadius * Math.sin(nodeAngle);
 
@@ -662,16 +662,16 @@ const GraphVisualization = ({ language = "english" }) => {
         });
       });
 
-      // Apply noverlap with more iterations to prevent node overlap
-      noverlap.assign(graphRef.current, { maxIterations: 100 }); // Increased from 50
+       
+      noverlap.assign(graphRef.current, { maxIterations: 100 });  
 
-      // Refresh the renderer
+       
       sigmaRef.current.refresh();
 
-      // Center the camera with a wider view
+       
       sigmaRef.current.getCamera().animatedReset();
 
-      // Zoom out to see the whole graph
+       
       setTimeout(() => {
         const camera = sigmaRef.current.getCamera();
         const state = camera.getState();
@@ -685,16 +685,16 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, []);
 
-  // Toggle clustering
+   
   const toggleClustering = useCallback(() => {
     setClusterByCategory((prev) => {
       const newValue = !prev;
 
-      // If enabling clustering, apply it immediately
+       
       if (newValue && graphRef.current && sigmaRef.current) {
         applyClustering();
       } else if (!newValue && graphRef.current && sigmaRef.current) {
-        // If disabling, reset to circular layout
+         
         circular.assign(graphRef.current);
         sigmaRef.current.getCamera().animatedReset();
         sigmaRef.current.refresh();
@@ -704,12 +704,12 @@ const GraphVisualization = ({ language = "english" }) => {
     });
   }, [applyClustering]);
 
-  // Apply filters when they change
+   
   useEffect(() => {
     applyFilters();
   }, [nodeTypeFilters, categoryFilters, clusterByCategory, applyFilters]);
 
-  // Handle search
+   
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -718,11 +718,11 @@ const GraphVisualization = ({ language = "english" }) => {
 
     try {
       if (query.trim() === "") {
-        // Reset all nodes and edges visibility
+         
         graphRef.current.forEachNode((node) => {
           graphRef.current.setNodeAttribute(node, "hidden", false);
 
-          // Reset original colors
+           
           const nodeType = graphRef.current.getNodeAttribute(node, "nodeType");
           if (nodeType === "term") {
             graphRef.current.setNodeAttribute(
@@ -753,7 +753,7 @@ const GraphVisualization = ({ language = "english" }) => {
 
         graphRef.current.forEachEdge((edge) => {
           graphRef.current.setEdgeAttribute(edge, "hidden", false);
-          // Reset edge colors
+           
           const relType = graphRef.current.getEdgeAttribute(edge, "relType");
           if (relType === "HAS_DEFINITION") {
             graphRef.current.setEdgeAttribute(edge, "color", "#4C8EDA");
@@ -764,10 +764,10 @@ const GraphVisualization = ({ language = "english" }) => {
           }
         });
 
-        // Re-apply filters
+         
         applyFilters();
       } else {
-        // First, hide all nodes and edges
+         
         graphRef.current.forEachNode((node) => {
           graphRef.current.setNodeAttribute(node, "hidden", true);
         });
@@ -775,12 +775,12 @@ const GraphVisualization = ({ language = "english" }) => {
           graphRef.current.setEdgeAttribute(edge, "hidden", true);
         });
 
-        // Find matching nodes
+         
         const matchingNodes = new Set();
         const directlyConnectedNodes = new Set();
         const relevantEdges = new Set();
 
-        // First pass: find matching nodes
+         
         graphRef.current.forEachNode((node) => {
           try {
             const label = (
@@ -799,7 +799,7 @@ const GraphVisualization = ({ language = "english" }) => {
           }
         });
 
-        // Second pass: find all directly connected nodes and edges
+         
         matchingNodes.forEach((nodeId) => {
           try {
             graphRef.current.forEachEdge(
@@ -807,11 +807,11 @@ const GraphVisualization = ({ language = "english" }) => {
               (edge, attributes, source, target) => {
                 const connectedNodeId = source === nodeId ? target : source;
 
-                // Add connected node and edge to our sets
+                 
                 directlyConnectedNodes.add(connectedNodeId);
                 relevantEdges.add(edge);
 
-                // Make them visible
+                 
                 graphRef.current.setNodeAttribute(
                   connectedNodeId,
                   "hidden",
@@ -825,7 +825,7 @@ const GraphVisualization = ({ language = "english" }) => {
           }
         });
 
-        // Highlight matching nodes
+         
         matchingNodes.forEach((nodeId) => {
           graphRef.current.setNodeAttribute(
             nodeId,
@@ -835,7 +835,7 @@ const GraphVisualization = ({ language = "english" }) => {
         });
       }
 
-      // Refresh the renderer
+       
       if (sigmaRef.current) {
         sigmaRef.current.refresh();
       }
@@ -844,36 +844,36 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Add this function after handleNodeClick to implement node dragging
+   
   const handleNodeDrag = (nodeId, event) => {
     if (!graphRef.current || !sigmaRef.current) return;
 
     try {
-      // Get new position of node in graph coordinates
+       
       const pos = sigmaRef.current.viewportToGraph({
         x: event.clientX,
         y: event.clientY,
       });
 
-      // Update node position
+       
       graphRef.current.setNodeAttribute(nodeId, "x", pos.x);
       graphRef.current.setNodeAttribute(nodeId, "y", pos.y);
 
-      // Refresh the renderer
+       
       sigmaRef.current.refresh();
     } catch (err) {
       console.error("Error during node drag:", err);
     }
   };
 
-  // Add this function to find and set connected nodes for the info panel
+   
   const findConnectedNodes = (nodeId) => {
     if (!graphRef.current || !nodeId) return [];
 
     const connected = [];
 
     try {
-      // First collect all directly connected nodes
+       
       graphRef.current.forEachEdge(
         nodeId,
         (edge, attributes, source, target) => {
@@ -887,7 +887,7 @@ const GraphVisualization = ({ language = "english" }) => {
               nodeType: nodeAttrs.nodeType || "",
               relType: attributes.relType || "unknown",
               color: nodeAttrs.color || "#cccccc",
-              // Add additional information for better organization
+               
               defType: nodeAttrs.defType || "",
               fullText: nodeAttrs.fullText || "",
               originalLabel: nodeAttrs.originalLabel || "",
@@ -899,28 +899,28 @@ const GraphVisualization = ({ language = "english" }) => {
       console.error("Error finding connected nodes:", err);
     }
 
-    // Sort connected nodes by relationship type first, then by node type
+     
     return connected.sort((a, b) => {
-      // First sort by relationship type
+       
       const relOrder = { HAS_DEFINITION: 1, BELONGS_TO: 2, RELATED_TO: 3 };
       if (a.relType !== b.relType) {
         return relOrder[a.relType] - relOrder[b.relType];
       }
 
-      // Then sort by node type
+       
       const typeOrder = { term: 1, definition: 2, category: 3 };
       return typeOrder[a.nodeType] - typeOrder[b.nodeType];
     });
   };
 
-  // Function to navigate to a connected node
+   
   const navigateToNode = (nodeId) => {
     if (!graphRef.current || !sigmaRef.current) return;
 
-    // Handle node click to select the node
+     
     handleNodeClick(nodeId);
 
-    // Center the camera on the node
+     
     const nodePosition = sigmaRef.current.getNodeDisplayData(nodeId);
     if (nodePosition) {
       sigmaRef.current
@@ -932,25 +932,25 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Modify handleNodeClick to also set connected nodes
+   
   const handleNodeClick = async (nodeId) => {
     try {
       if (!graphRef.current) return;
 
-      // Check if the node exists in the graph
+       
       if (!graphRef.current.hasNode(nodeId)) {
         console.warn(`Node ${nodeId} not found in graph`);
         return;
       }
 
-      // Toggle behavior - if clicking the same node, deselect it
+       
       if (lastClickedNodeRef.current === nodeId) {
         setSelectedNode(null);
         setHighlightedRelationships([]);
         setConnectedNodes([]);
         lastClickedNodeRef.current = null;
 
-        // Reset node/edge styles
+         
         graphRef.current.forEachNode((node) => {
           graphRef.current.setNodeAttribute(node, "hidden", false);
           const nodeType = graphRef.current.getNodeAttribute(node, "nodeType");
@@ -996,9 +996,9 @@ const GraphVisualization = ({ language = "english" }) => {
         });
 
         applyFilters();
-        setProjectionName(null); // Clear projection on deselect
+        setProjectionName(null);  
       } else {
-        // Select new node
+         
         const nodeAttributes = graphRef.current.getNodeAttributes(nodeId);
         const node = {
           id: nodeId,
@@ -1093,9 +1093,9 @@ const GraphVisualization = ({ language = "english" }) => {
           }
         });
 
-        // API CALLS
+         
         try {
-          // 1. GET /api/search/node
+           
           const response1 = await fetch(
             `http://localhost:3001/api/search/node?nodeName=${encodeURIComponent(
               node.label
@@ -1107,7 +1107,7 @@ const GraphVisualization = ({ language = "english" }) => {
           const data1 = await response1.json();
           console.log("Search Node API Response:", data1);
 
-          // 2. POST /api/gds/subgraph-projections
+           
           const response2 = await fetch(
             `http://localhost:3001/api/gds/subgraph-projections`,
             {
@@ -1127,7 +1127,8 @@ const GraphVisualization = ({ language = "english" }) => {
           console.log("Projection API Response:", data2);
 
           if (data2.success && data2.projectionName) {
-            setProjectionName(data2.projectionName); // Transmet à l'extérieur
+            setProjectionName( data2.projectionName ); 
+            localStorage.setItem("projectionName", data2.projectionName); 
           }
         } catch (apiErr) {
           console.error("Error in API calls after node click:", apiErr);
@@ -1146,14 +1147,14 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Enhance the exportGraph function to fix download issues
+   
   const exportGraph = () => {
     if (!containerRef.current || !sigmaRef.current) return;
 
     try {
-      // First, make all nodes and edges visible for the screenshot
+       
       if (graphRef.current) {
-        // Store current visibility state
+         
         const visibilityState = {};
         graphRef.current.forEachNode((node) => {
           visibilityState[node] =
@@ -1167,25 +1168,25 @@ const GraphVisualization = ({ language = "english" }) => {
           graphRef.current.setEdgeAttribute(edge, "hidden", false);
         });
 
-        // Refresh to show all nodes
+         
         sigmaRef.current.refresh();
 
-        // Get the sigma canvas element
+         
         const canvas = containerRef.current.querySelector(".sigma-scene");
 
         if (canvas) {
-          // Create a new canvas with the same dimensions
+           
           const exportCanvas = document.createElement("canvas");
           exportCanvas.width = canvas.width;
           exportCanvas.height = canvas.height;
 
-          // Draw the sigma canvas onto our export canvas
+           
           const ctx = exportCanvas.getContext("2d");
           ctx.fillStyle = isDarkMode ? "#1a1a1a" : "#f5f5f7";
           ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
           ctx.drawImage(canvas, 0, 0);
 
-          // Convert to image and download
+           
           exportCanvas.toBlob((blob) => {
             if (blob) {
               const url = URL.createObjectURL(blob);
@@ -1195,7 +1196,7 @@ const GraphVisualization = ({ language = "english" }) => {
               link.click();
               URL.revokeObjectURL(url);
 
-              // Restore visibility state
+               
               Object.keys(visibilityState).forEach((key) => {
                 if (graphRef.current.hasNode(key)) {
                   graphRef.current.setNodeAttribute(
@@ -1212,7 +1213,7 @@ const GraphVisualization = ({ language = "english" }) => {
                 }
               });
 
-              // Refresh to restore original view
+               
               sigmaRef.current.refresh();
             }
           }, "image/png");
@@ -1225,7 +1226,7 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Initialize Sigma.js
+   
   useEffect(() => {
     if (
       isLoading ||
@@ -1235,7 +1236,7 @@ const GraphVisualization = ({ language = "english" }) => {
     )
       return;
 
-    // Clean up previous instance
+     
     if (sigmaRef.current) {
       try {
         sigmaRef.current.kill();
@@ -1245,21 +1246,21 @@ const GraphVisualization = ({ language = "english" }) => {
       sigmaRef.current = null;
     }
 
-    // Clean up any lingering tooltips
+     
     cleanupTooltips();
 
     try {
-      // Create a new graph
+       
       const graph = new Graph();
       graphRef.current = graph;
 
-      // Track added nodes to prevent duplicates
+       
       const addedNodes = new Set();
 
-      // Add nodes
+       
       filteredGraphData.nodes.forEach((node) => {
         try {
-          // Skip if node already exists or has no ID
+           
           if (!node.id || addedNodes.has(node.id)) {
             console.warn(`Skipping duplicate or invalid node: ${node.id}`);
             return;
@@ -1276,24 +1277,24 @@ const GraphVisualization = ({ language = "english" }) => {
             defType: node.defType || "",
             references: node.references || "",
             fullText: node.fullText || "",
-            grayed: false, // Add grayed state for highlighting
-            hidden: false, // Add hidden state for filtering
-            categories: node.categories || [], // For filtering
-            category: node.category || "", // For category nodes
+            grayed: false,  
+            hidden: false,  
+            categories: node.categories || [],  
+            category: node.category || "",  
             originalLabel: node.originalLabel || "",
           });
 
-          // Track added node
+           
           addedNodes.add(node.id);
         } catch (err) {
           console.error(`Error adding node ${node.id}:`, err);
         }
       });
 
-      // Add edges
+       
       filteredGraphData.relationships.forEach((rel) => {
         try {
-          // Check if both source and target nodes exist
+           
           if (
             !rel.source ||
             !rel.target ||
@@ -1303,7 +1304,7 @@ const GraphVisualization = ({ language = "english" }) => {
             return;
           }
 
-          // Avoid duplicate edges
+           
           if (!graph.hasEdge(rel.source, rel.target)) {
             graph.addEdge(rel.source, rel.target, {
               id: rel.id || `edge-${rel.source}-${rel.target}`,
@@ -1311,7 +1312,7 @@ const GraphVisualization = ({ language = "english" }) => {
               relType: rel.relType || "unknown",
               color: rel.color || "#aaaaaa",
               size: rel.size || 1,
-              hidden: false, // Add hidden state for filtering
+              hidden: false,  
             });
           }
         } catch (err) {
@@ -1322,57 +1323,57 @@ const GraphVisualization = ({ language = "english" }) => {
         }
       });
 
-      // Apply initial layout - first circular to position nodes
+       
       try {
         circular.assign(graph);
       } catch (err) {
         console.error("Error applying circular layout:", err);
       }
 
-      // Then apply force atlas to create a star-like pattern with longer edges
+       
       try {
-        // Configure force atlas for a star-like layout with MUCH longer edges
+         
         const settings = forceAtlas2.inferSettings(graph);
         forceAtlas2.assign(graph, {
           settings: {
             ...settings,
-            gravity: 0.5, // Even lower gravity (was 1)
+            gravity: 0.5,  
             strongGravityMode: false,
-            scalingRatio: 120, // Significantly increased for much longer edges (was 80)
-            slowDown: 3, // Reduced for more spread (was 5)
+            scalingRatio: 120,  
+            slowDown: 3,  
             linLogMode: true,
             outboundAttractionDistribution: true,
-            edgeWeightInfluence: 5, // Increased influence of edge weights (was 3)
+            edgeWeightInfluence: 5,  
             barnesHutOptimize: true,
             barnesHutTheta: 0.8,
           },
-          iterations: 600, // More iterations for better layout (was 500)
+          iterations: 600,  
         });
 
-        // Adjust category nodes to be more prominent and further away
+         
         graph.forEachNode((nodeId) => {
           const nodeType = graph.getNodeAttribute(nodeId, "nodeType");
           if (nodeType === "category") {
-            // Scale up category node positions to push them outward much further
+             
             const x = graph.getNodeAttribute(nodeId, "x");
             const y = graph.getNodeAttribute(nodeId, "y");
-            graph.setNodeAttribute(nodeId, "x", x * 3.0); // Increased scaling (was 2.0)
-            graph.setNodeAttribute(nodeId, "y", y * 3.0); // Increased scaling (was 2.0)
+            graph.setNodeAttribute(nodeId, "x", x * 3.0);  
+            graph.setNodeAttribute(nodeId, "y", y * 3.0);  
 
-            // Make category nodes larger
-            graph.setNodeAttribute(nodeId, "size", 30); // Larger size (was 25)
+             
+            graph.setNodeAttribute(nodeId, "size", 30);  
           }
         });
 
-        // Push definition nodes further away from their connected terms
+         
         graph.forEachNode((nodeId) => {
           const nodeType = graph.getNodeAttribute(nodeId, "nodeType");
           if (nodeType === "definition") {
-            // Get current position
+             
             const x = graph.getNodeAttribute(nodeId, "x");
             const y = graph.getNodeAttribute(nodeId, "y");
 
-            // Push definitions outward by scaling their position
+             
             graph.setNodeAttribute(nodeId, "x", x * 1.8);
             graph.setNodeAttribute(nodeId, "y", y * 1.8);
           }
@@ -1381,14 +1382,14 @@ const GraphVisualization = ({ language = "english" }) => {
         console.error("Error applying force layout:", err);
       }
 
-      // Create Sigma instance with improved settings
+       
       const renderer = new Sigma(graph, containerRef.current, {
         renderEdgeLabels: false,
         allowInvalidContainer: true,
         labelRenderedSizeThreshold: 1,
         labelFont: "Roboto, sans-serif",
-        minCameraRatio: 0.1, // Allow zooming out more
-        maxCameraRatio: 20, // Allow zooming in more
+        minCameraRatio: 0.1,  
+        maxCameraRatio: 20,  
         labelColor: {
           color: isDarkMode ? "#ffffff" : "#333333",
         },
@@ -1398,37 +1399,37 @@ const GraphVisualization = ({ language = "english" }) => {
         labelWeight: "normal",
         defaultNodeBorderWidth: 1,
         edgeLabelSize: 12,
-        stagePadding: 50, // Add padding to ensure nodes aren't cut off
+        stagePadding: 50,  
         nodeReducer: (node, data) => {
           try {
             const res = { ...data };
 
-            // If node is hidden, don't render it
+             
             if (data.hidden) {
               return { ...data, hidden: true };
             }
 
-            // If node is grayed out, reduce its opacity
+             
             if (data.grayed) {
               res.color = isDarkMode ? "#555555" : "#cccccc";
               res.borderColor = isDarkMode ? "#444444" : "#dddddd";
             }
 
-            // Adjust size based on node type
+             
             if (data.nodeType === "category") {
-              res.size = data.size * 1.5; // Make categories larger
-              // Add a border to distinguish categories
+              res.size = data.size * 1.5;  
+               
               res.borderColor = isDarkMode ? "#ffffff" : "#333333";
               res.borderWidth = 2;
             } else if (data.nodeType === "term") {
-              res.size = data.size * 1.2; // Make terms slightly larger
+              res.size = data.size * 1.2;  
               res.borderColor = isDarkMode ? "#555555" : "#dddddd";
               res.borderWidth = 1;
             } else if (data.nodeType === "definition") {
-              res.size = data.size * 0.8; // Make definitions smaller
+              res.size = data.size * 0.8;  
             }
 
-            // Highlight selected node
+             
             if (selectedNode && node === selectedNode.id) {
               res.highlighted = true;
               res.color = nodeColors.term.selected;
@@ -1446,21 +1447,21 @@ const GraphVisualization = ({ language = "english" }) => {
           try {
             const res = { ...data };
 
-            // If edge is hidden, don't render it
+             
             if (data.hidden) {
               return { ...data, hidden: true };
             }
 
-            // Color edges based on relationship type
+             
             if (data.relType === "HAS_DEFINITION") {
-              res.color = "#4C8EDA"; // Blue
+              res.color = "#4C8EDA";  
             } else if (data.relType === "BELONGS_TO") {
-              res.color = "#8DCC93"; // Green
+              res.color = "#8DCC93";  
             } else if (data.relType === "RELATED_TO") {
-              res.color = "#FFC454"; // Yellow
+              res.color = "#FFC454";  
             }
 
-            // Highlight edges connected to selected node
+             
             if (
               selectedNode &&
               (graph.source(edge) === selectedNode.id ||
@@ -1478,14 +1479,14 @@ const GraphVisualization = ({ language = "english" }) => {
         },
       });
 
-      // Add this code after creating the Sigma instance to fit the graph to the view
+       
       setTimeout(() => {
         if (sigmaRef.current) {
           try {
-            // Fit graph to view with padding
+             
             sigmaRef.current.getCamera().animatedReset();
 
-            // Apply a specific zoom level (5x)
+             
             const camera = sigmaRef.current.getCamera();
             const state = camera.getState();
             camera.animate(
@@ -1498,30 +1499,30 @@ const GraphVisualization = ({ language = "english" }) => {
         }
       }, 500);
 
-      // Store the renderer
+       
       sigmaRef.current = renderer;
 
-      // Add drag-and-drop functionality
+       
       renderer
         .on("downNode", (e) => {
           setIsDragging(true);
           setDraggedNode(e.node);
-          // Highlight the node being dragged
+           
           graph.setNodeAttribute(e.node, "highlighted", true);
-          // Prevent camera movement during drag
+           
           if (!renderer.getCustomBBox())
             renderer.setCustomBBox(renderer.getBBox());
         })
         .on("mousemove", (e) => {
           if (isDragging && draggedNode) {
-            // Get mouse position in graph coordinates
+             
             const pos = renderer.viewportToGraph(e);
 
-            // Update node position
+             
             graph.setNodeAttribute(draggedNode, "x", pos.x);
             graph.setNodeAttribute(draggedNode, "y", pos.y);
 
-            // Prevent default to avoid camera movement
+             
             e.preventSigmaDefault();
           }
         })
@@ -1535,33 +1536,33 @@ const GraphVisualization = ({ language = "english" }) => {
         .on("clickNode", ({ node }) => {
           handleNodeClick(node);
         })
-        // Update the enterNode event handler to properly show all relationship types when hovering
+         
         .on("enterNode", ({ node }) => {
-          // Get node attributes
+           
           const nodeAttributes = graphRef.current.getNodeAttributes(node);
 
-          // Create a tooltip
+           
           const tooltip = document.createElement("div");
           tooltip.className = "sigma-tooltip";
           tooltip.innerHTML = `<b>${nodeAttributes.label}</b><br/>Type: ${nodeAttributes.nodeType}`;
 
-          // Position the tooltip
+           
           const x = renderer.getNodeDisplayData(node).x;
           const y = renderer.getNodeDisplayData(node).y;
           tooltip.style.left = `${x + 15}px`;
           tooltip.style.top = `${y + 15}px`;
 
-          // Add the tooltip to the container
+           
           containerRef.current.appendChild(tooltip);
 
-          // Store the tooltip for later removal
+           
           graphRef.current.setNodeAttribute(node, "tooltip", tooltip);
 
-          // Find connected nodes and edges
+           
           const connectedNodes = new Set([node]);
           const connectedEdges = new Set();
 
-          // Find all directly connected nodes and edges
+           
           graphRef.current.forEachEdge(
             node,
             (edge, attributes, source, target) => {
@@ -1571,10 +1572,10 @@ const GraphVisualization = ({ language = "english" }) => {
             }
           );
 
-          // Hide all nodes and edges except the hovered node and its connections
+           
           graphRef.current.forEachNode((n) => {
             if (!connectedNodes.has(n)) {
-              // Store original visibility
+               
               graphRef.current.setNodeAttribute(
                 n,
                 "originalHidden",
@@ -1582,7 +1583,7 @@ const GraphVisualization = ({ language = "english" }) => {
               );
               graphRef.current.setNodeAttribute(n, "hidden", true);
             } else if (n !== node) {
-              // Store original color for connected nodes
+               
               graphRef.current.setNodeAttribute(
                 n,
                 "originalColor",
@@ -1593,7 +1594,7 @@ const GraphVisualization = ({ language = "english" }) => {
 
           graphRef.current.forEachEdge((edge) => {
             if (!connectedEdges.has(edge)) {
-              // Store original visibility
+               
               graphRef.current.setEdgeAttribute(
                 edge,
                 "originalHidden",
@@ -1601,7 +1602,7 @@ const GraphVisualization = ({ language = "english" }) => {
               );
               graphRef.current.setEdgeAttribute(edge, "hidden", true);
             } else {
-              // Highlight connected edges
+               
               graphRef.current.setEdgeAttribute(
                 edge,
                 "originalColor",
@@ -1621,13 +1622,13 @@ const GraphVisualization = ({ language = "english" }) => {
             }
           });
 
-          // Refresh the renderer
+           
           renderer.refresh();
         })
-        // Update the leaveNode event handler to be more robust
+         
         .on("leaveNode", ({ node }) => {
           try {
-            // Remove the tooltip
+             
             const tooltip = graphRef.current.getNodeAttribute(node, "tooltip");
             if (tooltip) {
               try {
@@ -1640,7 +1641,7 @@ const GraphVisualization = ({ language = "english" }) => {
               graphRef.current.setNodeAttribute(node, "tooltip", null);
             }
 
-            // Restore original visibility and colors
+             
             graphRef.current.forEachNode((n) => {
               try {
                 const originalHidden = graphRef.current.getNodeAttribute(
@@ -1713,24 +1714,24 @@ const GraphVisualization = ({ language = "english" }) => {
               }
             });
 
-            // Refresh the renderer
+             
             renderer.refresh();
           } catch (err) {
             console.error("Error in leaveNode handler:", err);
           }
         });
 
-      // Dark mode
+       
       if (isDarkMode) {
         document.body.classList.add("dark");
       } else {
         document.body.classList.remove("dark");
       }
 
-      // Apply filters
+       
       applyFilters();
 
-      // Clean up on unmount
+       
       return () => {
         if (sigmaRef.current) {
           try {
@@ -1739,7 +1740,7 @@ const GraphVisualization = ({ language = "english" }) => {
             console.error("Error killing Sigma instance on unmount:", err);
           }
         }
-        // Clean up tooltips on unmount
+         
         cleanupTooltips();
       };
     } catch (err) {
@@ -1751,13 +1752,13 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, [filteredGraphData, containerRef, isDarkMode, selectedNode, applyFilters]);
 
-  // Add this effect to clean up tooltips when language changes
+   
   useEffect(() => {
-    // Clean up tooltips when language changes
+     
     return () => {
       cleanupTooltips();
 
-      // Also kill sigma instance when language changes
+       
       if (sigmaRef.current) {
         try {
           sigmaRef.current.kill();
@@ -1772,7 +1773,7 @@ const GraphVisualization = ({ language = "english" }) => {
     };
   }, [language, cleanupTooltips]);
 
-  // Apply search filter
+   
   useEffect(() => {
     if (!graphData.nodes.length) return;
 
@@ -1794,12 +1795,12 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   }, [searchQuery, graphData]);
 
-  // Toggle full screen mode
+   
   const toggleFullScreen = () => {
     if (!containerRef.current) return;
 
     if (!document.fullscreenElement) {
-      // Make the graph container full screen
+       
       containerRef.current.requestFullscreen();
       setIsFullScreen(true);
     } else if (document.exitFullscreen) {
@@ -1808,7 +1809,7 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Group connected nodes by type and relationship
+   
   const groupedConnectedNodes = () => {
     if (!connectedNodes.length) return {};
 
@@ -1826,15 +1827,15 @@ const GraphVisualization = ({ language = "english" }) => {
       }
     });
 
-    // Sort nodes within each group
+     
     Object.keys(grouped).forEach((key) => {
       grouped[key].sort((a, b) => {
-        // Sort by node type
+         
         const typeOrder = { term: 1, definition: 2, category: 3 };
         if (a.nodeType !== b.nodeType) {
           return typeOrder[a.nodeType] - typeOrder[b.nodeType];
         }
-        // Then alphabetically by label
+         
         return a.label.localeCompare(b.label);
       });
     });
@@ -1842,7 +1843,7 @@ const GraphVisualization = ({ language = "english" }) => {
     return grouped;
   };
 
-  // Get relationship type label
+   
   const getRelationshipLabel = (relType) => {
     switch (relType) {
       case "HAS_DEFINITION":
@@ -1856,7 +1857,7 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Get relationship type color
+   
   const getRelationshipColor = (relType) => {
     switch (relType) {
       case "HAS_DEFINITION":
@@ -1870,7 +1871,7 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Get node type label
+   
   const getNodeTypeLabel = (nodeType) => {
     switch (nodeType) {
       case "term":
@@ -1884,7 +1885,7 @@ const GraphVisualization = ({ language = "english" }) => {
     }
   };
 
-  // Toggle all node type filters
+   
   const toggleAllNodeTypes = (value) => {
     setNodeTypeFilters({
       term: value,
@@ -1893,7 +1894,7 @@ const GraphVisualization = ({ language = "english" }) => {
     });
   };
 
-  // Toggle all category filters
+   
   const toggleAllCategories = (value) => {
     const newCategoryFilters = {};
     Object.keys(categoryFilters).forEach((category) => {
@@ -1925,7 +1926,7 @@ const GraphVisualization = ({ language = "english" }) => {
                 const camera = sigmaRef.current.getCamera();
                 const state = camera.getState();
                 camera.animate(
-                  { ...state, ratio: state.ratio / 2 }, // Zoom in by reducing ratio
+                  { ...state, ratio: state.ratio / 2 },  
                   { duration: 300 }
                 );
               }
@@ -1939,7 +1940,7 @@ const GraphVisualization = ({ language = "english" }) => {
                 const camera = sigmaRef.current.getCamera();
                 const state = camera.getState();
                 camera.animate(
-                  { ...state, ratio: state.ratio * 2 }, // Zoom out by increasing ratio
+                  { ...state, ratio: state.ratio * 2 },  
                   { duration: 300 }
                 );
               }
