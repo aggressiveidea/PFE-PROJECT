@@ -7,7 +7,7 @@ import PopularTerms from "../components/forHome/PopularTerms"
 import BecomeExpert from "../components/forHome/become-expert"
 import Footer from "../components/forHome/Footer"
 import { useTheme } from "../context/theme-context"
-import "../components/darkMode.css"
+import "../styles/darkMode.css"
 import "./Home.css"
 
 export default function Home() {

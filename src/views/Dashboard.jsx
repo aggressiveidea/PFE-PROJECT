@@ -7,7 +7,7 @@ import Footer from "../components/forHome/Footer"
 import { Menu } from "lucide-react"
 import { useTheme } from "../context/theme-context"
 import "./Dashboard.css"
-import "../components/darkMode.css"
+import "../styles/darkMode.css"
 import { getTotalUsers, getActiveUsers, getUsersByCountry, getUserActivityPerMonth } from "../services/Api"
 
 export default function Dashboard() {

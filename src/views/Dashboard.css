@@ -1,5 +1,5 @@
 /* Import dark mode variables */
-@import "../components/darkMode.css";
+@import "../styles/darkMode.css";
 
 .dashboardAdmin-container {
   display: flex;
