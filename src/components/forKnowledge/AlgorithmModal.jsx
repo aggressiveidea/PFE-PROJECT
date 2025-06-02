@@ -1,9 +1,9 @@
 import "./AlgorithmModal.css";
 import { useState, useEffect } from "react";
 
-// Hard-coded algorithm results data from actual Neo4j queries
+ 
 const MOCK_ALGORITHM_RESULTS = {
-  // Full Graph Results
+   
   fullGraph: {
     pagerank: {
       success: true,
@@ -295,7 +295,7 @@ const MOCK_ALGORITHM_RESULTS = {
     },
   },
 
-  // Categories Graph Results
+   
   categoriesGraph: {
     pagerank: {
       success: true,
@@ -541,7 +541,7 @@ const MOCK_ALGORITHM_RESULTS = {
     },
   },
 
-  // Terms Graph Results
+   
   termsGraph: {
     pagerank: {
       success: true,
@@ -642,7 +642,7 @@ const AlgorithmModal = ({
   const [selectedCustomProjection, setSelectedCustomProjection] = useState("");
 
   useEffect(() => {
-    // Fetch custom projections from API
+     
     const fetchCustomProjections = async () => {
       try {
         const response = await fetch(
@@ -661,13 +661,16 @@ const AlgorithmModal = ({
     fetchCustomProjections();
   }, []);
 
-  // Update custom projections when prop changes
+   
   useEffect(() => {
     setCustomProjections(customProjections);
   }, [customProjections]);
 
-  const fetchCustomAlgorithmResults = async (projectionName, algorithmId) => {
-    try {
+  const fetchCustomAlgorithmResults = async ( algorithmId) => {
+    try
+    {
+      const projectionName = localStorage.getItem("projectionName");
+
       const response = await fetch(
         `http://localhost:3001/api/gds/projections/${projectionName}/${algorithmId}`
       );
@@ -704,7 +707,7 @@ const AlgorithmModal = ({
     setSelectedCategory(category);
   };
 
-  // Helper function to get node ID as string
+   
   const getNodeId = (nodeId) => {
     if (typeof nodeId === "object" && nodeId.low !== undefined) {
       return nodeId.low.toString();
@@ -712,7 +715,7 @@ const AlgorithmModal = ({
     return nodeId?.toString() || "N/A";
   };
 
-  // Helper function to format algorithm-specific results
+   
   const formatAlgorithmResults = (results, algorithmId) => {
     if (!results || !Array.isArray(results)) return [];
 
@@ -725,7 +728,7 @@ const AlgorithmModal = ({
         internalId: result.internalId,
       };
 
-      // Add algorithm-specific fields
+       
       switch (algorithmId) {
         case "pagerank":
         case "betweenness":
@@ -776,7 +779,7 @@ const AlgorithmModal = ({
     });
   };
 
-  // Helper function to get table headers based on algorithm
+   
   const getTableHeaders = (algorithmId) => {
     const baseHeaders = ["Rank", "Node", "Type"];
 
@@ -804,7 +807,7 @@ const AlgorithmModal = ({
     }
   };
 
-  // Helper function to render table cells based on algorithm
+   
   const renderTableCell = (result, algorithmId) => {
     switch (algorithmId) {
       case "pagerank":
@@ -830,7 +833,7 @@ const AlgorithmModal = ({
     }
   };
 
-  // Helper function to get node type color
+   
   const getNodeTypeColor = (nodeType) => {
     const colors = {
       Term: "#8B5CF6",
@@ -842,7 +845,7 @@ const AlgorithmModal = ({
     return colors[nodeType] || colors["Unknown"];
   };
 
-  // Update the handleApplyAlgorithm function to handle both hard-coded and custom results
+   
   const handleApplyAlgorithm = async () => {
     if (!selectedScope) {
       console.error("No scope selected");
@@ -853,7 +856,7 @@ const AlgorithmModal = ({
     setAppliedAlgorithmResult(null);
 
     try {
-      // Show loading state
+       
       setAppliedAlgorithmResult({
         loading: true,
         algorithm: algorithm.name.english,
@@ -864,21 +867,21 @@ const AlgorithmModal = ({
       let results;
       let projectionName;
 
-      // Handle custom projections
+       
       if (selectedScope === "custom" && selectedCustomProjection) {
         projectionName = selectedCustomProjection;
 
-        // Fetch results from API
+         
         results = await fetchCustomAlgorithmResults(
           projectionName,
           algorithm.id
         );
       } else {
-        // Use hard-coded results
-        // Simulate API delay
+         
+         
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        // Determine which hard-coded dataset to use
+         
         let datasetKey;
         if (selectedScope === "allGraph") {
           datasetKey = "fullGraph";
@@ -899,7 +902,7 @@ const AlgorithmModal = ({
           projectionName = "fullGraph";
         }
 
-        // Get mock results based on algorithm and dataset
+         
         const mockResults = MOCK_ALGORITHM_RESULTS[datasetKey]?.[algorithm.id];
 
         if (!mockResults) {
@@ -911,7 +914,7 @@ const AlgorithmModal = ({
         results = mockResults;
       }
 
-      // Format results for display
+       
       const formattedResults = formatAlgorithmResults(
         results.results || [],
         algorithm.id
@@ -947,7 +950,7 @@ const AlgorithmModal = ({
 
       setAppliedAlgorithmResult(finalResults);
 
-      // Add to search history (mock)
+       
       try {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         const userId = userData?.id || userData?._id;
@@ -1099,8 +1102,12 @@ const AlgorithmModal = ({
                   <option value="">Select scope...</option>
                   <option value="allGraph">All Graph</option>
                   <option value="clustering">Clustering</option>
-                  <option value="recentResearch">Recent Research</option>
-                  <option value="custom">Custom Projection</option>
+                  <option
+                    value="recentResearch"
+                    onClick={(e) => fetchCustomAlgorithmResults(e.target.value)}
+                  >
+                    Recent Research
+                  </option>
                 </select>
               </div>
 
@@ -1155,28 +1162,7 @@ const AlgorithmModal = ({
                 </div>
               )}
 
-              {selectedScope === "custom" && (
-                <div className="custom-projection-selection">
-                  <label htmlFor="custom-projection-select">
-                    Select Custom Projection:
-                  </label>
-                  <select
-                    id="custom-projection-select"
-                    value={selectedCustomProjection}
-                    onChange={(e) =>
-                      setSelectedCustomProjection(e.target.value)
-                    }
-                    className="custom-projection-select"
-                  >
-                    <option value="">Select projection...</option>
-                    {customProjectionsState.map((projection, index) => (
-                      <option key={index} value={projection}>
-                        {projection}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              {selectedScope === "recentResearch"}
 
               <button
                 className="apply-algorithm-btn"
