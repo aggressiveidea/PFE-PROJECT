@@ -1,36 +1,39 @@
-import { useState, useEffect } from "react"
-import Footer from "../components/forHome/Footer"
-import BookLibShelf from "../components/forBooks/BookLibShelf"
-import BookLibDetail from "../components/forBooks/BookLibDetail"
-import BookLibSearch from "../components/forBooks/BookLibSearch"
-import BookLibAddForm from "../components/forBooks/BookLibAddForm"
-import Sidebar from "../components/forDashboard/Sidebar"
-import { getBooks } from "../services/Api"
-import "./BooksLib.css"
+import { useState, useEffect } from "react";
+import Footer from "../components/forHome/Footer";
+import BookLibShelf from "../components/forBooks/BookLibShelf";
+import BookLibDetail from "../components/forBooks/BookLibDetail";
+import BookLibSearch from "../components/forBooks/BookLibSearch";
+import BookLibAddForm from "../components/forBooks/BookLibAddForm";
+import Sidebar from "../components/forDashboard/Sidebar";
+import { getBooks } from "../services/Api";
+import "./BooksLib.css";
 
 const BooksLib = () => {
-  const [darkMode, setDarkMode] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [selectedBook, setSelectedBook] = useState(null)
-  const [searchParams, setSearchParams] = useState({ searchTerm: "", category: "all" })
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [darkMode, setDarkMode] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [searchParams, setSearchParams] = useState({
+    searchTerm: "",
+    category: "all",
+  });
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // State for books data from API
   const [booksData, setBooksData] = useState({
     featured: [],
     popular: [],
     new: [],
-  })
+  });
 
   // State for filtered books
   const [filteredBooks, setFilteredBooks] = useState({
     featured: [],
     popular: [],
     new: [],
-  })
+  });
 
   // Sample categories
   const categories = [
@@ -43,23 +46,23 @@ const BooksLib = () => {
     { id: "operating-systems", name: "Operating Systems" },
     { id: "databases", name: "Databases" },
     { id: "web-development", name: "Web Development" },
-  ]
+  ];
 
   // Fetch books from API
   useEffect(() => {
     const fetchBooks = async () => {
-      setIsLoading(true)
-      setError(null)
+      setIsLoading(true);
+      setError(null);
 
       try {
-        console.log("Fetching books from API...")
-        const response = await getBooks()
-        console.log("API response:", response)
+        console.log("Fetching books from API...");
+        const response = await getBooks();
+        console.log("API response:", response);
 
         if (response && response.data) {
           // Process the books data
-          const books = response.data
-          console.log("Books data:", books)
+          const books = response.data;
+          console.log("Books data:", books);
 
           // Organize books into categories
           // This is a simple categorization - you might want to adjust based on your actual data
@@ -67,141 +70,201 @@ const BooksLib = () => {
             featured: books.slice(0, 5), // First 5 books as featured
             popular: books.slice(5, 10), // Next 5 as popular
             new: books.slice(10), // Rest as new
-          }
+          };
 
-          console.log("Categorized books:", categorizedBooks)
-          setBooksData(categorizedBooks)
+          console.log("Categorized books:", categorizedBooks);
+          setBooksData(categorizedBooks);
         } else {
-          console.error("Invalid response format:", response)
-          setError("Failed to load books. Invalid response format.")
+          console.error("Invalid response format:", response);
+          setError("Failed to load books. Invalid response format.");
         }
       } catch (error) {
-        console.error("Error fetching books:", error)
-        setError("Failed to load books. Please try again later.")
+        console.error("Error fetching books:", error);
+        setError("Failed to load books. Please try again later.");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchBooks()
-  }, [])
+    fetchBooks();
+  }, []);
 
   // Initialize with filtered books
   useEffect(() => {
-    setFilteredBooks(booksData)
-  }, [booksData])
+    setFilteredBooks(booksData);
+  }, [booksData]);
 
   // Apply dark mode to the entire document and header
   useEffect(() => {
     // Force light mode initially
     if (darkMode === false) {
-      document.body.classList.remove("BookLib-body-dark-mode")
-      document.documentElement.style.setProperty("--sidebar-z-index", "50")
+      document.body.classList.remove("BookLib-body-dark-mode");
+      document.documentElement.style.setProperty("--sidebar-z-index", "50");
 
       // Remove dark mode from header
-      const appHeader = document.querySelector("header")
+      const appHeader = document.querySelector("header");
       if (appHeader) {
-        appHeader.classList.remove("BookLib-dark-header")
+        appHeader.classList.remove("BookLib-dark-header");
       }
     } else {
-      document.body.classList.add("BookLib-body-dark-mode")
-      document.documentElement.style.setProperty("--sidebar-z-index", "50")
+      document.body.classList.add("BookLib-body-dark-mode");
+      document.documentElement.style.setProperty("--sidebar-z-index", "50");
 
       // Find and update the header from the parent application if it exists
-      const appHeader = document.querySelector("header")
+      const appHeader = document.querySelector("header");
       if (appHeader) {
-        appHeader.classList.add("BookLib-dark-header")
+        appHeader.classList.add("BookLib-dark-header");
       }
     }
 
     // Cleanup function
     return () => {
-      document.body.classList.remove("BookLib-body-dark-mode")
-      const appHeader = document.querySelector("header")
+      document.body.classList.remove("BookLib-body-dark-mode");
+      const appHeader = document.querySelector("header");
       if (appHeader) {
-        appHeader.classList.remove("BookLib-dark-header")
+        appHeader.classList.remove("BookLib-dark-header");
       }
-    }
-  }, [darkMode])
+    };
+  }, [darkMode]);
 
   // Filter books based on search parameters
   useEffect(() => {
     if (searchParams.searchTerm === "" && searchParams.category === "all") {
-      setFilteredBooks(booksData)
-      return
+      setFilteredBooks(booksData);
+      return;
     }
 
     const filterBook = (book) => {
       const matchesSearchTerm =
         searchParams.searchTerm === "" ||
-        book.title?.toLowerCase().includes(searchParams.searchTerm.toLowerCase()) ||
-        book.author?.toLowerCase().includes(searchParams.searchTerm.toLowerCase()) ||
-        book.description?.toLowerCase().includes(searchParams.searchTerm.toLowerCase())
+        book.title
+          ?.toLowerCase()
+          .includes(searchParams.searchTerm.toLowerCase()) ||
+        book.author
+          ?.toLowerCase()
+          .includes(searchParams.searchTerm.toLowerCase()) ||
+        book.description
+          ?.toLowerCase()
+          .includes(searchParams.searchTerm.toLowerCase());
 
       const matchesCategory =
         searchParams.category === "all" ||
         book.tags?.toLowerCase() === searchParams.category.toLowerCase() ||
-        categories.find((cat) => cat.id === searchParams.category)?.name.toLowerCase() === book.tags?.toLowerCase()
+        categories
+          .find((cat) => cat.id === searchParams.category)
+          ?.name.toLowerCase() === book.tags?.toLowerCase();
 
-      return matchesSearchTerm && matchesCategory
-    }
+      return matchesSearchTerm && matchesCategory;
+    };
 
     const filtered = {
       featured: booksData.featured.filter(filterBook),
       popular: booksData.popular.filter(filterBook),
       new: booksData.new.filter(filterBook),
-    }
+    };
 
-    setFilteredBooks(filtered)
-  }, [searchParams, booksData, categories])
+    setFilteredBooks(filtered);
+  }, [searchParams, booksData, categories]);
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed)
-  }
+    setCollapsed(!collapsed);
+  };
 
   const closeMobileMenu = () => {
-    setMobileOpen(false)
-  }
+    setMobileOpen(false);
+  };
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-  }
+    setDarkMode(!darkMode);
+  };
 
   const handleBookClick = (book) => {
     if (book.pdfLink) {
       // If the book has a PDF URL, open it in a new tab
-      window.open(book.pdfLink, "_blank")
+      window.open(book.pdfLink, "_blank");
     } else {
       // Otherwise, show the book details
-      setSelectedBook(book)
+      setSelectedBook(book);
     }
-  }
+  };
 
   const handleCloseBookDetail = () => {
-    setSelectedBook(null)
-  }
+    setSelectedBook(null);
+  };
 
   const handleAddToLibrary = (book) => {
-    // Implementation for adding book to user's library
-    alert(`Added "${book.title}" to your library!`)
-  }
+    try {
+      // Get existing saved books from localStorage
+      const savedBooks = JSON.parse(localStorage.getItem("savedBooks") || "[]");
+
+      // Check if book is already saved
+      const isAlreadySaved = savedBooks.some(
+        (savedBook) => savedBook.id === book._id || savedBook.id === book.id
+      );
+
+      if (isAlreadySaved) {
+        alert(`"${book.title}" is already in your digital library!`);
+        return;
+      }
+
+      // Create complete book data object for saving
+      const bookData = {
+        id: book._id || book.id || Date.now().toString(),
+        title: book.title || "Untitled Book",
+        author: book.author || "Unknown Author",
+        description: book.description || "No description available",
+        coverImgUrl:
+          book.coverImgUrl ||
+          book.coverImgPreview ||
+          "/placeholder.svg?height=300&width=200",
+        pdfLink: book.pdfLink || null,
+        tags: book.tags || "Uncategorized",
+        category: book.category || book.tags || "General",
+        publishedDate:
+          book.publishedDate || book.createdAt || new Date().toISOString(),
+        pages: book.pages || 0,
+        language: book.language || "English",
+        isbn: book.isbn || null,
+        publisher: book.publisher || "Unknown Publisher",
+        rating: book.rating || 0,
+        downloadCount: book.downloadCount || 0,
+        fileSize: book.fileSize || "Unknown",
+        addedToLibraryAt: new Date().toISOString(),
+        source: "digital_library", // To distinguish from other sources
+      };
+
+      // Add to saved books array
+      const updatedSavedBooks = [...savedBooks, bookData];
+
+      // Save to localStorage
+      localStorage.setItem("savedBooks", JSON.stringify(updatedSavedBooks));
+
+      alert(`"${book.title}" has been added to your digital library!`);
+
+      // Optional: You can also trigger a state update if you want to show saved status immediately
+      console.log("Book saved to digital library:", bookData);
+    } catch (error) {
+      console.error("Error saving book to digital library:", error);
+      alert("Failed to add book to your library. Please try again.");
+    }
+  };
 
   const handleReadNow = (book) => {
     // Implementation for reading the book - open the PDF URL
     if (book.pdfLink) {
-      window.open(book.pdfLink, "_blank")
+      window.open(book.pdfLink, "_blank");
     } else {
-      alert("No PDF link available for this book.")
+      alert("No PDF link available for this book.");
     }
-  }
+  };
 
   const handleSearch = (params) => {
-    setSearchParams(params)
-  }
+    setSearchParams(params);
+  };
 
   const handleAddBook = async (newBook) => {
     try {
-      console.log("Adding new book:", newBook)
+      console.log("Adding new book:", newBook);
 
       // The API call is now handled in the BookLibAddForm component
       // Here we just need to update our local state with the book data
@@ -218,20 +281,24 @@ const BooksLib = () => {
           },
           ...prevData.new,
         ],
-      }))
+      }));
 
-      setShowAddForm(false)
-      alert(`"${newBook.title}" has been added to the library!`)
+      setShowAddForm(false);
+      alert(`"${newBook.title}" has been added to the library!`);
     } catch (error) {
-      console.error("Error adding book:", error)
-      alert("Failed to add book. Please try again.")
+      console.error("Error adding book:", error);
+      alert("Failed to add book. Please try again.");
     }
-  }
+  };
 
   return (
     <div className={`BookLib-page ${darkMode ? "BookLib-dark-mode" : ""}`}>
       {/* Custom header that will properly toggle with dark mode */}
-      <div className={`BookLib-custom-header ${darkMode ? "BookLib-dark-header" : ""}`}>
+      <div
+        className={`BookLib-custom-header ${
+          darkMode ? "BookLib-dark-header" : ""
+        }`}
+      >
         <div className="BookLib-logo">
           <h1>ICT Digital Library</h1>
         </div>
@@ -239,7 +306,9 @@ const BooksLib = () => {
           <button
             className="BookLib-dark-mode-toggle"
             onClick={toggleDarkMode}
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={
+              darkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
           >
             {darkMode ? "☀️" : "🌙"}
           </button>
@@ -256,7 +325,9 @@ const BooksLib = () => {
         toggleDarkMode={toggleDarkMode}
       />
 
-      <div className={`BookLib-main ${collapsed ? "BookLib-main-expanded" : ""}`}>
+      <div
+        className={`BookLib-main ${collapsed ? "BookLib-main-expanded" : ""}`}
+      >
         <div className="BookLib-content">
           {/* Enhanced Welcome Section */}
           <div className="bookslib-welcome-section">
@@ -278,10 +349,12 @@ const BooksLib = () => {
                 <span>ICT Digital Library</span>
               </div>
               <h1 className="bookslib-welcome-title">
-                Digital Knowledge Hub<span className="bookslib-code-accent">{"<library/>"}</span>
+                Digital Knowledge Hub
+                <span className="bookslib-code-accent">{"<library/>"}</span>
               </h1>
               <p className="bookslib-welcome-subtitle">
-                Explore our comprehensive collection of ICT books, research papers, and technical documentation.
+                Explore our comprehensive collection of ICT books, research
+                papers, and technical documentation.
               </p>
 
               {/* Code snippet */}
@@ -292,7 +365,9 @@ const BooksLib = () => {
                     <span></span>
                     <span></span>
                   </div>
-                  <span className="bookslib-code-title">digital-library.js</span>
+                  <span className="bookslib-code-title">
+                    digital-library.js
+                  </span>
                 </div>
                 <div className="bookslib-code-content">
                   <span className="bookslib-code-line">
@@ -300,7 +375,9 @@ const BooksLib = () => {
                     <span className="bookslib-code-punctuation">.</span>
                     <span className="bookslib-code-function">searchBooks</span>
                     <span className="bookslib-code-punctuation">(</span>
-                    <span className="bookslib-code-string">"{searchParams.searchTerm || "technology"}"</span>
+                    <span className="bookslib-code-string">
+                      "{searchParams.searchTerm || "technology"}"
+                    </span>
                     <span className="bookslib-code-punctuation">);</span>
                   </span>
                 </div>
@@ -321,7 +398,14 @@ const BooksLib = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -414,7 +498,10 @@ const BooksLib = () => {
 
           <div className="BookLib-actions">
             <BookLibSearch onSearch={handleSearch} categories={categories} />
-            <button className="BookLib-add-button" onClick={() => setShowAddForm(true)}>
+            <button
+              className="BookLib-add-button"
+              onClick={() => setShowAddForm(true)}
+            >
               <span className="BookLib-add-icon">+</span>
               Add New Book
             </button>
@@ -427,7 +514,10 @@ const BooksLib = () => {
           ) : error ? (
             <div className="BookLib-error">
               <p>{error}</p>
-              <button onClick={() => window.location.reload()} className="BookLib-retry-button">
+              <button
+                onClick={() => window.location.reload()}
+                className="BookLib-retry-button"
+              >
                 Retry
               </button>
             </div>
@@ -460,12 +550,16 @@ const BooksLib = () => {
                 />
               )}
 
-              {Object.values(filteredBooks).every((shelf) => shelf.length === 0) && (
+              {Object.values(filteredBooks).every(
+                (shelf) => shelf.length === 0
+              ) && (
                 <div className="BookLib-no-results">
                   <h3>No books found matching your search criteria</h3>
                   <p>Try adjusting your search terms or category filter</p>
                   <button
-                    onClick={() => setSearchParams({ searchTerm: "", category: "all" })}
+                    onClick={() =>
+                      setSearchParams({ searchTerm: "", category: "all" })
+                    }
                     className="BookLib-reset-search"
                   >
                     Reset Search
@@ -497,7 +591,7 @@ const BooksLib = () => {
         <Footer darkMode={darkMode} setDarkMode={setDarkMode} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BooksLib
+export default BooksLib;

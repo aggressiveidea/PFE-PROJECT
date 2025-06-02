@@ -6,7 +6,7 @@ import QuestionPage from "../components/forQuiz/QuestionPage"
 import ResultsPage from "../components/forQuiz/ResultsPage"
 import Header from "../components/forHome/Header"
 import Sidebar from "../components/forDashboard/Sidebar"
-import Footer from "../components/forHome/Footer"
+//import Footer from "../components/forHome/Footer"
 import { updateCategoryPerformance } from "../services/QuizStorage"
 import { Calendar, Clock, Code, Terminal, Brain } from "lucide-react"
 import "./QuizPage.css"
@@ -173,7 +173,6 @@ const QuizPage = () => {
         </div>
       </main>
 
-      <Footer darkMode={darkMode} setDarkMode={toggleDarkMode} />
     </div>
   )
 }

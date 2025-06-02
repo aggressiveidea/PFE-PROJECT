@@ -48,6 +48,11 @@ class GDSApi {
     });
   }
 
+  async searchNodeByName(nodeName, language = "en") {
+    return this.request(`/search/node?nodeName=${nodeName}&language=${language}`, {
+      method: "GET",
+    });
+  }
   /**
    * Create a subgraph projection for a specific term
    */

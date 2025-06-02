@@ -90,12 +90,7 @@ const Footer = ({ language = "en" }) => {
             </div>
           </div>
 
-          <div className="footer-actions">
-            <button className="theme-toggle" onClick={toggleDarkMode}>
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-              <span>{darkMode ? t.lightMode || "Light Mode" : t.darkMode || "Dark Mode"}</span>
-            </button>
-          </div>
+        
         </div>
 
         <div className="footer-bottom">

@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Search } from "lucide-react";
-import "./ClassicSearch.css";
 
-const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
+const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
   const [searchInput, setSearchInput] = useState("");
   const [filteredTerms, setFilteredTerms] = useState(terms);
-  const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [activeCategories, setActiveCategories] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -15,77 +13,19 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
   const [hasSearched, setHasSearched] = useState(false);
   const [visibleTerms, setVisibleTerms] = useState(6);
 
-  // Fixed French legal terms to always include in suggestions
-  const fixedSuggestedTerms = [
-    {
-      name: "Droit d'accès",
-      category: "Personal Data",
-      definition:
-        "Le droit pour une personne d'obtenir la confirmation que des données à caractère personnel la concernant sont ou ne sont pas traitées et d'accéder auxdites données.",
-      reference: "Article 15 RGPD",
-      priority: 10,
-      categories: [{ type: "Personal Data" }],
-    },
-    {
-      name: "Droit à l'information",
-      category: "Personal Data",
-      definition:
-        "Le droit d'être informé de manière claire et transparente sur le traitement des données personnelles.",
-      reference: "Articles 13-14 RGPD",
-      priority: 9,
-      categories: [{ type: "Personal Data" }],
-    },
-    {
-      name: "Droit de contestation",
-      category: "Personal Data",
-      definition:
-        "Le droit de contester une décision prise uniquement sur la base d'un traitement automatisé.",
-      reference: "Article 22 RGPD",
-      priority: 9,
-      categories: [{ type: "Personal Data" }],
-    },
-    {
-      name: "Droit de rectification",
-      category: "Personal Data",
-      definition:
-        "Le droit d'obtenir la rectification des données à caractère personnel inexactes et de compléter les données incomplètes.",
-      reference: "Article 16 RGPD",
-      priority: 9,
-      categories: [{ type: "Personal Data" }],
-    },
-    {
-      name: "Droit de retrait",
-      category: "Personal Data",
-      definition:
-        "Le droit de retirer son consentement à tout moment lorsque le traitement est fondé sur le consentement.",
-      reference: "Article 7(3) RGPD",
-      priority: 9,
-      categories: [{ type: "Personal Data" }],
-    },
-    {
-      name: "Droit d'opposition",
-      category: "Personal Data",
-      definition:
-        "Le droit de s'opposer à tout moment au traitement des données à caractère personnel pour des raisons tenant à sa situation particulière.",
-      reference: "Article 21 RGPD",
-      priority: 5,
-      categories: [{ type: "Personal Data" }],
-    },
-  ];
-
   // Function to get color for a category - purple-themed colors
   const getCategoryColor = (category) => {
     const colorMap = {
-      "Computer Crime": "#e879f9", // Pink
-      "Personal Data": "#9333ea", // Purple
-      "Electronic Commerce": "#c026d3", // Fuchsia
-      Organizations: "#8b5cf6", // Violet
-      Networks: "#6366f1", // Indigo
-      "Intellectual Property": "#c084fc", // Purple
-      Miscellaneous: "#8b5cf6", // Violet
-      "Computer Contracts": "#a78bfa", // Violet
+      "Computer Crime": "#e879f9",
+      "Personal Data": "#9333ea",
+      "Electronic Commerce": "#c026d3",
+      Organizations: "#8b5cf6",
+      Networks: "#6366f1",
+      "Intellectual Property": "#c084fc",
+      Miscellaneous: "#8b5cf6",
+      "Computer Contracts": "#a78bfa",
     };
-    return colorMap[category] || "#8b5cf6"; // Default violet
+    return colorMap[category] || "#8b5cf6";
   };
 
   // Category translations (standardized)
@@ -127,7 +67,7 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
     const allCategories = Object.keys(
       categoryTranslations[selectedLanguage] || {}
     );
-    return allCategories.slice(0, 7); // Only return the first 7 categories
+    return allCategories.slice(0, 7);
   };
 
   // Filter terms based on search input, active categories, and language
@@ -136,48 +76,44 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
 
     // Filter by search term
     if (searchInput && hasSearched) {
-      results = results.filter((term) =>
-        term.name.toLowerCase().includes(searchInput.toLowerCase())
+      results = results.filter(
+        (term) =>
+          term.name &&
+          term.name.toLowerCase().includes(searchInput.toLowerCase())
       );
 
-      // Generate suggested terms based on search, always including fixed French terms
       const searchBasedSuggestions = terms
         .filter(
           (term) =>
             !results.includes(term) &&
-            (term.category.toLowerCase().includes(searchInput.toLowerCase()) ||
+            ((term.category &&
+              term.category
+                .toLowerCase()
+                .includes(searchInput.toLowerCase())) ||
               (term.categories &&
-                term.categories.some((cat) =>
-                  cat.type.toLowerCase().includes(searchInput.toLowerCase())
+                term.categories.some(
+                  (cat) =>
+                    cat &&
+                    cat.type &&
+                    cat.type.toLowerCase().includes(searchInput.toLowerCase())
                 )))
         )
         .slice(0, 3);
 
-      // Combine fixed terms with search-based suggestions, sorted by priority
-      const combinedSuggestions = [
-        ...fixedSuggestedTerms,
-        ...searchBasedSuggestions,
-      ]
-        .sort((a, b) => (b.priority || 0) - (a.priority || 0))
-        .slice(0, 8);
-
-      setSuggestedTerms(combinedSuggestions);
+      setSuggestedTerms(searchBasedSuggestions);
     } else {
-      // When no search is active, show fixed terms as default suggestions
-      setSuggestedTerms(fixedSuggestedTerms.slice(0, 6));
+      setSuggestedTerms([]);
     }
 
     // Filter by active categories
     if (activeCategories.length > 0) {
       results = results.filter((term) => {
-        // For terms with multiple categories
         if (term.categories && term.categories.length > 0) {
-          return term.categories.some((cat) =>
-            activeCategories.includes(cat.type)
+          return term.categories.some(
+            (cat) => cat && cat.type && activeCategories.includes(cat.type)
           );
         }
-        // For terms with a single category
-        return activeCategories.includes(term.category);
+        return term.category && activeCategories.includes(term.category);
       });
     }
 
@@ -190,52 +126,35 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
     if (onSearch) onSearch(searchInput);
   };
 
-  // Update the search functionality to include autocomplete
-  // Modify the handleInputChange function to provide autocomplete suggestions
   const handleInputChange = (e) => {
     setSearchInput(e.target.value);
 
-    // Generate suggestions as user types (autocomplete)
     if (e.target.value.length > 1) {
       const autocompleteSuggestions = terms
         .filter(
           (term) =>
-            term.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+            (term.name &&
+              term.name.toLowerCase().includes(e.target.value.toLowerCase())) ||
             (term.category &&
               term.category
                 .toLowerCase()
                 .includes(e.target.value.toLowerCase())) ||
             (term.categories &&
-              term.categories.some((cat) =>
-                cat.type.toLowerCase().includes(e.target.value.toLowerCase())
+              term.categories.some(
+                (cat) =>
+                  cat &&
+                  cat.type &&
+                  cat.type.toLowerCase().includes(e.target.value.toLowerCase())
               ))
         )
-        .slice(0, 3);
+        .slice(0, 5);
 
-      // Include fixed terms that match the search
-      const matchingFixedTerms = fixedSuggestedTerms.filter((term) =>
-        term.name.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-
-      const combinedSuggestions = [
-        ...matchingFixedTerms,
-        ...autocompleteSuggestions,
-      ]
-        .sort((a, b) => (b.priority || 0) - (a.priority || 0))
-        .slice(0, 8);
-
-      setSuggestedTerms(combinedSuggestions);
+      setSuggestedTerms(autocompleteSuggestions);
       setHasSearched(true);
     } else if (e.target.value === "") {
-      setSuggestedTerms(fixedSuggestedTerms.slice(0, 6));
+      setSuggestedTerms([]);
       setHasSearched(false);
     }
-  };
-
-  const handleLanguageChange = (e) => {
-    setSelectedLanguage(e.target.value);
-    // Reset active categories when language changes
-    setActiveCategories([]);
   };
 
   const handleCategoryToggle = (category) => {
@@ -258,32 +177,40 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
     return categoryTranslations[selectedLanguage][category] || category;
   };
 
-  // Add function to show more terms
   const handleShowMore = () => {
     setVisibleTerms((prev) => prev + 6);
   };
 
   const handleTermSelect = (term) => {
-    if (onTermSelect) onTermSelect(term);
+    if (onTermSelect) {
+      // Sauvegarder dans localStorage avant de passer au parent
+      try {
+        const savedTerms = JSON.parse(
+          localStorage.getItem("savedTerms") || "[]"
+        );
+        const termExists = savedTerms.some(
+          (t) => t.id === term.id || t.name === term.name
+        );
+
+        if (!termExists) {
+          savedTerms.push({
+            ...term,
+            savedAt: new Date().toISOString(),
+            source: "classic",
+          });
+          localStorage.setItem("savedTerms", JSON.stringify(savedTerms));
+        }
+      } catch (error) {
+        console.error("Error saving term to localStorage:", error);
+      }
+
+      onTermSelect(term);
+    }
   };
 
   return (
     <div className="_terms_search_container">
       <div className="_terms_search_header">
-        <div className="_terms_search_language_selector">
-          <label htmlFor="language-select">Language:</label>
-          <select
-            id="language-select"
-            value={selectedLanguage}
-            onChange={handleLanguageChange}
-            className="_terms_search_language_select"
-          >
-            <option value="english">English</option>
-            <option value="french">French</option>
-            <option value="arabic">Arabic</option>
-          </select>
-        </div>
-
         <form onSubmit={handleSearchSubmit} className="_terms_search_form">
           <div className="_terms_search_input_wrapper">
             <Search size={18} className="_terms_search_icon" />
@@ -339,17 +266,14 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
 
         <div className="_terms_search_results_grid">
           {filteredTerms.slice(0, visibleTerms).map((term, index) => {
-            // Get all categories for the term
             const categories = term.categories
               ? term.categories.map((cat) => cat.type)
               : term.category
               ? [term.category]
               : [];
 
-            // Get the primary category for styling
             const primaryCategory = categories[0] || "Miscellaneous";
 
-            // Get the primary definition
             const primaryDefinition =
               term.definition ||
               (term.categories &&
@@ -360,7 +284,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
                 term.categories[0].principale[0].definition_principale[0]) ||
               "No definition available";
 
-            // Get references if available
             const references = term.reference
               ? [term.reference]
               : (term.categories &&
@@ -455,7 +378,32 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     // Add save functionality here
-                    console.log(`Saving term: ${term.name}`);
+                    try {
+                      const savedTerms = JSON.parse(
+                        localStorage.getItem("savedTerms") || "[]"
+                      );
+                      const termExists = savedTerms.some(
+                        (t) => t.id === term.id || t.name === term.name
+                      );
+
+                      if (!termExists) {
+                        savedTerms.push({
+                          ...term,
+                          savedAt: new Date().toISOString(),
+                          source: "classic",
+                        });
+                        localStorage.setItem(
+                          "savedTerms",
+                          JSON.stringify(savedTerms)
+                        );
+                        console.log(`Term saved: ${term.name}`);
+                      }
+                    } catch (error) {
+                      console.error(
+                        "Error saving term to localStorage:",
+                        error
+                      );
+                    }
                   }}
                 >
                   <span className="_terms_search_btn_text">Add to Library</span>

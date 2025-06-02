@@ -1,102 +1,287 @@
-import { useState, useEffect } from "react"
-import "../components/forLibrary/library.css"
-import Sidebar from "../components/forDashboard/Sidebar"
-import Header from "../components/forHome/Header"
-import Footer from "../components/forHome/Footer"
-import SearchBar from "../components/forLibrary/SearchBar"
-import FilterControls from "../components/forLibrary/FilterControls"
-import TermsList from "../components/forLibrary/TermsList"
-import ArticlesList from "../components/forLibrary/ArticlesList"
-import BooksList from "../components/forLibrary/BooksList"
-import Pagination from "../components/forLibrary/Pagination"
+"use client";
+
+import { useState, useEffect } from "react";
+import "../components/forLibrary/library.css";
+import Sidebar from "../components/forDashboard/Sidebar";
+import Header from "../components/forHome/Header";
+import Footer from "../components/forHome/Footer";
+import SearchBar from "../components/forLibrary/SearchBar";
+import FilterControls from "../components/forLibrary/FilterControls";
+import TermsList from "../components/forLibrary/TermsList";
+import ArticlesList from "../components/forLibrary/ArticlesList";
+import BooksList from "../components/forLibrary/BooksList";
+import Pagination from "../components/forLibrary/Pagination";
 
 const Library = () => {
-  const [activeTab, setActiveTab] = useState("terms")
-  const [currentLanguage, setCurrentLanguage] = useState("en")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [languageFilter, setLanguageFilter] = useState("all")
-  const [sortOption, setSortOption] = useState("dateNewest")
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [darkMode, setDarkMode] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [language, setLanguage] = useState("en")
-  const [isLoading, setIsLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState("terms");
+  const [currentLanguage, setCurrentLanguage] = useState("en");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [languageFilter, setLanguageFilter] = useState("all");
+  const [sortOption, setSortOption] = useState("dateNewest");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [darkMode, setDarkMode] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Real data from localStorage
+  const [savedArticles, setSavedArticles] = useState([]);
+  const [savedBooks, setSavedBooks] = useState([]);
+  const [savedTerms, setSavedTerms] = useState([]);
 
   // Check for dark mode preference
   useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode") === "true"
-    setDarkMode(savedDarkMode)
+    const savedDarkMode = localStorage.getItem("darkMode") === "true";
+    setDarkMode(savedDarkMode);
 
     if (savedDarkMode) {
-      document.body.classList.add("dark")
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove("dark")
+      document.body.classList.remove("dark");
     }
-  }, [])
+  }, []);
 
   // Update dark mode when it changes
   useEffect(() => {
-    localStorage.setItem("darkMode", darkMode)
+    localStorage.setItem("darkMode", darkMode);
     if (darkMode) {
-      document.body.classList.add("dark")
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove("dark")
+      document.body.classList.remove("dark");
     }
-  }, [darkMode])
+  }, [darkMode]);
 
-  // Simulate loading data
+  // Load real data from localStorage
   useEffect(() => {
-    setIsLoading(true)
+    const loadSavedData = () => {
+      try {
+        // Load saved articles (bookmarks from ArticleCard)
+        const bookmarkedArticles = JSON.parse(
+          localStorage.getItem("articles") || "[]"
+        );
+        console.log("Loaded articles:", bookmarkedArticles);
+        setSavedArticles(bookmarkedArticles);
+
+        // Load saved books (from BooksLib)
+        const savedBooksData = JSON.parse(
+          localStorage.getItem("saved_books") || "[]"
+        );
+        console.log("Loaded books:", savedBooksData);
+        setSavedBooks(savedBooksData);
+
+        // Load saved terms (placeholder for now - will be implemented later)
+        const savedTermsData = JSON.parse(
+          localStorage.getItem("saved_terms") || "[]"
+        );
+        setSavedTerms(savedTermsData);
+
+        console.log("Loaded saved data:", {
+          articles: bookmarkedArticles.length,
+          books: savedBooksData.length,
+          terms: savedTermsData.length,
+        });
+      } catch (error) {
+        console.error("Error loading saved data from localStorage:", error);
+        setSavedArticles([]);
+        setSavedBooks([]);
+        setSavedTerms([]);
+      }
+    };
+
+    loadSavedData();
+
+    // Listen for localStorage changes to update the data in real-time
+    const handleStorageChange = () => {
+      loadSavedData();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Simulate loading data with real data loading
+  useEffect(() => {
+    setIsLoading(true);
     const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 800)
-    return () => clearTimeout(timer)
-  }, [activeTab])
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
+  // Get filtered and sorted data based on current filters
+  const getFilteredData = (data, type) => {
+    let filteredData = [...data];
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      filteredData = filteredData.filter((item) => {
+        const searchTerm = searchQuery.toLowerCase();
+        return (
+          item.title?.toLowerCase().includes(searchTerm) ||
+          item.content?.toLowerCase().includes(searchTerm) ||
+          item.ownerName?.toLowerCase().includes(searchTerm) ||
+          item.ownerName?.toLowerCase().includes(searchTerm) ||
+          item.category?.toLowerCase().includes(searchTerm)
+        );
+      });
+    }
+
+    // Apply category filter
+    if (categoryFilter !== "all") {
+      filteredData = filteredData.filter((item) => {
+        const itemCategory = item.category || "uncategorized";
+        return itemCategory
+          .toLowerCase()
+          .includes(categoryFilter.toLowerCase());
+      });
+    }
+
+    // Apply language filter (if applicable)
+    if (languageFilter !== "all") {
+      filteredData = filteredData.filter((item) => {
+        const itemLanguage = item.language || "en";
+        return itemLanguage === languageFilter;
+      });
+    }
+
+    // Apply sorting
+    filteredData.sort((a, b) => {
+      switch (sortOption) {
+        case "dateNewest":
+          return (
+            new Date(b.bookmarkedAt || b.createdAt || 0) -
+            new Date(a.bookmarkedAt || a.createdAt || 0)
+          );
+        case "dateOldest":
+          return (
+            new Date(a.bookmarkedAt || a.createdAt || 0) -
+            new Date(b.bookmarkedAt || b.createdAt || 0)
+          );
+        case "titleAZ":
+          return (a.title || "").localeCompare(b.title || "");
+        case "titleZA":
+          return (b.title || "").localeCompare(a.title || "");
+        case "authorAZ":
+          return (a.author || a.ownerName || "").localeCompare(
+            b.author || b.ownerName || ""
+          );
+        case "authorZA":
+          return (b.author || b.ownerName || "").localeCompare(
+            a.author || a.ownerName || ""
+          );
+        default:
+          return 0;
+      }
+    });
+
+    return filteredData;
+  };
+
+  // Get current data based on active tab
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case "articles":
+        return getFilteredData(savedArticles, "articles");
+      case "books":
+        return getFilteredData(savedBooks, "books");
+      case "terms":
+        return getFilteredData(savedTerms, "terms");
+      default:
+        return [];
+    }
+  };
+
+  // Get statistics for the welcome section
+  const getStats = () => {
+    return {
+      articles: savedArticles.length,
+      books: savedBooks.length,
+      terms: savedTerms.length,
+      total: savedArticles.length + savedBooks.length + savedTerms.length,
+    };
+  };
 
   // Reset filters
   const resetFilters = () => {
-    setSearchQuery("")
-    setCategoryFilter("all")
-    setLanguageFilter("all")
-    setShowFavoritesOnly(false)
-    setSortOption("dateNewest")
-    setCurrentPage(1)
-  }
+    setSearchQuery("");
+    setCategoryFilter("all");
+    setLanguageFilter("all");
+    setShowFavoritesOnly(false);
+    setSortOption("dateNewest");
+    setCurrentPage(1);
+  };
 
   // Toggle sidebar
   const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed)
-  }
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   // Mobile menu handlers
   const closeMobileMenu = () => {
-    setMobileOpen(false)
-  }
+    setMobileOpen(false);
+  };
 
   const openMobileMenu = () => {
-    setMobileOpen(true)
-  }
+    setMobileOpen(true);
+  };
 
   // Handle page change
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage)
+    setCurrentPage(newPage);
     // Scroll to top of results
-    document.querySelector(".library-content").scrollIntoView({ behavior: "smooth" })
-  }
+    document
+      .querySelector(".library-content")
+      .scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Handle card click navigation
+  const handleCardClick = (item, type) => {
+    if (type === "articles") {
+      // Navigate to the article using the id from localStorage
+      window.open(`http://localhost:3000/articles/${item.id}`, "_blank");
+    } else if (type === "books") {
+      // You can add book navigation here if needed
+      console.log("Book clicked:", item);
+    }
+  };
+
+  // Calculate pagination
+  const itemsPerPage = 10;
+  const currentData = getCurrentData();
+  const totalPages = Math.ceil(currentData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = currentData.slice(startIndex, endIndex);
+
+  const stats = getStats();
 
   return (
     <div
-      className={`library-app-container ${darkMode ? "library-dark" : ""} ${sidebarCollapsed ? "library-sidebar-collapsed" : ""}`}
+      className={`library-app-container ${darkMode ? "library-dark" : ""} ${
+        sidebarCollapsed ? "library-sidebar-collapsed" : ""
+      }`}
     >
       <div className="library-header-wrapper">
-        <Header language={language} setLanguage={setLanguage} darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Header
+          language={language}
+          setLanguage={setLanguage}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
       </div>
 
       <div className="library-content-wrapper">
-        <div className={`library-sidebar-wrapper ${mobileOpen ? "library-mobile-open" : ""}`}>
+        <div
+          className={`library-sidebar-wrapper ${
+            mobileOpen ? "library-mobile-open" : ""
+          }`}
+        >
           <Sidebar
             collapsed={sidebarCollapsed}
             toggleSidebar={toggleSidebar}
@@ -107,7 +292,10 @@ const Library = () => {
         </div>
 
         <div className="library-main-content">
-          <button className="library-mobile-menu-button" onClick={openMobileMenu}>
+          <button
+            className="library-mobile-menu-button"
+            onClick={openMobileMenu}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -125,8 +313,12 @@ const Library = () => {
             </svg>
           </button>
 
-          <div className={`library-container ${currentLanguage === "ar" ? "library-rtl" : "library-ltr"}`}>
-            {/* Enhanced Welcome Section */}
+          <div
+            className={`library-container ${
+              currentLanguage === "ar" ? "library-rtl" : "library-ltr"
+            }`}
+          >
+            {/* Enhanced Welcome Section with Real Stats */}
             <div className="library-welcome-section">
               <div className="library-welcome-content">
                 <div className="library-welcome-badge">
@@ -147,13 +339,15 @@ const Library = () => {
                   <span>Digital Knowledge Library</span>
                 </div>
                 <h1 className="library-welcome-title">
-                  Degital Saver<span className="library-code-accent">{"<saver/>"}</span>
+                  Digital Saver
+                  <span className="library-code-accent">{"<saver/>"}</span>
                 </h1>
                 <p className="library-welcome-subtitle">
-                  Explore our comprehensive collection of ICT terms, technical articles, and educational resources.
+                  Your personal collection of saved ICT terms, articles, and
+                  books. Total items: {stats.total}
                 </p>
 
-                {/* Code snippet */}
+                {/* Code snippet with real data */}
                 <div className="library-code-snippet">
                   <div className="library-code-header">
                     <div className="library-code-dots">
@@ -161,7 +355,9 @@ const Library = () => {
                       <span></span>
                       <span></span>
                     </div>
-                    <span className="library-code-title">knowledge-base.js</span>
+                    <span className="library-code-title">
+                      knowledge-base.js
+                    </span>
                   </div>
                   <div className="library-code-content">
                     <span className="library-code-line">
@@ -172,6 +368,24 @@ const Library = () => {
                       <span className="library-code-string">"{activeTab}"</span>
                       <span className="library-code-punctuation">);</span>
                     </span>
+                  </div>
+                </div>
+
+                {/* Real statistics */}
+                <div className="library-stats-grid">
+                  <div className="library-stat-item">
+                    <span className="library-stat-number">
+                      {stats.articles}
+                    </span>
+                    <span className="library-stat-label">Articles</span>
+                  </div>
+                  <div className="library-stat-item">
+                    <span className="library-stat-number">{stats.books}</span>
+                    <span className="library-stat-label">Books</span>
+                  </div>
+                  <div className="library-stat-item">
+                    <span className="library-stat-number">{stats.terms}</span>
+                    <span className="library-stat-label">Terms</span>
                   </div>
                 </div>
               </div>
@@ -190,7 +404,14 @@ const Library = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        ry="2"
+                      ></rect>
                       <line x1="16" y1="2" x2="16" y2="6"></line>
                       <line x1="8" y1="2" x2="8" y2="6"></line>
                       <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -278,10 +499,12 @@ const Library = () => {
               </div>
             </div>
 
-            {/* Updated tabs with icons */}
+            {/* Updated tabs with real data counts */}
             <div className="library-tabs">
               <button
-                className={`library-tab-button ${activeTab === "terms" ? "library-active" : ""}`}
+                className={`library-tab-button ${
+                  activeTab === "terms" ? "library-active" : ""
+                }`}
                 onClick={() => setActiveTab("terms")}
               >
                 <svg
@@ -297,10 +520,12 @@ const Library = () => {
                 >
                   <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
-                Legal Terms
+                Legal Terms ({stats.terms})
               </button>
               <button
-                className={`library-tab-button ${activeTab === "articles" ? "library-active" : ""}`}
+                className={`library-tab-button ${
+                  activeTab === "articles" ? "library-active" : ""
+                }`}
                 onClick={() => setActiveTab("articles")}
               >
                 <svg
@@ -316,10 +541,12 @@ const Library = () => {
                 >
                   <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                 </svg>
-                Articles
+                Articles ({stats.articles})
               </button>
               <button
-                className={`library-tab-button ${activeTab === "books" ? "library-active" : ""}`}
+                className={`library-tab-button ${
+                  activeTab === "books" ? "library-active" : ""
+                }`}
                 onClick={() => setActiveTab("books")}
               >
                 <svg
@@ -335,11 +562,15 @@ const Library = () => {
                 >
                   <path d="M16 4v12l-4-2-4 2V4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                Books
+                Books ({stats.books})
               </button>
             </div>
 
-            <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} currentLanguage={currentLanguage} />
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              currentLanguage={currentLanguage}
+            />
 
             <FilterControls
               categoryFilter={categoryFilter}
@@ -364,6 +595,7 @@ const Library = () => {
                 <>
                   {activeTab === "terms" && (
                     <TermsList
+                      data={paginatedData}
                       searchQuery={searchQuery}
                       categoryFilter={categoryFilter}
                       languageFilter={languageFilter}
@@ -376,6 +608,7 @@ const Library = () => {
 
                   {activeTab === "articles" && (
                     <ArticlesList
+                      data={paginatedData}
                       searchQuery={searchQuery}
                       categoryFilter={categoryFilter}
                       languageFilter={languageFilter}
@@ -383,11 +616,13 @@ const Library = () => {
                       showFavoritesOnly={showFavoritesOnly}
                       currentPage={currentPage}
                       currentLanguage={currentLanguage}
+                      onCardClick={(item) => handleCardClick(item, "articles")}
                     />
                   )}
 
                   {activeTab === "books" && (
                     <BooksList
+                      data={paginatedData}
                       searchQuery={searchQuery}
                       categoryFilter={categoryFilter}
                       languageFilter={languageFilter}
@@ -395,16 +630,36 @@ const Library = () => {
                       showFavoritesOnly={showFavoritesOnly}
                       currentPage={currentPage}
                       currentLanguage={currentLanguage}
+                      onCardClick={(item) => handleCardClick(item, "books")}
                     />
+                  )}
+
+                  {currentData.length === 0 && (
+                    <div className="library-empty-state">
+                      <h3>No {activeTab} found</h3>
+                      <p>
+                        {searchQuery || categoryFilter !== "all"
+                          ? "Try adjusting your search or filters"
+                          : `You haven't saved any ${activeTab} yet`}
+                      </p>
+                      {(searchQuery || categoryFilter !== "all") && (
+                        <button
+                          onClick={resetFilters}
+                          className="library-reset-button"
+                        >
+                          Reset Filters
+                        </button>
+                      )}
+                    </div>
                   )}
                 </>
               )}
             </div>
 
-            {activeTab !== "books" && (
+            {currentData.length > itemsPerPage && (
               <Pagination
                 currentPage={currentPage}
-                totalPages={5} // This would be dynamic based on filtered results
+                totalPages={totalPages}
                 handlePageChange={handlePageChange}
                 currentLanguage={currentLanguage}
               />
@@ -413,11 +668,9 @@ const Library = () => {
         </div>
       </div>
 
-      <div className="library-footer-wrapper">
-        <Footer darkMode={darkMode} setDarkMode={setDarkMode} language={language} />
-      </div>
+     
     </div>
-  )
-}
+  );
+};
 
-export default Library
+export default Library;

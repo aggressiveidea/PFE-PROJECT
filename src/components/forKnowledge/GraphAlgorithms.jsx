@@ -881,48 +881,6 @@ const GraphAlgorithmsEnhanced = ({
     setSelectedCategory(category);
   };
 
-  /*const handleApplyAlgorithm = () => {
-    if (selectedAlgorithm && onAlgorithmSelect) {
-      const options = {
-        ...selectedAlgorithm,
-        scope: selectedScope,
-      }
-
-      if (selectedScope === "clusters") {
-        if (selectedClusterType === "definitions" && selectedDefinitionLevel) {
-          options.definitionLevel = selectedDefinitionLevel
-        } else if (selectedClusterType === "categories" && selectedCategory) {
-          options.category = selectedCategory
-        }
-        options.clusterType = selectedClusterType
-      }
-
-      // Simulate results
-      const mockResults = {
-        algorithm: selectedAlgorithm.name.english,
-        scope: selectedScope,
-        nodesProcessed: Math.floor(Math.random() * 1000) + 100,
-        edgesProcessed: Math.floor(Math.random() * 5000) + 500,
-        executionTime: (Math.random() * 2 + 0.1).toFixed(2) + "s",
-        results: [
-          { id: 1, name: "Node A", score: 0.95 },
-          { id: 2, name: "Node B", score: 0.87 },
-          { id: 3, name: "Node C", score: 0.76 },
-          { id: 4, name: "Node D", score: 0.65 },
-          { id: 5, name: "Node E", score: 0.54 },
-        ],
-      }
-
-      setAppliedAlgorithmResult(mockResults)
-      setShowResults(true)
-      setIsModalOpen(false)
-
-      if (onAlgorithmSelect) {
-        onAlgorithmSelect(options)
-      }
-    }
-  }*/
-
   const handleCategoryChangeMain = (category) => {
     //setActiveCategory(category)
   };
