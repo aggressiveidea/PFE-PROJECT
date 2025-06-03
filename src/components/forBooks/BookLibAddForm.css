@@ -375,5 +375,139 @@
   box-shadow: 0 4px 10px rgba(138, 43, 226, 0.3);
   transform: translateY(-2px);
 }
- 
+.BookLibAddForm-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.BookLibAddForm-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.BookLibAddForm-permission-denied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.BookLibAddForm-permission-icon {
+  margin-bottom: 1.5rem;
+}
+
+.BookLibAddForm-permission-denied h3 {
+  color: #dc2626;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.BookLibAddForm-permission-denied p {
+  color: #7f1d1d;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.BookLibAddForm-user-info {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.BookLibAddForm-user-role {
+  font-weight: 600;
+  color: #374151;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.BookLibAddForm-back-button {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.BookLibAddForm-back-button:hover {
+  background: #4b5563;
+}
+
+.BookLibAddForm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.BookLibAddForm-user-badge {
+  display: flex;
+  align-items: center;
+}
+
+.BookLibAddForm-role-badge {
+  background: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Dark mode support */
+.dark .BookLibAddForm-permission-denied {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark .BookLibAddForm-permission-denied h3 {
+  color: #ef4444;
+}
+
+.dark .BookLibAddForm-permission-denied p {
+  color: #d1d5db;
+}
+
+.dark .BookLibAddForm-user-info {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.dark .BookLibAddForm-user-role {
+  background: #4b5563;
+  color: #f9fafb;
+}
+
   

@@ -1,0 +1,31 @@
+.add-book-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #8a2be2, #da70d6);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.add-book-button:hover {
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+  transform: translateY(-2px);
+}
+
+.add-book-button:active {
+  transform: translateY(0);
+}
+
+.add-book-button svg {
+  transition: transform 0.2s ease;
+}
+
+.add-book-button:hover svg {
+  transform: rotate(90deg);
+}

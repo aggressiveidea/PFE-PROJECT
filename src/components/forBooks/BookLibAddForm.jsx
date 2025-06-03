@@ -3,10 +3,11 @@ import "./BookLibAddForm.css"
 import { createNewBook } from "../../services/Api"
 
 const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
+  // Remove the permission checking from here since it's now handled by the parent
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    coverImgUrl: "", 
+    coverImgUrl: "",
     description: "",
     tags: "",
     pages: "",
@@ -49,20 +50,8 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
     }
 
     setCoverImageFile(file)
-
-
     const previewUrl = URL.createObjectURL(file)
     setCoverImagePreview(previewUrl)
-  }
-
-  const handleTagAdd = () => {
-    if (selectedTag && !formData.tags.includes(selectedTag)) {
-      setFormData({
-        ...formData,
-        tags: selectedTag,
-      })
-      setSelectedTag("")
-    }
   }
 
   const validateForm = () => {
@@ -108,7 +97,6 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
         console.log("API response for book creation:", response)
 
         if (response && response.data) {
-
           const bookWithPreview = {
             ...response.data,
             coverImgUrl: response.data.coverImgUrl || coverImagePreview,
@@ -143,6 +131,7 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
       }
     }
   }
+
   const handleSelectImage = () => {
     fileInputRef.current.click()
   }
@@ -151,6 +140,7 @@ const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
     <div className="BookLibAddForm">
       <div className="BookLibAddForm-container">
         <h2 className="BookLibAddForm-title">Add New Book</h2>
+
         <form onSubmit={handleSubmit} className="BookLibAddForm-form" encType="multipart/form-data">
           <div className="BookLibAddForm-field">
             <label htmlFor="title">Title*</label>

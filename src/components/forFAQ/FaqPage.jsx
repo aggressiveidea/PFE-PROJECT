@@ -92,7 +92,7 @@ const FaqPage = () => {
           <h2>Still have questions?</h2>
           <p>If you couldn't find the answer to your question, feel free to contact us directly.</p>
           <button
-            onClick={() => (window.location.href = "mailto:support@yourcompany.com?subject=Contact%20Support")}
+            onClick={() => (window.location.href = "mailto:imessaoudenealdjia@gmail.com?subject=Contact%20Support")}
             className="contact-button"
           >
             <span>Contact Us</span>
