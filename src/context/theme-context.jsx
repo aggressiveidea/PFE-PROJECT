@@ -35,10 +35,8 @@ export const ThemeProvider = ({ children }) => {
         document.body.classList.remove("dark")
       }
 
-      // Store preference in localStorage
       localStorage.setItem("darkMode", darkMode.toString())
 
-      // Dispatch an event for any non-React components
       window.dispatchEvent(new Event("darkModeChanged"))
     }
   }, [darkMode, mounted])

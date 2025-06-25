@@ -24,7 +24,6 @@ export const useUserPermissions = () => {
 
     checkUserData()
 
-    // Listen for user updates
     const handleUserUpdate = () => {
       checkUserData()
     }

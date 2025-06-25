@@ -38,9 +38,7 @@ class GDSApi {
 
    
 
-  /**
-   * Create a new GDS projection
-   */
+
   async createProjection(type, options = {}) {
     return this.request("/projections", {
       method: "POST",
@@ -53,9 +51,7 @@ class GDSApi {
       method: "GET",
     });
   }
-  /**
-   * Create a subgraph projection for a specific term
-   */
+
   async createSubgraphProjection(termName, depth = 2, language = "en") {
     return this.request("/subgraph-projections", {
       method: "POST",
@@ -63,41 +59,30 @@ class GDSApi {
     });
   }
 
-  /**
-   * List all existing projections
-   */
+ 
   async listProjections() {
     return this.request("/projections");
   }
 
-  /**
-   * Get information about a specific projection
-   */
+
   async getProjectionInfo(projectionName) {
     return this.request(`/projections/${projectionName}`);
   }
 
-  /**
-   * Drop a projection to free memory
-   */
   async dropProjection(projectionName) {
     return this.request(`/projections/${projectionName}`, {
       method: "DELETE",
     });
   }
 
-  /**
-   * Get relationship distribution in a projection
-   */
+
   async getRelationshipDistribution(projectionName) {
     return this.request(`/projections/${projectionName}/relationships`);
   }
 
    
 
-  /**
-   * Run PageRank algorithm
-   */
+ 
   async runPageRank(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/pagerank`, {
       method: "POST",
@@ -105,9 +90,7 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Betweenness Centrality algorithm
-   */
+
   async runBetweenness(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/betweenness`, {
       method: "POST",
@@ -115,9 +98,7 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Closeness Centrality algorithm
-   */
+
   async runClosenessCentrality(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/closeness`, {
       method: "POST",
@@ -125,9 +106,7 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Degree Centrality algorithm
-   */
+
   async runDegreeCentrality(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/degree`, {
       method: "POST",
@@ -135,11 +114,6 @@ class GDSApi {
     });
   }
 
-   
-
-  /**
-   * Run Louvain Community Detection algorithm
-   */
   async runLouvain(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/louvain`, {
       method: "POST",
@@ -147,9 +121,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Label Propagation algorithm
-   */
   async runLabelPropagation(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/labelpropagation`, {
       method: "POST",
@@ -157,9 +128,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Weakly Connected Components algorithm
-   */
   async runWeaklyConnectedComponents(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/wcc`, {
       method: "POST",
@@ -167,11 +135,6 @@ class GDSApi {
     });
   }
 
-   
-
-  /**
-   * Run Triangle Count algorithm
-   */
   async runTriangleCount(projectionName, config = {}) {
     return this.request(`/projections/${projectionName}/triangle-count`, {
       method: "POST",
@@ -179,9 +142,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Local Clustering Coefficient algorithm
-   */
   async runLocalClusteringCoefficient(projectionName, config = {}) {
     return this.request(
       `/projections/${projectionName}/clustering-coefficient`,
@@ -192,9 +152,7 @@ class GDSApi {
     );
   }
 
-  /**
-   * Run Jaccard Similarity algorithm
-   */
+
   async runJaccardSimilarity(projectionName, sourceTermName, config = {}) {
     return this.request("/similarity/jaccard", {
       method: "POST",
@@ -202,11 +160,6 @@ class GDSApi {
     });
   }
 
-   
-
-  /**
-   * Run Enhanced PageRank algorithm
-   */
   async runEnhancedPageRank(projectionName, config = {}) {
     return this.request("/algorithms/pagerank", {
       method: "POST",
@@ -214,9 +167,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Enhanced Louvain algorithm
-   */
   async runEnhancedLouvain(projectionName, config = {}) {
     return this.request("/algorithms/louvain", {
       method: "POST",
@@ -224,9 +174,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Enhanced Betweenness algorithm
-   */
   async runEnhancedBetweenness(projectionName, config = {}) {
     return this.request("/algorithms/betweenness", {
       method: "POST",
@@ -234,9 +181,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run Enhanced Label Propagation algorithm
-   */
   async runEnhancedLabelPropagation(projectionName, config = {}) {
     return this.request("/algorithms/labelpropagation", {
       method: "POST",
@@ -244,12 +188,6 @@ class GDSApi {
     });
   }
 
-   
-
-  /**
-   * Get smart term suggestions using multiple advanced algorithms
-   * This is the BEST option for term suggestions
-   */
   async getSmartSuggestions(
     termName,
     maxSuggestions = 10,
@@ -261,9 +199,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Get term suggestions using multiple algorithms
-   */
   async getSuggestedTerms(
     termName,
     maxSuggestions = 10,
@@ -275,9 +210,7 @@ class GDSApi {
     });
   }
 
-  /**
-   * Get quick term suggestions using PageRank only (fastest)
-   */
+
   async getQuickSuggestions(termName, maxSuggestions = 5) {
     return this.request("/suggestions/quick", {
       method: "POST",
@@ -285,11 +218,6 @@ class GDSApi {
     });
   }
 
-   
-
-  /**
-   * Run complete workflow with single algorithm
-   */
   async runCompleteWorkflow(type, algorithm = "pagerank", config = {}) {
     return this.request("/workflow", {
       method: "POST",
@@ -297,9 +225,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Run enhanced workflow with multiple algorithms
-   */
   async runEnhancedWorkflow(type, algorithms = ["pagerank"], config = {}) {
     return this.request("/workflows/enhanced", {
       method: "POST",
@@ -307,18 +232,11 @@ class GDSApi {
     });
   }
 
-   
 
-  /**
-   * Get available algorithms
-   */
   async getAvailableAlgorithms() {
     return this.request("/algorithms/available");
   }
 
-  /**
-   * Search for nodes by name
-   */
   async nodeNameSearch(nodeName, language = "en", limit = 10) {
     return this.request("/search/node", {
       method: "POST",
@@ -326,9 +244,6 @@ class GDSApi {
     });
   }
 
-  /**
-   * Execute custom Cypher queries
-   */
   async querySearch(cypherQuery, params = {}, limit = 100) {
     return this.request("/search/query", {
       method: "POST",
@@ -336,26 +251,15 @@ class GDSApi {
     });
   }
 
-  /**
-   * Get query help and examples
-   */
+
   async getQueryHelp() {
     return this.request("/search/query/help");
   }
 
-  /**
-   * Get available relationship types
-   */
   async getRelationshipTypes() {
     return this.request("/relationship-types");
   }
 
-   
-
-  /**
-   * Complete term suggestion workflow
-   * Creates projection, gets suggestions, and cleans up
-   */
   async getTermSuggestionsComplete(termName, options = {}) {
     const {
       maxSuggestions = 10,
@@ -399,9 +303,6 @@ class GDSApi {
     }
   }
 
-  /**
-   * Run all centrality algorithms on a projection
-   */
   async runAllCentralityAlgorithms(projectionName, config = {}) {
     const results = {};
 
@@ -430,9 +331,6 @@ class GDSApi {
     return results;
   }
 
-  /**
-   * Run all community detection algorithms on a projection
-   */
   async runAllCommunityAlgorithms(projectionName, config = {}) {
     const results = {};
 
@@ -457,9 +355,7 @@ class GDSApi {
     return results;
   }
 
-  /**
-   * Get comprehensive analysis for a term
-   */
+
   async getTermAnalysis(termName, options = {}) {
     const {
       depth = 2,

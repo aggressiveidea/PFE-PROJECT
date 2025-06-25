@@ -51,12 +51,10 @@ export default function PersonalInfo() {
     }
   }, [darkMode])
 
-  // Fetch user data from API or localStorage
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
       try {
-        // Check if we have a token in localStorage
         const authData = JSON.parse(localStorage.getItem("authData") || "{}")
         const token = authData.token
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
@@ -66,7 +64,6 @@ export default function PersonalInfo() {
 
         if (token && userId) {
           try {
-            // First try to get user by ID
             const userData = await getUserById(userId)
             console.log("PersonalInfo: User data from API by ID:", userData)
 
@@ -86,17 +83,14 @@ export default function PersonalInfo() {
               setUser(updatedUserData)
               setEditedUser(updatedUserData)
 
-              // Update localStorage with the latest data
               localStorage.setItem("user", JSON.stringify(updatedUserData))
 
-              // Dispatch event to notify other components
               window.dispatchEvent(new Event("userUpdated"))
               return
             }
           } catch (idError) {
             console.error("PersonalInfo: Error fetching user by ID, trying profile API:", idError)
 
-            // If getUserById fails, try the profile API
             try {
               const profileData = await getProfile(token)
               console.log("PersonalInfo: Profile data from API:", profileData)
@@ -121,10 +115,8 @@ export default function PersonalInfo() {
                 setUser(updatedUserData)
                 setEditedUser(updatedUserData)
 
-                // Update localStorage with the latest data
                 localStorage.setItem("user", JSON.stringify(updatedUserData))
 
-                // Dispatch event to notify other components
                 window.dispatchEvent(new Event("userUpdated"))
                 return
               }
@@ -133,8 +125,6 @@ export default function PersonalInfo() {
             }
           }
         }
-
-        // Fall back to localStorage if API calls fail or no token/userId
         if (storedUser && storedUser.email) {
           setUser(storedUser)
           setEditedUser(storedUser)
@@ -150,8 +140,6 @@ export default function PersonalInfo() {
     }
 
     fetchUserData()
-
-    // Listen for userUpdated event
     const handleUserUpdate = () => {
       console.log("PersonalInfo: User updated event received")
       const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
@@ -205,32 +193,28 @@ export default function PersonalInfo() {
 
   const handleSave = async () => {
     try {
-      setIsEditing(false) // Disable editing mode immediately to prevent multiple submissions
+      setIsEditing(false) 
       setUpdateLoading(true)
 
-      // Log the entire user object to see what's available
       console.log("PersonalInfo: Current user object:", user)
 
-      // Check for ID in different possible locations
       const userId =
         user._id || user.id || editedUser._id || editedUser.id || JSON.parse(localStorage.getItem("user") || "{}")._id
 
       if (!userId) {
         console.error("PersonalInfo: User ID is missing:", user)
         alert("Cannot update profile: User ID is missing")
-        setIsEditing(true) // Re-enable editing if there's an error
+        setIsEditing(true) 
         setUpdateLoading(false)
         return
       }
 
       console.log("PersonalInfo: Updating user with ID:", userId)
 
-      // Create a clean copy of the data to update
       const updateData = {
         firstName: editedUser.firstName,
         lastName: editedUser.lastName,
         userBio: editedUser.userBio || "",
-        // Only include profileImgUrl if it's not the placeholder
         ...(editedUser.profileImgUrl && !editedUser.profileImgUrl.includes("placeholder.svg")
           ? { profileImgUrl: editedUser.profileImgUrl }
           : {}),
@@ -239,20 +223,17 @@ export default function PersonalInfo() {
       const response = await updateUser(userId, updateData)
       console.log("PersonalInfo: Update response:", response)
 
-      // Check for success based on your backend response format
       if (response && response.success === true) {
-        // Update the local user state with the response data
         const updatedUserData = response.data || updateData
 
         const newUserData = {
           ...user,
           ...updatedUserData,
-          _id: userId, // Ensure ID is preserved
+          _id: userId,
         }
 
         setUser(newUserData)
 
-        // Update localStorage with the latest data
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}")
         const updatedStoredData = {
           ...storedUser,
@@ -265,7 +246,6 @@ export default function PersonalInfo() {
 
         localStorage.setItem("user", JSON.stringify(updatedStoredData))
 
-        // Notify other components about the update
         window.dispatchEvent(new Event("userUpdated"))
 
         setPreviewImage(null)
@@ -276,7 +256,7 @@ export default function PersonalInfo() {
     } catch (err) {
       console.error("PersonalInfo: Error updating profile:", err)
       alert("Failed to update profile: " + (err.message || "Unknown error"))
-      setIsEditing(true) // Re-enable editing if there's an error
+      setIsEditing(true) 
     } finally {
       setUpdateLoading(false)
     }
@@ -327,8 +307,6 @@ export default function PersonalInfo() {
               <p className="profileinfos-welcome-subtitle">
                 Manage your profile information and keep your account details up to date.
               </p>
-
-              {/* Code snippet */}
               <div className="profileinfos-code-snippet">
                 <div className="profileinfos-code-header">
                   <div className="profileinfos-code-dots">

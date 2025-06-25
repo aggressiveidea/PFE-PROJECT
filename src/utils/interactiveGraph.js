@@ -26,7 +26,6 @@ export const initInteractiveGraph = (container, language) => {
       ai: "#8B5CF6",
     }
   
-    // Create central node
     nodes.push({
       id: "center",
       label: language === "en" ? "ICT" : language === "fr" ? "TIC" : "تكنولوجيا المعلومات",
@@ -38,8 +37,7 @@ export const initInteractiveGraph = (container, language) => {
       category: "center",
       fixed: true,
     })
-  
-    // Create category nodes
+
     categories.forEach((category, i) => {
       const angle = (i / categories.length) * Math.PI * 2
       const distance = 180 
@@ -75,7 +73,7 @@ export const initInteractiveGraph = (container, language) => {
     ]
   
     terms.forEach((term) => {
-      // Find the parent category node
+
       const parentNode = nodes.find((node) => node.id === term.category)
       const angle = Math.random() * Math.PI * 2
       const distance = 90 + Math.random() * 40 
@@ -162,8 +160,7 @@ export const initInteractiveGraph = (container, language) => {
         node.y = Math.max(node.radius, Math.min(height - node.radius, node.y))
       })
   
-      // Draw links
-      ctx.lineWidth = 2 // Thicker lines for better visibility
+      ctx.lineWidth = 2 
   
       links.forEach((link) => {
         const sourceNode = nodes.find((node) => node.id === link.source)
@@ -171,7 +168,7 @@ export const initInteractiveGraph = (container, language) => {
   
         const isHighlighted = selectedNode && (selectedNode.id === sourceNode.id || selectedNode.id === targetNode.id)
   
-        ctx.strokeStyle = isHighlighted ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.4)" // More visible connections
+        ctx.strokeStyle = isHighlighted ? "rgba(255, 255, 255, 0.8)" : "rgba(255, 255, 255, 0.4)" 
   
         ctx.beginPath()
         ctx.moveTo(sourceNode.x, sourceNode.y)
@@ -179,12 +176,10 @@ export const initInteractiveGraph = (container, language) => {
         ctx.stroke()
       })
   
-      // Draw nodes
       nodes.forEach((node) => {
         const isSelected = selectedNode === node
         const isHovered = hoveredNode === node
   
-        // Draw node background with gradient
         const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius)
   
         gradient.addColorStop(0, node.color)
@@ -196,7 +191,6 @@ export const initInteractiveGraph = (container, language) => {
         ctx.fillStyle = gradient
         ctx.fill()
   
-        // Add glow effect for selected/hovered nodes
         if (isSelected || isHovered) {
           ctx.beginPath()
           ctx.arc(node.x, node.y, node.radius + 8, 0, Math.PI * 2)
@@ -208,7 +202,6 @@ export const initInteractiveGraph = (container, language) => {
           ctx.stroke()
         }
   
-        // Draw label
         ctx.font = `${isSelected ? "bold " : ""}12px Arial`
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
@@ -221,9 +214,7 @@ export const initInteractiveGraph = (container, language) => {
   
     animate()
   
-    // Event handlers
     const getNodeAtPosition = (x, y) => {
-      // Check in reverse order to select the node drawn on top
       for (let i = nodes.length - 1; i >= 0; i--) {
         const node = nodes[i]
         const dx = node.x - x
@@ -251,7 +242,6 @@ export const initInteractiveGraph = (container, language) => {
         draggedNode.vy = 0
       }
   
-      // Change cursor based on hover
       canvas.style.cursor = hoveredNode ? "pointer" : "default"
     }
   
@@ -266,11 +256,9 @@ export const initInteractiveGraph = (container, language) => {
         isDragging = true
         draggedNode = node
   
-        // If clicking on a node, select it
         if (node !== selectedNode) {
           selectedNode = node
   
-          // In a real app, you would update the info panel here
           const infoPanel = document.querySelector(".graph-info-panel")
           if (infoPanel) {
             infoPanel.style.display = "block"
@@ -279,7 +267,6 @@ export const initInteractiveGraph = (container, language) => {
       } else {
         selectedNode = null
   
-        // In a real app, you would hide the info panel here
         const infoPanel = document.querySelector(".graph-info-panel")
         if (infoPanel) {
           infoPanel.style.display = "none"
@@ -296,7 +283,6 @@ export const initInteractiveGraph = (container, language) => {
     canvas.addEventListener("mousedown", handleMouseDown)
     canvas.addEventListener("mouseup", handleMouseUp)
   
-    // Handle window resize
     const handleResize = () => {
       canvas.width = container.clientWidth * window.devicePixelRatio
       canvas.height = container.clientHeight * window.devicePixelRatio
@@ -307,7 +293,6 @@ export const initInteractiveGraph = (container, language) => {
   
     window.addEventListener("resize", handleResize)
   
-    // Cleanup function
     return () => {
       cancelAnimationFrame(animationFrameId)
       window.removeEventListener("resize", handleResize)

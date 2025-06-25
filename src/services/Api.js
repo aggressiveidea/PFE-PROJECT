@@ -411,7 +411,7 @@ export const addArticle = async (data) => {
     console.log("the fetching answer", res);
     return res.data;
   } catch (error) {
-    console.error("❌ Error adding article:", error);
+    console.error("Error adding article:", error);
     throw error;
   }
 };
@@ -988,9 +988,6 @@ export const createCategoryProjection = async (
   }
 };
 
-/**
- * Create a node-centric projection
- */
 export const createNodeCentricProjection = async (
   nodeName,
   userId = "anonymous",
@@ -1021,10 +1018,6 @@ export const createNodeCentricProjection = async (
 };
 
  
-
-/**
- * Run PageRank algorithm
- */
 export const runPageRank = async (graphName, config = {}) => {
   try {
     const response = await fetch("http://localhost:3001/api/gds/pagerank", {
@@ -1046,9 +1039,6 @@ export const runPageRank = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Run Louvain community detection algorithm
- */
 export const runLouvain = async (graphName, config = {}) => {
   try {
     const response = await fetch("http://localhost:3001/api/gds/louvain", {
@@ -1070,9 +1060,6 @@ export const runLouvain = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Run Betweenness Centrality algorithm
- */
 export const runBetweennessCentrality = async (graphName, config = {}) => {
   try {
     const response = await fetch("http://localhost:3001/api/gds/betweenness", {
@@ -1094,9 +1081,6 @@ export const runBetweennessCentrality = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Run Label Propagation algorithm
- */
 export const runLabelPropagation = async (graphName, config = {}) => {
   try {
     const response = await fetch(
@@ -1121,9 +1105,6 @@ export const runLabelPropagation = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Run Node Similarity algorithm
- */
 export const runNodeSimilarity = async (graphName, config = {}) => {
   try {
     const response = await fetch(
@@ -1148,9 +1129,6 @@ export const runNodeSimilarity = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Get term suggestions based on a specific term
- */
 export const getTermSuggestions = async (
   graphName,
   termName,
@@ -1180,9 +1158,6 @@ export const getTermSuggestions = async (
   }
 };
 
-/**
- * Find related terms based on a specific term
- */
 export const findRelatedTerms = async (graphName, termName, limit = 10) => {
   try {
     const response = await fetch(
@@ -1207,9 +1182,6 @@ export const findRelatedTerms = async (graphName, termName, limit = 10) => {
   }
 };
 
-/**
- * Find interdisciplinary terms
- */
 export const findInterdisciplinaryTerms = async (graphName, config = {}) => {
   try {
     const response = await fetch(
@@ -1234,9 +1206,6 @@ export const findInterdisciplinaryTerms = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Find key legal concepts
- */
 export const findKeyLegalConcepts = async (graphName, config = {}) => {
   try {
     const response = await fetch(
@@ -1261,9 +1230,6 @@ export const findKeyLegalConcepts = async (graphName, config = {}) => {
   }
 };
 
-/**
- * Find semantic clusters
- */
 export const findSemanticClusters = async (graphName, config = {}) => {
   try {
     const response = await fetch(
@@ -1287,12 +1253,6 @@ export const findSemanticClusters = async (graphName, config = {}) => {
     throw error;
   }
 };
-
- 
-
-/**
- * Get search history for a user
- */
 export const getSearchHistory = async (userId, limit = 50) => {
   try {
     const token = localStorage.getItem("token");
@@ -1317,10 +1277,6 @@ export const getSearchHistory = async (userId, limit = 50) => {
     throw error;
   }
 };
-
-/**
- * Add a search history entry
- */
 export const addSearchHistory = async (historyData) => {
   try {
     const token = localStorage.getItem("token");
@@ -1343,10 +1299,6 @@ export const addSearchHistory = async (historyData) => {
     throw error;
   }
 };
-
-/**
- * Clear search history for a user
- */
 export const clearSearchHistory = async (userId) => {
   try {
     const token = localStorage.getItem("token");
@@ -1415,11 +1367,7 @@ export const createNewBook = async (bookData) => {
     throw error;
   }
 };
-/**
- * Request a password reset email
- * @param {string} email - User's email address
- * @returns {Promise<{success: boolean, message: string}>}
- */
+
 export const requestPasswordReset = async (email) => {
   try {
     console.log("Requesting password reset for:", email);
@@ -1449,11 +1397,6 @@ export const requestPasswordReset = async (email) => {
   }
 };
 
-/**
- * Verify if a password reset link is valid
- * @param {string} userId - The user ID
- * @returns {Promise<{isValid: boolean, userId: string, message: string}>}
- */
 export const verifyResetLink = async (userId) => {
   try {
     console.log("Verifying reset link for user:", userId);
@@ -1500,12 +1443,6 @@ export const verifyResetLink = async (userId) => {
   }
 };
 
-/**
- * Reset password with user ID
- * @param {string} userId - The user ID
- * @param {string} password - The new password
- * @returns {Promise<{success: boolean, data: any}>}
- */
 export const resetPassword = async (userId, password) => {
   try {
     console.log("Resetting password for user:", userId);

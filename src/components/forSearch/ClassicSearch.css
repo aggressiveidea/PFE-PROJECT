@@ -1,4 +1,4 @@
-/* Professional-themed ICT Law Search Styles with underscore naming convention */
+
 :root {
   --primary-color: #8b5cf6;
   --primary-dark: #7c3aed;
@@ -164,7 +164,6 @@
   transform: translateX(0);
 }
 
-/* Categories Section */
 ._terms_search_categories {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
@@ -233,7 +232,6 @@
   border-color: var(--category-color);
 }
 
-/* Results Section */
 ._terms_search_results {
   padding: 24px;
   background-color: rgba(255, 255, 255, 0.6);
@@ -289,7 +287,6 @@
   gap: 24px;
 }
 
-/* Term Card Styling */
 ._terms_search_term_card {
   background-color: var(--card-bg-color) !important;
   border-radius: 16px;
@@ -349,7 +346,6 @@
 
 ._terms_search_term_categories {
   display: none;
-  /* Hide the duplicate categories */
 }
 
 ._terms_search_term_content {
@@ -449,7 +445,6 @@
   transition: all 0.3s ease;
 }
 
-/* Term Details Modal */
 ._terms_term_details_modal_overlay {
   position: fixed;
   top: 0;
@@ -571,7 +566,6 @@
   cursor: pointer;
 }
 
-/* Suggested Terms Section */
 ._terms_search_suggested {
   padding: 20px 24px;
   border-top: 1px solid var(--border-color);
@@ -699,7 +693,6 @@
   box-shadow: 0 4px 8px rgba(139, 92, 246, 0.2);
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   ._terms_search_form {
     flex-direction: column;
@@ -728,7 +721,6 @@
   }
 }
 
-/* RTL Support for Arabic */
 [dir="rtl"] ._terms_search_icon {
   left: auto;
   right: 15px;

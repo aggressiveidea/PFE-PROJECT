@@ -1,4 +1,4 @@
-/* Professional-themed Indexed Search Styles with underscore naming convention */
+
 :root {
   --primary-color: #8b5cf6;
   --primary-dark: #7c3aed;
@@ -192,7 +192,6 @@
   gap: 16px;
 }
 
-/* Update the term item styling to have a light background color */
 ._terms_indexed_search_term_item {
   padding: 16px;
   border-radius: 8px;
@@ -244,7 +243,6 @@
   font-weight: 600;
 }
 
-/* Update term category styling to have colored backgrounds */
 ._terms_indexed_search_term_category {
   display: inline-block;
   padding: 4px 10px;
@@ -290,7 +288,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* Update the suggested terms section to match classic search */
 ._terms_indexed_search_suggested {
   padding: 20px 24px;
   border-top: 1px solid var(--border-color);
@@ -407,7 +404,6 @@
   box-shadow: 0 4px 8px rgba(139, 92, 246, 0.2);
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   ._terms_indexed_search_alphabet {
     padding: 10px;
@@ -429,7 +425,6 @@
   }
 }
 
-/* RTL Support for Arabic */
 [dir="rtl"] ._terms_indexed_search_icon {
   left: auto;
   right: 15px;

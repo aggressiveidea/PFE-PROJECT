@@ -126,7 +126,6 @@ const PasswordReset = () => {
 
       console.log("Password reset result:", result)
 
-      // Show success state
       setIsSuccess(true)
       console.log("Set isSuccess to true")
 

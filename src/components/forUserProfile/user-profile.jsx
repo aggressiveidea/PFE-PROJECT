@@ -329,8 +329,6 @@ export default function UserProfile() {
               </div>
             </div>
           </div>
-
-          {/* Favorite Articles Section */}
           <div className="up_articles-section">
             <div className="up_section-header">
               <h3>
@@ -359,8 +357,6 @@ export default function UserProfile() {
               </div>
             )}
           </div>
-
-          {/* User Writings Section - Only shown for ICT experts and Content admins */}
           {isExpertOrAdmin && (
             <div className="up_articles-section up_writings-section">
               <div className="up_section-header">

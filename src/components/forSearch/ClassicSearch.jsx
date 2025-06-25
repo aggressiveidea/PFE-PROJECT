@@ -414,7 +414,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
         )}
       </div>
 
-      {/* Suggested Terms Section */}
       <div className="_terms_search_suggested">
         <h3 className="_terms_search_suggested_title">Suggested Terms</h3>
         <div className="_terms_search_suggested_list">
