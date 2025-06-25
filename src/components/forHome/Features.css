@@ -139,7 +139,7 @@
   max-width: 1200px;
 }
 
-/* Enhanced journey path */
+ 
 .features-journey-path {
   position: absolute;
   top: 0;
@@ -178,7 +178,6 @@
   }
 }
 
-/* Feature stops */
 .features-feature-stop {
   position: absolute;
   z-index: 3;
@@ -201,7 +200,6 @@
   top: 280px;
 }
 
-/* Feature icons */
 .features-feature-icon {
   position: absolute;
   top: -30px;
@@ -220,7 +218,6 @@
   transition: all 0.4s ease;
 }
 
-/* Compact cards (always visible) */
 .features-compact-card {
   width: 160px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
@@ -257,8 +254,6 @@
   font-weight: 800;
   opacity: 0.8;
 }
-
-/* Detailed cards (hover only) */
 .features-detailed-card {
   position: absolute;
   width: 320px;
@@ -271,7 +266,6 @@
   backdrop-filter: blur(20px);
 }
 
-/* Positioning for detailed cards */
 .features-stop-1 .features-detailed-card {
   top: -240px;
   left: -80px;
@@ -288,7 +282,6 @@
   right: -80px;
 }
 
-/* Card tails */
 .features-detailed-card::after {
   content: "";
   position: absolute;
@@ -316,7 +309,6 @@
   right: 90px;
 }
 
-/* Detailed card content */
 .features-detailed-header {
   display: flex;
   justify-content: space-between;

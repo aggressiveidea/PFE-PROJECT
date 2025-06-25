@@ -1,31 +1,23 @@
-/* Integration styles for Sidebar and BooksLib */
 
-/* Ensure sidebar and main content work together */
 .sidebar {
     z-index: var(--sidebar-z-index, 50);
   }
-  
-  /* Adjust sidebar position to match BooksLib header */
   .sidebar {
-    top: 60px; /* Match BooksLib header height */
-    height: calc(100vh - 60px); /* Subtract header height */
+    top: 60px; 
+    height: calc(100vh - 60px); 
   }
-  
-  /* Ensure color consistency between components */
   .sidebar.dark-mode {
     background-color: var(--dark-bg, #1a1a2e);
     border-right-color: rgba(255, 255, 255, 0.1);
   }
   
-  /* Ensure the sidebar toggle button is visible */
   .sidebar-toggle {
     z-index: 100;
   }
-  
-  /* Ensure the sidebar overlay works with BooksLib */
+
   .sidebar-overlay {
-    z-index: 89; /* Below header, above content */
-    top: 60px; /* Start below header */
+    z-index: 89; 
+    top: 60px; 
     height: calc(100vh - 60px);
   }
   

@@ -1,4 +1,3 @@
-/* Import the CSS custom properties from level-page.css */
 @import url("./LevelPage.css");
 
 .category-page {
@@ -73,7 +72,6 @@
   box-shadow: var(--shadow-xl);
 }
 
-/* Category-specific styling */
 .category-card[data-category="personal-data"] {
   --card-accent: #3b82f6;
   --card-accent-light: #60a5fa;
@@ -130,7 +128,6 @@
   --card-accent-rgb: 14, 165, 233;
 }
 
-/* Card glow effect on hover */
 .category-card::before {
   content: "";
   position: absolute;
@@ -146,7 +143,6 @@
   opacity: 0.5;
 }
 
-/* Card header styling */
 .category-card-header {
   padding: 2rem 1.5rem;
   display: flex;
@@ -211,7 +207,6 @@
   background-color: rgba(var(--card-accent-rgb), 0.25);
 }
 
-/* Card content styling */
 .category-card-content {
   padding: 1.5rem;
   flex: 1;
@@ -322,7 +317,6 @@
   box-shadow: 0 2px 5px rgba(var(--card-accent-rgb), 0.3);
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .category-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -374,7 +368,6 @@
   }
 }
 
-/* Animation for card entrance */
 @keyframes cardEntrance {
   from {
     opacity: 0;

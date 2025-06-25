@@ -304,7 +304,6 @@
       gap: 20px;
     }
   }
- /* Add these styles to your existing BookLibAddForm.css file */
 
 .BookLibAddForm-image-upload {
   display: flex;
@@ -486,7 +485,6 @@
   font-weight: 500;
 }
 
-/* Dark mode support */
 .dark .BookLibAddForm-permission-denied {
   background: #1f2937;
   border-color: #374151;

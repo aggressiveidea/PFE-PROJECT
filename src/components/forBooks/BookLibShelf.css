@@ -1,4 +1,3 @@
-/* BookLibShelf.css - Enhanced version */
 .BookLibShelf {
   margin-bottom: 40px;
   position: relative;
@@ -59,16 +58,15 @@
   overflow-x: auto;
   padding: 20px 5px;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
   position: relative;
 }
 
 .BookLibShelf-books::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none; 
 }
 
-/* Enhanced 3D book effect */
 .BookLibShelf-book {
   flex: 0 0 auto;
   width: 180px;
@@ -228,7 +226,6 @@
   right: -20px;
 }
 
-/* Book overlay with Add to Library button */
 .BookLibShelf-book-overlay {
   position: absolute;
   top: 0;
@@ -300,7 +297,6 @@
   background: linear-gradient(90deg, #45a049, #3d8b3d);
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
   .BookLibShelf-book {
     width: 140px;
@@ -344,7 +340,6 @@
   }
 }
 
-/* Add a subtle shelf effect */
 .BookLibShelf-books::after {
   content: "";
   position: absolute;

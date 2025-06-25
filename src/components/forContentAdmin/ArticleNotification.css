@@ -222,7 +222,6 @@
   border-left: 4px solid var(--article-notif-danger);
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .article-notif {
     flex-direction: column;

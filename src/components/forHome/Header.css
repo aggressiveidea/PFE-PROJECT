@@ -3,7 +3,6 @@
   --primary-gradient: linear-gradient(90deg, #9333ea, #c026d3);
 }
 
-/* Light mode variables (default) */
 .header {
   --header-bg: #ffffff;
   --header-border: #e5e7eb;
@@ -21,7 +20,6 @@
   --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Dark mode variables */
 .header.dark {
   --header-bg: #13111f;
   --header-border: #313244;
@@ -63,7 +61,6 @@
   margin: 0 auto;
 }
 
-/* Logo section */
 .logo-section {
   display: flex;
   align-items: center;
@@ -90,7 +87,6 @@
   height: 32px;
 }
 
-/* Navigation section */
 .nav-section {
   display: flex;
   align-items: center;
@@ -157,7 +153,6 @@
   height: 100%;
 }
 
-/* Enhanced Language Select */
 .language-select-container {
   position: relative;
   height: 36px;
@@ -204,7 +199,6 @@
   padding: 8px;
 }
 
-/* User Controls */
 .user-controls {
   display: flex;
   align-items: center;

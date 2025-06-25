@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getUserById } from "../../services/Api";
@@ -12,7 +10,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Function to load user data from API or localStorage
   const loadUserData = async () => {
     try {
       setLoading(true);
@@ -22,12 +19,10 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
       if (storedUser) {
         const userData = JSON.parse(storedUser);
 
-        // If we have a user ID and token, try to get fresh data from API
         if (userData._id && authData.token) {
           try {
             const freshUserData = await getUserById(userData._id);
             if (freshUserData) {
-              // Update localStorage with fresh data
               const updatedUser = {
                 ...userData,
                 ...freshUserData,
@@ -66,7 +61,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
   useEffect(() => {
     loadUserData();
 
-    // Listen for userUpdated event to refresh user data
     const handleUserUpdate = () => {
       console.log("Header: User updated event received");
       loadUserData();
@@ -79,7 +73,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
     };
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -137,7 +130,6 @@ const Header = ({ language = "en", setLanguage, darkMode }) => {
     return user.email ? user.email.split("@")[0] : "Guest";
   };
 
-  // Use imported translations if available, otherwise use default
   const translations = window.translations || {
     en: {
       home: "Home",

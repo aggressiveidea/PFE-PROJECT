@@ -1,4 +1,3 @@
-/* Message Preview Styles */
 .dashboard-message-preview {
     background-color: var(--dashboard-white, #ffffff);
     border-radius: var(--dashboard-border-radius-md, 12px);
@@ -109,7 +108,6 @@
     color: var(--dashboard-purple, #8b5cf6);
 }
 
-/* Article reference section */
 .dashboard-message-article-ref {
     padding: 16px;
     border-bottom: 1px solid rgba(79, 70, 229, 0.1);
@@ -176,7 +174,6 @@
     padding: 8px 0;
 }
 
-/* Message content */
 .dashboard-message-content {
     padding: 16px;
     display: flex;
@@ -246,7 +243,6 @@
     color: var(--dashboard-blue-light, #818cf8);
 }
 
-/* Empty state */
 .dashboard-message-empty {
     display: flex;
     flex-direction: column;
@@ -262,8 +258,6 @@
     opacity: 0.5;
     margin-bottom: 1rem;
 }
-
-/* Responsive styles */
 @media (max-width: 768px) {
     .dashboard-message-header {
         flex-direction: column;

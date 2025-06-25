@@ -91,7 +91,6 @@ const FilterControls = ({
           </svg>
         </div>
 
-        {/* Language filter */}
         <div className="library-filter-container">
           <select
             className="library-filter-select"
@@ -120,8 +119,6 @@ const FilterControls = ({
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
           </svg>
         </div>
-
-        {/* Sort options */}
         <div className="library-filter-container">
           <select className="library-filter-select" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
             <option value="dateNewest">{getText("dateNewest")}</option>
@@ -151,8 +148,6 @@ const FilterControls = ({
             <line x1="17" y1="16" x2="23" y2="16"></line>
           </svg>
         </div>
-
-        {/* Favorites toggle */}
         <button
           className={`library-favorites-toggle ${showFavoritesOnly ? "library-active" : ""}`}
           onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
@@ -175,7 +170,6 @@ const FilterControls = ({
           <span>{getText("favorites")}</span>
         </button>
 
-        {/* Reset filters */}
         <button className="library-reset-filters-button" onClick={resetFilters} aria-label="Reset filters">
           <svg
             xmlns="http://www.w3.org/2000/svg"

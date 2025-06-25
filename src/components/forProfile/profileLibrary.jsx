@@ -15,9 +15,8 @@ import Footer from "../forHome/Footer"
 import Sidebar from "../forDashboard/Sidebar"
 import "./Library.css"
 
-// Mock data structure for legal IT terminology
 const mockTermsData = [
-  // E-Commerce Terms
+ 
   {
     id: "ec-1",
     title: "Electronic Contract",
@@ -61,7 +60,6 @@ const mockTermsData = [
     relatedTerms: ["ec-1", "mkt-1"],
   },
 
-  // IT Compliance Terms
   {
     id: "itc-1",
     title: "Data Protection",
@@ -90,8 +88,6 @@ const mockTermsData = [
     isFavorite: false,
     relatedTerms: ["itc-1", "leg-2"],
   },
-
-  // Security Terms
   {
     id: "sec-1",
     title: "Cybersecurity Threat",
@@ -120,8 +116,6 @@ const mockTermsData = [
     isFavorite: false,
     relatedTerms: ["sec-1", "itc-1"],
   },
-
-  // Legal Terms
   {
     id: "leg-1",
     title: "Intellectual Property",
@@ -150,8 +144,6 @@ const mockTermsData = [
     isFavorite: false,
     relatedTerms: ["leg-1", "itc-2"],
   },
-
-  // Marketing Terms
   {
     id: "mkt-1",
     title: "Search Engine Optimization (SEO)",
@@ -182,7 +174,6 @@ const mockTermsData = [
   },
 ]
 
-// Mock data structure for articles
 const mockArticlesData = [
   {
     id: "art-1",
@@ -231,7 +222,6 @@ const mockArticlesData = [
   },
 ]
 
-// Metadata for categories
 const categoryMetadata = {
   "e-commerce": {
     label: { en: "E-Commerce", fr: "Commerce électronique", ar: "التجارة الإلكترونية" },
@@ -259,8 +249,6 @@ const categoryMetadata = {
     color: "#F39C12",
   },
 }
-
-// UI translations
 const uiTranslations = {
   en: {
     myLibrary: "My Library",
@@ -334,9 +322,9 @@ const uiTranslations = {
 }
 
 const ProfileLibrary = () => {
-  // State management
-  const [activeTab, setActiveTab] = useState("terms") // 'terms' or 'articles'
-  const [currentLanguage, setCurrentLanguage] = useState("en") // 'en', 'fr', or 'ar'
+
+  const [activeTab, setActiveTab] = useState("terms") 
+  const [currentLanguage, setCurrentLanguage] = useState("en") 
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [languageFilter, setLanguageFilter] = useState("all")
@@ -355,7 +343,6 @@ const ProfileLibrary = () => {
 
   const itemsPerPage = 6
 
-  // Check for dark mode preference
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true"
     setDarkMode(savedDarkMode)
@@ -367,7 +354,6 @@ const ProfileLibrary = () => {
     }
   }, [])
 
-  // Update dark mode when it changes
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode)
     if (darkMode) {
@@ -377,7 +363,6 @@ const ProfileLibrary = () => {
     }
   }, [darkMode])
 
-  // Get UI text based on current language
   const getText = useCallback(
     (key) => {
       return uiTranslations[currentLanguage][key] || uiTranslations.en[key]
@@ -385,7 +370,6 @@ const ProfileLibrary = () => {
     [currentLanguage],
   )
 
-  // Get category label based on current language
   const getCategoryLabel = useCallback(
     (categoryKey) => {
       return categoryMetadata[categoryKey]?.label[currentLanguage] || categoryKey
@@ -393,17 +377,14 @@ const ProfileLibrary = () => {
     [currentLanguage],
   )
 
-  // Load initial data
   useEffect(() => {
     setIsLoading(true)
     setAnimateItems(false)
 
-    // Simulate API call with delay
     const timer = setTimeout(() => {
       const sourceData = activeTab === "terms" ? mockTermsData : mockArticlesData
       setItems(sourceData)
 
-      // Build related terms map
       const relatedMap = {}
       mockTermsData.forEach((term) => {
         relatedMap[term.id] = term
@@ -413,7 +394,6 @@ const ProfileLibrary = () => {
       setIsLoading(false)
       setCurrentPage(1)
 
-      // Trigger animation after items are loaded
       setTimeout(() => {
         setAnimateItems(true)
       }, 100)
@@ -422,23 +402,20 @@ const ProfileLibrary = () => {
     return () => clearTimeout(timer)
   }, [activeTab])
 
-  // Toggle favorite status
   const toggleFavorite = useCallback((id) => {
     setItems((prevItems) =>
       prevItems.map((item) => (item.id === id ? { ...item, isFavorite: !item.isFavorite } : item)),
     )
   }, [])
 
-  // Toggle expanded item for details view
   const toggleExpandItem = useCallback((id) => {
     setExpandedItemId((prevId) => (prevId === id ? null : id))
   }, [])
 
-  // Filter and sort items
   const filteredAndSortedItems = useMemo(() => {
-    // First apply filters
+  
     const result = items.filter((item) => {
-      // Search query filter
+  
       const searchInCurrentLanguage = (text) => {
         if (!text) return true
         return text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -454,20 +431,13 @@ const ProfileLibrary = () => {
       }
 
       const matchesSearch = searchQuery === "" || titleMatch || contentMatch
-
-      // Category filter
       const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
-
-      // Language filter
       const matchesLanguage = languageFilter === "all" || (item.languages && item.languages.includes(languageFilter))
-
-      // Favorites filter
       const matchesFavorites = !showFavoritesOnly || item.isFavorite
 
       return matchesSearch && matchesCategory && matchesLanguage && matchesFavorites
     })
 
-    // Then sort
     result.sort((a, b) => {
       switch (sortOption) {
         case "dateNewest":
@@ -488,7 +458,6 @@ const ProfileLibrary = () => {
     return result
   }, [items, searchQuery, categoryFilter, languageFilter, showFavoritesOnly, sortOption, activeTab, currentLanguage])
 
-  // Pagination
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage
     return filteredAndSortedItems.slice(startIndex, startIndex + itemsPerPage)
@@ -498,7 +467,6 @@ const ProfileLibrary = () => {
     return Math.ceil(filteredAndSortedItems.length / itemsPerPage)
   }, [filteredAndSortedItems, itemsPerPage])
 
-  // Get related terms data
   const getRelatedTermsData = useCallback(
     (relatedIds) => {
       if (!relatedIds) return []
@@ -507,19 +475,16 @@ const ProfileLibrary = () => {
     [relatedTermsMap],
   )
 
-  // Handle page change
   const handlePageChange = useCallback(
     (newPage) => {
       if (newPage >= 1 && newPage <= totalPages) {
         setCurrentPage(newPage)
-        // Scroll to top of results
         document.querySelector(".library-grid")?.scrollIntoView({ behavior: "smooth" })
       }
     },
     [totalPages],
   )
 
-  // Reset filters
   const resetFilters = useCallback(() => {
     setSearchQuery("")
     setCategoryFilter("all")
@@ -529,7 +494,6 @@ const ProfileLibrary = () => {
     setCurrentPage(1)
   }, [])
 
-  // Get all available languages
   const availableLanguages = useMemo(() => {
     return [
       { code: "en", label: "English" },
@@ -538,7 +502,7 @@ const ProfileLibrary = () => {
     ]
   }, [])
 
-  // Get all categories for the filter dropdown
+  
   const categories = useMemo(() => {
     return Object.keys(categoryMetadata).map((key) => ({
       value: key,
@@ -548,12 +512,10 @@ const ProfileLibrary = () => {
     }))
   }, [getCategoryLabel])
 
-  // Toggle sidebar
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed)
   }
 
-  // Mobile menu handlers
   const closeMobileMenu = () => {
     setMobileOpen(false)
   }
@@ -667,8 +629,6 @@ const ProfileLibrary = () => {
                   </select>
                   <Filter className="filter-icon-lib" size={16} />
                 </div>
-
-                {/* Language filter */}
                 <div className="filter-container-lib">
                   <select
                     className="filter-select-lib"
@@ -685,7 +645,6 @@ const ProfileLibrary = () => {
                   <Filter className="filter-icon-lib" size={16} />
                 </div>
 
-                {/* Sort options */}
                 <div className="filter-container-lib">
                   <select
                     className="filter-select-lib"
@@ -701,7 +660,6 @@ const ProfileLibrary = () => {
                   <SlidersHorizontal className="filter-icon-lib" size={16} />
                 </div>
 
-                {/* Favorites toggle */}
                 <button
                   className={`favorites-toggle-lib ${
                     showFavoritesOnly ? "active" : ""
@@ -712,8 +670,6 @@ const ProfileLibrary = () => {
                   <Heart className="favorites-icon-lib" size={16} />
                   <span>{getText("favorites")}</span>
                 </button>
-
-                {/* Reset filters */}
                 <button
                   className="reset-filters-button-lib"
                   onClick={resetFilters}

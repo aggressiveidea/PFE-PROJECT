@@ -513,7 +513,6 @@
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .question-page {
     padding: 1rem;

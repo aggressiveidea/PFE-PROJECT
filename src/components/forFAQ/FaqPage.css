@@ -1,9 +1,7 @@
-/* Light/Dark mode variables */
 :root {
   --primary-gradient: linear-gradient(to right, #4338ca, #7e22ce);
 }
 
-/* Light mode (default) */
 .app-wrapper {
   --bg-color: #ffffff;
   --text-color: #1f2937;
@@ -18,7 +16,6 @@
   --contact-section-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-/* Dark mode */
 .app-wrapper.dark {
   --bg-color: #1a1528;
   --text-color: #ffffff;
@@ -42,7 +39,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* App wrapper for proper footer positioning */
 .app-wrapper {
   display: flex;
   flex-direction: column;
@@ -63,9 +59,8 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* Footer styles */
 .footer {
-  margin-top: auto; /* Push footer to bottom */
+  margin-top: auto; 
   width: 100%;
 }
 
@@ -106,7 +101,6 @@ body {
   line-height: 1.6;
 }
 
-/* FAQ Page Styles */
 .faq-container {
   margin-bottom: 4rem;
   max-width: 800px;

@@ -28,14 +28,12 @@ const QuestionPage = ({ darkMode }) => {
   const questionContainerRef = useRef(null)
 
   useEffect(() => {
-    // Validate category parameter
     if (!category) {
       setError("No category specified")
       setLoading(false)
       return
     }
 
-    // Get category details
     try {
       const details = getCategoryDetails(category)
       setCategoryInfo(details)
@@ -69,8 +67,6 @@ const QuestionPage = ({ darkMode }) => {
 
     loadQuestions()
   }, [category])
-
-  // Animate progress bar when current question changes
   useEffect(() => {
     if (questions.length > 0) {
       setAnimateProgress(true)
@@ -79,17 +75,13 @@ const QuestionPage = ({ darkMode }) => {
     }
   }, [currentQuestion, questions.length])
 
-  // Timer effect with ticking sound
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeSpent((prev) => {
-        // Store time spent in session storage for results page
         sessionStorage.setItem("quizTimeSpent", (prev + 1).toString())
 
-        // Play tick sound every second if enabled
         if (soundEnabled && tickAudioRef.current) {
           const now = Date.now()
-          // Ensure we don't play sounds too rapidly (debounce)
           if (now - lastTickTimeRef.current > 900) {
             tickAudioRef.current.currentTime = 0
             tickAudioRef.current.play().catch((e) => console.log("Audio play prevented:", e))
@@ -103,7 +95,6 @@ const QuestionPage = ({ darkMode }) => {
     return () => clearInterval(timer)
   }, [soundEnabled])
 
-  // Add slide-in animation when question changes
   useEffect(() => {
     if (questionContainerRef.current && questions.length > 0) {
       questionContainerRef.current.classList.add("question-enter")
@@ -121,7 +112,7 @@ const QuestionPage = ({ darkMode }) => {
   }
 
   const handleOptionSelect = (option) => {
-    if (showAnswer) return // Prevent changing answer after submission
+    if (showAnswer) return 
     setSelectedOption(option)
   }
 
@@ -155,7 +146,6 @@ const QuestionPage = ({ darkMode }) => {
       setShowAnswer(false)
       setIsAnswerCorrect(null)
     } else {
-      // Quiz completed, navigate to results page
       navigate(`/quiz/results/${category}/${score}`)
     }
   }
@@ -170,7 +160,6 @@ const QuestionPage = ({ darkMode }) => {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`
   }
 
-  // Loading state
   if (loading) {
     return (
       <div className="question-page">
@@ -182,7 +171,6 @@ const QuestionPage = ({ darkMode }) => {
     )
   }
 
-  // Error state
   if (error) {
     return (
       <div className="question-page">
@@ -200,8 +188,6 @@ const QuestionPage = ({ darkMode }) => {
       </div>
     )
   }
-
-  // No questions state
   if (!questions || !Array.isArray(questions) || questions.length === 0) {
     return (
       <div className="question-page">
@@ -220,7 +206,6 @@ const QuestionPage = ({ darkMode }) => {
     )
   }
 
-  // Ensure current question exists
   const question = questions[currentQuestion]
   if (!question) {
     return (
@@ -244,7 +229,7 @@ const QuestionPage = ({ darkMode }) => {
 
   return (
     <div className="question-page">
-      {/* Audio elements */}
+    
       <audio ref={tickAudioRef} preload="auto">
         <source
           src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"

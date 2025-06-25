@@ -74,7 +74,6 @@ export const mockTermsData = [
       relatedTerms: ["itc-1", "leg-2"],
     },
   
-    // Security Terms
     {
       id: "sec-1",
       title: "Cybersecurity Threat",
@@ -104,8 +103,7 @@ export const mockTermsData = [
       relatedTerms: ["sec-1", "itc-1"],
     },
   ]
-  
-  // Mock data for articles
+
   export const mockArticlesData = [
     {
       id: "art-1",
@@ -154,7 +152,6 @@ export const mockTermsData = [
     },
   ]
   
-  // Mock data for books
   export const mockBooksData = [
     {
       id: "book-1",

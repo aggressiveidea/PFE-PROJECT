@@ -6,12 +6,10 @@ const AddBookButton = ({ onAddBook, categories }) => {
   const [showForm, setShowForm] = useState(false)
   const { canAddBooks, user, loading } = useUserPermissions()
 
-  // Don't render anything while loading
-  if (loading) {
-    return null
-  }
+ if(loading){
+  return null
+ }
 
-  // Don't render the button if user doesn't have permission
   if (!canAddBooks()) {
     return null
   }

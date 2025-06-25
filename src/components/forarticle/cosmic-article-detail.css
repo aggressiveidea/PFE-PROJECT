@@ -11,8 +11,6 @@ body.dark-mode .cosmic-article-container {
   background-color: #0a0b2e;
   color: #ffffff;
 }
-
-/* Cosmic Elements */
 .cosmic-stars-container {
   position: fixed;
   top: 0;

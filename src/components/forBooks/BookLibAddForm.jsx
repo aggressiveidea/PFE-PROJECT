@@ -3,7 +3,6 @@ import "./BookLibAddForm.css"
 import { createNewBook } from "../../services/Api"
 
 const BookLibAddForm = ({ categories, onAddBook, onCancel }) => {
-  // Remove the permission checking from here since it's now handled by the parent
   const [formData, setFormData] = useState({
     title: "",
     author: "",

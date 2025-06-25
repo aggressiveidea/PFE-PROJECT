@@ -22,14 +22,13 @@ const QuizPage = () => {
   });
   const location = useLocation();
 
-  // Load quiz stats from localStorage on component mount
   useEffect(() => {
-    // Load quiz stats
+  
     const savedStats = localStorage.getItem("quizStats");
     if (savedStats) {
       try {
         const parsedStats = JSON.parse(savedStats);
-        // Validate the structure to ensure it has all required properties
+       
         if (
           parsedStats &&
           typeof parsedStats === "object" &&
@@ -49,27 +48,20 @@ const QuizPage = () => {
     }
   }, []);
 
-  // Save quiz stats to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("quizStats", JSON.stringify(quizStats));
   }, [quizStats]);
 
-  // Function to update category performance
   const handleUpdateCategoryPerformance = (category, score) => {
     updateCategoryPerformance(category, score);
   };
 
-  // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
-
-  // Toggle sidebar
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
-
-  // Close mobile menu
   const closeMobileMenu = () => {
     setMobileOpen(false);
   };

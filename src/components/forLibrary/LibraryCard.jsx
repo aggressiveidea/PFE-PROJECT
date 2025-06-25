@@ -108,7 +108,7 @@ const LibraryCard = ({
         style={{ animationDelay: `${index * 0.05}s` }}
         onClick={handleCardClick}
       >
-        {/* Article Image */}
+      
         <div className="library-article-image">
           <img
             src={

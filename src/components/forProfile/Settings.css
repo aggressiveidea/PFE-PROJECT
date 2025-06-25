@@ -74,7 +74,6 @@
   pointer-events: none;
 }
 
-/* Main Content */
 .settingsPage-main-content {
   margin-left: 250px;
   padding: 80px 32px 32px;
@@ -93,7 +92,6 @@
   margin: 0 auto;
 }
 
-/* Enhanced Welcome Section */
 .settingsPage-welcome-section {
   display: flex;
   justify-content: space-between;
@@ -178,7 +176,6 @@
   line-height: 1.6;
 }
 
-/* Code snippet */
 .settingsPage-code-snippet {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
@@ -363,14 +360,12 @@
   }
 }
 
-/* Content */
 .settingsPage-content {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* Profile card */
 .settingsPage-profile-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: var(--settingsPage-radius-xl);

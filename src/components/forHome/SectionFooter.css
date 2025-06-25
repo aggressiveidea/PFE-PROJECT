@@ -72,16 +72,14 @@
   }
 }
 
-/* Make sure sections have position relative for absolute positioning of the footer */
 #home,
 #features,
 #knowledge-graph,
 #popular-terms {
   position: relative;
-  padding-bottom: 100px; /* Add padding to make room for the arrow */
+  padding-bottom: 100px; 
 }
 
-/* Dark mode support */
 .home-page-dark .section-arrow-icon {
   background: linear-gradient(90deg, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -92,7 +90,6 @@
   box-shadow: 0 6px 16px rgba(147, 51, 234, 0.3);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .section-footer {
     bottom: 20px;

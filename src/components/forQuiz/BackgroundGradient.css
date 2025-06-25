@@ -20,7 +20,6 @@
   }
 }
 
-/* Add a subtle noise texture overlay to the canvas */
 .background-gradient::after {
   content: "";
   position: fixed;
@@ -34,7 +33,6 @@
   z-index: 1;
 }
 
-/* Dark mode adjustments */
 .dark-mode .background-gradient::after {
   opacity: 0.03;
 }

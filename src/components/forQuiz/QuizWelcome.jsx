@@ -88,7 +88,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
     )
   }
 
-  // Function to get appropriate icon based on category
   const getCategoryIcon = (categoryId) => {
     const icons = {
       "personal-data": <Database size={24} />,
@@ -104,13 +103,11 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
     return icons[categoryId] || <FileQuestion size={24} />
   }
 
-  // Function to format date
   const formatDate = (dateString) => {
     if (!dateString) return "Never"
     return new Date(dateString).toLocaleDateString()
   }
 
-  // All categories with enhanced data
   const quizCategories = [
     {
       id: "personal-data",
@@ -193,7 +190,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
 
   return (
     <div className="quiz-welcome">
-      {/* Enhanced Hero Section */}
       <div className="quiz-welcome-hero">
         <div className="quiz-welcome-icon">
           <Terminal size={32} />
@@ -222,8 +218,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
           Start Quiz Challenge
         </button>
       </div>
-
-      {/* Enhanced Quiz Statistics Dashboard */}
       <div className="quiz-stats-dashboard">
         <h2 className="quiz-stats-title">
           <TrendingUp size={24} />
@@ -264,8 +258,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
           </div>
         </div>
       </div>
-
-      {/* Enhanced Top Performance Categories Section */}
       <div className="quiz-top-cards-section">
         <h2 className="quiz-top-cards-title">
           <Trophy size={20} className="quiz-top-cards-icon" />
@@ -317,7 +309,6 @@ const QuizWelcome = ({ darkMode, quizStats }) => {
         )}
       </div>
 
-      {/* Enhanced All Categories Section */}
       <div className="quiz-categories-section">
         <h2 className="quiz-categories-title">All Quiz Categories</h2>
         <div className="quiz-categories-grid">
