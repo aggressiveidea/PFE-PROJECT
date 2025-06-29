@@ -39,7 +39,7 @@
   border-radius: 1px;
 }
 
-/* Algorithm Cards Grid */
+ 
 .algorithms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -47,7 +47,7 @@
   padding: 30px;
 }
 
-/* Algorithm Card */
+ 
 .algorithm-card {
   background: white;
   border-radius: 16px;
@@ -93,7 +93,7 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Header */
+ 
 .card-header {
   display: flex;
   align-items: flex-start;
@@ -137,7 +137,7 @@
   text-transform: uppercase;
 }
 
-/* Card Content */
+ 
 .algorithm-description {
   font-size: 0.875rem;
   line-height: 1.6;
@@ -200,7 +200,7 @@
   border-color: #333;
 }
 
-/* Card Footer */
+ 
 .card-footer {
   margin-top: auto;
 }
@@ -239,7 +239,7 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Algorithm Results Section */
+ 
 .algorithm-results-section {
   margin: 30px;
   background: white;
@@ -352,7 +352,7 @@
   background-color: #f8fafc;
 }
 
-/* Responsive Design */
+ 
 @media (max-width: 768px) {
   .knowledge-graph-header {
     padding: 40px 20px 30px;

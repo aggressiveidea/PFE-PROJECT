@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -30,7 +29,7 @@ const GraphAlgorithmsEnhanced = ({
   const [showResults, setShowResults] = useState(false);
   const [appliedAlgorithmResult, setAppliedAlgorithmResult] = useState(null);
 
-  // Add new state for dynamic data
+   
   const [algorithms, setAlgorithms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -227,15 +226,15 @@ const GraphAlgorithmsEnhanced = ({
 
   const t = translations[language] || translations.english;
 
-  // Fetch algorithms data on component mount
+   
   useEffect(() => {
     const fetchAlgorithms = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Since your backend doesn't have a "list" type, we'll use the hardcoded algorithms
-        // but make them compatible with your backend algorithm names
+         
+         
         const backendCompatibleAlgorithms = [
           {
             id: "PageRank",
@@ -682,8 +681,8 @@ const GraphAlgorithmsEnhanced = ({
       setSelectedScope("complete");
       setIsModalOpen(true);
 
-      // Your backend doesn't need a separate details call,
-      // the algorithm object already has all needed info
+       
+       
     } catch (err) {
       console.error("Failed to open algorithm details:", err);
     }
@@ -776,7 +775,7 @@ const GraphAlgorithmsEnhanced = ({
     internet: <Globe size={20} />,
   };
 
-  // Loading state
+   
   if (loading && algorithms.length === 0) {
     return (
       <div className="enhanced-graph-algorithms">
@@ -793,7 +792,7 @@ const GraphAlgorithmsEnhanced = ({
     );
   }
 
-  // Error state
+   
   if (error && algorithms.length === 0) {
     return (
       <div className="enhanced-graph-algorithms">
