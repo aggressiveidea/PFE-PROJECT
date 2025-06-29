@@ -1,5 +1,6 @@
+"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Network,
   Database,
@@ -9,9 +10,11 @@ import {
   FileText,
   Server,
   Globe,
+  Loader2,
 } from "lucide-react";
 import AlgorithmModal from "./AlgorithmModal";
 import "./GraphAlgorithms.css";
+import { analyzeGraph } from "../../services/Api";
 
 const GraphAlgorithmsEnhanced = ({
   language = "english",
@@ -24,33 +27,19 @@ const GraphAlgorithmsEnhanced = ({
   const [selectedDefinitionLevel, setSelectedDefinitionLevel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [
-    showResults, setShowResults
-  ] = useState(false);
-  const [
-    appliedAlgorithmResult, setAppliedAlgorithmResult
-  ] = useState(null);
+  const [showResults, setShowResults] = useState(false);
+  const [appliedAlgorithmResult, setAppliedAlgorithmResult] = useState(null);
 
-   
-  const filterCounts = {
-    categories: {
-      "Computer Crime": 8,
-      "Personal Data": 12,
-      "Electronic Commerce": 6,
-      Organization: 15,
-      Networks: 22,
-      "Intellectual Property": 9,
-      Miscellaneous: 18,
-      "Computer Science": 25,
-    },
-    definitions: {
-      Primary: 45,
-      Secondary: 32,
-    },
-    terms: 115,
-  };
+  // Add new state for dynamic data
+  const [algorithms, setAlgorithms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filterCounts, setFilterCounts] = useState({
+    categories: {},
+    definitions: { Primary: 0, Secondary: 0 },
+    terms: 0,
+  });
 
-   
   const translations = {
     english: {
       title: "Graph Algorithms",
@@ -81,6 +70,9 @@ const GraphAlgorithmsEnhanced = ({
       definitions: "Definitions",
       terms: "Terms",
       showAll: "Show All",
+      loading: "Loading algorithms...",
+      error: "Error loading algorithms",
+      retry: "Retry",
       networkTypes: {
         networks: "Networks",
         data: "Data",
@@ -139,6 +131,9 @@ const GraphAlgorithmsEnhanced = ({
       definitions: "Définitions",
       terms: "Termes",
       showAll: "Tout Afficher",
+      loading: "Chargement des algorithmes...",
+      error: "Erreur lors du chargement des algorithmes",
+      retry: "Réessayer",
       networkTypes: {
         networks: "Réseaux",
         data: "Données",
@@ -197,6 +192,9 @@ const GraphAlgorithmsEnhanced = ({
       definitions: "التعريفات",
       terms: "المصطلحات",
       showAll: "إظهار الكل",
+      loading: "تحميل الخوارزميات...",
+      error: "خطأ في تحميل الخوارزميات",
+      retry: "إعادة المحاولة",
       networkTypes: {
         networks: "الشبكات",
         data: "البيانات",
@@ -229,471 +227,466 @@ const GraphAlgorithmsEnhanced = ({
 
   const t = translations[language] || translations.english;
 
-   
-  const graphExamples = {
-    pagerank: {
-      before: {
-        nodes: [
-          { id: 1, x: 50, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 2, x: 100, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 4, x: 75, y: 80, size: 8, color: "#8B5CF6" },
-          { id: 5, x: 125, y: 80, size: 8, color: "#8B5CF6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#ccc", width: 2 },
-          { source: 2, target: 3, color: "#ccc", width: 2 },
-          { source: 1, target: 4, color: "#ccc", width: 2 },
-          { source: 2, target: 4, color: "#ccc", width: 2 },
-          { source: 2, target: 5, color: "#ccc", width: 2 },
-          { source: 3, target: 5, color: "#ccc", width: 2 },
-        ],
-      },
-      after: {
-        nodes: [
-          { id: 1, x: 50, y: 30, size: 6, color: "#EC4899" },
-          { id: 2, x: 100, y: 30, size: 12, color: "#EF4444" },
-          { id: 3, x: 150, y: 30, size: 8, color: "#10B981" },
-          { id: 4, x: 75, y: 80, size: 10, color: "#F59E0B" },
-          { id: 5, x: 125, y: 80, size: 7, color: "#3B82F6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#EF4444", width: 3 },
-          { source: 2, target: 3, color: "#10B981", width: 2 },
-          { source: 1, target: 4, color: "#F59E0B", width: 2 },
-          { source: 2, target: 4, color: "#EF4444", width: 3 },
-          { source: 2, target: 5, color: "#3B82F6", width: 2 },
-          { source: 3, target: 5, color: "#3B82F6", width: 2 },
-        ],
-      },
-    },
-    betweenness: {
-      before: {
-        nodes: [
-          { id: 1, x: 30, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 6, x: 150, y: 90, size: 8, color: "#8B5CF6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#ccc", width: 2 },
-          { source: 2, target: 3, color: "#ccc", width: 2 },
-          { source: 4, target: 5, color: "#ccc", width: 2 },
-          { source: 5, target: 6, color: "#ccc", width: 2 },
-          { source: 2, target: 5, color: "#ccc", width: 2 },
-        ],
-      },
-      after: {
-        nodes: [
-          { id: 1, x: 30, y: 30, size: 6, color: "#3B82F6" },
-          { id: 2, x: 90, y: 30, size: 14, color: "#EF4444" },
-          { id: 3, x: 150, y: 30, size: 6, color: "#3B82F6" },
-          { id: 4, x: 30, y: 90, size: 6, color: "#3B82F6" },
-          { id: 5, x: 90, y: 90, size: 14, color: "#EF4444" },
-          { id: 6, x: 150, y: 90, size: 6, color: "#3B82F6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#3B82F6", width: 2 },
-          { source: 2, target: 3, color: "#3B82F6", width: 2 },
-          { source: 4, target: 5, color: "#3B82F6", width: 2 },
-          { source: 5, target: 6, color: "#3B82F6", width: 2 },
-          { source: 2, target: 5, color: "#EF4444", width: 4 },
-        ],
-      },
-    },
-    louvain: {
-      before: {
-        nodes: [
-          { id: 1, x: 50, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 3, x: 130, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 4, x: 50, y: 70, size: 8, color: "#8B5CF6" },
-          { id: 5, x: 90, y: 70, size: 8, color: "#8B5CF6" },
-          { id: 6, x: 130, y: 70, size: 8, color: "#8B5CF6" },
-          { id: 7, x: 170, y: 50, size: 8, color: "#8B5CF6" },
-          { id: 8, x: 210, y: 50, size: 8, color: "#8B5CF6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#ccc", width: 2 },
-          { source: 1, target: 4, color: "#ccc", width: 2 },
-          { source: 1, target: 5, color: "#ccc", width: 2 },
-          { source: 2, target: 3, color: "#ccc", width: 2 },
-          { source: 2, target: 5, color: "#ccc", width: 2 },
-          { source: 3, target: 6, color: "#ccc", width: 2 },
-          { source: 4, target: 5, color: "#ccc", width: 2 },
-          { source: 5, target: 6, color: "#ccc", width: 2 },
-          { source: 6, target: 7, color: "#ccc", width: 2 },
-          { source: 7, target: 8, color: "#ccc", width: 2 },
-        ],
-      },
-      after: {
-        nodes: [
-          { id: 1, x: 50, y: 30, size: 8, color: "#EF4444" },
-          { id: 2, x: 90, y: 30, size: 8, color: "#EF4444" },
-          { id: 3, x: 130, y: 30, size: 8, color: "#10B981" },
-          { id: 4, x: 50, y: 70, size: 8, color: "#EF4444" },
-          { id: 5, x: 90, y: 70, size: 8, color: "#EF4444" },
-          { id: 6, x: 130, y: 70, size: 8, color: "#10B981" },
-          { id: 7, x: 170, y: 50, size: 8, color: "#3B82F6" },
-          { id: 8, x: 210, y: 50, size: 8, color: "#3B82F6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#EF4444", width: 2 },
-          { source: 1, target: 4, color: "#EF4444", width: 2 },
-          { source: 1, target: 5, color: "#EF4444", width: 2 },
-          { source: 2, target: 3, color: "#ccc", width: 1 },
-          { source: 2, target: 5, color: "#EF4444", width: 2 },
-          { source: 3, target: 6, color: "#10B981", width: 2 },
-          { source: 4, target: 5, color: "#EF4444", width: 2 },
-          { source: 5, target: 6, color: "#ccc", width: 1 },
-          { source: 6, target: 7, color: "#ccc", width: 1 },
-          { source: 7, target: 8, color: "#3B82F6", width: 2 },
-        ],
-      },
-    },
-    dijkstra: {
-      before: {
-        nodes: [
-          { id: 1, x: 30, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 2, x: 90, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 3, x: 150, y: 30, size: 8, color: "#8B5CF6" },
-          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 6, x: 150, y: 90, size: 8, color: "#8B5CF6" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#ccc", width: 2 },
-          { source: 1, target: 4, color: "#ccc", width: 2 },
-          { source: 2, target: 3, color: "#ccc", width: 2 },
-          { source: 2, target: 5, color: "#ccc", width: 2 },
-          { source: 3, target: 6, color: "#ccc", width: 2 },
-          { source: 4, target: 5, color: "#ccc", width: 2 },
-          { source: 5, target: 6, color: "#ccc", width: 2 },
-        ],
-      },
-      after: {
-        nodes: [
-          { id: 1, x: 30, y: 30, size: 10, color: "#EF4444" },
-          { id: 2, x: 90, y: 30, size: 8, color: "#F59E0B" },
-          { id: 3, x: 150, y: 30, size: 8, color: "#10B981" },
-          { id: 4, x: 30, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 5, x: 90, y: 90, size: 8, color: "#8B5CF6" },
-          { id: 6, x: 150, y: 90, size: 10, color: "#EF4444" },
-        ],
-        edges: [
-          { source: 1, target: 2, color: "#F59E0B", width: 3 },
-          { source: 1, target: 4, color: "#ccc", width: 1 },
-          { source: 2, target: 3, color: "#10B981", width: 3 },
-          { source: 2, target: 5, color: "#ccc", width: 1 },
-          { source: 3, target: 6, color: "#EF4444", width: 3 },
-          { source: 4, target: 5, color: "#ccc", width: 1 },
-          { source: 5, target: 6, color: "#ccc", width: 1 },
-        ],
-      },
-    },
-  };
+  // Fetch algorithms data on component mount
+  useEffect(() => {
+    const fetchAlgorithms = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const algorithms = [
-    {
-      id: "pagerank",
-      name: {
-        english: "PageRank",
-        french: "PageRank",
-        arabic: "خوارزمية تصنيف الصفحات",
-      },
-      category: "centrality",
-      categoryLabel: {
-        english: "CENTRALITY",
-        french: "CENTRALITÉ",
-        arabic: "المركزية",
-      },
-      description: {
-        english:
-          "Measures the importance of each node based on the structure of incoming links",
-        french:
-          "Mesure l'importance de chaque nœud en fonction de la structure des liens entrants",
-        arabic: "تقيس أهمية كل عقدة بناءً على هيكل الروابط الواردة",
-      },
-      timeComplexity: "O(n + m)",
-      spaceComplexity: "O(n)",
-      howItWorks: {
-        english:
-          "PageRank assigns a numerical weight to each node in a graph, with the purpose of measuring its relative importance within the set. The algorithm works by counting the number and quality of links to a page to determine a rough estimate of how important the website is.",
-        french:
-          "PageRank attribue un poids numérique à chaque nœud d'un graphe, dans le but de mesurer son importance relative au sein de l'ensemble. L'algorithme fonctionne en comptant le nombre et la qualité des liens vers une page.",
-        arabic:
-          "تخصص خوارزمية PageRank وزنًا رقميًا لكل عقدة في الرسم البياني، بهدف قياس أهميتها النسبية ضمن المجموعة.",
-      },
-      applications: {
-        english: [
-          "Web search ranking",
-          "Social network analysis",
-          "Citation analysis in academic papers",
-          "Recommendation systems",
-        ],
-        french: [
-          "Classement des recherches Web",
-          "Analyse des réseaux sociaux",
-          "Analyse des citations dans les articles académiques",
-          "Systèmes de recommandation",
-        ],
-        arabic: [
-          "ترتيب نتائج البحث على الويب",
-          "تحليل الشبكات الاجتماعية",
-          "تحليل الاستشهادات في الأوراق الأكاديمية",
-          "أنظمة التوصية",
-        ],
-      },
-      before: graphExamples.pagerank.before,
-      after: graphExamples.pagerank.after,
-      overview:
-        "PageRank is a link analysis algorithm used by Google Search to rank web pages in their search engine results. It works by counting the number and quality of links to a page to determine a rough estimate of how important the website is.",
-    },
-    {
-      id: "betweenness",
-      name: {
-        english: "Betweenness Centrality",
-        french: "Centralité d'Intermédiarité",
-        arabic: "المركزية البينية",
-      },
-      category: "centrality",
-      categoryLabel: {
-        english: "CENTRALITY",
-        french: "CENTRALITÉ",
-        arabic: "المركزية",
-      },
-      description: {
-        english:
-          "Identifies nodes that act as bridges between different parts of a graph",
-        french:
-          "Identifie les nœuds qui agissent comme des ponts entre différentes parties d'un graphe",
-        arabic: "تحدد العقد التي تعمل كجسور بين أجزاء مختلفة من الرسم البياني",
-      },
-      timeComplexity: "O(n³)",
-      spaceComplexity: "O(n² + m)",
-      howItWorks: {
-        english:
-          "Betweenness centrality is calculated by finding the shortest paths between all pairs of nodes in a graph and then counting how many of these paths pass through each node.",
-        french:
-          "La centralité d'intermédiarité est calculée en trouvant les chemins les plus courts entre toutes les paires de nœuds dans un graphe.",
-        arabic:
-          "يتم حساب المركزية البينية من خلال إيجاد أقصر المسارات بين جميع أزواج العقد في الرسم البياني.",
-      },
-      applications: {
-        english: [
-          "Identifying influential individuals in social networks",
-          "Finding bottlenecks in transportation networks",
-          "Detecting community bridges in networks",
-          "Network vulnerability analysis",
-        ],
-        french: [
-          "Identification des individus influents dans les réseaux sociaux",
-          "Recherche de goulots d'étranglement dans les réseaux de transport",
-          "Détection des ponts communautaires dans les réseaux",
-          "Analyse de la vulnérabilité du réseau",
-        ],
-        arabic: [
-          "تحديد الأفراد المؤثرين في الشبكات الاجتماعية",
-          "العثور على نقاط الاختناق في شبكات النقل",
-          "اكتشاف جسور المجتمع في الشبكات",
-          "تحليل نقاط ضعف الشبكة",
-        ],
-      },
-      before: graphExamples.betweenness.before,
-      after: graphExamples.betweenness.after,
-      overview:
-        "Betweenness centrality measures the extent to which a node lies on paths between other nodes. Nodes with high betweenness may have considerable influence within a network by virtue of their control over information passing between others.",
-    },
-    {
-      id: "louvain",
-      name: {
-        english: "Louvain Community Detection",
-        french: "Détection de Communauté Louvain",
-        arabic: "اكتشاف المجتمع لوفان",
-      },
-      category: "community",
-      categoryLabel: {
-        english: "COMMUNITY DETECTION",
-        french: "DÉTECTION DE COMMUNAUTÉ",
-        arabic: "اكتشاف المجتمع",
-      },
-      description: {
-        english:
-          "Identifies groups of nodes that are more densely connected to each other than to the rest of the network",
-        french:
-          "Identifie des groupes de nœuds qui sont plus densément connectés entre eux qu'au reste du réseau",
-        arabic:
-          "تحدد مجموعات من العقد التي ترتبط ببعضها البعض بشكل أكثر كثافة من بقية الشبكة",
-      },
-      timeComplexity: "O(n log n)",
-      spaceComplexity: "O(n + m)",
-      howItWorks: {
-        english:
-          "The Louvain method works in two phases that are repeated iteratively. First, it optimizes modularity locally by moving nodes between communities. Then, it aggregates nodes of the same community.",
-        french:
-          "La méthode de Louvain fonctionne en deux phases qui sont répétées de manière itérative. Elle optimise la modularité localement en déplaçant les nœuds entre les communautés.",
-        arabic:
-          "تعمل طريقة Louvain في مرحلتين يتم تكرارهما بشكل متكرر. تقوم بتحسين النمطية محليًا عن طريق نقل العقد بين المجتمعات.",
-      },
-      applications: {
-        english: [
-          "Social network analysis",
-          "Customer segmentation",
-          "Recommendation systems",
-          "Biological network analysis",
-        ],
-        french: [
-          "Analyse des réseaux sociaux",
-          "Segmentation des clients",
-          "Systèmes de recommandation",
-          "Analyse des réseaux biologiques",
-        ],
-        arabic: [
-          "تحليل الشبكات الاجتماعية",
-          "تقسيم العملاء",
-          "أنظمة التوصية",
-          "تحليل الشبكات البيولوجية",
-        ],
-      },
-      before: graphExamples.louvain.before,
-      after: graphExamples.louvain.after,
-      overview:
-        "The Louvain method is a fast algorithm for community detection in large networks. It optimizes modularity, which measures the density of connections within communities compared to connections between communities.",
-    },
-    {
-      id: "jaccard",
-      name: {
-        english: "Jaccard Similarity",
-        french: "Similarité de Jaccard",
-        arabic: "تشابه جاكارد",
-      },
-      category: "similarity",
-      categoryLabel: {
-        english: "SIMILARITY",
-        french: "SIMILARITÉ",
-        arabic: "التشابه",
-      },
-      description: {
-        english:
-          "Measures similarity between finite sample sets by comparing their intersection to their union",
-        french:
-          "Mesure la similarité entre des ensembles d'échantillons finis en comparant leur intersection à leur union",
-        arabic:
-          "يقيس التشابه بين مجموعات العينات المحدودة بمقارنة تقاطعها مع اتحادها",
-      },
-      timeComplexity: "O(n)",
-      spaceComplexity: "O(n)",
-      howItWorks: {
-        english:
-          "The Jaccard similarity coefficient is defined as the size of the intersection divided by the size of the union of the sample sets.",
-        french:
-          "Le coefficient de similarité de Jaccard est défini comme la taille de l'intersection divisée par la taille de l'union des ensembles d'échantillons.",
-        arabic:
-          "يتم تعريف معامل تشابه جاكارد على أنه حجم التقاطع مقسومًا على حجم اتحاد مجموعات العينات.",
-      },
-      applications: {
-        english: [
-          "Document similarity",
-          "Recommendation systems",
-          "Duplicate detection",
-          "Data mining",
-        ],
-        french: [
-          "Similarité documentaire",
-          "Systèmes de recommandation",
-          "Détection de doublons",
-          "Exploration de données",
-        ],
-        arabic: [
-          "تشابه المستندات",
-          "أنظمة التوصية",
-          "كشف التكرارات",
-          "تنقيب البيانات",
-        ],
-      },
-      before: graphExamples.pagerank.before,
-      after: graphExamples.pagerank.after,
-      overview:
-        "The Jaccard index measures similarity between finite sample sets by comparing their intersection to their union. It ranges from 0 (no similarity) to 1 (identical sets).",
-    },
-    {
-      id: "triangle-count",
-      name: {
-        english: "Triangle Count",
-        french: "Compte de Triangles",
-        arabic: "عد المثلثات",
-      },
-      category: "structure",
-      categoryLabel: {
-        english: "STRUCTURE ANALYSIS",
-        french: "ANALYSE DE STRUCTURE",
-        arabic: "تحليل البنية",
-      },
-      description: {
-        english:
-          "Counts the number of triangles passing through each node in a graph",
-        french:
-          "Compte le nombre de triangles passant par chaque nœud dans un graphe",
-        arabic: "يعد عدد المثلثات التي تمر عبر كل عقدة في الرسم البياني",
-      },
-      timeComplexity: "O(m^(3/2))",
-      spaceComplexity: "O(n)",
-      howItWorks: {
-        english:
-          "Triangle counting works by identifying sets of three nodes that are all connected to each other (forming a triangle). This can be done by checking all possible triplets or using more efficient methods.",
-        french:
-          "Le comptage de triangles fonctionne en identifiant des ensembles de trois nœuds qui sont tous connectés les uns aux autres (formant un triangle).",
-        arabic:
-          "يعمل حساب المثلثات عن طريق تحديد مجموعات من ثلاث عقد متصلة ببعضها البعض (تشكل مثلثًا).",
-      },
-      applications: {
-        english: [
-          "Social network analysis",
-          "Spam detection",
-          "Link recommendation",
-          "Graph clustering",
-        ],
-        french: [
-          "Analyse des réseaux sociaux",
-          "Détection de spam",
-          "Recommandation de liens",
-          "Regroupement de graphes",
-        ],
-        arabic: [
-          "تحليل الشبكات الاجتماعية",
-          "كشف البريد المزعج",
-          "توصية الروابط",
-          "تجميع الرسم البياني",
-        ],
-      },
-      before: graphExamples.pagerank.before,
-      after: graphExamples.pagerank.after,
-      overview:
-        "Triangle counting is a measure used in graph theory to determine the number of triangles (3-cliques) in an undirected graph. It's often used as a measure of clustering in networks.",
-    },
-  ];
+        // Since your backend doesn't have a "list" type, we'll use the hardcoded algorithms
+        // but make them compatible with your backend algorithm names
+        const backendCompatibleAlgorithms = [
+          {
+            id: "PageRank",
+            name: {
+              english: "PageRank",
+              french: "Classement de Pages",
+              arabic: "ترتيب الصفحات",
+            },
+            category: "centrality",
+            categoryLabel: {
+              english: "CENTRALITY",
+              french: "CENTRALITÉ",
+              arabic: "المركزية",
+            },
+            description: {
+              english:
+                "Measures the importance of each node based on the structure of incoming links",
+              french:
+                "Mesure l'importance de chaque nœud en fonction de la structure des liens entrants",
+              arabic: "تقيس أهمية كل عقدة بناءً على هيكل الروابط الواردة",
+            },
+            timeComplexity: "O(n + m)",
+            spaceComplexity: "O(n)",
+            howItWorks: {
+              english:
+                "PageRank assigns a numerical weight to each node in a graph, measuring its relative importance within the set.",
+              french:
+                "PageRank attribue un poids numérique à chaque nœud d'un graphe, mesurant son importance relative.",
+              arabic:
+                "تخصص خوارزمية ترتيب الصفحات وزنًا رقميًا لكل عقدة في الرسم البياني.",
+            },
+            applications: {
+              english: [
+                "Web search ranking",
+                "Social network analysis",
+                "Citation analysis",
+                "Recommendation systems",
+              ],
+              french: [
+                "Classement des recherches Web",
+                "Analyse des réseaux sociaux",
+                "Analyse des citations",
+                "Systèmes de recommandation",
+              ],
+              arabic: [
+                "ترتيب نتائج البحث",
+                "تحليل الشبكات الاجتماعية",
+                "تحليل الاستشهادات",
+                "أنظمة التوصية",
+              ],
+            },
+            overview: {
+              english:
+                "PageRank is a link analysis algorithm used to rank nodes by importance in a graph structure.",
+              french:
+                "PageRank est un algorithme d'analyse de liens utilisé pour classer les nœuds par importance dans une structure de graphe.",
+              arabic:
+                "ترتيب الصفحات هو خوارزمية تحليل الروابط المستخدمة لترتيب العقد حسب الأهمية في هيكل الرسم البياني.",
+            },
+          },
+          {
+            id: "Louvain",
+            name: {
+              english: "Louvain Community Detection",
+              french: "Détection de Communauté Louvain",
+              arabic: "اكتشاف المجتمع لوفان",
+            },
+            category: "community",
+            categoryLabel: {
+              english: "COMMUNITY DETECTION",
+              french: "DÉTECTION DE COMMUNAUTÉ",
+              arabic: "اكتشاف المجتمع",
+            },
+            description: {
+              english:
+                "Identifies groups of nodes that are more densely connected to each other",
+              french:
+                "Identifie des groupes de nœuds plus densément connectés entre eux",
+              arabic: "تحدد مجموعات من العقد المترابطة بكثافة أكبر",
+            },
+            timeComplexity: "O(n log n)",
+            spaceComplexity: "O(n + m)",
+            howItWorks: {
+              english:
+                "The Louvain method optimizes modularity by moving nodes between communities iteratively.",
+              french:
+                "La méthode de Louvain optimise la modularité en déplaçant les nœuds entre communautés de manière itérative.",
+              arabic:
+                "تعمل طريقة لوفان على تحسين النمطية عن طريق نقل العقد بين المجتمعات بشكل متكرر.",
+            },
+            applications: {
+              english: [
+                "Social network analysis",
+                "Customer segmentation",
+                "Biological networks",
+                "Recommendation systems",
+              ],
+              french: [
+                "Analyse des réseaux sociaux",
+                "Segmentation des clients",
+                "Réseaux biologiques",
+                "Systèmes de recommandation",
+              ],
+              arabic: [
+                "تحليل الشبكات الاجتماعية",
+                "تقسيم العملاء",
+                "الشبكات البيولوجية",
+                "أنظمة التوصية",
+              ],
+            },
+            overview: {
+              english:
+                "The Louvain method is a fast algorithm for community detection in large networks.",
+              french:
+                "La méthode de Louvain est un algorithme rapide pour la détection de communautés dans de grands réseaux.",
+              arabic:
+                "طريقة لوفان هي خوارزمية سريعة لاكتشاف المجتمعات في الشبكات الكبيرة.",
+            },
+          },
+          {
+            id: "Betweenness",
+            name: {
+              english: "Betweenness Centrality",
+              french: "Centralité d'Intermédiarité",
+              arabic: "المركزية البينية",
+            },
+            category: "centrality",
+            categoryLabel: {
+              english: "CENTRALITY",
+              french: "CENTRALITÉ",
+              arabic: "المركزية",
+            },
+            description: {
+              english:
+                "Identifies nodes that act as bridges between different parts of a graph",
+              french:
+                "Identifie les nœuds qui agissent comme des ponts entre différentes parties d'un graphe",
+              arabic:
+                "تحدد العقد التي تعمل كجسور بين أجزاء مختلفة من الرسم البياني",
+            },
+            timeComplexity: "O(n³)",
+            spaceComplexity: "O(n² + m)",
+            howItWorks: {
+              english:
+                "Betweenness centrality measures how often a node lies on shortest paths between other nodes.",
+              french:
+                "La centralité d'intermédiarité mesure la fréquence à laquelle un nœud se trouve sur les chemins les plus courts entre d'autres nœuds.",
+              arabic:
+                "تقيس المركزية البينية مدى تكرار وجود العقدة في أقصر المسارات بين العقد الأخرى.",
+            },
+            applications: {
+              english: [
+                "Network bottleneck detection",
+                "Influential node identification",
+                "Transportation networks",
+                "Social influence analysis",
+              ],
+              french: [
+                "Détection de goulots d'étranglement réseau",
+                "Identification de nœuds influents",
+                "Réseaux de transport",
+                "Analyse d'influence sociale",
+              ],
+              arabic: [
+                "كشف نقاط الاختناق في الشبكة",
+                "تحديد العقد المؤثرة",
+                "شبكات النقل",
+                "تحليل التأثير الاجتماعي",
+              ],
+            },
+            overview: {
+              english:
+                "Betweenness centrality identifies nodes that serve as bridges in network communication.",
+              french:
+                "La centralité d'intermédiarité identifie les nœuds qui servent de ponts dans la communication réseau.",
+              arabic:
+                "تحدد المركزية البينية العقد التي تعمل كجسور في اتصالات الشبكة.",
+            },
+          },
+          {
+            id: "Jaccard",
+            name: {
+              english: "Jaccard Similarity",
+              french: "Similarité de Jaccard",
+              arabic: "تشابه جاكارد",
+            },
+            category: "similarity",
+            categoryLabel: {
+              english: "SIMILARITY",
+              french: "SIMILARITÉ",
+              arabic: "التشابه",
+            },
+            description: {
+              english:
+                "Measures similarity between nodes based on their shared neighbors",
+              french:
+                "Mesure la similarité entre nœuds basée sur leurs voisins partagés",
+              arabic: "يقيس التشابه بين العقد بناءً على الجيران المشتركين",
+            },
+            timeComplexity: "O(n²)",
+            spaceComplexity: "O(n)",
+            howItWorks: {
+              english:
+                "Jaccard similarity compares the intersection and union of node neighborhoods.",
+              french:
+                "La similarité de Jaccard compare l'intersection et l'union des voisinages de nœuds.",
+              arabic: "يقارن تشابه جاكارد تقاطع واتحاد أحياء العقد.",
+            },
+            applications: {
+              english: [
+                "Recommendation systems",
+                "Duplicate detection",
+                "Link prediction",
+                "Content similarity",
+              ],
+              french: [
+                "Systèmes de recommandation",
+                "Détection de doublons",
+                "Prédiction de liens",
+                "Similarité de contenu",
+              ],
+              arabic: [
+                "أنظمة التوصية",
+                "كشف التكرارات",
+                "توقع الروابط",
+                "تشابه المحتوى",
+              ],
+            },
+            overview: {
+              english:
+                "Jaccard similarity measures how similar two nodes are based on their shared connections.",
+              french:
+                "La similarité de Jaccard mesure à quel point deux nœuds sont similaires en fonction de leurs connexions partagées.",
+              arabic:
+                "يقيس تشابه جاكارد مدى تشابه عقدتين بناءً على اتصالاتهما المشتركة.",
+            },
+          },
+          {
+            id: "LabelPropagation",
+            name: {
+              english: "Label Propagation",
+              french: "Propagation d'Étiquettes",
+              arabic: "انتشار التسميات",
+            },
+            category: "community",
+            categoryLabel: {
+              english: "COMMUNITY DETECTION",
+              french: "DÉTECTION DE COMMUNAUTÉ",
+              arabic: "اكتشاف المجتمع",
+            },
+            description: {
+              english:
+                "Detects communities by propagating labels through the network",
+              french:
+                "Détecte les communautés en propageant les étiquettes dans le réseau",
+              arabic: "يكتشف المجتمعات عن طريق نشر التسميات عبر الشبكة",
+            },
+            timeComplexity: "O(m)",
+            spaceComplexity: "O(n)",
+            howItWorks: {
+              english:
+                "Each node adopts the most frequent label among its neighbors iteratively.",
+              french:
+                "Chaque nœud adopte l'étiquette la plus fréquente parmi ses voisins de manière itérative.",
+              arabic:
+                "تتبنى كل عقدة التسمية الأكثر تكراراً بين جيرانها بشكل متكرر.",
+            },
+            applications: {
+              english: [
+                "Community detection",
+                "Image segmentation",
+                "Social group identification",
+                "Network clustering",
+              ],
+              french: [
+                "Détection de communauté",
+                "Segmentation d'image",
+                "Identification de groupes sociaux",
+                "Regroupement de réseau",
+              ],
+              arabic: [
+                "اكتشاف المجتمع",
+                "تقسيم الصور",
+                "تحديد المجموعات الاجتماعية",
+                "تجميع الشبكة",
+              ],
+            },
+            overview: {
+              english:
+                "Label Propagation is a fast community detection algorithm based on label spreading.",
+              french:
+                "La propagation d'étiquettes est un algorithme rapide de détection de communautés basé sur la diffusion d'étiquettes.",
+              arabic:
+                "انتشار التسميات هو خوارزمية سريعة لاكتشاف المجتمعات تعتمد على نشر التسميات.",
+            },
+          },
+          {
+            id: "Closeness",
+            name: {
+              english: "Closeness Centrality",
+              french: "Centralité de Proximité",
+              arabic: "مركزية القرب",
+            },
+            category: "centrality",
+            categoryLabel: {
+              english: "CENTRALITY",
+              french: "CENTRALITÉ",
+              arabic: "المركزية",
+            },
+            description: {
+              english:
+                "Measures how close a node is to all other nodes in the network",
+              french:
+                "Mesure la proximité d'un nœud à tous les autres nœuds du réseau",
+              arabic: "يقيس مدى قرب العقدة من جميع العقد الأخرى في الشبكة",
+            },
+            timeComplexity: "O(n³)",
+            spaceComplexity: "O(n²)",
+            howItWorks: {
+              english:
+                "Closeness centrality is the reciprocal of the sum of shortest path distances to all other nodes.",
+              french:
+                "La centralité de proximité est l'inverse de la somme des distances de chemin le plus court vers tous les autres nœuds.",
+              arabic:
+                "مركزية القرب هي مقلوب مجموع مسافات أقصر مسار إلى جميع العقد الأخرى.",
+            },
+            applications: {
+              english: [
+                "Information spread analysis",
+                "Transportation hubs",
+                "Social influence",
+                "Network efficiency",
+              ],
+              french: [
+                "Analyse de propagation d'information",
+                "Centres de transport",
+                "Influence sociale",
+                "Efficacité du réseau",
+              ],
+              arabic: [
+                "تحليل انتشار المعلومات",
+                "مراكز النقل",
+                "التأثير الاجتماعي",
+                "كفاءة الشبكة",
+              ],
+            },
+            overview: {
+              english:
+                "Closeness centrality identifies nodes that can efficiently reach all other nodes in the network.",
+              french:
+                "La centralité de proximité identifie les nœuds qui peuvent atteindre efficacement tous les autres nœuds du réseau.",
+              arabic:
+                "تحدد مركزية القرب العقد التي يمكنها الوصول بكفاءة إلى جميع العقد الأخرى في الشبكة.",
+            },
+          },
+          {
+            id: "Degree",
+            name: {
+              english: "Degree Centrality",
+              french: "Centralité de Degré",
+              arabic: "مركزية الدرجة",
+            },
+            category: "centrality",
+            categoryLabel: {
+              english: "CENTRALITY",
+              french: "CENTRALITÉ",
+              arabic: "المركزية",
+            },
+            description: {
+              english: "Measures the number of direct connections a node has",
+              french: "Mesure le nombre de connexions directes d'un nœud",
+              arabic: "يقيس عدد الاتصالات المباشرة للعقدة",
+            },
+            timeComplexity: "O(n + m)",
+            spaceComplexity: "O(n)",
+            howItWorks: {
+              english:
+                "Degree centrality simply counts the number of edges connected to each node.",
+              french:
+                "La centralité de degré compte simplement le nombre d'arêtes connectées à chaque nœud.",
+              arabic: "تحسب مركزية الدرجة ببساطة عدد الحواف المتصلة بكل عقدة.",
+            },
+            applications: {
+              english: [
+                "Social network popularity",
+                "Network hubs identification",
+                "Connection analysis",
+                "Node importance ranking",
+              ],
+              french: [
+                "Popularité des réseaux sociaux",
+                "Identification des centres de réseau",
+                "Analyse de connexion",
+                "Classement d'importance des nœuds",
+              ],
+              arabic: [
+                "شعبية الشبكات الاجتماعية",
+                "تحديد مراكز الشبكة",
+                "تحليل الاتصال",
+                "ترتيب أهمية العقد",
+              ],
+            },
+            overview: {
+              english:
+                "Degree centrality is the simplest measure of node importance based on direct connections.",
+              french:
+                "La centralité de degré est la mesure la plus simple de l'importance des nœuds basée sur les connexions directes.",
+              arabic:
+                "مركزية الدرجة هي أبسط مقياس لأهمية العقدة بناءً على الاتصالات المباشرة.",
+            },
+          },
+        ];
+
+        setAlgorithms(backendCompatibleAlgorithms);
+      } catch (err) {
+        console.error("Failed to load algorithms:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAlgorithms();
+  }, [language]);
 
   const getCategoryColor = (category) => {
     const colors = {
-      centrality: "#3b82f6",  
-      community: "#8b5cf6",  
-      pathfinding: "#22c55e",  
-      structure: "#f97316",  
-      optimization: "#eab308",  
-      clustering: "#06b6d4",  
+      centrality: "#3b82f6",
+      community: "#8b5cf6",
+      pathfinding: "#22c55e",
+      structure: "#f97316",
+      optimization: "#eab308",
+      clustering: "#06b6d4",
     };
     return colors[category] || "#6366f1";
   };
 
-  const handleAlgorithmClick = (algorithm) => {
-    setSelectedAlgorithm(algorithm);
-    setSelectedClusterType(null);
-    setSelectedDefinitionLevel(null);
-    setSelectedCategory(null);
-    setSelectedScope("complete");
-    setIsModalOpen(true);
+  const handleAlgorithmClick = async (algorithm) => {
+    try {
+      setSelectedAlgorithm(algorithm);
+      setSelectedClusterType(null);
+      setSelectedDefinitionLevel(null);
+      setSelectedCategory(null);
+      setSelectedScope("complete");
+      setIsModalOpen(true);
+
+      // Your backend doesn't need a separate details call,
+      // the algorithm object already has all needed info
+    } catch (err) {
+      console.error("Failed to open algorithm details:", err);
+    }
   };
 
   const handleCloseDetails = () => {
@@ -732,7 +725,46 @@ const GraphAlgorithmsEnhanced = ({
     //setActiveCategory(category)
   };
 
-   
+  const handleApplyAlgorithm = async () => {
+    if (!selectedAlgorithm) return;
+
+    try {
+      setLoading(true);
+
+      const result = await analyzeGraph(
+        "apply",
+        selectedAlgorithm.id || selectedAlgorithm.name?.english,
+        selectedTarget,
+        language === "english"
+          ? "en"
+          : language === "french"
+          ? "fr"
+          : language === "arabic"
+          ? "ar"
+          : "en",
+        {
+          scope: selectedScope,
+          clusterType: selectedClusterType,
+          definitionLevel: selectedDefinitionLevel,
+          category: selectedCategory,
+        }
+      );
+
+      if (result) {
+        setAppliedAlgorithmResult(result);
+        setShowResults(true);
+        if (onAlgorithmSelect) {
+          onAlgorithmSelect(result);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to apply algorithm:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const networkIcons = {
     networks: <Network size={20} />,
     data: <Database size={20} />,
@@ -744,26 +776,64 @@ const GraphAlgorithmsEnhanced = ({
     internet: <Globe size={20} />,
   };
 
+  // Loading state
+  if (loading && algorithms.length === 0) {
+    return (
+      <div className="enhanced-graph-algorithms">
+        <div className="knowledge-graph-header">
+          <h1 className="main-title">{t.title}</h1>
+          <p className="main-subtitle">{t.subtitle}</p>
+          <div className="header-divider"></div>
+        </div>
+        <div className="loading-container">
+          <Loader2 className="loading-spinner" size={48} />
+          <p className="loading-text">{t.loading}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && algorithms.length === 0) {
+    return (
+      <div className="enhanced-graph-algorithms">
+        <div className="knowledge-graph-header">
+          <h1 className="main-title">{t.title}</h1>
+          <p className="main-subtitle">{t.subtitle}</p>
+          <div className="header-divider"></div>
+        </div>
+        <div className="error-container">
+          <p className="error-text">
+            {t.error}: {error}
+          </p>
+          <button
+            className="retry-button"
+            onClick={() => window.location.reload()}
+          >
+            {t.retry}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="enhanced-graph-algorithms">
       {/* Header with Title and Subtitle - Clean Style */}
       <div className="knowledge-graph-header">
-        <h1 className="main-title">Graph Algorithms</h1>
-        <p className="main-subtitle">
-          Explore terms and concepts powered by Neo4j graph technology
-        </p>
+        <h1 className="main-title">{t.title}</h1>
+        <p className="main-subtitle">{t.subtitle}</p>
         <div className="header-divider"></div>
       </div>
 
       {/* Algorithm Cards Grid */}
       <div className="algorithms-grid">
-        {algorithms.map((algorithm) => (
+        {algorithms.map((algorithm, index) => (
           <div
-            key={algorithm.id}
+            key={algorithm.id || index}
             className="algorithm-card"
             onClick={() => handleAlgorithmClick(algorithm)}
           >
-            {/* Keep existing card content but remove the application-scope-dropdown section from card-footer */}
             <div className="card-header">
               <div
                 className="algorithm-icon"
@@ -775,33 +845,38 @@ const GraphAlgorithmsEnhanced = ({
               </div>
               <div className="algorithm-info">
                 <h3 className="algorithm-name">
-                  {algorithm.name[language] || algorithm.name.english}
+                  {algorithm.name?.[language] ||
+                    algorithm.name?.english ||
+                    algorithm.name}
                 </h3>
                 <div
                   className="algorithm-category"
                   style={{ color: getCategoryColor(algorithm.category) }}
                 >
-                  {algorithm.categoryLabel[language] ||
-                    algorithm.categoryLabel.english}
+                  {algorithm.categoryLabel?.[language] ||
+                    algorithm.categoryLabel?.english ||
+                    algorithm.category}
                 </div>
               </div>
             </div>
 
             <p className="algorithm-description">
-              {algorithm.description[language] || algorithm.description.english}
+              {algorithm.description?.[language] ||
+                algorithm.description?.english ||
+                algorithm.description}
             </p>
 
             <div className="algorithm-complexity">
               <div className="complexity-item">
                 <span className="complexity-label">{t.time}</span>
                 <span className="complexity-value">
-                  {algorithm.timeComplexity}
+                  {algorithm.timeComplexity || "N/A"}
                 </span>
               </div>
               <div className="complexity-item">
                 <span className="complexity-label">{t.space}</span>
                 <span className="complexity-value">
-                  {algorithm.spaceComplexity}
+                  {algorithm.spaceComplexity || "N/A"}
                 </span>
               </div>
             </div>
@@ -826,6 +901,10 @@ const GraphAlgorithmsEnhanced = ({
           isOpen={isModalOpen}
           onClose={handleCloseDetails}
           algorithm={selectedAlgorithm}
+          onApply={handleApplyAlgorithm}
+          loading={loading}
+          language={language}
+          translations={t}
         />
       )}
     </div>

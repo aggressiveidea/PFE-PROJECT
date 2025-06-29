@@ -850,479 +850,141 @@ export const getAllterms = async (language) => {
   }
 };
 
- 
-
-/**
- * Get all available graph projections
- */
-export const getGraphProjections = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/graph-projections",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch graph projections");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching graph projections:", error);
-    throw error;
-  }
-};
-
-/**
- * Create a new graph projection
- */
-export const createGraphProjection = async (projectionData) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/graph-projections",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectionData),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to create graph projection");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creating graph projection:", error);
-    throw error;
-  }
-};
-
-/**
- * Drop a graph projection
- */
-export const dropGraphProjection = async (graphName) => {
-  try {
-    const response = await fetch(
-      `http://localhost:3001/api/graph-projections/${graphName}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to drop graph projection");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error dropping graph projection:", error);
-    throw error;
-  }
-};
-
-/**
- * Create a complete graph projection
- */
-export const createCompleteProjection = async (language = "en") => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/graph-projections/complete",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ language }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to create complete projection");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creating complete projection:", error);
-    throw error;
-  }
-};
-
-/**
- * Create a category-specific projection
- */
-export const createCategoryProjection = async (
-  categoryName,
-  language = "en"
-) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/graph-projections/category",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ categoryName, language }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to create category projection");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creating category projection:", error);
-    throw error;
-  }
-};
-
-export const createNodeCentricProjection = async (
-  nodeName,
-  userId = "anonymous",
+  
+export const createSubgraphProjection = async (
+  termName,
   depth = 2,
   language = "en"
 ) => {
   try {
-    const response = await fetch(
-      "http://localhost:3001/api/graph-projections/node-centric",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nodeName, userId, depth, language }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to create node-centric projection");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creating node-centric projection:", error);
-    throw error;
-  }
-};
-
- 
-export const runPageRank = async (graphName, config = {}) => {
-  try {
-    const response = await fetch("http://localhost:3001/api/gds/pagerank", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ graphName, config }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to run PageRank algorithm");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error running PageRank:", error);
-    throw error;
-  }
-};
-
-export const runLouvain = async (graphName, config = {}) => {
-  try {
-    const response = await fetch("http://localhost:3001/api/gds/louvain", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ graphName, config }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to run Louvain algorithm");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error running Louvain:", error);
-    throw error;
-  }
-};
-
-export const runBetweennessCentrality = async (graphName, config = {}) => {
-  try {
-    const response = await fetch("http://localhost:3001/api/gds/betweenness", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ graphName, config }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to run Betweenness Centrality algorithm");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error running Betweenness Centrality:", error);
-    throw error;
-  }
-};
-
-export const runLabelPropagation = async (graphName, config = {}) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/label-propagation",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to run Label Propagation algorithm");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error running Label Propagation:", error);
-    throw error;
-  }
-};
-
-export const runNodeSimilarity = async (graphName, config = {}) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/node-similarity",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to run Node Similarity algorithm");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error running Node Similarity:", error);
-    throw error;
-  }
-};
-
-export const getTermSuggestions = async (
-  graphName,
-  termName,
-  limit = 10,
-  config = {}
-) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/term-suggestions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, termName, limit, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to get term suggestions");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error getting term suggestions:", error);
-    throw error;
-  }
-};
-
-export const findRelatedTerms = async (graphName, termName, limit = 10) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/related-terms",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, termName, limit }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to find related terms");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error finding related terms:", error);
-    throw error;
-  }
-};
-
-export const findInterdisciplinaryTerms = async (graphName, config = {}) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/interdisciplinary-terms",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to find interdisciplinary terms");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error finding interdisciplinary terms:", error);
-    throw error;
-  }
-};
-
-export const findKeyLegalConcepts = async (graphName, config = {}) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/key-legal-concepts",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to find key legal concepts");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error finding key legal concepts:", error);
-    throw error;
-  }
-};
-
-export const findSemanticClusters = async (graphName, config = {}) => {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/gds/semantic-clusters",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ graphName, config }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to find semantic clusters");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error finding semantic clusters:", error);
-    throw error;
-  }
-};
-export const getSearchHistory = async (userId, limit = 50) => {
-  try {
     const token = localStorage.getItem("token");
+
     const response = await fetch(
-      `http://localhost:3001/api/search-history/${userId}?limit=${limit}`,
+      "http://localhost:3001/graphalgos/projection",
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          termName,
+          depth,
+          language,
+        }),
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch search history");
-    }
+    if (!response.ok) throw new Error("Failed to create subgraph projection");
 
-    return await response.json();
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("Error fetching search history:", error);
+    console.error("Error in createSubgraphProjection:", error);
     throw error;
   }
 };
-export const addSearchHistory = async (historyData) => {
+
+export const analyzeGraph = async (
+  type,
+  algorithmName,
+  name = null,
+  language = "en",
+  config = {}
+) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3001/api/search-history", {
+
+    const response = await fetch("http://localhost:3001/graphalgos/analyze", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(historyData),
+      body: JSON.stringify({
+        type,
+        algorithmName,
+        name,
+        language,
+        config,
+      }),
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to add search history");
-    }
+    if (!response.ok) throw new Error("Graph analysis failed");
 
-    return await response.json();
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("Error adding search history:", error);
+    console.error("Error in analyzeGraph:", error);
     throw error;
   }
 };
-export const clearSearchHistory = async (userId) => {
+
+export const executeCypherQuery = async (query, params = {}, limit = 100) => {
   try {
     const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:3001/api/search/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query,
+        params,
+        limit,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to execute Cypher query");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error in executeCypherQuery:", error);
+    throw error;
+  }
+};
+
+export const searchNodeByName = async (
+  nodeName,
+  language = "en",
+  limit = 10
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const params = new URLSearchParams({
+      nodeName,
+      language,
+      limit,
+    }).toString();
     const response = await fetch(
-      `http://localhost:3001/api/search-history/${userId}`,
+      `http://localhost:3001/api/search/node?${params}`,
       {
-        method: "DELETE",
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
     );
 
     if (!response.ok) {
-      throw new Error("Failed to clear search history");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to perform node name search");
     }
 
-    return await response.json();
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("Error clearing search history:", error);
+    console.error("Error in searchNodeByName:", error);
     throw error;
   }
 };
+
 
 //hadi for books les loulous
 

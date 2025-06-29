@@ -1,66 +1,103 @@
-const GraphLegend = ({ categories = [], nodeColors = {} }) => {
+"use client";
+
+import React from "react";
+import { X } from "lucide-react";
+
+const GraphLegend = ({ categories, nodeColors }) => {
+  const [isOpen, setIsOpen] = React.useState(true);
+
+  if (!isOpen) return null;
+
   return (
     <div className="graph-legend">
-      <div className="legend-title">Node Types</div>
-      <div className="legend-items">
-        <div className="legend-item">
-          <div
-            className="legend-node"
-            style={{ backgroundColor: nodeColors.term.default }}
-          ></div>
-          <div className="legend-label">Term</div>
-        </div>
-        <div className="legend-item">
-          <div
-            className="legend-node"
-            style={{ backgroundColor: nodeColors.definition.primary }}
-          ></div>
-          <div className="legend-label">Primary Definition</div>
-        </div>
-        <div className="legend-item">
-          <div
-            className="legend-node"
-            style={{ backgroundColor: nodeColors.definition.secondary }}
-          ></div>
-          <div className="legend-label">Secondary Definition</div>
-        </div>
-        <div className="legend-item">
-          <div
-            className="legend-node"
-            style={{
-              backgroundColor:
-                nodeColors.category["Computer Science"] || "#06B6D4",
-              border: "2px solid #333",
-            }}
-          ></div>
-          <div className="legend-label">Category</div>
-        </div>
+      <div className="legend-header">
+        <h3>Graph Legend</h3>
+        <button onClick={() => setIsOpen(false)} className="close-button">
+          <X size={16} />
+        </button>
       </div>
 
-      <div className="legend-title" style={{ marginTop: "15px" }}>
-        Relationship Types
-      </div>
-      <div className="legend-items">
-        <div className="legend-item">
-          <div
-            className="legend-color"
-            style={{ backgroundColor: "#4C8EDA" }}
-          ></div>
-          <div className="legend-label">Has Definition</div>
+      <div className="legend-content">
+        <div className="legend-section">
+          <h4>Node Types</h4>
+          <div className="legend-items">
+            <div className="legend-item">
+              <div
+                className="legend-node"
+                style={{
+                  backgroundColor: nodeColors.term.default,
+                  border: "3px solid #FFFFFF",
+                }}
+              />
+              <span>Terms</span>
+            </div>
+            <div className="legend-item">
+              <div
+                className="legend-node"
+                style={{
+                  backgroundColor: nodeColors.definition.primary,
+                  border: "2px solid #FFFFFF",
+                }}
+              />
+              <span>Definitions</span>
+            </div>
+            <div className="legend-item">
+              <div
+                className="legend-node large"
+                style={{
+                  backgroundColor:
+                    nodeColors.category["Computer Crime"] || "#6366F1",
+                  border: "4px solid #FFFFFF",
+                }}
+              />
+              <span>Categories</span>
+            </div>
+          </div>
         </div>
-        <div className="legend-item">
-          <div
-            className="legend-color"
-            style={{ backgroundColor: "#8DCC93" }}
-          ></div>
-          <div className="legend-label">Belongs To</div>
+
+        <div className="legend-section">
+          <h4>Categories</h4>
+          <div className="legend-items">
+            {categories.map((category) => (
+              <div key={category} className="legend-item">
+                <div
+                  className="legend-node large"
+                  style={{
+                    backgroundColor: nodeColors.category[category] || "#6366F1",
+                    border: "4px solid #FFFFFF",
+                  }}
+                />
+                <span>{category}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="legend-item">
-          <div
-            className="legend-color"
-            style={{ backgroundColor: "#FFC454" }}
-          ></div>
-          <div className="legend-label">Related To</div>
+
+        <div className="legend-section">
+          <h4>Relationships</h4>
+          <div className="legend-items">
+            <div className="legend-item">
+              <div
+                className="legend-edge"
+                style={{ backgroundColor: "#4F46E5" }}
+              />
+              <span>Has Definition</span>
+            </div>
+            <div className="legend-item">
+              <div
+                className="legend-edge"
+                style={{ backgroundColor: "#10B981" }}
+              />
+              <span>Belongs To</span>
+            </div>
+            <div className="legend-item">
+              <div
+                className="legend-edge"
+                style={{ backgroundColor: "#F59E0B" }}
+              />
+              <span>Related To</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
