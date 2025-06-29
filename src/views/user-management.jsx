@@ -222,10 +222,10 @@ export default function UserManagement() {
 
           localStorage.setItem("updatedUsers", JSON.stringify(updatedUsersCollection))
 
-          // Trigger a role update event for real-time updates
+           
           window.dispatchEvent(new Event("roleUpdated"))
 
-          await fetchUsers() // Refresh the user list
+          await fetchUsers()  
           closeModal()
           setRoleUpdateSuccess(true)
         } else {

@@ -15,7 +15,7 @@
   --sidebar-collapsed-width: 80px;
 }
 
-/* Global styles for dark mode */
+ 
 .BookLib-body-dark-mode {
   background-color: var(--dark-bg);
   color: var(--dark-text);
@@ -36,7 +36,7 @@
   color: var(--dark-text);
 }
 
-/* Custom header styles */
+ 
 .BookLib-custom-header {
   position: fixed;
   top: 0;
@@ -60,7 +60,7 @@
   color: var(--dark-text) !important;
 }
 
-/* Apply dark mode to the main app header if it exists */
+ 
 .BookLib-dark-header {
   background-color: #16213e !important;
   color: var(--dark-text) !important;
@@ -111,20 +111,20 @@
   background-color: rgba(218, 112, 214, 0.2);
 }
 
-/* Updated main content to work with sidebar */
+ 
 .BookLib-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-top: 60px; /* Account for fixed header */
-  margin-left: var(--sidebar-width); /* Account for sidebar */
+  margin-top: 60px;  
+  margin-left: var(--sidebar-width);  
   transition: margin-left var(--transition-speed) ease;
   position: relative;
-  z-index: 10; /* Ensure main content is above sidebar */
+  z-index: 10;  
   width: calc(100% - var(--sidebar-width));
 }
 
-/* When sidebar is collapsed */
+ 
 .BookLib-main-expanded {
   margin-left: var(--sidebar-collapsed-width);
   width: calc(100% - var(--sidebar-collapsed-width));
@@ -379,7 +379,7 @@
   transform: translateY(-2px);
 }
 
-/* Technology-themed decorative elements */
+ 
 .BookLib-content::before {
   content: "";
   position: fixed;
@@ -412,7 +412,7 @@
   background: radial-gradient(circle, rgba(218, 112, 214, 0.05) 0%, rgba(138, 43, 226, 0.02) 50%, transparent 70%);
 }
 
-/* Responsive styles */
+ 
 @media (max-width: 768px) {
   .BookLib-main {
     margin-left: 0;
@@ -456,7 +456,7 @@
   }
 }
 
-/* Enhanced Welcome Section Styles */
+ 
 .bookslib-welcome-section {
   display: flex;
   justify-content: space-between;
@@ -541,7 +541,7 @@
   line-height: 1.6;
 }
 
-/* Code snippet */
+ 
 .bookslib-code-snippet {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
@@ -638,7 +638,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* IT-themed background elements */
+ 
 .bookslib-tech-bg {
   position: absolute;
   top: 0;
@@ -716,7 +716,7 @@
   }
 }
 
-/* Mobile styles for welcome section */
+ 
 @media (max-width: 768px) {
   .bookslib-welcome-section {
     flex-direction: column;

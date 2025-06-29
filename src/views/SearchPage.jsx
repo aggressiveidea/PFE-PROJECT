@@ -369,7 +369,7 @@ const SearchPage = () => {
         )}
       </div>
 
-      {/* Term Details Modal - Updated to show ALL categories and definitions */}
+      
       {selectedTerm && (
         <div className="_terms_term_details_overlay">
           <div className="_terms_term_details_modal">
@@ -385,7 +385,7 @@ const SearchPage = () => {
               </button>
             </div>
             <div className="_terms_term_details_content">
-              {/* Display ALL definitions from allDefinitions array */}
+              
               {selectedTerm.allDefinitions &&
               selectedTerm.allDefinitions.length > 0 ? (
                 selectedTerm.allDefinitions.map((definition, defIndex) => (
@@ -401,7 +401,7 @@ const SearchPage = () => {
                       <h3>{definition.categories?.[0] || "General"}</h3>
                     </div>
                     <div className="_terms_term_category_content">
-                      {/* Primary definition */}
+                      
                       <div className="_terms_term_definition_section">
                         <h4>Definition</h4>
                         <div className="_terms_term_definition_block">
@@ -435,7 +435,7 @@ const SearchPage = () => {
                       <h3>{category.type}</h3>
                     </div>
                     <div className="_terms_term_category_content">
-                      {/* Principal definition */}
+                      
                       {category.principale &&
                         category.principale.length > 0 && (
                           <div className="_terms_term_definition_section">
@@ -477,7 +477,7 @@ const SearchPage = () => {
                           </div>
                         )}
 
-                      {/* Secondary definition */}
+                      
                       {category.secondaire &&
                         category.secondaire.length > 0 && (
                           <div className="_terms_term_definition_section _terms_term_secondary">
@@ -552,7 +552,7 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {/* Related terms */}
+              
               {relatedTerms.length > 0 && (
                 <div className="_terms_term_relations_section">
                   <h4>Related Terms</h4>

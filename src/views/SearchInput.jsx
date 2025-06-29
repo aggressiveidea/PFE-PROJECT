@@ -46,7 +46,7 @@ const categories = [
   },
 ];
 
-// Search Input Component
+ 
 function SearchInput({ value, onChange }) {
   return (
     <div className="search-container">
@@ -62,7 +62,7 @@ function SearchInput({ value, onChange }) {
   );
 }
 
-// Button Component
+ 
 function Button({ children, onClick }) {
   return (
     <button className="explore-button" onClick={onClick}>
@@ -71,7 +71,7 @@ function Button({ children, onClick }) {
   );
 }
 
-// Timeline Node Component
+ 
 function TimelineNode({
   category,
   index,
@@ -90,18 +90,18 @@ function TimelineNode({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {/* Timeline marker */}
+      
       <div className="node-marker">
         {isActive && <div className="node-pulse"></div>}
       </div>
 
-      {/* Content card */}
+      
       <div className={`node-card ${isTop ? "card-top" : "card-bottom"}`}>
         <h3 className="card-title">{category.name}</h3>
         <p className="card-date">{category.date}</p>
         {isActive && <p className="card-description">{category.description}</p>}
 
-        {/* Connector line */}
+        
         <div
           className={`connector-line ${isTop ? "line-top" : "line-bottom"}`}
         ></div>
@@ -110,16 +110,16 @@ function TimelineNode({
   );
 }
 
-// Main Timeline Component
+ 
 function Timeline({ categories }) {
   const [activeCategory, setActiveCategory] = useState(null);
 
   return (
     <div className="timeline-container">
-      {/* Main timeline line */}
+      
       <div className="timeline-line"></div>
 
-      {/* Timeline nodes */}
+      
       {categories.map((category, index) => (
         <TimelineNode
           key={category.id}
@@ -135,7 +135,7 @@ function Timeline({ categories }) {
   );
 }
 
-// Main Component
+ 
 function CategoriesExplorer() {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -157,7 +157,7 @@ function CategoriesExplorer() {
           <SearchInput value={searchQuery} onChange={handleSearchChange} />
         </div>
 
-        {/* Timeline Component */}
+        
         <Timeline categories={categories} />
 
         <div className="action-area">

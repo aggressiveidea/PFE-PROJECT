@@ -275,7 +275,7 @@ function Signin() {
               or Sign in with
               <span></span>
             </p>
-            {/* Social media buttons will go here */}
+            
 
             <p className="signin-signup-text">
               Don't have an account?

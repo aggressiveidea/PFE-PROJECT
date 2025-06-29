@@ -146,16 +146,6 @@ const KnowledgeGraphPage = () => {
       ];
 
       setSearchHistory(mockHistory);
-
-       
-      /*
-      const response = await fetch('/api/search-history');
-      if (!response.ok) {
-        throw new Error('Failed to fetch search history');
-      }
-      const data = await response.json();
-      setSearchHistory(data);
-      */
     } catch (error) {
       console.error("Error fetching search history:", error);
     }

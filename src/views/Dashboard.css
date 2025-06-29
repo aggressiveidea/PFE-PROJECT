@@ -1,4 +1,4 @@
-/* Import dark mode variables */
+ 
 @import "../styles/darkMode.css";
 
 .dashboardAdmin-container {
@@ -70,7 +70,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Animation classes */
+ 
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -111,7 +111,7 @@
   }
 }
 
-/* Enhanced Welcome Section */
+ 
 .dashboardAdmin-enhanced-welcome {
   background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
   border-radius: 16px;
@@ -312,7 +312,7 @@
   z-index: 1;
 }
 
-/* Animations */
+ 
 @keyframes dashboardAdmin-fadeInUp {
   from {
     opacity: 0;
@@ -346,12 +346,12 @@
   }
 }
 
-/* Dark mode adjustments */
+ 
 .dashboardAdmin-container.dark .dashboardAdmin-enhanced-welcome {
   background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
 }
 
-/* Responsive design */
+ 
 @media (max-width: 768px) {
   .dashboardAdmin-enhanced-welcome {
     margin: 0 16px 24px 16px;

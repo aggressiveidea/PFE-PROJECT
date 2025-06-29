@@ -90,7 +90,7 @@
 
 .quiz-main {
   flex: 1;
-  margin-top: 60px; /* Match header height */
+  margin-top: 60px;  
   margin-left: var(--sidebar-width);
   transition: var(--sidebar-transition);
   padding: 0;
@@ -108,7 +108,7 @@
   padding: 0;
 }
 
-/* Enhanced Welcome Section */
+ 
 .quiz-welcome-section {
   display: flex;
   justify-content: space-between;
@@ -193,7 +193,7 @@
   line-height: 1.6;
 }
 
-/* Code snippet */
+ 
 .quiz-code-snippet {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
@@ -290,7 +290,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* IT-themed background elements */
+ 
 .quiz-tech-bg {
   position: absolute;
   top: 0;
@@ -375,7 +375,7 @@
   padding: 0 32px 32px;
 }
 
-/* Loading spinner */
+ 
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -408,7 +408,7 @@
   }
 }
 
-/* Responsive styles */
+ 
 @media (max-width: 768px) {
   .quiz-main {
     margin-left: 0;

@@ -81,7 +81,7 @@
     }
 }
 
-/* Main content */
+   
 .main-content-article {
     position: relative;
     z-index: 1;
@@ -90,7 +90,7 @@
     margin: 0 auto;
 }
 
-/* Section styling */
+   
 .trending-section,
 .authors-section,
 .articles-section {
@@ -99,7 +99,7 @@
     scroll-margin-top: 80px;
 }
 
-/* Show more button */
+   
 .show-more {
     background: linear-gradient(90deg, #9333ea, #d946ef);
     color: white;
@@ -146,7 +146,7 @@
     box-shadow: none;
 }
 
-/* Section navigation buttons */
+   
 .section-nav {
     position: fixed;
     right: 20px;
@@ -183,7 +183,7 @@
     border-color: white;
 }
 
-/* Loading spinner */
+   
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -212,7 +212,7 @@
     }
 }
 
-/* Article grid */
+   
 .article-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));

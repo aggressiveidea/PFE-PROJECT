@@ -6,7 +6,7 @@ import QuestionPage from "../components/forQuiz/QuestionPage"
 import ResultsPage from "../components/forQuiz/ResultsPage"
 import Header from "../components/forHome/Header"
 import Sidebar from "../components/forDashboard/Sidebar"
-//import Footer from "../components/forHome/Footer"
+ 
 import { updateCategoryPerformance } from "../services/QuizStorage"
 import { Calendar, Clock, Code, Terminal, Brain } from "lucide-react"
 import "./QuizPage.css"
@@ -81,7 +81,7 @@ const QuizPage = () => {
 
       <main className={`quiz-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         <div className="quiz-content-wrapper">
-          {/* Enhanced Welcome Section */}
+          
           <div className="quiz-welcome-section">
             <div className="quiz-welcome-content">
               <div className="quiz-welcome-badge">
@@ -95,7 +95,7 @@ const QuizPage = () => {
                 Test your ICT knowledge with our comprehensive quiz system and track your learning progress.
               </p>
 
-              {/* Code snippet */}
+              
               <div className="quiz-code-snippet">
                 <div className="quiz-code-header">
                   <div className="quiz-code-dots">
@@ -142,7 +142,7 @@ const QuizPage = () => {
               </div>
             </div>
 
-            {/* IT-themed background elements */}
+            
             <div className="quiz-tech-bg">
               <div className="quiz-circuit-pattern"></div>
               <div className="quiz-floating-icons">

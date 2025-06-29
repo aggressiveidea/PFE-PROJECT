@@ -54,7 +54,7 @@ body.dark-mode {
   min-height: 100vh;
 }
 
-/* Form Section */
+ 
 .signup-form-section {
   flex: 1;
   padding: 3rem;
@@ -89,7 +89,7 @@ body.dark-mode {
   line-height: 1.5;
 }
 
-/* Form Styling */
+ 
 .signup-form {
   display: flex;
   flex-direction: column;
@@ -110,7 +110,7 @@ body.dark-mode {
   width: 100%;
 }
 
-/* Input styling - matching signin exactly */
+ 
 .signup-input {
   width: 100%;
   padding: 0.875rem 1rem;
@@ -134,7 +134,7 @@ body.dark-mode {
   opacity: 0.7;
 }
 
-/* Country dropdown - matching signin input styling */
+ 
 .signup-country-dropdown {
   width: 100%;
   padding: 0.875rem 1rem;
@@ -164,7 +164,7 @@ body.dark-mode {
   padding: 8px;
 }
 
-/* Button container for centering */
+ 
 .signup-button-container {
   display: flex;
   justify-content: center;
@@ -172,7 +172,7 @@ body.dark-mode {
   width: 100%;
 }
 
-/* Button styling - exactly matching signin */
+ 
 .signup-button {
   width: 100%;
   padding: 1rem;
@@ -225,7 +225,7 @@ body.dark-mode {
   left: 100%;
 }
 
-/* Sign in link - matching signin styling */
+ 
 .signup-signin-link {
   text-align: center;
   margin-top: 2rem;
@@ -260,7 +260,7 @@ body.dark-mode {
   transform-origin: bottom left;
 }
 
-/* Visual Section */
+ 
 .signup-visual-section {
   flex: 1;
   position: relative;
@@ -319,7 +319,7 @@ body.dark-mode {
   }
 }
 
-/* Stars Animation */
+ 
 .signup-stars .signup-star {
   position: absolute;
   background: var(--signup-white);
@@ -339,7 +339,7 @@ body.dark-mode {
   }
 }
 
-/* Alert Box - matching signin */
+ 
 .alert-box {
   background: rgba(255, 255, 255, 0.95);
   border-left: 4px solid var(--signup-primary);
@@ -376,7 +376,7 @@ body.dark-mode {
   }
 }
 
-/* Responsive Design */
+ 
 @media (max-width: 1024px) {
   .signup-heading {
     font-size: 2.75rem;

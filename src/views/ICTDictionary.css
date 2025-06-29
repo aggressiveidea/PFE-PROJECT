@@ -1,4 +1,4 @@
-/* Knowledge Graph Page Styling */
+ 
 :root {
   --primary-color: #8b5cf6;
   --primary-light: #a78bfa;
@@ -22,7 +22,7 @@
   --dark-text-secondary: #9ca3af;
 }
 
-/* Base Styles */
+ 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
@@ -36,7 +36,7 @@ body {
   color: var(--dark-text);
 }
 
-/* Main Layout */
+ 
 .knowledge-graph-page {
   display: flex;
   flex-direction: column;
@@ -55,7 +55,7 @@ body {
   overflow-y: auto;
 }
 
-/* Knowledge Graph Container */
+ 
 .knowledge-graph-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -74,7 +74,7 @@ body {
   padding: 30px;
 }
 
-/* Header Styling */
+ 
 .knowledge-graph-header {
   text-align: center;
   margin-bottom: 30px;
@@ -101,7 +101,7 @@ body {
   color: var(--dark-text-secondary);
 }
 
-/* Search Tabs */
+ 
 .search-tabs {
   display: flex;
   justify-content: center;
@@ -130,7 +130,7 @@ body {
   color: white;
 }
 
-/* Purple Divider */
+ 
 .purple-divider {
   height: 2px;
   background: linear-gradient(90deg,
@@ -140,7 +140,7 @@ body {
   margin: 30px 0;
 }
 
-/* Controls */
+ 
 .knowledge-graph-controls {
   display: flex;
   justify-content: space-between;
@@ -218,7 +218,7 @@ body {
   background-color: var(--dark-bg);
 }
 
-/* Graph Visualization Wrapper */
+ 
 .graph-visualization-wrapper {
   border-radius: 12px;
   overflow: hidden;
@@ -229,12 +229,12 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Section Spacer */
+ 
 .section-spacer {
   height: 40px;
 }
 
-/* Graph Algorithms Wrapper */
+ 
 .graph-algorithms-wrapper {
   border-radius: 12px;
   overflow: hidden;
@@ -245,7 +245,7 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Loading State */
+ 
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -277,7 +277,7 @@ body {
   }
 }
 
-/* RTL Support */
+ 
 [dir="rtl"] .knowledge-graph-controls {
   flex-direction: row-reverse;
 }
@@ -286,7 +286,7 @@ body {
   flex-direction: row-reverse;
 }
 
-/* Responsive Styles */
+ 
 @media (max-width: 768px) {
   .main-content {
     flex-direction: column;
@@ -351,7 +351,7 @@ body {
   }
 }
 
-/* History Panel Styles */
+ 
 .history-button {
   display: flex;
   align-items: center;

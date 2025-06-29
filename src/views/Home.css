@@ -10,7 +10,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 60px; /* Account for fixed header */
+  scroll-padding-top: 60px;  
 }
 
 body {
@@ -40,7 +40,7 @@ main {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Animation keyframes */
+ 
 @keyframes home-fadeIn {
   from {
     opacity: 0;
@@ -150,7 +150,7 @@ main {
   }
 }
 
-/* Section transitions */
+ 
 .home-section-entering {
   animation: home-section-enter 0.8s ease-out forwards;
 }
@@ -166,13 +166,13 @@ main {
   }
 }
 
-/* Focus styles for keyboard navigation */
+ 
 :focus-visible {
   outline: 2px solid #9333ea;
   outline-offset: 2px;
 }
 
-/* Skip to content link for accessibility */
+ 
 .home-skip-link {
   position: absolute;
   top: -40px;
@@ -188,7 +188,7 @@ main {
   top: 0;
 }
 
-/* Responsive adjustments */
+ 
 @media (max-width: 768px) {
   .home-section-indicator {
     right: 15px;

@@ -251,7 +251,7 @@ const BooksLib = () => {
     }
   }
 
-  // Function to handle opening the add form (with permission check)
+   
   const handleOpenAddForm = () => {
     if (canAddBooks()) {
       setShowAddForm(true)
@@ -262,7 +262,7 @@ const BooksLib = () => {
 
   return (
     <div className={`BookLib-page ${darkMode ? "BookLib-dark-mode" : ""}`}>
-      {/* Custom header that will properly toggle with dark mode */}
+      
       <div className={`BookLib-custom-header ${darkMode ? "BookLib-dark-header" : ""}`}>
         <div className="BookLib-logo">
           <h1>ICT Digital Library</h1>
@@ -278,7 +278,7 @@ const BooksLib = () => {
         </div>
       </div>
 
-      {/* Integrate Sidebar component */}
+      
       <Sidebar
         collapsed={collapsed}
         toggleSidebar={toggleSidebar}
@@ -290,7 +290,7 @@ const BooksLib = () => {
 
       <div className={`BookLib-main ${collapsed ? "BookLib-main-expanded" : ""}`}>
         <div className="BookLib-content">
-          {/* Enhanced Welcome Section */}
+          
           <div className="bookslib-welcome-section">
             <div className="bookslib-welcome-content">
               <div className="bookslib-welcome-badge">
@@ -317,7 +317,7 @@ const BooksLib = () => {
                 Explore our comprehensive collection of ICT books, research papers, and technical documentation.
               </p>
 
-              {/* Code snippet */}
+              
               <div className="bookslib-code-snippet">
                 <div className="bookslib-code-header">
                   <div className="bookslib-code-dots">
@@ -392,7 +392,7 @@ const BooksLib = () => {
               </div>
             </div>
 
-            {/* IT-themed background elements */}
+            
             <div className="bookslib-tech-bg">
               <div className="bookslib-circuit-pattern"></div>
               <div className="bookslib-floating-icons">
@@ -448,7 +448,7 @@ const BooksLib = () => {
           <div className="BookLib-actions">
             <BookLibSearch onSearch={handleSearch} categories={categories} />
 
-            {/* Role-based Add Book Button - Only show if user has permission */}
+            
             {!permissionLoading && canAddBooks() && (
               <button className="BookLib-add-button" onClick={handleOpenAddForm} title={`Add New Book (${user?.role})`}>
                 <span className="BookLib-add-icon">+</span>
@@ -456,7 +456,7 @@ const BooksLib = () => {
               </button>
             )}
 
-            {/* Debug info - remove in production */}
+            
             {process.env.NODE_ENV === "development" && (
               <div
                 style={{

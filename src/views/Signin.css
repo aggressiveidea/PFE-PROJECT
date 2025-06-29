@@ -54,7 +54,7 @@ body.dark-mode {
   min-height: 100vh;
 }
 
-/* Visual Section */
+ 
 .signin-visual-section {
   flex: 1;
   position: relative;
@@ -113,7 +113,7 @@ body.dark-mode {
   }
 }
 
-/* Stars Animation */
+ 
 .signin-stars .signin-star {
   position: absolute;
   background: var(--signin-white);
@@ -133,7 +133,7 @@ body.dark-mode {
   }
 }
 
-/* Form Section */
+ 
 .signin-form-section {
   flex: 1;
   padding: 3rem;
@@ -168,7 +168,7 @@ body.dark-mode {
   line-height: 1.5;
 }
 
-/* Form Styling */
+ 
 .signin-form {
   display: flex;
   flex-direction: column;
@@ -185,7 +185,7 @@ body.dark-mode {
   gap: 1.25rem;
 }
 
-/* Input styling */
+ 
 .signin-input {
   width: 100%;
   padding: 0.875rem 1rem;
@@ -241,7 +241,7 @@ body.dark-mode {
   transform-origin: bottom left;
 }
 
-/* Button container for centering */
+ 
 .signin-button-container {
   display: flex;
   justify-content: center;
@@ -249,7 +249,7 @@ body.dark-mode {
   width: 100%;
 }
 
-/* Button styling */
+ 
 .signin-button {
   width: 100%;
   padding: 1rem;
@@ -302,7 +302,7 @@ body.dark-mode {
   left: 100%;
 }
 
-/* Auth Footer */
+ 
 .signin-auth-footer {
   margin-top: 2rem;
   text-align: center;
@@ -323,7 +323,7 @@ body.dark-mode {
   margin: 0 0.75rem;
 }
 
-/* Social Buttons */
+ 
 .signin-social-buttons {
   display: flex;
   justify-content: center;
@@ -385,7 +385,7 @@ body.dark-mode {
   transform-origin: bottom left;
 }
 
-/* Alert Box */
+ 
 .alert-box {
   background: rgba(255, 255, 255, 0.95);
   border-left: 4px solid var(--signin-primary);
@@ -422,7 +422,7 @@ body.dark-mode {
   }
 }
 
-/* Responsive Design */
+ 
 @media (max-width: 1024px) {
   .signin-heading {
     font-size: 2.75rem;

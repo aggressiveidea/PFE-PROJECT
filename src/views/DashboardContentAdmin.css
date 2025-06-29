@@ -39,7 +39,7 @@
   --dashboard-gradient-bg: radial-gradient(ellipse at top, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
 }
 
-/* Base container */
+ 
 .dashboard-container {
   min-height: 100vh;
   background: var(--dashboard-gradient-bg);
@@ -74,7 +74,7 @@
   pointer-events: none;
 }
 
-/* Main Content */
+ 
 .dashboard-main {
   margin-left: 250px;
   padding: 80px 32px 32px;
@@ -93,7 +93,7 @@
   margin: 0 auto;
 }
 
-/* Subtle IT-Themed Welcome Section */
+ 
 .dashboard-welcome-section {
   display: flex;
   justify-content: space-between;
@@ -178,7 +178,7 @@
   line-height: 1.6;
 }
 
-/* Simplified IT-themed code snippet */
+ 
 .dashboard-code-snippet {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
@@ -275,7 +275,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* IT-themed background elements - more subtle */
+ 
 .dashboard-tech-bg {
   position: absolute;
   top: 0;
@@ -371,7 +371,7 @@
   }
 }
 
-/* Simplified Dashboard Stats Section */
+ 
 .dashboard-stats-section {
   margin-bottom: 40px;
 }
@@ -490,7 +490,7 @@
   text-align: center;
 }
 
-/* Enhanced Controls Section */
+ 
 .dashboard-controls-section {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: var(--dashboard-radius-xl);
@@ -534,7 +534,7 @@
   border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
-/* Enhanced Tabs - Only Articles and Messages */
+ 
 .dashboard-tabs {
   display: flex;
   gap: 8px;
@@ -585,7 +585,7 @@
   justify-content: center;
 }
 
-/* Controls */
+ 
 .dashboard-controls {
   display: flex;
   gap: 20px;
@@ -594,7 +594,7 @@
   flex-wrap: wrap;
 }
 
-/* Enhanced Search */
+ 
 .dashboard-search {
   position: relative;
   flex: 1;
@@ -636,7 +636,7 @@
   color: var(--dashboard-text-tertiary);
 }
 
-/* Enhanced Filters */
+ 
 .dashboard-filters {
   display: flex;
   gap: 16px;
@@ -680,14 +680,14 @@
   outline: none;
 }
 
-/* Grid Layout */
+ 
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 400px;
   gap: 32px;
 }
 
-/* Items Section */
+ 
 .dashboard-items-section {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: var(--dashboard-radius-xl);
@@ -723,7 +723,7 @@
   background: rgba(139, 92, 246, 0.5);
 }
 
-/* Item Card */
+ 
 .dashboard-item-card {
   cursor: pointer;
   border-radius: var(--dashboard-radius-lg);
@@ -767,7 +767,7 @@
   background: var(--dashboard-gradient-primary-subtle);
 }
 
-/* Empty States */
+ 
 .dashboard-empty {
   display: flex;
   flex-direction: column;
@@ -804,7 +804,7 @@
   max-width: 300px;
 }
 
-/* Loading State */
+ 
 .dashboard-loading {
   display: flex;
   flex-direction: column;
@@ -838,7 +838,7 @@
   margin: 0;
 }
 
-/* Preview Section */
+ 
 .dashboard-preview-section {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: var(--dashboard-radius-xl);
@@ -915,7 +915,7 @@
   line-height: 1.5;
 }
 
-/* Action Buttons */
+ 
 .dashboard-notification-actions {
   display: flex;
   gap: 12px;
@@ -978,7 +978,7 @@
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
 }
 
-/* Status */
+ 
 .dashboard-status {
   display: flex;
   align-items: center;
@@ -1004,7 +1004,7 @@
   border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* Notification */
+ 
 .dashboard-notification {
   display: flex;
   align-items: center;
@@ -1042,7 +1042,7 @@
   }
 }
 
-/* Responsive Design */
+ 
 @media (max-width: 1400px) {
   .dashboard-grid {
     grid-template-columns: 1fr 350px;

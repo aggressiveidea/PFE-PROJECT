@@ -1,4 +1,4 @@
-/* Base styles and variables */
+ 
 :root {
   --usermanagement-primary: #8a3ffc;
   --usermanagement-primary-light: #f3efff;
@@ -16,7 +16,7 @@
   --usermanagement-border: #e0e0e0;
   --usermanagement-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-  /* Dark mode variables */
+   
   --usermanagement-background-dark: #161616;
   --usermanagement-card-background-dark: #262626;
   --usermanagement-text-dark: #ffffff;
@@ -27,7 +27,7 @@
   --usermanagement-primary-light-dark-theme: #8a3ffc;
 }
 
-/* App container styles */
+ 
 .app-container {
   display: flex;
   flex-direction: column;
@@ -46,7 +46,7 @@
   margin-left: 80px;
 }
 
-/* Container styles */
+ 
 .usermanagement-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -88,7 +88,7 @@ body.dark .usermanagement-header p {
   color: var(--usermanagement-text-secondary-dark);
 }
 
-/* Controls container */
+ 
 .usermanagement-controls {
   display: flex;
   justify-content: space-between;
@@ -236,7 +236,7 @@ body.dark .usermanagement-refresh-btn:hover {
   background-color: rgba(190, 149, 255, 0.15);
 }
 
-/* Filters panel */
+ 
 .usermanagement-filters {
   background-color: var(--usermanagement-card-background);
   border-radius: 0.75rem;
@@ -400,7 +400,7 @@ body.dark .usermanagement-filter-option.selected {
   border-color: var(--usermanagement-primary-dark-theme);
 }
 
-/* Table container */
+ 
 .usermanagement-table-container {
   background-color: var(--usermanagement-card-background);
   border-radius: 0.75rem;
@@ -474,7 +474,7 @@ body.dark .usermanagement-table tr.selected {
   background-color: rgba(190, 149, 255, 0.1);
 }
 
-/* Checkbox styling */
+ 
 .usermanagement-checkbox-col {
   width: 40px;
 }
@@ -546,7 +546,7 @@ body.dark .usermanagement-checkbox input:checked ~ .usermanagement-checkmark {
   border-color: var(--usermanagement-primary-dark-theme);
 }
 
-/* Column styling */
+ 
 .usermanagement-id-col {
   width: 220px;
   max-width: 220px;
@@ -592,7 +592,7 @@ body.dark .usermanagement-user-id {
   align-items: center;
 }
 
-/* User avatar styling */
+ 
 .usermanagement-avatar {
   width: 36px;
   height: 36px;
@@ -749,7 +749,7 @@ body.dark .usermanagement-status-pending {
   color: #f1df6f;
 }
 
-/* Action buttons */
+ 
 .usermanagement-actions {
   display: flex;
   gap: 0.75rem;
@@ -833,7 +833,7 @@ body.dark .usermanagement-no-results p {
   color: var(--usermanagement-text-secondary-dark);
 }
 
-/* Loading state */
+ 
 .usermanagement-loading {
   display: flex;
   flex-direction: column;
@@ -871,7 +871,7 @@ body.dark .usermanagement-loading p {
   color: var(--usermanagement-text-secondary-dark);
 }
 
-/* Success message */
+ 
 .usermanagement-success {
   display: flex;
   align-items: center;
@@ -898,7 +898,7 @@ body.dark .usermanagement-success {
   color: #95e079;
 }
 
-/* Modal styles */
+ 
 .usermanagement-modal-overlay {
   position: fixed;
   top: 0;
@@ -1147,7 +1147,7 @@ body.dark .usermanagement-cancel-btn {
   cursor: not-allowed;
 }
 
-/* Responsive adjustments */
+ 
 @media (max-width: 1024px) {
   .usermanagement-id-col {
     width: 150px;

@@ -316,7 +316,7 @@ const Library = () => {
               currentLanguage === "ar" ? "library-rtl" : "library-ltr"
             }`}
           >
-            {/* Enhanced Welcome Section with Real Stats */}
+            
             <div className="library-welcome-section">
               <div className="library-welcome-content">
                 <div className="library-welcome-badge">
@@ -345,7 +345,7 @@ const Library = () => {
                   books. Total items: {stats.total}
                 </p>
 
-                {/* Code snippet with real data */}
+                
                 <div className="library-code-snippet">
                   <div className="library-code-header">
                     <div className="library-code-dots">
@@ -369,7 +369,7 @@ const Library = () => {
                   </div>
                 </div>
 
-                {/* Real statistics */}
+                
                 <div className="library-stats-grid">
                   <div className="library-stat-item">
                     <span className="library-stat-number">
@@ -447,7 +447,7 @@ const Library = () => {
                 </div>
               </div>
 
-              {/* IT-themed background elements */}
+              
               <div className="library-tech-bg">
                 <div className="library-circuit-pattern"></div>
                 <div className="library-floating-icons">
@@ -497,7 +497,7 @@ const Library = () => {
               </div>
             </div>
 
-            {/* Updated tabs with real data counts */}
+            
             <div className="library-tabs">
               <button
                 className={`library-tab-button ${

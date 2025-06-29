@@ -23,7 +23,7 @@ export default function Home() {
       const progress = (window.scrollY / totalHeight) * 100
       setScrollProgress(progress)
 
-      // Get all sections
+       
       const sections = [
         document.getElementById("home"),
         document.getElementById("features"),
@@ -32,7 +32,7 @@ export default function Home() {
         document.getElementById("become-expert"),
       ]
 
-      // Find the current active section
+       
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i]
         if (section && section.offsetTop <= scrollPosition) {
@@ -43,41 +43,41 @@ export default function Home() {
     }
 
     window.addEventListener("scroll", handleScroll)
-    handleScroll() // Call once on mount to set initial state
+    handleScroll()  
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Function to handle keyboard navigation
+   
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Define all navigable sections in order
+       
       const sections = ["home", "features", "knowledge-graph", "popular-terms", "become-expert"]
 
       const currentIndex = sections.indexOf(activeSection)
 
       if (e.key === "ArrowDown" && currentIndex < sections.length - 1) {
-        // Navigate to next section
+         
         const nextSection = document.getElementById(sections[currentIndex + 1])
         if (nextSection) {
           nextSection.scrollIntoView({ behavior: "smooth" })
           e.preventDefault()
         }
       } else if (e.key === "ArrowUp" && currentIndex > 0) {
-        // Navigate to previous section
+         
         const prevSection = document.getElementById(sections[currentIndex - 1])
         if (prevSection) {
           prevSection.scrollIntoView({ behavior: "smooth" })
           e.preventDefault()
         }
       } else if (e.key === "Home") {
-        // Navigate to first section
+         
         const firstSection = document.getElementById(sections[0])
         if (firstSection) {
           firstSection.scrollIntoView({ behavior: "smooth" })
           e.preventDefault()
         }
       } else if (e.key === "End") {
-        // Navigate to last section
+         
         const lastSection = document.getElementById(sections[sections.length - 1])
         if (lastSection) {
           lastSection.scrollIntoView({ behavior: "smooth" })
@@ -92,7 +92,7 @@ export default function Home() {
 
   return (
     <div className={`home-page-app-container ${darkMode ? "home-page-dark" : "home-page-light"}`}>
-      {/* Progress indicator */}
+       
       <div className="home-progress-indicator" style={{ width: `${scrollProgress}%` }}></div>
 
       <Header language={language} setLanguage={setLanguage} activeSection={activeSection} />

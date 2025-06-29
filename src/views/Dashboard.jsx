@@ -119,8 +119,8 @@ export default function Dashboard() {
 
       <main className={`dashboard-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         <div className="dashboard-header">
-          {/* <SearchBar /> */}
-          {/* <ProfileSection /> */}
+          
+          
         </div>
 
         <div className="dashboardAdmin-enhanced-welcome">

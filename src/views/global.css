@@ -48,10 +48,10 @@
     display: flex;
     flex-direction: column;
   }
-  /* Global styles to ensure dark background */
+   
 body,
 html {
-  background-color: #1a1528; /* Dark purple background */
+  background-color: #1a1528;  
   margin: 0;
   padding: 0;
   color: #ffffff;
@@ -63,20 +63,20 @@ html {
 
 #root,
 #__next {
-  background-color: #1a1528; /* Dark purple background */
+  background-color: #1a1528;  
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Ensure all containers inherit the dark background */
+ 
 main,
 section,
 article {
   background-color: inherit;
 }
 
-/* App wrapper for proper footer positioning */
+ 
 .app-wrapper {
   display: flex;
   flex-direction: column;
@@ -180,7 +180,7 @@ article {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
   
-  /* Responsive styles */
+   
   @media (max-width: 768px) {
     .section {
       padding: 60px 0;
@@ -213,7 +213,7 @@ article {
     }
   }
   
-  /* Animation classes */
+   
   .fade-in {
     animation: fadeIn 1s ease-in-out;
   }
@@ -245,7 +245,7 @@ article {
     }
   }
   
-  /* RTL support for Arabic */
+   
   .rtl {
     direction: rtl;
     text-align: right;

@@ -559,7 +559,7 @@ export default function ContentAdminDashboard() {
 
       <main className={`dashboard-main ${sidebarCollapsed ? "dashboard-sidebar-collapsed" : ""}`}>
         <div className="dashboard-wrapper">
-          {/* Enhanced IT-Themed Welcome Section */}
+          
           <div className="dashboard-welcome-section">
             <div className="dashboard-welcome-content">
               <div className="dashboard-welcome-badge">
@@ -574,7 +574,7 @@ export default function ContentAdminDashboard() {
                 structured.
               </p>
 
-              {/* Simplified IT-themed code snippet */}
+              
               <div className="dashboard-code-snippet">
                 <div className="dashboard-code-header">
                   <div className="dashboard-code-dots">
@@ -621,7 +621,7 @@ export default function ContentAdminDashboard() {
               </div>
             </div>
 
-            {/* IT-themed background elements */}
+            
             <div className="dashboard-tech-bg">
               <div className="dashboard-circuit-pattern"></div>
               <div className="dashboard-floating-icons">
@@ -635,7 +635,7 @@ export default function ContentAdminDashboard() {
             </div>
           </div>
 
-          {/* Simplified Dashboard Stats - Only Articles and Messages */}
+          
           <div className="dashboard-stats-section">
             <div className="dashboard-stats-grid-simple">
               <div className="dashboard-stat-card-simple dashboard-stat-articles">
@@ -670,7 +670,7 @@ export default function ContentAdminDashboard() {
             </div>
           </div>
 
-          {/* Notification alert */}
+          
           {notification.show && (
             <div className={`dashboard-notification dashboard-notification-${notification.type}`}>
               {notification.type === "success" ? (
@@ -682,7 +682,7 @@ export default function ContentAdminDashboard() {
             </div>
           )}
 
-          {/* Enhanced Controls Section */}
+          
           <div className="dashboard-controls-section">
             <div className="dashboard-controls-header">
               <h2 className="dashboard-controls-title">
@@ -691,7 +691,7 @@ export default function ContentAdminDashboard() {
                 <span className="dashboard-item-count">{filteredItems.length}</span>
               </h2>
 
-              {/* Tabs - Only Articles and Messages */}
+              
               <div className="dashboard-tabs">
                 <button
                   className={`dashboard-tab ${activeTab === "articles" ? "active" : ""}`}
