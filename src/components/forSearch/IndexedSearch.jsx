@@ -1,3 +1,4 @@
+"use client";
 
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
@@ -14,10 +15,44 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-   
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  // Define alphabets based on language
+  const alphabets = {
+    english: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+    arabic: [
+      "ا",
+      "ب",
+      "ت",
+      "ث",
+      "ج",
+      "ح",
+      "خ",
+      "د",
+      "ذ",
+      "ر",
+      "ز",
+      "س",
+      "ش",
+      "ص",
+      "ض",
+      "ط",
+      "ظ",
+      "ع",
+      "غ",
+      "ف",
+      "ق",
+      "ك",
+      "ل",
+      "م",
+      "ن",
+      "ه",
+      "و",
+      "ي",
+    ],
+    french: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+  };
 
-   
+  const alphabet = alphabets[language] || alphabets.english;
+
   const getCategoryColor = (category) => {
     const colorMap = {
       "Computer Crime": "#e879f9",
@@ -32,7 +67,6 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     return colorMap[category] || "#8b5cf6";
   };
 
-   
   const categoryTranslations = {
     english: {
       "Computer Crime": "Computer Crime Law",
@@ -66,24 +100,43 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     },
   };
 
-   
   const getCategoryName = (category) => {
-    return categoryTranslations[language]?.[category] || category;
+    const normalizedCategory = category?.trim();
+    return (
+      categoryTranslations[language]?.[normalizedCategory] || normalizedCategory
+    );
   };
 
-   
+  const shouldHideCategory = (category) => {
+    return (
+      !category || category.trim() === "Miscellaneous" || category.trim() === ""
+    );
+  };
+
+  // Function to get the first letter based on language
+  const getFirstLetter = (text) => {
+    if (!text) return "";
+
+    const firstChar = text.charAt(0);
+
+    if (language === "arabic") {
+      // For Arabic, return the first Arabic character if it exists in our alphabet
+      return alphabet.includes(firstChar) ? firstChar : alphabet[0];
+    } else {
+      // For English and other languages, convert to uppercase
+      return firstChar.toUpperCase();
+    }
+  };
+
   useEffect(() => {
     if (terms && terms.length > 0) {
       const organizedTerms = {};
-
-       
       alphabet.forEach((letter) => {
         organizedTerms[letter] = [];
       });
 
-       
       terms.forEach((term) => {
-        const firstLetter = term.name.charAt(0).toUpperCase();
+        const firstLetter = getFirstLetter(term.name);
         if (alphabet.includes(firstLetter)) {
           organizedTerms[firstLetter].push(term);
         }
@@ -91,7 +144,6 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
 
       setIndexedTerms(organizedTerms);
 
-       
       const firstLetterWithTerms = alphabet.find(
         (letter) => organizedTerms[letter].length > 0
       );
@@ -99,7 +151,6 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
         setActiveIndex(firstLetterWithTerms);
       }
 
-       
       const allTerms = terms;
       const randomTerms = [...allTerms]
         .sort(() => 0.5 - Math.random())
@@ -108,39 +159,49 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     }
   }, [terms, language]);
 
-   
   const getFilteredTerms = () => {
     if (!activeIndex || !indexedTerms[activeIndex]) return [];
 
-    if (!searchInput) return indexedTerms[activeIndex];
+    if (!searchInput.trim()) return indexedTerms[activeIndex];
 
-    return indexedTerms[activeIndex].filter(
-      (term) =>
-        term.name && term.name.toLowerCase().includes(searchInput.toLowerCase())
-    );
+    const searchTerm = searchInput.toLowerCase().trim();
+
+    return indexedTerms[activeIndex].filter((term) => {
+      const nameMatch =
+        term.name && term.name.toLowerCase().includes(searchTerm);
+      const categoryMatch =
+        term.category && term.category.toLowerCase().includes(searchTerm);
+      const translatedCategoryMatch = getCategoryName(term.category)
+        ?.toLowerCase()
+        .includes(searchTerm);
+
+      return nameMatch || categoryMatch || translatedCategoryMatch;
+    });
   };
 
-   
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
-
-     
-    if (e.target.value.length > 1) {
+    setVisibleTerms(6);
+    if (e.target.value.trim().length > 1) {
       const allTerms = Object.values(indexedTerms).flat();
+      const searchTerm = e.target.value.toLowerCase().trim();
+
       const autocompleteSuggestions = allTerms
-        .filter(
-          (term) =>
-            (term.name &&
-              term.name.toLowerCase().includes(e.target.value.toLowerCase())) ||
-            (term.category &&
-              term.category
-                .toLowerCase()
-                .includes(e.target.value.toLowerCase()))
-        )
+        .filter((term) => {
+          const nameMatch =
+            term.name && term.name.toLowerCase().includes(searchTerm);
+          const categoryMatch =
+            term.category && term.category.toLowerCase().includes(searchTerm);
+          const translatedCategoryMatch = getCategoryName(term.category)
+            ?.toLowerCase()
+            .includes(searchTerm);
+
+          return nameMatch || categoryMatch || translatedCategoryMatch;
+        })
         .slice(0, 5);
 
       setSuggestedTerms(autocompleteSuggestions);
-    } else if (e.target.value === "") {
+    } else if (e.target.value.trim() === "") {
       setSuggestedTerms([]);
     }
   };
@@ -148,18 +209,22 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setSearchedTerm(searchInput);
-
-     
-    if (searchInput) {
+    if (searchInput.trim()) {
       const allTerms = Object.values(indexedTerms).flat();
+      const searchTerm = searchInput.toLowerCase().trim();
+
       const relatedTerms = allTerms
-        .filter(
-          (term) =>
-            (term.name &&
-              term.name.toLowerCase().includes(searchInput.toLowerCase())) ||
-            (term.category &&
-              term.category.toLowerCase().includes(searchInput.toLowerCase()))
-        )
+        .filter((term) => {
+          const nameMatch =
+            term.name && term.name.toLowerCase().includes(searchTerm);
+          const categoryMatch =
+            term.category && term.category.toLowerCase().includes(searchTerm);
+          const translatedCategoryMatch = getCategoryName(term.category)
+            ?.toLowerCase()
+            .includes(searchTerm);
+
+          return nameMatch || categoryMatch || translatedCategoryMatch;
+        })
         .slice(0, 5);
 
       setSuggestedTerms(relatedTerms);
@@ -176,10 +241,8 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
     setVisibleTerms((prev) => prev + 6);
   };
 
-   
   const handleTermSelect = (term) => {
     if (onTermSelect) {
-       
       try {
         const savedTerms = JSON.parse(
           localStorage.getItem("savedTerms") || "[]"
@@ -274,19 +337,21 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
                 <div className="_terms_indexed_search_term_header">
                   <h5>{term.name}</h5>
                 </div>
-                <span
-                  className="_terms_indexed_search_term_category"
-                  style={{
-                    backgroundColor: `rgba(${categoryColor
-                      .replace("#", "")
-                      .match(/.{2}/g)
-                      .map((x) => Number.parseInt(x, 16))
-                      .join(", ")}, 0.4)`,
-                    color: categoryColor,
-                  }}
-                >
-                  {getCategoryName(term.category || "Miscellaneous")}
-                </span>
+                {!shouldHideCategory(term.category) && (
+                  <span
+                    className="_terms_indexed_search_term_category"
+                    style={{
+                      backgroundColor: `rgba(${categoryColor
+                        .replace("#", "")
+                        .match(/.{2}/g)
+                        .map((x) => Number.parseInt(x, 16))
+                        .join(", ")}, 0.4)`,
+                      color: categoryColor,
+                    }}
+                  >
+                    {getCategoryName(term.category)}
+                  </span>
+                )}
               </div>
             );
           })}
@@ -306,49 +371,6 @@ const IndexedSearch = ({ language = "english", onTermSelect, terms = [] }) => {
             Show More Terms
           </button>
         )}
-      </div>
-
-      <div className="_terms_search_suggested">
-        <h3 className="_terms_search_suggested_title">Suggested Terms</h3>
-        <div className="_terms_search_suggested_list">
-          {suggestedTerms.length > 0 ? (
-            suggestedTerms.map((term, index) => {
-              const category = term.category || "Miscellaneous";
-              const categoryColor = getCategoryColor(category);
-              return (
-                <div
-                  key={index}
-                  className="_terms_search_suggested_item"
-                  onClick={() => handleTermSelect(term)}
-                  style={{
-                    "--suggestion-color": categoryColor,
-                  }}
-                >
-                  <span className="_terms_search_suggested_name">
-                    {term.name}
-                  </span>
-                  <span
-                    className="_terms_search_suggested_category"
-                    style={{
-                      backgroundColor: `rgba(${categoryColor
-                        .replace("#", "")
-                        .match(/.{2}/g)
-                        .map((x) => Number.parseInt(x, 16))
-                        .join(", ")}, 0.2)`,
-                      color: categoryColor,
-                    }}
-                  >
-                    {getCategoryName(category)}
-                  </span>
-                </div>
-              );
-            })
-          ) : (
-            <div className="_terms_search_empty_message">
-              Search for a term to see suggestions
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

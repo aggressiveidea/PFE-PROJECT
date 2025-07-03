@@ -115,7 +115,7 @@ const LibraryCard = ({
               item.imageUrl ||
               "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-VEQRQgOh77L44yDusYYhmOqACc0jVK.png"
             }
-            alt={item.title}
+            alt={item.title}  
             onError={(e) => {
               e.target.src =
                 "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-VEQRQgOh77L44yDusYYhmOqACc0jVK.png";

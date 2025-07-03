@@ -72,7 +72,7 @@ const Library = () => {
 
          
         const savedTermsData = JSON.parse(
-          localStorage.getItem("saved_terms") || "[]"
+          localStorage.getItem("savedTerms") || "[]"
         );
         setSavedTerms(savedTermsData);
 

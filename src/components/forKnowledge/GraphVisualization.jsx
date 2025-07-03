@@ -1876,9 +1876,7 @@ const GraphVisualization = ({ language = "english" }) => {
               <Maximize className="icon" />
             )}
           </button>
-          <button onClick={exportGraph}>
-            <Download className="icon" />
-          </button>
+         
           <button onClick={toggleLegend}>
             <Info className="icon" />
           </button>

@@ -1,23 +1,33 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import { Globe, Network, RefreshCw, Zap, Users } from "lucide-react"
-import { translations } from "../../utils/translations"
-import "./Features.css"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Globe, Network, RefreshCw, Zap, Users } from "lucide-react";
+import { translations } from "../../utils/translations";
+import "./Features.css";
 
 const Features = ({ language = "en" }) => {
-  const navigate = useNavigate()
-  const t = translations[language] || translations.en
-  const isRtl = language === "ar"
-  const [activeFeature, setActiveFeature] = useState(0)
+  const navigate = useNavigate();
+  const t = translations[language] || translations.en;
+  const isRtl = language === "ar";
+  const [activeFeature, setActiveFeature] = useState(null);
 
-  const handleExplore = () => {
-    navigate("/terms")
-  }
+  const handleExplore = (index) => {
+    if (index === 0) {
+      navigate("/terms");
+      window.location.reload();
+    } else if (index === 1) {
+      navigate("/dictionary");
+      window.location.reload();
+    } else if (index === 2) {
+      navigate("/articles");
+      window.location.reload();
+    }
+  };
 
   const handleGetStarted = () => {
-    navigate("/terms")
-  }
+    navigate("/signup");
+    window.location.reload();
+  };
 
   const features = [
     {
@@ -44,33 +54,15 @@ const Features = ({ language = "en" }) => {
       highlight: "Always Fresh",
       color: "#ef476f",
     },
-  ]
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  }
+  ];
 
   return (
-    <section id="features" className={`features-features ${isRtl ? "features-rtl" : ""}`}>
+    <section
+      id="features"
+      className={`features-features ${isRtl ? "features-rtl" : ""}`}
+    >
       <div className="features-container">
+        {/* Section Header */}
         <motion.div
           className="features-section-header"
           initial={{ opacity: 0, y: 30 }}
@@ -103,6 +95,7 @@ const Features = ({ language = "en" }) => {
           </motion.p>
         </motion.div>
 
+        {/* Feature Map */}
         <motion.div
           className="features-adventure-map"
           initial={{ opacity: 0, y: 40 }}
@@ -110,9 +103,19 @@ const Features = ({ language = "en" }) => {
           transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
         >
           <div className="features-journey-path">
-            <svg className="features-path-svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid meet">
+            <svg
+              className="features-path-svg"
+              viewBox="0 0 1200 400"
+              preserveAspectRatio="xMidYMid meet"
+            >
               <defs>
-                <linearGradient id="featuresAdventureGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="featuresAdventureGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor="#8b5cf6" />
                   <stop offset="50%" stopColor="#ec4899" />
                   <stop offset="100%" stopColor="#a78bfa" />
@@ -131,14 +134,34 @@ const Features = ({ language = "en" }) => {
                 strokeLinecap="round"
                 filter="url(#featuresGlow)"
               />
-              <circle cx="100" cy="300" r="4" fill="#8b5cf6" className="features-path-marker" />
-              <circle cx="600" cy="200" r="4" fill="#ec4899" className="features-path-marker" />
-              <circle cx="1100" cy="300" r="4" fill="#a78bfa" className="features-path-marker" />
+              <circle
+                cx="100"
+                cy="300"
+                r="4"
+                fill="#8b5cf6"
+                className="features-path-marker"
+              />
+              <circle
+                cx="600"
+                cy="200"
+                r="4"
+                fill="#ec4899"
+                className="features-path-marker"
+              />
+              <circle
+                cx="1100"
+                cy="300"
+                r="4"
+                fill="#a78bfa"
+                className="features-path-marker"
+              />
             </svg>
           </div>
+
+          {/* Features Loop */}
           {features.map((feature, index) => {
-            const IconComponent = feature.icon
-            const isHovered = activeFeature === index
+            const IconComponent = feature.icon;
+            const isHovered = activeFeature === index;
 
             return (
               <motion.div
@@ -169,7 +192,9 @@ const Features = ({ language = "en" }) => {
                 </motion.div>
 
                 <motion.div
-                  className={`features-compact-card ${isHovered ? "features-hovered" : ""}`}
+                  className={`features-compact-card ${
+                    isHovered ? "features-hovered" : ""
+                  }`}
                   style={{ borderColor: `${feature.color}30` }}
                   layout
                 >
@@ -184,11 +209,15 @@ const Features = ({ language = "en" }) => {
                     >
                       {feature.highlight}
                     </div>
-                    <div className="features-compact-number" style={{ color: feature.color }}>
+                    <div
+                      className="features-compact-number"
+                      style={{ color: feature.color }}
+                    >
                       {String(index + 1).padStart(2, "0")}
                     </div>
                   </div>
                 </motion.div>
+
                 <AnimatePresence>
                   {isHovered && (
                     <motion.div
@@ -197,7 +226,11 @@ const Features = ({ language = "en" }) => {
                       initial={{ opacity: 0, scale: 0.9, y: 10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                      transition={{ duration: 0.3, type: "spring", stiffness: 400 }}
+                      transition={{
+                        duration: 0.3,
+                        type: "spring",
+                        stiffness: 400,
+                      }}
                     >
                       <div className="features-detailed-header">
                         <div
@@ -211,18 +244,28 @@ const Features = ({ language = "en" }) => {
                           <Zap size={12} />
                           {feature.highlight}
                         </div>
-                        <div className="features-detailed-number" style={{ color: feature.color }}>
+                        <div
+                          className="features-detailed-number"
+                          style={{ color: feature.color }}
+                        >
                           {String(index + 1).padStart(2, "0")}
                         </div>
                       </div>
                       <div className="features-detailed-content">
-                        <h3 className="features-detailed-title">{feature.title}</h3>
-                        <p className="features-detailed-description">{feature.description}</p>
+                        <h3 className="features-detailed-title">
+                          {feature.title}
+                        </h3>
+                        <p className="features-detailed-description">
+                          {feature.description}
+                        </p>
                       </div>
                       <motion.button
                         className="features-explore-button"
-                        style={{ borderColor: feature.color, color: feature.color }}
-                        onClick={handleExplore}
+                        style={{
+                          borderColor: feature.color,
+                          color: feature.color,
+                        }}
+                        onClick={() => handleExplore(index)}
                         whileHover={{
                           backgroundColor: `${feature.color}10`,
                           borderColor: feature.color,
@@ -237,10 +280,11 @@ const Features = ({ language = "en" }) => {
                   )}
                 </AnimatePresence>
               </motion.div>
-            )
+            );
           })}
         </motion.div>
 
+        {/* Footer Call-to-Action */}
         <motion.div
           className="features-features-summary"
           initial={{ opacity: 0, y: 20 }}
@@ -253,7 +297,10 @@ const Features = ({ language = "en" }) => {
             </div>
             <div className="features-summary-text">
               <h4>Ready to explore?</h4>
-              <p>Join thousands of users discovering ICT terminology in multiple languages.</p>
+              <p>
+                Join thousands of users discovering ICT terminology in multiple
+                languages.
+              </p>
             </div>
             <motion.button
               className="features-get-started-button"
@@ -267,7 +314,7 @@ const Features = ({ language = "en" }) => {
         </motion.div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Features
+export default Features;

@@ -338,14 +338,7 @@ const KnowledgeGraphPage = () => {
                     </div>
                   </div>
 
-                  <button
-                    className="history-button"
-                    onClick={toggleHistory}
-                    aria-label={t.history}
-                  >
-                    <History size={20} />
-                    <span className="history-text">{t.history}</span>
-                  </button>
+                  
                 </div>
               </div>
 

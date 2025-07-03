@@ -1,6 +1,8 @@
+"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { Search } from "lucide-react";
+import "./ClassicSearch.css";
 
 const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -22,20 +24,26 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
       "Intellectual Property": "#c084fc",
       Miscellaneous: "#8b5cf6",
       "Computer Contracts": "#a78bfa",
+      // Add French variants
+      Divers: "#8b5cf6",
+      متنوعة: "#8b5cf6",
     };
     return colorMap[category] || "#8b5cf6";
   };
 
   const categoryTranslations = {
     english: {
-      "Computer Crime": "Computer Crime Law",
-      "Personal Data": "Personal Data Law",
-      "Electronic Commerce": "Electronic Commerce Law",
-      Organizations: "Organizations Law",
-      Networks: "Network Law",
-      "Intellectual Property": "Intellectual Property Law",
-      Miscellaneous: "Miscellaneous Law",
-      "Computer Contracts": "Computer Contracts Law",
+      "Computer Crime": "Computer Crime",
+      "Personal Data": "Personal Data",
+      "Electronic Commerce": "Electronic Commerce",
+      Organizations: "Organizations",
+      Networks: "Networks",
+      "Intellectual Property": "Intellectual Property",
+      Miscellaneous: "Miscellaneous",
+      "Computer Contracts": "Computer Contracts",
+      // Add French variants for English
+      Divers: "Miscellaneous",
+      متنوعة: "Miscellaneous",
     },
     french: {
       "Computer Crime": "Criminalité informatique",
@@ -46,6 +54,9 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
       "Intellectual Property": "Propriété intellectuelle",
       Miscellaneous: "Divers",
       "Computer Contracts": "Contrats informatiques",
+      // Add variants
+      Divers: "Divers",
+      متنوعة: "Divers",
     },
     arabic: {
       "Computer Crime": "الجريمة الإلكترونية",
@@ -56,6 +67,12 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
       "Intellectual Property": "الملكية الفكرية",
       Miscellaneous: "متنوعة",
       "Computer Contracts": "العقود الإلكترونية",
+      // Fix: Add all possible variants that should translate to متنوعة
+      Divers: "متنوعة",
+      متنوعة: "متنوعة",
+      General: "متنوعة",
+      general: "متنوعة",
+      GENERAL: "متنوعة",
     },
   };
 
@@ -66,53 +83,180 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     return allCategories.slice(0, 7);
   };
 
+  // Fix: Updated function to check if category should be hidden
+  const shouldHideCategory = (category) => {
+    if (!category) return true;
+
+    const normalizedCategory = category.trim();
+
+    // Check for all possible miscellaneous variants
+    const miscellaneousVariants = [
+      "Miscellaneous",
+      "miscellaneous",
+      "MISCELLANEOUS",
+      "Divers",
+      "divers",
+      "DIVERS",
+      "General",
+      "general",
+      "GENERAL",
+      "متنوعة",
+      "",
+    ];
+
+    return miscellaneousVariants.includes(normalizedCategory);
+  };
+
+  const getCategoryName = (category) => {
+    if (!category) return "";
+
+    // Fix: Normalize category and ensure proper translation lookup
+    const normalizedCategory = category.trim();
+
+    // First try exact match
+    let translatedCategory =
+      categoryTranslations[selectedLanguage]?.[normalizedCategory];
+
+    // If no exact match, try case-insensitive search
+    if (!translatedCategory) {
+      const categoryKeys = Object.keys(
+        categoryTranslations[selectedLanguage] || {}
+      );
+      const matchingKey = categoryKeys.find(
+        (key) => key.toLowerCase() === normalizedCategory.toLowerCase()
+      );
+      if (matchingKey) {
+        translatedCategory =
+          categoryTranslations[selectedLanguage][matchingKey];
+      }
+    }
+
+    // Return translated category or original if no translation found
+    return translatedCategory || normalizedCategory;
+  };
+
   useEffect(() => {
     let results = [...terms];
 
-    if (searchInput && hasSearched) {
-      results = results.filter(
-        (term) =>
-          term.name &&
-          term.name.toLowerCase().includes(searchInput.toLowerCase())
-      );
+    // Fix: Updated search logic to work with your actual data structure
+    if (searchInput && searchInput.trim().length > 0) {
+      const searchTerm = searchInput.toLowerCase().trim();
+      results = results.filter((term) => {
+        // Search in term name
+        const nameMatch =
+          term.name && term.name.toLowerCase().includes(searchTerm);
 
-      const searchBasedSuggestions = terms
-        .filter(
-          (term) =>
-            !results.includes(term) &&
-            ((term.category &&
-              term.category
-                .toLowerCase()
-                .includes(searchInput.toLowerCase())) ||
-              (term.categories &&
-                term.categories.some(
-                  (cat) =>
-                    cat &&
-                    cat.type &&
-                    cat.type.toLowerCase().includes(searchInput.toLowerCase())
-                )))
-        )
-        .slice(0, 3);
+        // Search in main category
+        const categoryMatch =
+          term.category && term.category.toLowerCase().includes(searchTerm);
 
-      setSuggestedTerms(searchBasedSuggestions);
+        // Search in categories array
+        const categoriesMatch =
+          term.categories &&
+          term.categories.some(
+            (cat) => cat && cat.toLowerCase().includes(searchTerm)
+          );
+
+        // Search in translated categories
+        const translatedCategoryMatch =
+          term.category &&
+          getCategoryName(term.category)?.toLowerCase().includes(searchTerm);
+
+        // Search in definition text
+        const definitionMatch =
+          term.definition && term.definition.toLowerCase().includes(searchTerm);
+
+        // Search in allDefinitions array
+        const allDefinitionsMatch =
+          term.allDefinitions &&
+          term.allDefinitions.some(
+            (def) => def.text && def.text.toLowerCase().includes(searchTerm)
+          );
+
+        // Search in references
+        const referenceMatch =
+          term.reference && term.reference.toLowerCase().includes(searchTerm);
+
+        // Search in allDefinitions references
+        const allReferencesMatch =
+          term.allDefinitions &&
+          term.allDefinitions.some(
+            (def) =>
+              def.references &&
+              def.references.toLowerCase().includes(searchTerm)
+          );
+
+        return (
+          nameMatch ||
+          categoryMatch ||
+          categoriesMatch ||
+          translatedCategoryMatch ||
+          definitionMatch ||
+          allDefinitionsMatch ||
+          referenceMatch ||
+          allReferencesMatch
+        );
+      });
+
+      // Show suggestions when actively searching
+      if (searchTerm.length > 1) {
+        const searchBasedSuggestions = terms
+          .filter((term) => {
+            if (results.includes(term)) return false;
+
+            const categoryMatch =
+              term.category && term.category.toLowerCase().includes(searchTerm);
+            const categoriesMatch =
+              term.categories &&
+              term.categories.some(
+                (cat) => cat && cat.toLowerCase().includes(searchTerm)
+              );
+            const translatedCategoryMatch = getCategoryName(term.category)
+              ?.toLowerCase()
+              .includes(searchTerm);
+
+            return categoryMatch || categoriesMatch || translatedCategoryMatch;
+          })
+          .slice(0, 3);
+        setSuggestedTerms(searchBasedSuggestions);
+      } else {
+        setSuggestedTerms([]);
+      }
     } else {
       setSuggestedTerms([]);
     }
 
-  
+    // Filter by active categories - Updated to work with your data structure
     if (activeCategories.length > 0) {
       results = results.filter((term) => {
-        if (term.categories && term.categories.length > 0) {
-          return term.categories.some(
-            (cat) => cat && cat.type && activeCategories.includes(cat.type)
+        // Check main category
+        const mainCategoryMatch =
+          term.category && activeCategories.includes(term.category);
+
+        // Check categories array
+        const categoriesArrayMatch =
+          term.categories &&
+          term.categories.some((cat) => activeCategories.includes(cat));
+
+        // Check allDefinitions categories
+        const allDefinitionsCategoriesMatch =
+          term.allDefinitions &&
+          term.allDefinitions.some(
+            (def) =>
+              def.categories &&
+              def.categories.some((cat) => activeCategories.includes(cat))
           );
-        }
-        return term.category && activeCategories.includes(term.category);
+
+        return (
+          mainCategoryMatch ||
+          categoriesArrayMatch ||
+          allDefinitionsCategoriesMatch
+        );
       });
     }
 
     setFilteredTerms(results);
-  }, [searchInput, activeCategories, terms, selectedLanguage, hasSearched]);
+  }, [searchInput, activeCategories, terms, selectedLanguage]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -122,33 +266,8 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
 
   const handleInputChange = (e) => {
     setSearchInput(e.target.value);
-
-    if (e.target.value.length > 1) {
-      const autocompleteSuggestions = terms
-        .filter(
-          (term) =>
-            (term.name &&
-              term.name.toLowerCase().includes(e.target.value.toLowerCase())) ||
-            (term.category &&
-              term.category
-                .toLowerCase()
-                .includes(e.target.value.toLowerCase())) ||
-            (term.categories &&
-              term.categories.some(
-                (cat) =>
-                  cat &&
-                  cat.type &&
-                  cat.type.toLowerCase().includes(e.target.value.toLowerCase())
-              ))
-        )
-        .slice(0, 5);
-
-      setSuggestedTerms(autocompleteSuggestions);
-      setHasSearched(true);
-    } else if (e.target.value === "") {
-      setSuggestedTerms([]);
-      setHasSearched(false);
-    }
+    // Fix: Reset visible terms when searching
+    setVisibleTerms(6);
   };
 
   const handleCategoryToggle = (category) => {
@@ -161,15 +280,9 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
     });
   };
 
-
   const languageCategories = useMemo(() => {
     return getLanguageSpecificCategories();
   }, [selectedLanguage]);
-
-
-  const getCategoryName = (category) => {
-    return categoryTranslations[selectedLanguage][category] || category;
-  };
 
   const handleShowMore = () => {
     setVisibleTerms((prev) => prev + 6);
@@ -177,7 +290,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
 
   const handleTermSelect = (term) => {
     if (onTermSelect) {
- 
       try {
         const savedTerms = JSON.parse(
           localStorage.getItem("savedTerms") || "[]"
@@ -185,7 +297,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
         const termExists = savedTerms.some(
           (t) => t.id === term.id || t.name === term.name
         );
-
         if (!termExists) {
           savedTerms.push({
             ...term,
@@ -197,100 +308,80 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
       } catch (error) {
         console.error("Error saving term to localStorage:", error);
       }
-
       onTermSelect(term);
     }
   };
 
   return (
-    <div className="_terms_search_container">
-      <div className="_terms_search_header">
-        <form onSubmit={handleSearchSubmit} className="_terms_search_form">
-          <div className="_terms_search_input_wrapper">
-            <Search size={18} className="_terms_search_icon" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={handleInputChange}
-              placeholder="Search for terms..."
-              className="_terms_search_input"
-            />
-          </div>
+    <div className="terms-classic-search-container">
+      <div className="terms-classic-search-header">
+        <h3 className="terms-classic-search-title">Digital Terms Search</h3>
+        <form
+          onSubmit={handleSearchSubmit}
+          className="terms-classic-search-input-wrapper"
+        >
+          <Search size={18} className="terms-classic-search-icon" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleInputChange}
+            placeholder="Search digital terms..."
+            className="terms-classic-search-input"
+          />
           <button
             type="submit"
-            className="_terms_search_button"
+            className="terms-classic-search-button"
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
           >
-            <span>Search</span>
-            <div className="_terms_search_button_icon">
-              <Search size={16} className={isButtonHovered ? "visible" : ""} />
-            </div>
+            Search
           </button>
         </form>
       </div>
 
-      <div className="_terms_search_categories">
-        <h3 className="_terms_search_categories_title">Categories</h3>
-        <div className="_terms_search_categories_list">
-          {languageCategories.map((category, index) => (
-            <button
-              key={index}
-              className={`_terms_search_category_btn ${
-                activeCategories.includes(category) ? "active" : ""
-              }`}
-              style={{
-                "--category-color": getCategoryColor(category),
-              }}
-              onClick={() => handleCategoryToggle(category)}
-            >
-              <span>{getCategoryName(category)}</span>
-            </button>
-          ))}
+      <div className="terms-classic-search-filters">
+        <div className="terms-classic-search-categories">
+          <h4>Categories</h4>
+          <div className="terms-classic-search-category-buttons">
+            {languageCategories.map((category, index) => (
+              <button
+                key={index}
+                className={`terms-classic-search-category-button ${
+                  activeCategories.includes(category) ? "active" : ""
+                }`}
+                onClick={() => handleCategoryToggle(category)}
+              >
+                {getCategoryName(category)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="_terms_search_results">
-        <div className="_terms_search_results_header">
-          <h3>Terms</h3>
-          <span className="_terms_search_results_count">
+      <div className="terms-classic-search-content">
+        <div className="terms-classic-search-results-header">
+          <h4>Terms</h4>
+          <span className="terms-classic-search-results-count">
             {filteredTerms.length} terms found
           </span>
         </div>
-
-        <div className="_terms_search_results_grid">
+        <div className="terms-classic-search-results-list">
           {filteredTerms.slice(0, visibleTerms).map((term, index) => {
-            const categories = term.categories
-              ? term.categories.map((cat) => cat.type)
-              : term.category
-              ? [term.category]
-              : [];
-
-            const primaryCategory = categories[0] || "Miscellaneous";
-
+            // Updated to work with your data structure
+            const primaryCategory =
+              term.category ||
+              (term.categories && term.categories[0]) ||
+              "Miscellaneous";
             const primaryDefinition =
-              term.definition ||
-              (term.categories &&
-                term.categories[0] &&
-                term.categories[0].principale &&
-                term.categories[0].principale[0] &&
-                term.categories[0].principale[0].definition_principale &&
-                term.categories[0].principale[0].definition_principale[0]) ||
-              "No definition available";
-
-            const references = term.reference
-              ? [term.reference]
-              : (term.categories &&
-                  term.categories[0] &&
-                  term.categories[0].principale &&
-                  term.categories[0].principale[0] &&
-                  term.categories[0].principale[0].references) ||
-                [];
+              term.definition || "No definition available";
+            const references = term.reference ? [term.reference] : [];
 
             return (
               <div
                 key={index}
-                className="_terms_search_term_card"
+                className="terms-classic-search-term-card"
+                onMouseEnter={() => setHoveredCard(index)}
+                onMouseLeave={() => setHoveredCard(null)}
                 onClick={() => handleTermSelect(term)}
                 style={{
                   "--card-bg-color": `rgba(${getCategoryColor(primaryCategory)
@@ -301,77 +392,40 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
                   "--category-color": getCategoryColor(primaryCategory),
                 }}
               >
-                <div className="_terms_search_term_header">
-                  <div className="_terms_search_term_title_container">
-                    <h4 className="_terms_search_term_title">{term.name}</h4>
-                    <span
-                      className="_terms_search_term_category_name"
-                      style={{ color: getCategoryColor(primaryCategory) }}
-                    >
-                      {getCategoryName(primaryCategory)}
-                    </span>
+                <div className="terms-classic-search-term-header">
+                  <div className="terms-classic-search-term-title">
+                    <h5>{term.name}</h5>
+                    {/* Fix: Only show category if it's not Miscellaneous */}
+                    {!shouldHideCategory(primaryCategory) && (
+                      <span className="terms-classic-search-term-category">
+                        {getCategoryName(primaryCategory)}
+                      </span>
+                    )}
                   </div>
                 </div>
-
-                <div className="_terms_search_term_content">
-                  <h5
-                    className="_terms_search_term_section_title"
-                    style={{
-                      "--card-color": getCategoryColor(primaryCategory),
-                    }}
-                  >
-                    Primary Legal Provision
-                  </h5>
-                  <p className="_terms_search_term_definition">
-                    {primaryDefinition}
-                  </p>
-
+                <div className="terms-classic-search-term-content">
+                  <div className="terms-classic-search-term-definition">
+                    <h6>Primary Legal Provision</h6>
+                    <p>{primaryDefinition}</p>
+                  </div>
                   {references && references.length > 0 && (
-                    <div className="_terms_search_term_references">
-                      <h6 className="_terms_search_term_references_title">
-                        Legal References
-                      </h6>
+                    <div className="terms-classic-search-term-references">
+                      <h6>Legal References</h6>
                       {references.map((ref, refIndex) => (
-                        <div
+                        <span
                           key={refIndex}
-                          className="_terms_search_term_reference"
+                          className="terms-classic-search-term-reference"
                         >
-                          <span
-                            className="_terms_search_reference_icon"
-                            style={{ color: getCategoryColor(primaryCategory) }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                              <polyline points="14 2 14 8 20 8"></polyline>
-                              <line x1="16" y1="13" x2="8" y2="13"></line>
-                              <line x1="16" y1="17" x2="8" y2="17"></line>
-                              <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                          </span>
-                          <span>{ref}</span>
-                        </div>
+                          {ref}
+                        </span>
                       ))}
                     </div>
                   )}
                 </div>
                 <button
-                  className="_terms_search_save_button"
-                  style={{
-                    "--save-btn-color": getCategoryColor(primaryCategory),
-                  }}
+                  className="terms-classic-search-save-button"
                   onClick={(e) => {
                     e.stopPropagation();
-                
                     try {
                       const savedTerms = JSON.parse(
                         localStorage.getItem("savedTerms") || "[]"
@@ -379,7 +433,6 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
                       const termExists = savedTerms.some(
                         (t) => t.id === term.id || t.name === term.name
                       );
-
                       if (!termExists) {
                         savedTerms.push({
                           ...term,
@@ -400,67 +453,24 @@ const ClassicSearch = ({ terms, onSearch, onTermSelect, selectedLanguage }) => {
                     }
                   }}
                 >
-                  <span className="_terms_search_btn_text">Add to Library</span>
+                  Add to Library
                 </button>
               </div>
             );
           })}
         </div>
-
         {filteredTerms.length > visibleTerms && (
-          <button className="_terms_search_show_more" onClick={handleShowMore}>
+          <button
+            className="terms-classic-search-show-more"
+            onClick={handleShowMore}
+          >
             Show More Terms
           </button>
         )}
-      </div>
-
-      <div className="_terms_search_suggested">
-        <h3 className="_terms_search_suggested_title">Suggested Terms</h3>
-        <div className="_terms_search_suggested_list">
-          {suggestedTerms.length > 0 ? (
-            suggestedTerms.map((term, index) => {
-              const category = term.categories
-                ? term.categories[0]?.type
-                : term.category;
-              return (
-                <div
-                  key={index}
-                  className="_terms_search_suggested_item"
-                  onClick={() => handleTermSelect(term)}
-                  style={{
-                    "--suggestion-color": getCategoryColor(category),
-                  }}
-                >
-                  <span className="_terms_search_suggested_name">
-                    {term.name}
-                  </span>
-                  <span
-                    className="_terms_search_suggested_category"
-                    style={{
-                      backgroundColor: `rgba(${getCategoryColor(category)
-                        .replace("#", "")
-                        .match(/.{2}/g)
-                        .map((x) => Number.parseInt(x, 16))
-                        .join(", ")}, 0.2)`,
-                      color: getCategoryColor(category),
-                    }}
-                  >
-                    {getCategoryName(category)}
-                  </span>
-                </div>
-              );
-            })
-          ) : (
-            <div className="_terms_search_empty_message">
-              {hasSearched
-                ? "No suggestions found for this search"
-                : "Search for a term to see suggestions"}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
 export default ClassicSearch;
+  
