@@ -241,8 +241,10 @@ const Library = () => {
    
   const handleCardClick = (item, type) => {
     if (type === "articles") {
-       
-      window.open(`http://localhost:3000/articles/${item.id}`, "_blank");
+       console.log("Article clicked:", item);
+    } else if ( type === "terms" )
+    {
+      
     } else if (type === "books") {
        
       console.log("Book clicked:", item);

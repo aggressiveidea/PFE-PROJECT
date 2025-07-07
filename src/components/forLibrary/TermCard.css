@@ -1,0 +1,338 @@
+/* Clean Term Card Styles */
+.clean-term-wrapper {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.clean-term-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.clean-term-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.clean-term-container:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.clean-term-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.clean-term-source {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.clean-term-category-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.clean-term-category-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.clean-term-definition {
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.clean-term-read-more {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 12px;
+    text-decoration: underline;
+}
+
+.clean-term-read-more:hover {
+    color: #1d4ed8;
+}
+
+.clean-term-definitions-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.clean-term-save-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+/* Clean Modal Styles */
+.clean-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.clean-modal-panel {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.clean-modal-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.clean-modal-main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.clean-modal-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
+
+.clean-modal-close-btn:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.clean-modal-content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.clean-modal-category-section {
+    margin-bottom: 24px;
+}
+
+.clean-modal-category-header {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clean-modal-definition-section {
+    margin-bottom: 32px;
+}
+
+.clean-modal-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.clean-modal-title-indicator {
+    width: 4px;
+    height: 18px;
+    border-radius: 2px;
+}
+
+.clean-modal-section-title h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.clean-modal-definition-content {
+    color: #475569;
+    line-height: 1.7;
+    margin: 0 0 16px 0;
+    font-size: 0.95rem;
+}
+
+.clean-modal-references-box {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 6px;
+    border-left: 3px solid #e2e8f0;
+    margin-top: 16px;
+}
+
+.clean-modal-references-box h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clean-modal-references-box p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.clean-modal-related-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.clean-modal-related-item {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.clean-modal-bottom-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-top: 1px solid #f1f5f9;
+    background: #fafbfc;
+}
+
+.clean-modal-date-info {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.clean-modal-library-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clean-modal-library-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode support */
+.library-dark .clean-term-container {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.library-dark .clean-term-title {
+    color: #f8fafc;
+}
+
+.library-dark .clean-term-definition {
+    color: #cbd5e1;
+}
+
+.library-dark .clean-term-source,
+.library-dark .clean-term-definitions-count,
+.library-dark .clean-term-save-date {
+    color: #94a3b8;
+}
+
+.library-dark .clean-modal-panel {
+    background: #1e293b;
+}
+
+.library-dark .clean-modal-main-title {
+    color: #f8fafc;
+}
+
+.library-dark .clean-modal-definition-content {
+    color: #cbd5e1;
+}
+
+.library-dark .clean-modal-references-box {
+    background: #334155;
+    border-left-color: #475569;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .clean-modal-backdrop {
+        padding: 10px;
+    }
+
+    .clean-modal-panel {
+        max-height: 95vh;
+    }
+
+    .clean-modal-header-section {
+        padding: 20px 20px 16px 20px;
+    }
+
+    .clean-modal-content-area {
+        padding: 20px;
+    }
+
+    .clean-modal-bottom-section {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+}

@@ -136,8 +136,7 @@ const BooksList = ({
             <div className="library-book-cover-wrapper">
               <img
                 src={
-                  book.coverImgUrl ||
-                  book.coverImgPreview ||
+                  book.coverImage ||
                   "/placeholder.svg?height=240&width=160"
                 }
                 alt={book.title}
